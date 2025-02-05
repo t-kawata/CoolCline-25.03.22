@@ -17,6 +17,7 @@ import { checkExistKey } from "../../../src/shared/checkExistApiConfig"
 import { Mode, CustomModePrompts, defaultModeSlug, defaultPrompts, ModeConfig } from "../../../src/shared/modes"
 import { CustomSupportPrompts } from "../../../src/shared/support-prompt"
 import { experimentDefault, ExperimentId } from "../../../src/shared/experiments"
+import { initializeLanguage } from "../utils/i18n"
 
 export interface ExtensionStateContextType extends ExtensionState {
 	didHydrateState: boolean
@@ -184,6 +185,12 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					const hasKey = checkExistKey(config)
 					setShowWelcome(!hasKey)
 					setDidHydrateState(true)
+
+					// 初始化语言设置
+					if (newState.preferredLanguage) {
+						console.log("Initializing language from state:", newState.preferredLanguage)
+						initializeLanguage(newState.preferredLanguage)
+					}
 					break
 				}
 				case "theme": {
@@ -294,7 +301,11 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setBrowserViewportSize: (value: string) =>
 			setState((prevState) => ({ ...prevState, browserViewportSize: value })),
 		setFuzzyMatchThreshold: (value) => setState((prevState) => ({ ...prevState, fuzzyMatchThreshold: value })),
-		setPreferredLanguage: (value) => setState((prevState) => ({ ...prevState, preferredLanguage: value })),
+		setPreferredLanguage: useCallback((value: string) => {
+			console.log("Setting preferred language:", value)
+			setState((prevState) => ({ ...prevState, preferredLanguage: value }))
+			initializeLanguage(value)
+		}, []),
 		setWriteDelayMs: (value) => setState((prevState) => ({ ...prevState, writeDelayMs: value })),
 		setScreenshotQuality: (value) => setState((prevState) => ({ ...prevState, screenshotQuality: value })),
 		setTerminalOutputLineLimit: (value) =>

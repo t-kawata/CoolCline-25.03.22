@@ -46,6 +46,26 @@ declare module "i18next" {
 	}
 }
 
+// 获取初始语言设置
+function getInitialLanguage(): string {
+	try {
+		// 尝试从 vscode-state 元数据中获取语言设置
+		const stateElement = document.querySelector('meta[name="vscode-state"]')
+		if (stateElement) {
+			const state = JSON.parse(decodeURIComponent(stateElement.getAttribute("content") || "{}"))
+			if (state.preferredLanguage) {
+				console.log("Found initial language in vscode state:", state.preferredLanguage)
+				return state.preferredLanguage
+			}
+		}
+	} catch (error) {
+		console.warn("Failed to get initial language from vscode state:", error)
+	}
+
+	console.log("Using default language: English")
+	return "English"
+}
+
 // 语言代码映射
 const languageMap: { [key: string]: string } = {
 	English: "en",
@@ -145,7 +165,12 @@ const displayMap: { [key: string]: string } = {
 
 // 获取语言代码
 export function getLanguageCode(language: string): string {
-	return languageMap[language] || "en"
+	const code = languageMap[language]
+	if (!code) {
+		console.warn(`Unknown language: ${language}, falling back to English`)
+		return "en"
+	}
+	return code
 }
 
 // 获取显示语言名称
@@ -154,7 +179,12 @@ export function getDisplayLanguage(code: string): string {
 }
 
 // 初始化 i18next
-i18n.use(initReactI18next).init({
+const initialLanguage = getInitialLanguage()
+const langCode = getLanguageCode(initialLanguage)
+
+console.log("Initializing i18n with language:", { initialLanguage, langCode })
+
+const i18nInstance = i18n.use(initReactI18next).init({
 	resources: {
 		en: { translation: en },
 		"zh-CN": { translation: zhCN },
@@ -175,21 +205,54 @@ i18n.use(initReactI18next).init({
 		es: { translation: es },
 		tr: { translation: tr },
 	},
-	lng: "en",
+	lng: langCode,
 	fallbackLng: "en",
 	interpolation: {
 		escapeValue: false,
 	},
+	debug: true,
 })
 
 // 切换语言
-export function changeLanguage(language: string) {
+export async function changeLanguage(language: string): Promise<string | null> {
+	console.log("Changing language to:", language)
 	const langCode = getLanguageCode(language)
-	if (langCode && i18n.languages.includes(langCode)) {
-		i18n.changeLanguage(langCode)
-		return langCode
+
+	if (!langCode) {
+		console.warn(`Invalid language code for: ${language}`)
+		return null
 	}
-	return null
+
+	if (!i18n.languages.includes(langCode)) {
+		console.warn(`Language ${langCode} is not loaded`)
+		return null
+	}
+
+	try {
+		await i18n.changeLanguage(langCode)
+		console.log("Language successfully changed to:", langCode)
+		return langCode
+	} catch (error) {
+		console.error("Failed to change language:", error)
+		return null
+	}
+}
+
+// 初始化语言设置
+export async function initializeLanguage(preferredLanguage?: string): Promise<void> {
+	console.log("Initializing language with preferred language:", preferredLanguage)
+
+	if (!preferredLanguage) {
+		console.log("No preferred language provided, using default")
+		return
+	}
+
+	const result = await changeLanguage(preferredLanguage)
+	if (result) {
+		console.log("Language initialized successfully to:", result)
+	} else {
+		console.warn("Failed to initialize language, using default")
+	}
 }
 
 export default i18n
