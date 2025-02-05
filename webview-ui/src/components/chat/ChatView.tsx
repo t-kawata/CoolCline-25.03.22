@@ -28,6 +28,7 @@ import TaskHeader from "./TaskHeader"
 import AutoApproveMenu from "./AutoApproveMenu"
 import { AudioType } from "../../../../src/shared/WebviewMessage"
 import { validateCommand } from "../../utils/command-validation"
+import { useTranslation } from "react-i18next"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -88,6 +89,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	// (since it relies on the content of these messages, we are deep comparing. i.e. the button state after hitting button sets enableButtons to false, and this effect otherwise would have to true again even if messages didn't change
 	const lastMessage = useMemo(() => messages.at(-1), [messages])
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
+
+	const { t } = useTranslation()
 
 	function playSound(audioType: AudioType) {
 		vscode.postMessage({ type: "playSound", audioType })
@@ -1005,15 +1008,13 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
 					<div style={{ padding: "0 20px", flexShrink: 0 }}>
-						<h2>What can I do for you?</h2>
+						<h2>{String(t("chat.welcome.title"))}</h2>
 						<p>
-							CoolCline is a proactive programming assistant that enhances your development workflow with
-							advanced AI capabilities. It helps you write code more efficiently, optimize queries,
-							auto-fix errors, run command-line tasks, and perform browser automation tests.
+							{String(t("chat.welcome.description"))}
 							<VSCodeLink
 								href="https://github.com/coolcline/coolcline/blob/main/README.md"
 								style={{ display: "inline" }}>
-								README
+								{String(t("chat.welcome.readMore"))}
 							</VSCodeLink>
 						</p>
 					</div>

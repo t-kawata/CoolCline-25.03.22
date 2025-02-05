@@ -125,5 +125,12 @@
 				"description": "Add context to your current task or conversation. Useful for providing additional information or clarifications. Available in code actions (lightbulb icon in the editor). and the editor context menu (right-click on selected code)."
 			}
 		}
+	},
+	"chat": {
+		"welcome": {
+			"title": "What can I do for you?",
+			"description": "CoolCline is a proactive programming assistant that enhances your development workflow with advanced AI capabilities. It helps you write code more efficiently, optimize queries, auto-fix errors, run command-line tasks, and perform browser automation tests.",
+			"readMore": "README"
+		}
 	}
 }
