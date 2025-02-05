@@ -8,6 +8,7 @@ import Thumbnails from "../common/Thumbnails"
 import { mentionRegexGlobal } from "../../../../src/shared/context-mentions"
 import { formatLargeNumber } from "../../utils/format"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
+import { useTranslation } from "react-i18next"
 
 interface TaskHeaderProps {
 	task: CoolClineMessage
@@ -32,6 +33,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	contextTokens,
 	onClose,
 }) => {
+	const { t } = useTranslation()
 	const { apiConfiguration } = useExtensionState()
 	const { selectedModelInfo } = useMemo(() => normalizeApiConfiguration(apiConfiguration), [apiConfiguration])
 	const [isTaskExpanded, setIsTaskExpanded] = useState(true)
@@ -155,7 +157,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 								flexGrow: 1,
 								minWidth: 0, // This allows the div to shrink below its content size
 							}}>
-							<span style={{ fontWeight: "bold" }}>Task{!isTaskExpanded && ":"}</span>
+							<span style={{ fontWeight: "bold" }}>
+								{String(t("chat.task.title"))}
+								{!isTaskExpanded && ":"}
+							</span>
 							{!isTaskExpanded && (
 								<span style={{ marginLeft: 4 }}>{highlightMentions(task.text, false)}</span>
 							)}
@@ -232,7 +237,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 											backgroundColor: "var(--vscode-badge-background)",
 										}}
 										onClick={() => setIsTextExpanded(!isTextExpanded)}>
-										See more
+										{String(t("chat.task.seeMore"))}
 									</div>
 								</div>
 							)}
@@ -247,7 +252,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 									paddingRight: 2,
 								}}
 								onClick={() => setIsTextExpanded(!isTextExpanded)}>
-								See less
+								{String(t("chat.task.seeLess"))}
 							</div>
 						)}
 						{task.images && task.images.length > 0 && <Thumbnails images={task.images} />}
@@ -259,7 +264,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 									alignItems: "center",
 								}}>
 								<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-									<span style={{ fontWeight: "bold" }}>Tokens:</span>
+									<span style={{ fontWeight: "bold" }}>{String(t("chat.task.tokens"))}:</span>
 									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
 										<i
 											className="codicon codicon-arrow-up"
@@ -279,7 +284,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							</div>
 
 							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-								<span style={{ fontWeight: "bold" }}>Context:</span>
+								<span style={{ fontWeight: "bold" }}>{String(t("chat.task.context"))}:</span>
 								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
 									{contextTokens
 										? `${formatLargeNumber(contextTokens)} (${contextPercentage}%)`
@@ -289,7 +294,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 
 							{shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
 								<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-									<span style={{ fontWeight: "bold" }}>Cache:</span>
+									<span style={{ fontWeight: "bold" }}>{String(t("chat.task.cache"))}:</span>
 									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
 										<i
 											className="codicon codicon-database"
@@ -314,7 +319,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 										alignItems: "center",
 									}}>
 									<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-										<span style={{ fontWeight: "bold" }}>API Cost:</span>
+										<span style={{ fontWeight: "bold" }}>{String(t("chat.task.apiCost"))}:</span>
 										<span>${totalCost?.toFixed(4)}</span>
 									</div>
 									<ExportButton />
@@ -378,18 +383,21 @@ export const highlightMentions = (text?: string, withShadow = true) => {
 	})
 }
 
-const ExportButton = () => (
-	<VSCodeButton
-		appearance="icon"
-		onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}
-		style={
-			{
-				// marginBottom: "-2px",
-				// marginRight: "-2.5px",
-			}
-		}>
-		<div style={{ fontSize: "10.5px", fontWeight: "bold", opacity: 0.6 }}>EXPORT</div>
-	</VSCodeButton>
-)
+const ExportButton = () => {
+	const { t } = useTranslation()
+	return (
+		<VSCodeButton
+			appearance="icon"
+			onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}
+			style={
+				{
+					// marginBottom: "-2px",
+					// marginRight: "-2.5px",
+				}
+			}>
+			<div style={{ fontSize: "10.5px", fontWeight: "bold", opacity: 0.6 }}>{String(t("chat.task.export"))}</div>
+		</VSCodeButton>
+	)
+}
 
 export default memo(TaskHeader)

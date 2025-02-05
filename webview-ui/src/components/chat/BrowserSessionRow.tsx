@@ -12,6 +12,7 @@ import { vscode } from "../../utils/vscode"
 import CodeBlock, { CODE_BLOCK_BG_COLOR } from "../common/CodeBlock"
 import { ChatRowContent, ProgressIndicator } from "./ChatRow"
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import { useTranslation } from "react-i18next"
 
 interface BrowserSessionRowProps {
 	messages: CoolClineMessage[]
@@ -503,20 +504,22 @@ const BrowserActionBox = ({
 	coordinate?: string
 	text?: string
 }) => {
+	const { t } = useTranslation()
+
 	const getBrowserActionText = (action: BrowserAction, coordinate?: string, text?: string) => {
 		switch (action) {
 			case "launch":
-				return `Launch browser at ${text}`
+				return String(t("chat.browser.launch")).replace("{url}", text || "")
 			case "click":
-				return `Click (${coordinate?.replace(",", ", ")})`
+				return String(t("chat.browser.click")).replace("{coordinate}", coordinate?.replace(",", ", ") || "")
 			case "type":
-				return `Type "${text}"`
+				return String(t("chat.browser.type")).replace("{text}", text || "")
 			case "scroll_down":
-				return "Scroll down"
+				return String(t("chat.browser.scrollDown"))
 			case "scroll_up":
-				return "Scroll up"
+				return String(t("chat.browser.scrollUp"))
 			case "close":
-				return "Close browser"
+				return String(t("chat.browser.close"))
 			default:
 				return action
 		}
@@ -541,7 +544,7 @@ const BrowserActionBox = ({
 							whiteSpace: "normal",
 							wordBreak: "break-word",
 						}}>
-						<span style={{ fontWeight: 500 }}>Browse Action: </span>
+						<span style={{ fontWeight: 500 }}>{String(t("chat.browser.action"))}: </span>
 						{getBrowserActionText(action, coordinate, text)}
 					</span>
 				</div>

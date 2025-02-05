@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { ContextMenuOptionType, ContextMenuQueryItem, getContextMenuOptions } from "../../utils/context-mentions"
 import { removeLeadingNonAlphanumeric } from "../common/CodeAccordian"
 
@@ -21,6 +22,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 	selectedType,
 	queryItems,
 }) => {
+	const { t } = useTranslation()
 	const menuRef = useRef<HTMLDivElement>(null)
 
 	const filteredOptions = useMemo(
@@ -47,11 +49,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 	const renderOptionContent = (option: ContextMenuQueryItem) => {
 		switch (option.type) {
 			case ContextMenuOptionType.Problems:
-				return <span>Problems</span>
+				return <span>{String(t("chat.contextMenu.problems"))}</span>
 			case ContextMenuOptionType.URL:
-				return <span>Paste URL to fetch contents</span>
+				return <span>{String(t("chat.contextMenu.pasteUrl"))}</span>
 			case ContextMenuOptionType.NoResults:
-				return <span>No results found</span>
+				return <span>{String(t("chat.contextMenu.noResults"))}</span>
 			case ContextMenuOptionType.Git:
 				if (option.value) {
 					return (
@@ -71,7 +73,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 						</div>
 					)
 				} else {
-					return <span>Git Commits</span>
+					return <span>{String(t("chat.contextMenu.gitCommits"))}</span>
 				}
 			case ContextMenuOptionType.File:
 			case ContextMenuOptionType.OpenedFile:
@@ -94,7 +96,15 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 						</>
 					)
 				} else {
-					return <span>Add {option.type === ContextMenuOptionType.File ? "File" : "Folder"}</span>
+					return (
+						<span>
+							{String(
+								t(
+									`chat.contextMenu.${option.type === ContextMenuOptionType.File ? "addFile" : "addFolder"}`,
+								),
+							)}
+						</span>
+					)
 				}
 		}
 	}

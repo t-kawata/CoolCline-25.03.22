@@ -180,6 +180,120 @@
 			"title": "我能为您做什么？",
 			"description": "CoolCline 是一个主动式编程助手，通过先进的 AI 功能增强您的开发工作流程。它可以帮助您更高效地编写代码、优化查询、自动修复错误、运行命令行任务以及执行浏览器自动化测试。",
 			"readMore": "使用说明"
+		},
+		"browser": {
+			"action": "浏览器操作",
+			"launch": "在 {url} 启动浏览器",
+			"click": "点击 ({coordinate})",
+			"type": "输入 \"{text}\"",
+			"scrollDown": "向下滚动",
+			"scrollUp": "向上滚动",
+			"close": "关闭浏览器"
+		},
+		"task": {
+			"title": "任务",
+			"seeMore": "查看更多",
+			"seeLess": "收起",
+			"tokens": "令牌数",
+			"context": "上下文",
+			"cache": "缓存",
+			"apiCost": "API 费用",
+			"export": "导出"
+		},
+		"messages": {
+			"error": "错误",
+			"trouble": "CoolCline 遇到了问题...",
+			"executeCommand": "CoolCline 想要执行这个命令：",
+			"useTool": "使用工具",
+			"accessResource": "访问资源",
+			"taskCompleted": "任务完成",
+			"apiCancelled": "API 请求已取消",
+			"apiStreamingFailed": "API 流式传输失败",
+			"apiRequest": "API 请求",
+			"apiFailed": "API 请求失败",
+			"apiInProgress": "API 请求中...",
+			"question": "CoolCline 有一个问题：",
+			"searchDirectory": "CoolCline 想要搜索此目录",
+			"searchedDirectory": "CoolCline 已搜索此目录",
+			"switchMode": "CoolCline 想要切换到",
+			"switchedMode": "CoolCline 已切换到",
+			"modeBecause": "模式，原因：",
+			"mode": "模式",
+			"response": "响应"
+		},
+		"actions": {
+			"edit": "编辑...",
+			"separator": "────"
+		},
+		"announcement": {
+			"title": "🎉 隆重推出 CoolCline",
+			"customization": {
+				"title": "自定义模式：庆祝我们的新身份",
+				"description": "为了纪念这个新篇章，我们引入了将 CoolCline 塑造成任何您需要的角色的功能！创建专业化的角色，并通过深度定制的提示创建一个完整的代理团队：",
+				"examples": {
+					"qa": "编写全面测试用例并捕捉边缘情况的 QA 工程师",
+					"pm": "擅长用户故事和功能优先级排序的产品经理",
+					"ui": "打造美观、易用界面的 UI/UX 设计师",
+					"reviewer": "确保代码质量和可维护性的代码审查员"
+				},
+				"getStarted": "点击笔记本图标开始使用自定义模式！"
+			},
+			"join": {
+				"title": "加入我们的新篇章",
+				"description": "我们迫不及待地想看到您如何进一步发掘 CoolCline 的潜力！在以下地址分享您的自定义模式并加入讨论"
+			}
+		},
+		"autoApprove": {
+			"title": "自动批准",
+			"none": "无",
+			"description": "自动批准允许 CoolCline 在不询问许可的情况下执行操作。请只对您完全信任的操作启用此功能。",
+			"actions": {
+				"readFiles": {
+					"label": "读取文件和目录",
+					"description": "允许读取您计算机上的任何文件。"
+				},
+				"editFiles": {
+					"label": "编辑文件",
+					"description": "允许修改您计算机上的任何文件。"
+				},
+				"executeCommands": {
+					"label": "执行已批准的命令",
+					"description": "允许执行已批准的终端命令。您可以在设置面板中配置此项。"
+				},
+				"useBrowser": {
+					"label": "使用浏览器",
+					"description": "允许在无头浏览器中启动和与任何网站交互。"
+				},
+				"useMcp": {
+					"label": "使用 MCP 服务器",
+					"description": "允许使用配置的 MCP 服务器，这些服务器可能会修改文件系统或与 API 交互。"
+				},
+				"switchModes": {
+					"label": "切换模式和创建任务",
+					"description": "允许在不需要批准的情况下自动切换不同的 AI 模式和创建新任务。"
+				},
+				"retryRequests": {
+					"label": "重试失败的请求",
+					"description": "当提供商返回错误响应时自动重试失败的 API 请求。"
+				}
+			}
+		},
+		"contextMenu": {
+			"problems": "问题",
+			"pasteUrl": "粘贴 URL 以获取内容",
+			"noResults": "未找到结果",
+			"gitCommits": "Git 提交",
+			"addFile": "添加文件",
+			"addFolder": "添加文件夹"
+		},
+		"reasoning": {
+			"title": "推理过程"
+		},
+		"input": {
+			"typeMessage": "输入消息...",
+			"typeTask": "在此输入您的任务...",
+			"addContext": "(使用 @ 添加上下文",
+			"dragImages": "，按住 Shift 键拖入图片"
 		}
 	}
 }

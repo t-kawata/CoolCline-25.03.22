@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { CODE_BLOCK_BG_COLOR } from "../common/CodeBlock"
 import MarkdownBlock from "../common/MarkdownBlock"
 
@@ -15,6 +16,7 @@ const ReasoningBlock: React.FC<ReasoningBlockProps> = ({
 	onToggleCollapse,
 	autoHeight = false,
 }) => {
+	const { t } = useTranslation()
 	const contentRef = useRef<HTMLDivElement>(null)
 
 	// Scroll to bottom when content updates
@@ -43,7 +45,7 @@ const ReasoningBlock: React.FC<ReasoningBlockProps> = ({
 					justifyContent: "space-between",
 					borderBottom: isCollapsed ? "none" : "1px solid var(--vscode-editorGroup-border)",
 				}}>
-				<span style={{ fontWeight: "bold" }}>Reasoning</span>
+				<span style={{ fontWeight: "bold" }}>{String(t("chat.reasoning.title"))}</span>
 				<span className={`codicon codicon-chevron-${isCollapsed ? "right" : "down"}`}></span>
 			</div>
 			{!isCollapsed && (

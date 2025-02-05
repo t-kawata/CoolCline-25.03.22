@@ -20,6 +20,7 @@ import Thumbnails from "../common/Thumbnails"
 import McpResourceRow from "../mcp/McpResourceRow"
 import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
+import { useTranslation } from "react-i18next"
 
 interface ChatRowProps {
 	message: CoolClineMessage
@@ -79,6 +80,7 @@ export const ChatRowContent = ({
 	isLast,
 	isStreaming,
 }: ChatRowContentProps) => {
+	const { t } = useTranslation()
 	const { mcpServers, alwaysAllowMcp } = useExtensionState()
 	const [reasoningCollapsed, setReasoningCollapsed] = useState(false)
 
@@ -119,14 +121,14 @@ export const ChatRowContent = ({
 					<span
 						className="codicon codicon-error"
 						style={{ color: errorColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: errorColor, fontWeight: "bold" }}>Error</span>,
+					<span style={{ color: errorColor, fontWeight: "bold" }}>{String(t("chat.messages.error"))}</span>,
 				]
 			case "mistake_limit_reached":
 				return [
 					<span
 						className="codicon codicon-error"
 						style={{ color: errorColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: errorColor, fontWeight: "bold" }}>CoolCline is having trouble...</span>,
+					<span style={{ color: errorColor, fontWeight: "bold" }}>{String(t("chat.messages.trouble"))}</span>,
 				]
 			case "command":
 				return [
@@ -138,7 +140,7 @@ export const ChatRowContent = ({
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
 					<span style={{ color: normalColor, fontWeight: "bold" }}>
-						CoolCline wants to execute this command:
+						{String(t("chat.messages.executeCommand"))}
 					</span>,
 				]
 			case "use_mcp_server":
@@ -152,7 +154,10 @@ export const ChatRowContent = ({
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
 					<span style={{ color: normalColor, fontWeight: "bold" }}>
-						CoolCline wants to {mcpServerUse.type === "use_mcp_tool" ? "use a tool" : "access a resource"}{" "}
+						CoolCline wants to{" "}
+						{mcpServerUse.type === "use_mcp_tool"
+							? String(t("chat.messages.useTool"))
+							: String(t("chat.messages.accessResource"))}{" "}
 						on the <code>{mcpServerUse.serverName}</code> MCP server:
 					</span>,
 				]
@@ -161,7 +166,9 @@ export const ChatRowContent = ({
 					<span
 						className="codicon codicon-check"
 						style={{ color: successColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: successColor, fontWeight: "bold" }}>Task Completed</span>,
+					<span style={{ color: successColor, fontWeight: "bold" }}>
+						{String(t("chat.messages.taskCompleted"))}
+					</span>,
 				]
 			case "api_req_retry_delayed":
 				return []
@@ -200,16 +207,26 @@ export const ChatRowContent = ({
 					),
 					apiReqCancelReason !== null && apiReqCancelReason !== undefined ? (
 						apiReqCancelReason === "user_cancelled" ? (
-							<span style={{ color: normalColor, fontWeight: "bold" }}>API Request Cancelled</span>
+							<span style={{ color: normalColor, fontWeight: "bold" }}>
+								{String(t("chat.messages.apiCancelled"))}
+							</span>
 						) : (
-							<span style={{ color: errorColor, fontWeight: "bold" }}>API Streaming Failed</span>
+							<span style={{ color: errorColor, fontWeight: "bold" }}>
+								{String(t("chat.messages.apiStreamingFailed"))}
+							</span>
 						)
 					) : cost !== null && cost !== undefined ? (
-						<span style={{ color: normalColor, fontWeight: "bold" }}>API Request</span>
+						<span style={{ color: normalColor, fontWeight: "bold" }}>
+							{String(t("chat.messages.apiRequest"))}
+						</span>
 					) : apiRequestFailedMessage ? (
-						<span style={{ color: errorColor, fontWeight: "bold" }}>API Request Failed</span>
+						<span style={{ color: errorColor, fontWeight: "bold" }}>
+							{String(t("chat.messages.apiFailed"))}
+						</span>
 					) : (
-						<span style={{ color: normalColor, fontWeight: "bold" }}>API Request...</span>
+						<span style={{ color: normalColor, fontWeight: "bold" }}>
+							{String(t("chat.messages.apiInProgress"))}
+						</span>
 					),
 				]
 			case "followup":
@@ -217,7 +234,9 @@ export const ChatRowContent = ({
 					<span
 						className="codicon codicon-question"
 						style={{ color: normalColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: normalColor, fontWeight: "bold" }}>CoolCline has a question:</span>,
+					<span style={{ color: normalColor, fontWeight: "bold" }}>
+						{String(t("chat.messages.question"))}
+					</span>,
 				]
 			default:
 				return [null, null]
@@ -412,11 +431,11 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										CoolCline wants to search this directory for <code>{tool.regex}</code>:
+										{String(t("chat.messages.searchDirectory"))} <code>{tool.regex}</code>:
 									</>
 								) : (
 									<>
-										CoolCline searched this directory for <code>{tool.regex}</code>:
+										{String(t("chat.messages.searchedDirectory"))} <code>{tool.regex}</code>:
 									</>
 								)}
 							</span>
@@ -464,13 +483,15 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										CoolCline wants to switch to <code>{tool.mode}</code> mode
-										{tool.reason ? ` because: ${tool.reason}` : ""}
+										{String(t("chat.messages.switchMode"))} <code>{tool.mode}</code>{" "}
+										{String(t("chat.messages.mode"))}
+										{tool.reason ? ` ${String(t("chat.messages.modeBecause"))} ${tool.reason}` : ""}
 									</>
 								) : (
 									<>
-										CoolCline switched to <code>{tool.mode}</code> mode
-										{tool.reason ? ` because: ${tool.reason}` : ""}
+										{String(t("chat.messages.switchedMode"))} <code>{tool.mode}</code>{" "}
+										{String(t("chat.messages.mode"))}
+										{tool.reason ? ` ${String(t("chat.messages.modeBecause"))} ${tool.reason}` : ""}
 									</>
 								)}
 							</span>
@@ -747,7 +768,7 @@ export const ChatRowContent = ({
 										fontSize: "12px",
 										textTransform: "uppercase",
 									}}>
-									Response
+									{String(t("chat.messages.response"))}
 								</div>
 								<CodeAccordian
 									code={message.text}

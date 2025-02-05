@@ -180,6 +180,120 @@
 			"title": "What can I do for you?",
 			"description": "CoolCline is a proactive programming assistant that enhances your development workflow with advanced AI capabilities. It helps you write code more efficiently, optimize queries, auto-fix errors, run command-line tasks, and perform browser automation tests.",
 			"readMore": "README"
+		},
+		"browser": {
+			"action": "Browse Action",
+			"launch": "Launch browser at {url}",
+			"click": "Click ({coordinate})",
+			"type": "Type \"{text}\"",
+			"scrollDown": "Scroll down",
+			"scrollUp": "Scroll up",
+			"close": "Close browser"
+		},
+		"task": {
+			"title": "Task",
+			"seeMore": "See more",
+			"seeLess": "See less",
+			"tokens": "Tokens",
+			"context": "Context",
+			"cache": "Cache",
+			"apiCost": "API Cost",
+			"export": "EXPORT"
+		},
+		"messages": {
+			"error": "Error",
+			"trouble": "CoolCline is having trouble...",
+			"executeCommand": "CoolCline wants to execute this command:",
+			"useTool": "use a tool",
+			"accessResource": "access a resource",
+			"taskCompleted": "Task Completed",
+			"apiCancelled": "API Request Cancelled",
+			"apiStreamingFailed": "API Streaming Failed",
+			"apiRequest": "API Request",
+			"apiFailed": "API Request Failed",
+			"apiInProgress": "API Request...",
+			"question": "CoolCline has a question:",
+			"searchDirectory": "CoolCline wants to search this directory for",
+			"searchedDirectory": "CoolCline searched this directory for",
+			"switchMode": "CoolCline wants to switch to",
+			"switchedMode": "CoolCline switched to",
+			"modeBecause": "mode because:",
+			"mode": "mode",
+			"response": "Response"
+		},
+		"actions": {
+			"edit": "Edit...",
+			"separator": "────"
+		},
+		"announcement": {
+			"title": "🎉 Introducing CoolCline",
+			"customization": {
+				"title": "Custom Modes: Celebrating Our New Identity",
+				"description": "To mark this new chapter, we're introducing the power to shape CoolCline into any role you need! Create specialized personas and create an entire team of agents with deeply customized prompts:",
+				"examples": {
+					"qa": "QA Engineers who write thorough test cases and catch edge cases",
+					"pm": "Product Managers who excel at user stories and feature prioritization",
+					"ui": "UI/UX Designers who craft beautiful, accessible interfaces",
+					"reviewer": "Code Reviewers who ensure quality and maintainability"
+				},
+				"getStarted": "Just click the notebook icon to get started with Custom Modes!"
+			},
+			"join": {
+				"title": "Join Us for the Next Chapter",
+				"description": "We can't wait to see how you'll push CoolCline's potential even further! Share your custom modes and join the discussion at"
+			}
+		},
+		"autoApprove": {
+			"title": "Auto-approve",
+			"none": "None",
+			"description": "Auto-approve allows CoolCline to perform actions without asking for permission. Only enable for actions you fully trust.",
+			"actions": {
+				"readFiles": {
+					"label": "Read files and directories",
+					"description": "Allows access to read any file on your computer."
+				},
+				"editFiles": {
+					"label": "Edit files",
+					"description": "Allows modification of any files on your computer."
+				},
+				"executeCommands": {
+					"label": "Execute approved commands",
+					"description": "Allows execution of approved terminal commands. You can configure this in the settings panel."
+				},
+				"useBrowser": {
+					"label": "Use the browser",
+					"description": "Allows ability to launch and interact with any website in a headless browser."
+				},
+				"useMcp": {
+					"label": "Use MCP servers",
+					"description": "Allows use of configured MCP servers which may modify filesystem or interact with APIs."
+				},
+				"switchModes": {
+					"label": "Switch modes & create tasks",
+					"description": "Allows automatic switching between different AI modes and creating new tasks without requiring approval."
+				},
+				"retryRequests": {
+					"label": "Retry failed requests",
+					"description": "Automatically retry failed API requests when the provider returns an error response."
+				}
+			}
+		},
+		"contextMenu": {
+			"problems": "Problems",
+			"pasteUrl": "Paste URL to fetch contents",
+			"noResults": "No results found",
+			"gitCommits": "Git Commits",
+			"addFile": "Add File",
+			"addFolder": "Add Folder"
+		},
+		"reasoning": {
+			"title": "Reasoning"
+		},
+		"input": {
+			"typeMessage": "Type a message...",
+			"typeTask": "Type your task here...",
+			"addContext": "(@ to add context",
+			"dragImages": ", hold shift to drag in images"
 		}
 	}
 }

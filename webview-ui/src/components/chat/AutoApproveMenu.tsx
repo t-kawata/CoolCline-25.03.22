@@ -2,6 +2,7 @@ import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
+import { useTranslation } from "react-i18next"
 
 interface AutoApproveAction {
 	id: string
@@ -16,6 +17,7 @@ interface AutoApproveMenuProps {
 }
 
 const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
+	const { t } = useTranslation()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const {
 		alwaysAllowReadOnly,
@@ -39,54 +41,52 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 	const actions: AutoApproveAction[] = [
 		{
 			id: "readFiles",
-			label: "Read files and directories",
+			label: String(t("chat.autoApprove.actions.readFiles.label")),
 			shortName: "Read",
 			enabled: alwaysAllowReadOnly ?? false,
-			description: "Allows access to read any file on your computer.",
+			description: String(t("chat.autoApprove.actions.readFiles.description")),
 		},
 		{
 			id: "editFiles",
-			label: "Edit files",
+			label: String(t("chat.autoApprove.actions.editFiles.label")),
 			shortName: "Edit",
 			enabled: alwaysAllowWrite ?? false,
-			description: "Allows modification of any files on your computer.",
+			description: String(t("chat.autoApprove.actions.editFiles.description")),
 		},
 		{
 			id: "executeCommands",
-			label: "Execute approved commands",
+			label: String(t("chat.autoApprove.actions.executeCommands.label")),
 			shortName: "Commands",
 			enabled: alwaysAllowExecute ?? false,
-			description:
-				"Allows execution of approved terminal commands. You can configure this in the settings panel.",
+			description: String(t("chat.autoApprove.actions.executeCommands.description")),
 		},
 		{
 			id: "useBrowser",
-			label: "Use the browser",
+			label: String(t("chat.autoApprove.actions.useBrowser.label")),
 			shortName: "Browser",
 			enabled: alwaysAllowBrowser ?? false,
-			description: "Allows ability to launch and interact with any website in a headless browser.",
+			description: String(t("chat.autoApprove.actions.useBrowser.description")),
 		},
 		{
 			id: "useMcp",
-			label: "Use MCP servers",
+			label: String(t("chat.autoApprove.actions.useMcp.label")),
 			shortName: "MCP",
 			enabled: alwaysAllowMcp ?? false,
-			description: "Allows use of configured MCP servers which may modify filesystem or interact with APIs.",
+			description: String(t("chat.autoApprove.actions.useMcp.description")),
 		},
 		{
 			id: "switchModes",
-			label: "Switch modes & create tasks",
+			label: String(t("chat.autoApprove.actions.switchModes.label")),
 			shortName: "Modes",
 			enabled: alwaysAllowModeSwitch ?? false,
-			description:
-				"Allows automatic switching between different AI modes and creating new tasks without requiring approval.",
+			description: String(t("chat.autoApprove.actions.switchModes.description")),
 		},
 		{
 			id: "retryRequests",
-			label: "Retry failed requests",
+			label: String(t("chat.autoApprove.actions.retryRequests.label")),
 			shortName: "Retries",
 			enabled: alwaysApproveResubmit ?? false,
-			description: "Automatically retry failed API requests when the provider returns an error response.",
+			description: String(t("chat.autoApprove.actions.retryRequests.description")),
 		},
 	]
 
@@ -196,7 +196,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							color: "var(--vscode-foreground)",
 							flexShrink: 0,
 						}}>
-						Auto-approve:
+						{String(t("chat.autoApprove.title"))}:
 					</span>
 					<span
 						style={{
@@ -207,7 +207,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							flex: 1,
 							minWidth: 0,
 						}}>
-						{enabledActionsList || "None"}
+						{enabledActionsList || String(t("chat.autoApprove.none"))}
 					</span>
 					<span
 						className={`codicon codicon-chevron-${isExpanded ? "down" : "right"}`}
@@ -226,8 +226,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							color: "var(--vscode-descriptionForeground)",
 							fontSize: "12px",
 						}}>
-						Auto-approve allows CoolCline to perform actions without asking for permission. Only enable for
-						actions you fully trust.
+						{String(t("chat.autoApprove.description"))}
 					</div>
 					{actions.map((action) => (
 						<div key={action.id} style={{ margin: "6px 0" }}>

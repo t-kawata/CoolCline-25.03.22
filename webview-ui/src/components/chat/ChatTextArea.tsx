@@ -16,6 +16,7 @@ import { vscode } from "../../utils/vscode"
 import { WebviewMessage } from "../../../../src/shared/WebviewMessage"
 import { Mode, getAllModes } from "../../../../src/shared/modes"
 import { CaretIcon } from "../common/CaretIcon"
+import { useTranslation } from "react-i18next"
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -50,6 +51,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 		},
 		ref,
 	) => {
+		const { t } = useTranslation()
 		const { filePaths, openedTabs, currentApiConfigName, listApiConfigMeta, customModes } = useExtensionState()
 		const [gitCommits, setGitCommits] = useState<any[]>([])
 		const [showDropdown, setShowDropdown] = useState(false)
@@ -767,7 +769,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									────
 								</option>
 								<option value="prompts-action" style={{ ...optionStyle }}>
-									Edit...
+									{String(t("chat.actions.edit"))}
 								</option>
 							</select>
 							<div style={caretContainerStyle}>
@@ -822,7 +824,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									────
 								</option>
 								<option value="settings-action" style={{ ...optionStyle }}>
-									Edit...
+									{String(t("chat.actions.edit"))}
 								</option>
 							</select>
 							<div style={caretContainerStyle}>

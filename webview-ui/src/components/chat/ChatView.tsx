@@ -886,12 +886,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const baseText = task ? "Type a message..." : "Type your task here..."
-		const contextText = "(@ to add context"
-		const imageText = shouldDisableImages ? "" : ", hold shift to drag in images"
+		const baseText = task ? String(t("chat.input.typeMessage")) : String(t("chat.input.typeTask"))
+		const contextText = String(t("chat.input.addContext"))
+		const imageText = shouldDisableImages ? "" : String(t("chat.input.dragImages"))
 		const helpText = imageText ? `\n${contextText}${imageText})` : `\n${contextText})`
 		return baseText + helpText
-	}, [task, shouldDisableImages])
+	}, [task, shouldDisableImages, t])
 
 	const itemContent = useCallback(
 		(index: number, messageOrGroup: CoolClineMessage | CoolClineMessage[]) => {

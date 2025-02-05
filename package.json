@@ -29,7 +29,17 @@
 		"Testing"
 	],
 	"keywords": [
+		"cline",
+		"roo",
+		"roo code",
+		"roocode",
+		"bao cline",
+		"baocline",
+		"cursor",
+		"windsurf",
 		"coolcline",
+		"cool",
+		"cool cline",
 		"claude",
 		"dev",
 		"mcp",
@@ -40,9 +50,7 @@
 		"chatgpt",
 		"sonnet",
 		"ai",
-		"llama",
-		"coolcline",
-		"coolcline"
+		"llama"
 	],
 	"activationEvents": [
 		"onLanguage",
