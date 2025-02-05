@@ -200,11 +200,20 @@ afterAll(() => {
 	jest.restoreAllMocks()
 })
 
+// 在文件顶部添加类型定义
+interface MockWebview extends vscode.Webview {
+	messageHandler: ((message: any) => Promise<void>) | null
+}
+
+interface MockWebviewView extends vscode.WebviewView {
+	webview: MockWebview
+}
+
 describe("CoolClineProvider", () => {
 	let provider: CoolClineProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
-	let mockWebviewView: vscode.WebviewView
+	let mockWebviewView: MockWebviewView
 	let mockPostMessage: jest.Mock
 
 	beforeEach(() => {
@@ -264,9 +273,14 @@ describe("CoolClineProvider", () => {
 				postMessage: mockPostMessage,
 				html: "",
 				options: {},
-				onDidReceiveMessage: jest.fn(),
+				messageHandler: null as ((message: any) => Promise<void>) | null,
+				onDidReceiveMessage: jest.fn().mockImplementation((handler) => {
+					;(mockWebviewView.webview as MockWebview).messageHandler = handler
+					return { dispose: jest.fn() }
+				}),
 				asWebviewUri: jest.fn(),
-			},
+				cspSource: "",
+			} as unknown as MockWebview,
 			visible: true,
 			onDidDispose: jest.fn().mockImplementation((callback) => {
 				callback()
@@ -275,7 +289,9 @@ describe("CoolClineProvider", () => {
 			onDidChangeVisibility: jest.fn().mockImplementation((callback) => {
 				return { dispose: jest.fn() }
 			}),
-		} as unknown as vscode.WebviewView
+			viewType: "test-view",
+			show: jest.fn(),
+		} as unknown as MockWebviewView
 
 		provider = new CoolClineProvider(mockContext, mockOutputChannel)
 
@@ -1276,8 +1292,9 @@ describe("CoolClineProvider", () => {
 
 	describe("upsertApiConfiguration", () => {
 		test("handles error in upsertApiConfiguration gracefully", async () => {
-			provider.resolveWebviewView(mockWebviewView)
-			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
+			await provider.resolveWebviewView(mockWebviewView)
+			const messageHandler = (mockWebviewView.webview as MockWebview).messageHandler
+			expect(messageHandler).not.toBeNull()
 
 			// Mock ConfigManager methods to simulate error
 			provider.configManager = {
@@ -1294,7 +1311,7 @@ describe("CoolClineProvider", () => {
 			} as any)
 
 			// Trigger updateApiConfiguration
-			await messageHandler({
+			await messageHandler!({
 				type: "upsertApiConfiguration",
 				text: "test-config",
 				apiConfiguration: {
@@ -1311,8 +1328,9 @@ describe("CoolClineProvider", () => {
 		})
 
 		test("handles successful upsertApiConfiguration", async () => {
-			provider.resolveWebviewView(mockWebviewView)
-			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
+			await provider.resolveWebviewView(mockWebviewView)
+			const messageHandler = (mockWebviewView.webview as MockWebview).messageHandler
+			expect(messageHandler).not.toBeNull()
 
 			// Mock ConfigManager methods
 			provider.configManager = {
@@ -1328,7 +1346,7 @@ describe("CoolClineProvider", () => {
 			}
 
 			// Trigger upsertApiConfiguration
-			await messageHandler({
+			await messageHandler!({
 				type: "upsertApiConfiguration",
 				text: "test-config",
 				apiConfiguration: testApiConfig,
@@ -1348,8 +1366,9 @@ describe("CoolClineProvider", () => {
 		})
 
 		test("handles buildApiHandler error in updateApiConfiguration", async () => {
-			provider.resolveWebviewView(mockWebviewView)
-			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
+			await provider.resolveWebviewView(mockWebviewView)
+			const messageHandler = (mockWebviewView.webview as MockWebview).messageHandler
+			expect(messageHandler).not.toBeNull()
 
 			// Mock buildApiHandler to throw an error
 			const { buildApiHandler } = require("../../../api")
@@ -1379,7 +1398,7 @@ describe("CoolClineProvider", () => {
 			}
 
 			// Trigger upsertApiConfiguration
-			await messageHandler({
+			await messageHandler!({
 				type: "upsertApiConfiguration",
 				text: "test-config",
 				apiConfiguration: testApiConfig,

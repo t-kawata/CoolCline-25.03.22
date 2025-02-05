@@ -4,10 +4,12 @@ import userEvent from "@testing-library/user-event"
 import HistoryView from "../HistoryView"
 import { useExtensionState } from "../../../context/ExtensionStateContext"
 import { vscode } from "../../../utils/vscode"
+import { useTranslation } from "react-i18next"
 
 // Mock dependencies
 jest.mock("../../../context/ExtensionStateContext")
 jest.mock("../../../utils/vscode")
+jest.mock("../../../utils/i18n")
 jest.mock("react-virtuoso", () => ({
 	Virtuoso: ({ data, itemContent }: any) => (
 		<div data-testid="virtuoso-container">
@@ -18,6 +20,24 @@ jest.mock("react-virtuoso", () => ({
 			))}
 		</div>
 	),
+}))
+
+// Mock i18n
+jest.mock("react-i18next", () => ({
+	useTranslation: () => ({
+		t: (key: string) => {
+			const translations: { [key: string]: string } = {
+				"history.search.placeholder": "Fuzzy search history...",
+				"history.sort.newest": "Newest",
+				"history.sort.oldest": "Oldest",
+				"history.sort.mostExpensive": "Most Expensive",
+				"history.sort.mostTokens": "Most Tokens",
+				"history.sort.mostRelevant": "Most Relevant",
+				"history.preview.promptCopied": "Prompt Copied to Clipboard",
+			}
+			return translations[key] || key
+		},
+	}),
 }))
 
 const mockTaskHistory = [

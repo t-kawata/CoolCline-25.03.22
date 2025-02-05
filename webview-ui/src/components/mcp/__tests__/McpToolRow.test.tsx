@@ -9,6 +9,8 @@ jest.mock("../../../utils/vscode", () => ({
 	},
 }))
 
+jest.mock("../../../utils/i18n")
+
 jest.mock("@vscode/webview-ui-toolkit/react", () => ({
 	VSCodeCheckbox: function MockVSCodeCheckbox({
 		children,
@@ -49,13 +51,13 @@ describe("McpToolRow", () => {
 	it("does not show always allow checkbox when serverName is not provided", () => {
 		render(<McpToolRow tool={mockTool} />)
 
-		expect(screen.queryByText("Always allow")).not.toBeInTheDocument()
+		expect(screen.queryByText("mcp.tools.alwaysAllow")).not.toBeInTheDocument()
 	})
 
 	it("shows always allow checkbox when serverName and alwaysAllowMcp are provided", () => {
 		render(<McpToolRow tool={mockTool} serverName="test-server" alwaysAllowMcp={true} />)
 
-		expect(screen.getByText("Always allow")).toBeInTheDocument()
+		expect(screen.getByText("mcp.tools.alwaysAllow")).toBeInTheDocument()
 	})
 
 	it("sends message to toggle always allow when checkbox is clicked", () => {
@@ -107,19 +109,19 @@ describe("McpToolRow", () => {
 					param1: {
 						type: "string",
 						description: "First parameter",
+						required: true,
 					},
 					param2: {
-						type: "number",
+						type: "string",
 						description: "Second parameter",
 					},
 				},
-				required: ["param1"],
 			},
 		}
 
 		render(<McpToolRow tool={toolWithSchema} serverName="test-server" />)
 
-		expect(screen.getByText("Parameters")).toBeInTheDocument()
+		expect(screen.getByText("mcp.tools.parameters")).toBeInTheDocument()
 		expect(screen.getByText("param1")).toBeInTheDocument()
 		expect(screen.getByText("param2")).toBeInTheDocument()
 		expect(screen.getByText("First parameter")).toBeInTheDocument()
