@@ -213,8 +213,10 @@
 			},
 			"api": {
 				"title": "API 设置",
-				"configProfile": "配置文件",
-				"description": "保存多个 API 配置，方便快速切换不同的服务商和设置",
+				"configProfile": {
+					"title": "配置下拉选项",
+					"description": "配置 API 下拉列表，方便在聊天输入框底部快速切换服务商"
+				},
 				"model": {
 					"title": "模型",
 					"search": "搜索模型...",
