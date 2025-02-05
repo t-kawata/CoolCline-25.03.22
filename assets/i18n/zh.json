@@ -230,7 +230,8 @@
 		},
 		"actions": {
 			"edit": "编辑...",
-			"separator": "────"
+			"separator": "────",
+			"newChat": "新建聊天"
 		},
 		"announcement": {
 			"title": "🎉 隆重推出 CoolCline",
@@ -325,6 +326,296 @@
 				"cache": "缓存",
 				"apiCost": "API 费用"
 			}
+		}
+	},
+	"settings": {
+		"title": "设置",
+		"done": "完成",
+
+		"provider": {
+			"title": "服务商",
+			"apiProvider": "API 服务商",
+			"apiKey": {
+				"title": "API 密钥",
+				"placeholder": "输入您的 API 密钥",
+				"storedLocally": "API 密钥安全地存储在本地机器上",
+				"getKey": "获取 API 密钥"
+			},
+			"customBaseUrl": {
+				"title": "自定义基础 URL",
+				"placeholder": "默认: {defaultUrl}"
+			},
+			"configProfile": {
+				"title": "配置下拉选项",
+				"description": "配置 API 下拉列表，方便在聊天输入框底部快速切换服务商"
+			},
+			"providers": {
+				"anthropic": {
+					"name": "Anthropic",
+					"title": "Anthropic API 密钥",
+					"baseUrl": "基础 URL (可选)",
+					"enterBaseUrl": "输入 API 基础 URL",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 Anthropic API 密钥"
+				},
+				"openai": {
+					"name": "OpenAI 兼容接口",
+					"title": "OpenAI 兼容接口",
+					"baseUrl": "基础 URL",
+					"enterBaseUrl": "输入基础 URL",
+					"useAzure": "使用 Azure OpenAI",
+					"setAzureVersion": "设置 Azure API 版本",
+					"description": "使用兼容 OpenAI API 的服务",
+					"streaming": "启用流式输出",
+					"modelConfig": {
+						"title": "模型配置",
+						"description": "配置模型功能和定价信息"
+					},
+					"useCustomBaseUrl": "使用自定义基础 URL"
+				},
+				"openaiNative": {
+					"name": "OpenAI Native",
+					"title": "OpenAI API 密钥",
+					"description": "使用 OpenAI 官方的 API 服务",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "您可以在此处注册获取 OpenAI API 密钥"
+				},
+				"glama": {
+					"name": "Glama",
+					"title": "Glama API 密钥",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 Glama API 密钥"
+				},
+				"bedrock": {
+					"name": "AWS Bedrock",
+					"title": "AWS Bedrock",
+					"credentials": "AWS 凭证",
+					"profile": "AWS 配置文件",
+					"accessKey": "访问密钥 ID",
+					"secretKey": "密钥",
+					"sessionToken": "会话令牌 (可选)",
+					"region": "区域",
+					"selectRegion": "选择区域",
+					"useCrossRegion": "使用跨区域推理",
+					"description": "使用 AWS Bedrock 的 AI 模型服务",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 AWS Bedrock API 密钥"
+				},
+				"openRouter": {
+					"name": "OpenRouter",
+					"title": "OpenRouter API 密钥",
+					"getKey": "获取 OpenRouter API 密钥",
+					"compressPrompts": "将提示和消息链压缩到上下文大小",
+					"transforms": "OpenRouter 转换",
+					"useCustomBaseUrl": "使用自定义基础 URL"
+				},
+				"vertex": {
+					"name": "Google Vertex AI",
+					"projectId": "Google Cloud 项目 ID",
+					"enterProjectId": "输入项目 ID",
+					"region": "Google Cloud 区域",
+					"selectRegion": "选择区域",
+					"description": "要使用 Google Cloud Vertex AI，您需要 1) 创建 Google Cloud 账户 › 启用 Vertex AI API › 启用所需的 Claude 模型，2) 安装 Google Cloud CLI › 配置应用程序默认凭证。",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 Google Vertex AI API 密钥"
+				},
+				"gemini": {
+					"name": "Google Gemini",
+					"title": "Google Gemini API 密钥",
+					"description": "使用 Google 的 Gemini AI 模型",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 Google Gemini API 密钥"
+				},
+				"mistral": {
+					"name": "Mistral",
+					"title": "Mistral API 密钥",
+					"description": "使用 Mistral AI 的模型服务",
+					"getKey": "获取 Mistral API 密钥",
+					"useCustomBaseUrl": "使用自定义基础 URL"
+				},
+				"ollama": {
+					"name": "Ollama",
+					"title": "Ollama",
+					"baseUrl": "基础 URL",
+					"modelId": "模型 ID",
+					"description": "Ollama 允许您在本地运行开源的大语言模型",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 Ollama API 密钥"
+				},
+				"lmstudio": {
+					"name": "LM Studio",
+					"title": "LM Studio",
+					"baseUrl": "基础 URL (可选)",
+					"modelId": "模型 ID",
+					"enterModelId": "例如: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio 允许您在本地计算机上运行模型。要开始使用，请参阅其快速入门指南。您还需要启动 LM Studio 的本地服务器功能才能与此扩展一起使用。注意：CoolCline 使用复杂的提示，最适合与 Claude 模型配合使用。功能较弱的模型可能无法按预期工作。",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 LM Studio API 密钥"
+				},
+				"vscode": {
+					"name": "VS Code",
+					"title": "VS Code LM API",
+					"description": "使用 VS Code 内置的语言模型 API",
+					"modelSelector": "选择模型",
+					"noModels": "未找到可用的语言模型。请确保您已安装并启用了相关扩展。",
+					"useCustomBaseUrl": "使用自定义基础 URL",
+					"getKey": "获取 VS Code LM API 密钥"
+				},
+				"unbound": {
+					"name": "Unbound",
+					"title": "Unbound API 密钥",
+					"getKey": "获取 Unbound API 密钥",
+					"useCustomBaseUrl": "使用自定义基础 URL"
+				},
+				"deepseek": {
+					"name": "DeepSeek",
+					"title": "DeepSeek API 密钥",
+					"description": "DeepSeek 提供高性能的 AI 模型服务",
+					"getKey": "您可以在此处注册获取 DeepSeek API 密钥",
+					"useCustomBaseUrl": "使用自定义基础 URL"
+				}
+			},
+			"model": {
+				"title": "模型",
+				"selectPlaceholder": "选择模型...",
+				"currentlySelected": "当前选择的模型：",
+				"search": "搜索模型..."
+			}
+		},
+
+		"autoApprove": {
+			"title": "自动批准设置",
+			"description": "以下设置允许 CoolCline 自动执行操作而无需批准。仅在您完全信任 AI 并了解相关安全风险的情况下启用这些设置。",
+
+			"readOnly": {
+				"title": "始终批准只读操作",
+				"description": "启用后，CoolCline 将自动查看目录内容和读取文件，无需您点击批准按钮。"
+			},
+
+			"write": {
+				"title": "始终批准写入操作",
+				"description": "自动创建和编辑文件，无需批准",
+				"delay": {
+					"title": "写入延迟",
+					"description": "写入后延迟以允许诊断检测潜在问题"
+				}
+			},
+
+			"browser": {
+				"title": "始终批准浏览器操作",
+				"description": "自动执行浏览器操作，无需批准\n注意：仅在模型支持计算机使用时适用"
+			},
+
+			"retry": {
+				"title": "始终重试失败的 API 请求",
+				"description": "当服务器返回错误响应时自动重试失败的 API 请求",
+				"delay": {
+					"title": "重试延迟",
+					"description": "重试请求前的延迟时间"
+				}
+			},
+
+			"mcp": {
+				"title": "始终批准 MCP 工具",
+				"description": "在 MCP 服务器视图中启用单个 MCP 工具的自动批准（需要同时启用此设置和工具的单独'始终允许'复选框）"
+			},
+
+			"modeSwitch": {
+				"title": "始终批准模式切换和任务创建",
+				"description": "自动在不同的 AI 模式之间切换并创建新任务，无需批准"
+			},
+
+			"execute": {
+				"title": "始终批准允许的执行操作",
+				"description": "自动执行允许的终端命令，无需批准",
+				"commands": {
+					"title": "允许自动执行的命令",
+					"description": "当启用'始终批准执行操作'时可以自动执行的命令前缀。",
+					"placeholder": "输入命令前缀（例如：'git '）",
+					"add": "添加"
+				}
+			}
+		},
+
+		"browser": {
+			"title": "浏览器设置",
+			"viewport": {
+				"title": "视口大小",
+				"description": "选择浏览器交互的视口大小。这会影响网站的显示和交互方式。",
+				"options": {
+					"largeDesktop": "大型桌面（1280x800）",
+					"smallDesktop": "小型桌面（900x600）",
+					"tablet": "平板（768x1024）",
+					"mobile": "移动设备（360x640）"
+				}
+			},
+			"screenshot": {
+				"title": "截图质量",
+				"description": "调整浏览器截图的 WebP 质量。更高的值提供更清晰的截图但会增加令牌使用量。"
+			}
+		},
+
+		"notification": {
+			"title": "通知设置",
+			"sound": {
+				"title": "启用音效",
+				"description": "启用后，CoolCline 将为通知和事件播放音效。",
+				"volume": "音量"
+			}
+		},
+
+		"advanced": {
+			"title": "高级设置",
+			"experimental": {
+				"warning": "⚠️",
+				"features": {
+					"diffStrategy": {
+						"name": "使用实验性差异策略",
+						"description": "启用后，CoolCline 将使用更高级的差异策略，可以处理更复杂的代码更改。这仍处于实验阶段，可能不会在所有情况下都正常工作。"
+					}
+				}
+			},
+			"rateLimit": {
+				"title": "速率限制",
+				"description": "API 请求之间的最小时间间隔。"
+			},
+			"terminalOutput": {
+				"title": "终端输出限制",
+				"description": "执行命令时包含的最大行数。超过时将从中间删除行，以节省令牌。"
+			},
+			"diff": {
+				"title": "启用通过差异进行编辑",
+				"description": "启用后，CoolCline 将能够更快地编辑文件，并自动拒绝截断的完整文件写入。最适合与最新的 Claude 3.5 Sonnet 模型配合使用。",
+				"matchPrecision": {
+					"title": "匹配精度",
+					"description": "此滑块控制应用差异时代码段必须匹配的精确度。较低的值允许更灵活的匹配，但增加了错误替换的风险。使用低于 100% 的值时要格外小心。"
+				}
+			}
+		},
+
+		"experiments": {
+			"title": "实验性功能",
+			"description": "启用或禁用仍在开发中的实验性功能",
+			"features": {
+				"DIFF_STRATEGY": {
+					"name": "使用实验性统一差异策略",
+					"description": "启用实验性统一差异策略。此策略可能会减少由模型错误导致的重试次数，但可能会导致意外行为或不正确的编辑。仅在您了解风险并愿意仔细审查所有更改时才启用。"
+				},
+				"SEARCH_AND_REPLACE": {
+					"name": "使用实验性搜索和替换工具",
+					"description": "启用实验性搜索和替换工具，允许 CoolCline 在一个请求中替换搜索词的多个实例。"
+				},
+				"INSERT_BLOCK": {
+					"name": "使用实验性内容插入工具",
+					"description": "启用实验性内容插入工具，允许 CoolCline 在不需要创建差异的情况下在特定行号插入内容。"
+				}
+			}
+		},
+
+		"footer": {
+			"description": "如果您有任何问题或反馈，欢迎在",
+			"resetState": "重置",
+			"resetStateDescription": "这将重置扩展中的所有全局状态和密钥存储。"
 		}
 	}
 }

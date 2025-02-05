@@ -40,6 +40,7 @@ import OpenRouterModelPicker, {
 } from "./OpenRouterModelPicker"
 import OpenAiModelPicker from "./OpenAiModelPicker"
 import GlamaModelPicker from "./GlamaModelPicker"
+import { useTranslation } from "react-i18next"
 
 interface ApiOptionsProps {
 	apiErrorMessage?: string
@@ -47,6 +48,7 @@ interface ApiOptionsProps {
 }
 
 const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) => {
+	const { t } = useTranslation()
 	const { apiConfiguration, uriScheme, handleInputChange } = useExtensionState()
 	const [ollamaModels, setOllamaModels] = useState<string[]>([])
 	const [lmStudioModels, setLmStudioModels] = useState<string[]>([])
@@ -95,7 +97,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 
 	const createDropdown = (models: Record<string, ModelInfo>) => {
 		const options: DropdownOption[] = [
-			{ value: "", label: "Select a model..." },
+			{ value: "", label: t("settings.provider.model.selectPlaceholder").toString() },
 			...Object.keys(models).map((modelId) => ({
 				value: modelId,
 				label: modelId,
@@ -122,7 +124,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 		<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
 			<div className="dropdown-container">
 				<label htmlFor="api-provider">
-					<span style={{ fontWeight: 500 }}>API Provider</span>
+					<span style={{ fontWeight: 500 }}>{t("settings.provider.apiProvider").toString()}</span>
 				</label>
 				<Dropdown
 					id="api-provider"
@@ -139,20 +141,23 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					}}
 					style={{ minWidth: 130, position: "relative", zIndex: OPENROUTER_MODEL_PICKER_Z_INDEX + 1 }}
 					options={[
-						{ value: "openrouter", label: "OpenRouter" },
-						{ value: "anthropic", label: "Anthropic" },
-						{ value: "gemini", label: "Google Gemini" },
-						{ value: "deepseek", label: "DeepSeek" },
-						{ value: "openai-native", label: "OpenAI" },
-						{ value: "openai", label: "OpenAI Compatible" },
-						{ value: "vertex", label: "GCP Vertex AI" },
-						{ value: "bedrock", label: "AWS Bedrock" },
-						{ value: "glama", label: "Glama" },
-						{ value: "vscode-lm", label: "VS Code LM API" },
-						{ value: "mistral", label: "Mistral" },
-						{ value: "lmstudio", label: "LM Studio" },
-						{ value: "ollama", label: "Ollama" },
-						{ value: "unbound", label: "Unbound" },
+						{ value: "openrouter", label: t("settings.provider.providers.openRouter.name").toString() },
+						{ value: "anthropic", label: t("settings.provider.providers.anthropic.name").toString() },
+						{ value: "gemini", label: t("settings.provider.providers.gemini.name").toString() },
+						{ value: "deepseek", label: t("settings.provider.providers.deepseek.name").toString() },
+						{
+							value: "openai-native",
+							label: t("settings.provider.providers.openaiNative.name").toString(),
+						},
+						{ value: "openai", label: t("settings.provider.providers.openai.name").toString() },
+						{ value: "vertex", label: t("settings.provider.providers.vertex.name").toString() },
+						{ value: "bedrock", label: t("settings.provider.providers.bedrock.name").toString() },
+						{ value: "glama", label: t("settings.provider.providers.glama.name").toString() },
+						{ value: "vscode-lm", label: t("settings.provider.providers.vscode.name").toString() },
+						{ value: "mistral", label: t("settings.provider.providers.mistral.name").toString() },
+						{ value: "lmstudio", label: t("settings.provider.providers.lmstudio.name").toString() },
+						{ value: "ollama", label: t("settings.provider.providers.ollama.name").toString() },
+						{ value: "unbound", label: t("settings.provider.providers.unbound.name").toString() },
 					]}
 				/>
 			</div>
@@ -164,8 +169,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("apiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>Anthropic API Key</span>
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.anthropic.title").toString()}
+						</span>
 					</VSCodeTextField>
 
 					<Checkbox
@@ -180,7 +187,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								})
 							}
 						}}>
-						Use custom base URL
+						{t("settings.provider.providers.anthropic.useCustomBaseUrl").toString()}
 					</Checkbox>
 
 					{anthropicBaseUrlSelected && (
@@ -189,7 +196,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							style={{ width: "100%", marginTop: 3 }}
 							type="url"
 							onInput={handleInputChange("anthropicBaseUrl")}
-							placeholder="Default: https://api.anthropic.com"
+							placeholder={t("settings.provider.customBaseUrl.placeholder", {
+								defaultUrl: "https://api.anthropic.com",
+							}).toString()}
 						/>
 					)}
 
@@ -199,12 +208,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: 3,
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}
 						{!apiConfiguration?.apiKey && (
 							<VSCodeLink
 								href="https://console.anthropic.com/settings/keys"
 								style={{ display: "inline", fontSize: "inherit" }}>
-								You can get an Anthropic API key by signing up here.
+								{t("settings.provider.providers.anthropic.getKey").toString()}
 							</VSCodeLink>
 						)}
 					</p>
@@ -218,24 +227,28 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("glamaApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>Glama API Key</span>
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.glama.title").toString()}
+						</span>
 					</VSCodeTextField>
+
 					{!apiConfiguration?.glamaApiKey && (
 						<VSCodeButtonLink
 							href={getGlamaAuthUrl(uriScheme)}
 							style={{ margin: "5px 0 0 0" }}
 							appearance="secondary">
-							Get Glama API Key
+							{t("settings.provider.providers.glama.getKey").toString()}
 						</VSCodeButtonLink>
 					)}
+
 					<p
 						style={{
 							fontSize: "12px",
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}
 					</p>
 				</div>
 			)}
@@ -247,8 +260,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("openAiNativeApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>OpenAI API Key</span>
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.openaiNative.title").toString()}
+						</span>
 					</VSCodeTextField>
 					<p
 						style={{
@@ -256,14 +271,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: 3,
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
-						{!apiConfiguration?.openAiNativeApiKey && (
-							<VSCodeLink
-								href="https://platform.openai.com/api-keys"
-								style={{ display: "inline", fontSize: "inherit" }}>
-								You can get an OpenAI API key by signing up here.
-							</VSCodeLink>
-						)}
+						{t("settings.provider.apiKey.storedLocally").toString()}
 					</p>
 				</div>
 			)}
@@ -284,7 +292,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: 3,
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}
 						{!apiConfiguration?.mistralApiKey && (
 							<VSCodeLink
 								href="https://console.mistral.ai/codestral/"
@@ -306,19 +314,21 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("openRouterApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>OpenRouter API Key</span>
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.openRouter.title").toString()}
+						</span>
 					</VSCodeTextField>
+
 					{!apiConfiguration?.openRouterApiKey && (
-						<p>
-							<VSCodeButtonLink
-								href={getOpenRouterAuthUrl(uriScheme)}
-								style={{ margin: "5px 0 0 0" }}
-								appearance="secondary">
-								Get OpenRouter API Key
-							</VSCodeButtonLink>
-						</p>
+						<VSCodeButtonLink
+							href={getOpenRouterAuthUrl(uriScheme)}
+							style={{ margin: "5px 0 0 0" }}
+							appearance="secondary">
+							{t("settings.provider.providers.openRouter.getKey").toString()}
+						</VSCodeButtonLink>
 					)}
+
 					<Checkbox
 						checked={openRouterBaseUrlSelected}
 						onChange={(checked: boolean) => {
@@ -331,7 +341,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								})
 							}
 						}}>
-						Use custom base URL
+						{t("settings.provider.providers.openRouter.useCustomBaseUrl").toString()}
 					</Checkbox>
 
 					{openRouterBaseUrlSelected && (
@@ -340,22 +350,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							style={{ width: "100%", marginTop: 3 }}
 							type="url"
 							onInput={handleInputChange("openRouterBaseUrl")}
-							placeholder="Default: https://openrouter.ai/api/v1"
+							placeholder={t("settings.provider.customBaseUrl.placeholder", {
+								defaultUrl: "https://openrouter.ai/api",
+							}).toString()}
 						/>
 					)}
+
 					<p
 						style={{
 							fontSize: "12px",
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.{" "}
-						{/* {!apiConfiguration?.openRouterApiKey && (
-							<span style={{ color: "var(--vscode-charts-green)" }}>
-								(<span style={{ fontWeight: 500 }}>Note:</span> OpenRouter is recommended for high rate
-								limits, prompt caching, and wider selection of models.)
-							</span>
-						)} */}
+						{t("settings.provider.apiKey.storedLocally").toString()}
 					</p>
 					<Checkbox
 						checked={apiConfiguration?.openRouterUseMiddleOutTransform || false}
@@ -364,73 +371,53 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								target: { value: checked },
 							})
 						}}>
-						Compress prompts and message chains to the context size (
-						<a href="https://openrouter.ai/docs/transforms">OpenRouter Transforms</a>)
+						{t("settings.provider.providers.openRouter.compressPrompts").toString()}{" "}
+						<a href="https://openrouter.ai/docs/transforms">
+							{t("settings.provider.providers.openRouter.transforms").toString()}
+						</a>
 					</Checkbox>
 					<br />
 				</div>
 			)}
 
 			{selectedProvider === "bedrock" && (
-				<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-					<VSCodeRadioGroup
-						value={apiConfiguration?.awsUseProfile ? "profile" : "credentials"}
-						onChange={(e) => {
-							const value = (e.target as HTMLInputElement)?.value
-							const useProfile = value === "profile"
-							handleInputChange("awsUseProfile")({
-								target: { value: useProfile },
-							})
-						}}>
-						<VSCodeRadio value="credentials">AWS Credentials</VSCodeRadio>
-						<VSCodeRadio value="profile">AWS Profile</VSCodeRadio>
-					</VSCodeRadioGroup>
-					{/* AWS Profile Config Block */}
-					{apiConfiguration?.awsUseProfile ? (
-						<VSCodeTextField
-							value={apiConfiguration?.awsProfile || ""}
-							style={{ width: "100%" }}
-							onInput={handleInputChange("awsProfile")}
-							placeholder="Enter profile name">
-							<span style={{ fontWeight: 500 }}>AWS Profile Name</span>
-						</VSCodeTextField>
-					) : (
-						<>
-							{/* AWS Credentials Config Block */}
-							<VSCodeTextField
-								value={apiConfiguration?.awsAccessKey || ""}
-								style={{ width: "100%" }}
-								type="password"
-								onInput={handleInputChange("awsAccessKey")}
-								placeholder="Enter Access Key...">
-								<span style={{ fontWeight: 500 }}>AWS Access Key</span>
-							</VSCodeTextField>
-							<VSCodeTextField
-								value={apiConfiguration?.awsSecretKey || ""}
-								style={{ width: "100%" }}
-								type="password"
-								onInput={handleInputChange("awsSecretKey")}
-								placeholder="Enter Secret Key...">
-								<span style={{ fontWeight: 500 }}>AWS Secret Key</span>
-							</VSCodeTextField>
-							<VSCodeTextField
-								value={apiConfiguration?.awsSessionToken || ""}
-								style={{ width: "100%" }}
-								type="password"
-								onInput={handleInputChange("awsSessionToken")}
-								placeholder="Enter Session Token...">
-								<span style={{ fontWeight: 500 }}>AWS Session Token</span>
-							</VSCodeTextField>
-						</>
-					)}
-					<div className="dropdown-container">
-						<label htmlFor="aws-region-dropdown">
-							<span style={{ fontWeight: 500 }}>AWS Region</span>
+				<div>
+					<VSCodeTextField
+						value={apiConfiguration?.awsAccessKey || ""}
+						style={{ width: "100%" }}
+						type="text"
+						onInput={handleInputChange("awsAccessKey")}
+						placeholder={t("settings.provider.providers.bedrock.accessKey").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.bedrock.title").toString()}
+						</span>
+					</VSCodeTextField>
+
+					<VSCodeTextField
+						value={apiConfiguration?.awsSecretKey || ""}
+						style={{ width: "100%", marginTop: 3 }}
+						type="password"
+						onInput={handleInputChange("awsSecretKey")}
+						placeholder={t("settings.provider.providers.bedrock.secretKey").toString()}
+					/>
+
+					<VSCodeTextField
+						value={apiConfiguration?.awsSessionToken || ""}
+						style={{ width: "100%", marginTop: 3 }}
+						type="password"
+						onInput={handleInputChange("awsSessionToken")}
+						placeholder={t("settings.provider.providers.bedrock.sessionToken").toString()}
+					/>
+
+					<div className="dropdown-container" style={{ marginTop: 3 }}>
+						<label htmlFor="bedrock-region">
+							<span style={{ fontWeight: 500 }}>
+								{t("settings.provider.providers.bedrock.region").toString()}
+							</span>
 						</label>
 						<Dropdown
-							id="aws-region-dropdown"
-							value={apiConfiguration?.awsRegion || ""}
-							style={{ width: "100%" }}
+							id="bedrock-region"
+							value={apiConfiguration?.awsRegion || "us-east-1"}
 							onChange={(value: unknown) => {
 								handleInputChange("awsRegion")({
 									target: {
@@ -438,65 +425,61 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									},
 								})
 							}}
+							style={{ minWidth: 130 }}
 							options={[
-								{ value: "", label: "Select a region..." },
-								{ value: "us-east-1", label: "us-east-1" },
-								{ value: "us-east-2", label: "us-east-2" },
-								{ value: "us-west-2", label: "us-west-2" },
-								{ value: "ap-south-1", label: "ap-south-1" },
-								{ value: "ap-northeast-1", label: "ap-northeast-1" },
-								{ value: "ap-northeast-2", label: "ap-northeast-2" },
-								{ value: "ap-southeast-1", label: "ap-southeast-1" },
-								{ value: "ap-southeast-2", label: "ap-southeast-2" },
-								{ value: "ca-central-1", label: "ca-central-1" },
-								{ value: "eu-central-1", label: "eu-central-1" },
-								{ value: "eu-west-1", label: "eu-west-1" },
-								{ value: "eu-west-2", label: "eu-west-2" },
-								{ value: "eu-west-3", label: "eu-west-3" },
-								{ value: "sa-east-1", label: "sa-east-1" },
-								{ value: "us-gov-west-1", label: "us-gov-west-1" },
+								{ value: "us-east-1", label: "US East (N. Virginia)" },
+								{ value: "us-west-2", label: "US West (Oregon)" },
+								{ value: "ap-northeast-1", label: "Asia Pacific (Tokyo)" },
+								{ value: "eu-central-1", label: "Europe (Frankfurt)" },
 							]}
 						/>
 					</div>
+
 					<Checkbox
-						checked={apiConfiguration?.awsUseCrossRegionInference || false}
+						checked={apiConfiguration?.awsUseCrossRegionInference}
 						onChange={(checked: boolean) => {
 							handleInputChange("awsUseCrossRegionInference")({
-								target: { value: checked },
+								target: {
+									value: checked,
+								},
 							})
 						}}>
-						Use cross-region inference
+						{t("settings.provider.providers.bedrock.useCrossRegion").toString()}
 					</Checkbox>
+
 					<p
 						style={{
 							fontSize: "12px",
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						Authenticate by either providing the keys above or use the default AWS credential providers,
-						i.e. ~/.aws/credentials or environment variables. These credentials are only used locally to
-						make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}
 					</p>
 				</div>
 			)}
 
-			{apiConfiguration?.apiProvider === "vertex" && (
-				<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+			{selectedProvider === "vertex" && (
+				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.vertexProjectId || ""}
 						style={{ width: "100%" }}
+						type="text"
 						onInput={handleInputChange("vertexProjectId")}
-						placeholder="Enter Project ID...">
-						<span style={{ fontWeight: 500 }}>Google Cloud Project ID</span>
+						placeholder={t("settings.provider.providers.vertex.enterProjectId").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.vertex.projectId").toString()}
+						</span>
 					</VSCodeTextField>
-					<div className="dropdown-container">
-						<label htmlFor="vertex-region-dropdown">
-							<span style={{ fontWeight: 500 }}>Google Cloud Region</span>
+
+					<div className="dropdown-container" style={{ marginTop: 3 }}>
+						<label htmlFor="vertex-region">
+							<span style={{ fontWeight: 500 }}>
+								{t("settings.provider.providers.vertex.region").toString()}
+							</span>
 						</label>
 						<Dropdown
-							id="vertex-region-dropdown"
-							value={apiConfiguration?.vertexRegion || ""}
-							style={{ width: "100%" }}
+							id="vertex-region"
+							value={apiConfiguration?.vertexRegion || "us-central1"}
 							onChange={(value: unknown) => {
 								handleInputChange("vertexRegion")({
 									target: {
@@ -504,35 +487,23 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									},
 								})
 							}}
+							style={{ minWidth: 130 }}
 							options={[
-								{ value: "", label: "Select a region..." },
-								{ value: "us-east5", label: "us-east5" },
-								{ value: "us-central1", label: "us-central1" },
-								{ value: "europe-west1", label: "europe-west1" },
-								{ value: "europe-west4", label: "europe-west4" },
-								{ value: "asia-southeast1", label: "asia-southeast1" },
+								{ value: "us-central1", label: "US Central (Iowa)" },
+								{ value: "us-east4", label: "US East (N. Virginia)" },
+								{ value: "europe-west4", label: "Europe West (Netherlands)" },
+								{ value: "asia-southeast1", label: "Asia Southeast (Singapore)" },
 							]}
 						/>
 					</div>
+
 					<p
 						style={{
 							fontSize: "12px",
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						To use Google Cloud Vertex AI, you need to
-						<VSCodeLink
-							href="https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude#before_you_begin"
-							style={{ display: "inline", fontSize: "inherit" }}>
-							{
-								"1) create a Google Cloud account › enable the Vertex AI API › enable the desired Claude models,"
-							}
-						</VSCodeLink>{" "}
-						<VSCodeLink
-							href="https://cloud.google.com/docs/authentication/provide-credentials-adc#google-idp"
-							style={{ display: "inline", fontSize: "inherit" }}>
-							{"2) install the Google Cloud CLI › configure Application Default Credentials."}
-						</VSCodeLink>
+						{t("settings.provider.providers.vertex.description").toString()}
 					</p>
 				</div>
 			)}
@@ -553,12 +524,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: 3,
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}.
 						{!apiConfiguration?.geminiApiKey && (
 							<VSCodeLink
 								href="https://ai.google.dev/"
 								style={{ display: "inline", fontSize: "inherit" }}>
-								You can get a Gemini API key by signing up here.
+								{t("settings.provider.providers.gemini.getKey").toString()}.
 							</VSCodeLink>
 						)}
 					</p>
@@ -569,19 +540,23 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiBaseUrl || ""}
-						style={{ width: "100%" }}
-						type="url"
+						style={{ width: "100%", marginTop: 3 }}
+						type="text"
 						onInput={handleInputChange("openAiBaseUrl")}
-						placeholder={"Enter base URL..."}>
-						<span style={{ fontWeight: 500 }}>Base URL</span>
+						placeholder={t("settings.provider.providers.openai.enterBaseUrl").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.openai.baseUrl").toString()}
+						</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiApiKey || ""}
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("openAiApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>API Key</span>
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.openai.title").toString()}
+						</span>
 					</VSCodeTextField>
 					<OpenAiModelPicker />
 					<div style={{ display: "flex", alignItems: "center" }}>
@@ -592,7 +567,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									target: { value: checked },
 								})
 							}}>
-							Enable streaming
+							{t("settings.provider.providers.openai.streaming").toString()}
 						</Checkbox>
 					</div>
 					<Checkbox
@@ -602,7 +577,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								target: { value: checked },
 							})
 						}}>
-						Use Azure
+						{t("settings.provider.providers.openai.useAzure").toString()}
 					</Checkbox>
 					<Checkbox
 						checked={azureApiVersionSelected}
@@ -616,7 +591,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								})
 							}
 						}}>
-						Set Azure API version
+						{t("settings.provider.providers.openai.setAzureVersion").toString()}
 					</Checkbox>
 					{azureApiVersionSelected && (
 						<VSCodeTextField
@@ -633,7 +608,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						}}
 					/>
 					<Pane
-						title="Model Configuration"
+						title={t("settings.provider.providers.openai.modelConfig.title").toString()}
 						open={false}
 						actions={[
 							{
@@ -1151,7 +1126,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}.
 						{!apiConfiguration?.deepSeekApiKey && (
 							<VSCodeLink
 								href="https://platform.deepseek.com/"
@@ -1313,7 +1288,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: 3,
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						This key is stored locally and only used to make API requests from this extension.
+						{t("settings.provider.apiKey.storedLocally").toString()}.
 					</p>
 				</div>
 			)}
@@ -1337,7 +1312,8 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				selectedProvider !== "openrouter" &&
 				selectedProvider !== "openai" &&
 				selectedProvider !== "ollama" &&
-				selectedProvider !== "lmstudio" && (
+				selectedProvider !== "lmstudio" &&
+				selectedProvider !== "vscode-lm" && (
 					<>
 						<div className="dropdown-container">
 							<label htmlFor="model-id">

@@ -1,4 +1,4 @@
-import { VSCodeLink, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeLink, VSCodeTextField, VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 import debounce from "debounce"
 import { Fzf } from "fzf"
 import React, { KeyboardEvent, memo, useEffect, useMemo, useRef, useState } from "react"
@@ -10,8 +10,10 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import { highlightFzfMatch } from "../../utils/highlight"
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions"
+import { useTranslation } from "react-i18next"
 
 const GlamaModelPicker: React.FC = () => {
+	const { t } = useTranslation()
 	const { apiConfiguration, setApiConfiguration, glamaModels, onUpdateApiConfig } = useExtensionState()
 	const [searchTerm, setSearchTerm] = useState(apiConfiguration?.glamaModelId || glamaDefaultModelId)
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false)
@@ -147,6 +149,10 @@ const GlamaModelPicker: React.FC = () => {
 		}
 	}, [selectedIndex])
 
+	const handleRefreshModels = () => {
+		vscode.postMessage({ type: "refreshGlamaModels" })
+	}
+
 	return (
 		<>
 			<style>
@@ -157,94 +163,100 @@ const GlamaModelPicker: React.FC = () => {
 				}
 				`}
 			</style>
-			<div>
-				<label htmlFor="model-search">
-					<span style={{ fontWeight: 500 }}>Model</span>
-				</label>
-				<DropdownWrapper ref={dropdownRef}>
-					<VSCodeTextField
-						id="model-search"
-						placeholder="Search and select a model..."
-						value={searchTerm}
-						onInput={(e) => {
-							handleModelChange((e.target as HTMLInputElement)?.value?.toLowerCase())
-							setIsDropdownVisible(true)
-						}}
-						onFocus={() => setIsDropdownVisible(true)}
-						onKeyDown={handleKeyDown}
-						style={{ width: "100%", zIndex: GLAMA_MODEL_PICKER_Z_INDEX, position: "relative" }}>
-						{searchTerm && (
-							<div
-								className="input-icon-button codicon codicon-close"
-								aria-label="Clear search"
-								onClick={() => {
-									handleModelChange("")
-									setIsDropdownVisible(true)
-								}}
-								slot="end"
-								style={{
-									display: "flex",
-									justifyContent: "center",
-									alignItems: "center",
-									height: "100%",
-								}}
-							/>
-						)}
-					</VSCodeTextField>
-					{isDropdownVisible && (
-						<DropdownList ref={dropdownListRef}>
-							{modelSearchResults.map((item, index) => (
-								<DropdownItem
-									key={item.id}
-									ref={(el) => (itemRefs.current[index] = el)}
-									isSelected={index === selectedIndex}
-									onMouseEnter={() => setSelectedIndex(index)}
+			<div style={{ marginTop: 3 }}>
+				<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+					<span style={{ fontWeight: 500 }}>{t("settings.provider.model.title").toString()}</span>
+					<VSCodeButton appearance="icon" onClick={handleRefreshModels} style={{ padding: 5, margin: 0 }}>
+						<span className="codicon codicon-refresh" />
+					</VSCodeButton>
+				</div>
+
+				<div className="dropdown-container">
+					<DropdownWrapper ref={dropdownRef}>
+						<VSCodeTextField
+							id="model-search"
+							placeholder={t("settings.provider.model.selectPlaceholder").toString()}
+							value={searchTerm}
+							onInput={(e) => {
+								handleModelChange((e.target as HTMLInputElement)?.value?.toLowerCase())
+								setIsDropdownVisible(true)
+							}}
+							onFocus={() => setIsDropdownVisible(true)}
+							onKeyDown={handleKeyDown}
+							style={{ width: "100%", zIndex: GLAMA_MODEL_PICKER_Z_INDEX, position: "relative" }}>
+							{searchTerm && (
+								<div
+									className="input-icon-button codicon codicon-close"
+									aria-label="Clear search"
 									onClick={() => {
-										handleModelChange(item.id)
-										setIsDropdownVisible(false)
+										handleModelChange("")
+										setIsDropdownVisible(true)
 									}}
-									dangerouslySetInnerHTML={{
-										__html: item.html,
+									slot="end"
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										height: "100%",
 									}}
 								/>
-							))}
-						</DropdownList>
-					)}
-				</DropdownWrapper>
-			</div>
+							)}
+						</VSCodeTextField>
+						{isDropdownVisible && (
+							<DropdownList ref={dropdownListRef}>
+								{modelSearchResults.map((item, index) => (
+									<DropdownItem
+										key={item.id}
+										ref={(el) => (itemRefs.current[index] = el)}
+										isSelected={index === selectedIndex}
+										onMouseEnter={() => setSelectedIndex(index)}
+										onClick={() => {
+											handleModelChange(item.id)
+											setIsDropdownVisible(false)
+										}}
+										dangerouslySetInnerHTML={{
+											__html: item.html,
+										}}
+									/>
+								))}
+							</DropdownList>
+						)}
+					</DropdownWrapper>
+				</div>
 
-			{hasInfo ? (
-				<ModelInfoView
-					selectedModelId={selectedModelId}
-					modelInfo={selectedModelInfo}
-					isDescriptionExpanded={isDescriptionExpanded}
-					setIsDescriptionExpanded={setIsDescriptionExpanded}
-				/>
-			) : (
-				<p
-					style={{
-						fontSize: "12px",
-						marginTop: 0,
-						color: "var(--vscode-descriptionForeground)",
-					}}>
-					The extension automatically fetches the latest list of models available on{" "}
-					<VSCodeLink style={{ display: "inline", fontSize: "inherit" }} href="https://glama.ai/models">
-						Glama.
-					</VSCodeLink>
-					If you're unsure which model to choose, CoolCline works best with{" "}
-					<VSCodeLink
-						style={{ display: "inline", fontSize: "inherit" }}
-						onClick={() => handleModelChange("anthropic/claude-3.5-sonnet")}>
-						anthropic/claude-3.5-sonnet.
-					</VSCodeLink>
-					You can also try searching "free" for no-cost options currently available.
-				</p>
-			)}
+				{hasInfo ? (
+					<ModelInfoView
+						selectedModelId={selectedModelId}
+						modelInfo={selectedModelInfo}
+						isDescriptionExpanded={isDescriptionExpanded}
+						setIsDescriptionExpanded={setIsDescriptionExpanded}
+					/>
+				) : (
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: 0,
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						{t("settings.provider.model.description.text1").toString()}
+						<VSCodeLink style={{ display: "inline", fontSize: "inherit" }} href="https://glama.ai/models">
+							{t("settings.provider.model.description.glama").toString()}
+						</VSCodeLink>
+						{t("settings.provider.model.description.text2").toString()}
+						<VSCodeLink
+							style={{ display: "inline", fontSize: "inherit" }}
+							onClick={() => handleModelChange("anthropic/claude-3.5-sonnet")}>
+							{t("settings.provider.model.description.anthropic").toString()}
+						</VSCodeLink>
+						{t("settings.provider.model.description.text3").toString()}
+					</p>
+				)}
+			</div>
 		</>
 	)
 }
 
-export default GlamaModelPicker
+export default memo(GlamaModelPicker)
 
 // Dropdown
 
@@ -341,6 +353,7 @@ export const ModelDescriptionMarkdown = memo(
 		isExpanded: boolean
 		setIsExpanded: (isExpanded: boolean) => void
 	}) => {
+		const { t } = useTranslation()
 		const [reactContent, setMarkdown] = useRemark()
 		const [showSeeMore, setShowSeeMore] = useState(false)
 		const textContainerRef = useRef<HTMLDivElement>(null)
@@ -404,7 +417,7 @@ export const ModelDescriptionMarkdown = memo(
 									backgroundColor: "var(--vscode-sideBar-background)",
 								}}
 								onClick={() => setIsExpanded(true)}>
-								See more
+								{t("chat.task.seeMore").toString()}
 							</VSCodeLink>
 						</div>
 					)}

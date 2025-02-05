@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from "react"
 import { ApiConfigMeta } from "../../../../src/shared/ExtensionMessage"
 import { Dropdown } from "vscrui"
 import type { DropdownOption } from "vscrui"
+import { useTranslation } from "react-i18next"
 
 interface ApiConfigManagerProps {
 	currentApiConfigName?: string
@@ -21,6 +22,7 @@ const ApiConfigManager = ({
 	onRenameConfig,
 	onUpsertConfig,
 }: ApiConfigManagerProps) => {
+	const { t } = useTranslation()
 	const [editState, setEditState] = useState<"new" | "rename" | null>(null)
 	const [inputValue, setInputValue] = useState("")
 	const inputRef = useRef<HTMLInputElement>()
@@ -91,7 +93,7 @@ const ApiConfigManager = ({
 				}}>
 				<label htmlFor="config-profile">
 					<span style={{ fontWeight: "500" }}>
-						Configuration Profile{" "}
+						{String(t("settings.provider.configProfile.title"))}{" "}
 						<VSCodeLink
 							href="https://github.com/coolcline/coolcline/blob/main/README.md"
 							style={{ display: "inline" }}>
@@ -224,7 +226,7 @@ const ApiConfigManager = ({
 								margin: "5px 0 12px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							Save different API configurations to quickly switch between providers and settings
+							{String(t("settings.provider.configProfile.description"))}
 						</p>
 					</>
 				)}
