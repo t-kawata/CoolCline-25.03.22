@@ -2,9 +2,11 @@ import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import { FormEvent } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
+import { useTranslation } from "react-i18next"
 
 const McpEnabledToggle = () => {
 	const { mcpEnabled, setMcpEnabled } = useExtensionState()
+	const { t } = useTranslation()
 
 	const handleChange = (e: Event | FormEvent<HTMLElement>) => {
 		const target = ("target" in e ? e.target : null) as HTMLInputElement | null
@@ -16,7 +18,7 @@ const McpEnabledToggle = () => {
 	return (
 		<div style={{ marginBottom: "20px" }}>
 			<VSCodeCheckbox checked={mcpEnabled} onChange={handleChange}>
-				<span style={{ fontWeight: "500" }}>Enable MCP Servers</span>
+				<span style={{ fontWeight: "500" }}>{String(t("mcp.enable.title"))}</span>
 			</VSCodeCheckbox>
 			<p
 				style={{
@@ -24,8 +26,7 @@ const McpEnabledToggle = () => {
 					marginTop: "5px",
 					color: "var(--vscode-descriptionForeground)",
 				}}>
-				When enabled, CoolCline will be able to interact with MCP servers for advanced functionality. If you're
-				not using MCP, you can disable this to reduce CoolCline's token usage.
+				{String(t("mcp.enable.description"))}
 			</p>
 		</div>
 	)

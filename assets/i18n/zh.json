@@ -21,6 +21,55 @@
 			"loading": "加载中...",
 			"error": "错误",
 			"success": "成功"
+		},
+		"noDescription": "暂无描述",
+		"unknown": "未知"
+	},
+	"mcp": {
+		"title": "MCP 服务器",
+		"modelContextProtocol": "模型上下文协议(MCP)",
+		"description": {
+			"part1": "可以与本地运行的 MCP 服务器进行通信，这些服务器提供额外的工具和资源来扩展 CoolCline 的功能。您可以使用",
+			"part2": "，或者让 CoolCline 为您的工作流程创建新的专用工具（例如，'添加一个获取最新 npm 文档的工具'）。"
+		},
+		"communityServers": "社区制作的服务器",
+		"enable": {
+			"title": "启用 MCP 服务器",
+			"description": "启用后，CoolCline 将能够与 MCP 服务器交互以获得高级功能。如果您不使用 MCP，可以禁用此功能以减少 CoolCline 的令牌使用量。"
+		},
+		"serverCreation": {
+			"title": "启用 MCP 服务器创建",
+			"description": "启用后，CoolCline 可以通过类似'添加新工具到...'的命令帮助您创建新的 MCP 服务器。如果您不需要创建 MCP 服务器，可以禁用此功能以减少 CoolCline 的令牌使用量。"
+		},
+		"editSettings": "编辑 MCP 设置",
+		"tools": {
+			"title": "工具",
+			"parameters": "参数",
+			"alwaysAllow": "始终允许",
+			"noTools": "未找到工具"
+		},
+		"resources": {
+			"title": "资源",
+			"returns": "返回",
+			"noResources": "未找到资源"
+		},
+		"timeout": {
+			"title": "网络超时",
+			"description": "等待服务器响应的最长时间",
+			"15": "15 秒",
+			"30": "30 秒",
+			"60": "1 分钟",
+			"300": "5 分钟",
+			"600": "10 分钟",
+			"900": "15 分钟",
+			"1800": "30 分钟",
+			"3600": "60 分钟"
+		},
+		"server": {
+			"restart": "重启服务器",
+			"restarting": "正在重启...",
+			"retry": "重试连接",
+			"retrying": "正在重试..."
 		}
 	},
 	"settings": {

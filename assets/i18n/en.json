@@ -21,6 +21,55 @@
 			"loading": "Loading...",
 			"error": "Error",
 			"success": "Success"
+		},
+		"noDescription": "No description",
+		"unknown": "Unknown"
+	},
+	"mcp": {
+		"title": "MCP Servers",
+		"modelContextProtocol": "Model Context Protocol",
+		"description": {
+			"part1": "enables communication with locally running MCP servers that provide additional tools and resources to extend CoolCline's capabilities. You can use",
+			"part2": "or ask CoolCline to create new tools specific to your workflow (e.g., \"add a tool that gets the latest npm docs\")."
+		},
+		"communityServers": "community-made servers",
+		"enable": {
+			"title": "Enable MCP Servers",
+			"description": "When enabled, CoolCline will be able to interact with MCP servers for advanced functionality. If you're not using MCP, you can disable this to reduce CoolCline's token usage."
+		},
+		"serverCreation": {
+			"title": "Enable MCP Server Creation",
+			"description": "When enabled, CoolCline can help you create new MCP servers via commands like \"add a new tool to...\". If you don't need to create MCP servers you can disable this to reduce CoolCline's token usage."
+		},
+		"editSettings": "Edit MCP Settings",
+		"tools": {
+			"title": "Tools",
+			"parameters": "Parameters",
+			"alwaysAllow": "Always allow",
+			"noTools": "No tools found"
+		},
+		"resources": {
+			"title": "Resources",
+			"returns": "Returns",
+			"noResources": "No resources found"
+		},
+		"timeout": {
+			"title": "Network Timeout",
+			"description": "Maximum time to wait for server responses",
+			"15": "15 seconds",
+			"30": "30 seconds",
+			"60": "1 minute",
+			"300": "5 minutes",
+			"600": "10 minutes",
+			"900": "15 minutes",
+			"1800": "30 minutes",
+			"3600": "60 minutes"
+		},
+		"server": {
+			"restart": "Restart Server",
+			"restarting": "Restarting...",
+			"retry": "Retry Connection",
+			"retrying": "Retrying..."
 		}
 	},
 	"settings": {
