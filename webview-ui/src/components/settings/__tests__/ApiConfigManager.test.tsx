@@ -17,6 +17,7 @@ jest.mock("@vscode/webview-ui-toolkit/react", () => ({
 			ref={undefined} // Explicitly set ref to undefined to avoid warning
 		/>
 	),
+	VSCodeLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }))
 
 jest.mock("vscrui", () => ({
