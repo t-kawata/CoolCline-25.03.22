@@ -1,0 +1,129 @@
+{
+	"common": {
+		"done": "Done",
+		"add": "Add",
+		"delete": "Delete",
+		"rename": "Rename",
+		"preview": "Preview",
+		"save": "Save",
+		"cancel": "Cancel",
+		"create": "Create",
+		"prompt": "Prompt",
+		"actions": {
+			"reset": "Reset to default",
+			"edit": "Edit",
+			"save": "Save",
+			"cancel": "Cancel",
+			"close": "Close",
+			"doneEditing": "Done editing"
+		},
+		"status": {
+			"loading": "Loading...",
+			"error": "Error",
+			"success": "Success"
+		}
+	},
+	"settings": {
+		"language": {
+			"title": "Preferred Language",
+			"description": "Select the language that CoolCline should use for communication.",
+			"select": "Select Language"
+		},
+		"customInstructions": {
+			"title": "Custom Instructions for All Modes",
+			"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.",
+			"loadFrom": "Instructions can also be loaded from",
+			"inWorkspace": "in your workspace"
+		},
+		"modePrompts": {
+			"title": "Mode-Specific Prompts",
+			"description": "Hit the + to create a new custom mode, or just ask CoolCline in chat to create one for you!",
+			"createMode": "Create new mode",
+			"editConfig": "Edit modes configuration",
+			"name": "Name",
+			"specificPrompts": "Mode-Specific Prompts",
+			"slug": {
+				"title": "Slug",
+				"description": "The slug is used in URLs and file names. It should be lowercase and contain only letters, numbers, and hyphens."
+			},
+			"roleDefinition": {
+				"title": "Role Definition",
+				"description": "Define CoolCline's expertise and personality for this mode. This description shapes how CoolCline presents itself and approaches tasks.",
+				"createDescription": "Define CoolCline's expertise and personality for this mode."
+			},
+			"apiConfig": {
+				"title": "API Configuration",
+				"description": "Select which API configuration to use for this mode",
+				"useCurrentConfig": "Use currently selected API configuration",
+				"enhancePrompts": "You can select an API configuration to always use for enhancing prompts"
+			},
+			"tools": {
+				"title": "Available Tools",
+				"cannotModify": "Tools for built-in modes cannot be modified",
+				"selectTools": "Select which tools this mode can use",
+				"availableTitle": "Available Tools",
+				"selectDescription": "Select which tools this mode can use"
+			},
+			"customInstructions": {
+				"title": "Mode-specific Custom Instructions",
+				"description": "Add behavioral guidelines specific to {mode} mode.",
+				"loadFrom": "Custom instructions specific to {mode} mode can also be loaded from",
+				"inWorkspace": "in your workspace",
+				"createDescription": "Add behavioral guidelines specific to this mode.",
+				"modeSpecific": "Mode-specific Custom Instructions"
+			},
+			"preview": "Preview System Prompt"
+		},
+		"api": {
+			"title": "API Settings",
+			"configProfile": "Configuration Profile",
+			"description": "Save different API configurations to quickly switch between providers and settings",
+			"model": {
+				"title": "Model",
+				"search": "Search models...",
+				"selected": "Selected model:"
+			},
+			"provider": {
+				"title": "Provider",
+				"openai": "OpenAI",
+				"glama": "Glama",
+				"openRouter": "OpenRouter"
+			}
+		},
+		"experimental": {
+			"title": "Experimental Features",
+			"description": "Enable or disable experimental features"
+		}
+	},
+	"support": {
+		"title": "Support Prompts",
+		"enhance": {
+			"title": "Enhance",
+			"testPrompt": "Enter a prompt to test the enhancement",
+			"preview": "Preview Prompt Enhancement",
+			"enterPrompt": "Enter a prompt to test the enhancement"
+		},
+		"prompts": {
+			"enhance": {
+				"label": "Enhance Prompt",
+				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures CoolCline understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
+			},
+			"explain": {
+				"label": "Explain Code",
+				"description": "Get detailed explanations of code snippets, functions, or entire files. Useful for understanding complex code or learning new patterns. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
+			},
+			"fix": {
+				"label": "Fix Issues",
+				"description": "Get help identifying and resolving bugs, errors, or code quality issues. Provides step-by-step guidance for fixing problems. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
+			},
+			"improve": {
+				"label": "Improve Code",
+				"description": "Receive suggestions for code optimization, better practices, and architectural improvements while maintaining functionality. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
+			},
+			"addToContext": {
+				"label": "Add to Context",
+				"description": "Add context to your current task or conversation. Useful for providing additional information or clarifications. Available in code actions (lightbulb icon in the editor). and the editor context menu (right-click on selected code)."
+			}
+		}
+	}
+}

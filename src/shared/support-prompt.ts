@@ -32,17 +32,15 @@ interface SupportPromptConfig {
 
 const supportPromptConfigs: Record<string, SupportPromptConfig> = {
 	ENHANCE: {
-		label: "Enhance Prompt",
-		description:
-			"Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures CoolCline understands your intent and provides the best possible responses. Available via the ✨ icon in chat.",
+		label: "support.prompts.enhance.label",
+		description: "support.prompts.enhance.description",
 		template: `Generate an enhanced version of this prompt (reply with only the enhanced prompt - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):
 
 \${userInput}`,
 	},
 	EXPLAIN: {
-		label: "Explain Code",
-		description:
-			"Get detailed explanations of code snippets, functions, or entire files. Useful for understanding complex code or learning new patterns. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
+		label: "support.prompts.explain.label",
+		description: "support.prompts.explain.description",
 		template: `Explain the following code from file path @/\${filePath}:
 \${userInput}
 
@@ -56,9 +54,8 @@ Please provide a clear and concise explanation of what this code does, including
 3. Important patterns or techniques used`,
 	},
 	FIX: {
-		label: "Fix Issues",
-		description:
-			"Get help identifying and resolving bugs, errors, or code quality issues. Provides step-by-step guidance for fixing problems. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
+		label: "support.prompts.fix.label",
+		description: "support.prompts.fix.description",
 		template: `Fix any issues in the following code from file path @/\${filePath}
 \${diagnosticText}
 \${userInput}
@@ -74,9 +71,8 @@ Please:
 4. Explain what was fixed and why`,
 	},
 	IMPROVE: {
-		label: "Improve Code",
-		description:
-			"Receive suggestions for code optimization, better practices, and architectural improvements while maintaining functionality. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
+		label: "support.prompts.improve.label",
+		description: "support.prompts.improve.description",
 		template: `Improve the following code from file path @/\${filePath}:
 \${userInput}
 
@@ -93,9 +89,8 @@ Please suggest improvements for:
 Provide the improved code along with explanations for each enhancement.`,
 	},
 	ADD_TO_CONTEXT: {
-		label: "Add to Context",
-		description:
-			"Add context to your current task or conversation. Useful for providing additional information or clarifications. Available in code actions (lightbulb icon in the editor). and the editor context menu (right-click on selected code).",
+		label: "support.prompts.addToContext.label",
+		description: "support.prompts.addToContext.description",
 		template: `@/\${filePath}:
 \`\`\`
 \${selectedText}

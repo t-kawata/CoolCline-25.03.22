@@ -1,0 +1,129 @@
+{
+	"common": {
+		"done": "完成",
+		"add": "添加",
+		"delete": "删除",
+		"rename": "重命名",
+		"preview": "预览",
+		"save": "保存",
+		"cancel": "取消",
+		"create": "创建",
+		"prompt": "提示",
+		"actions": {
+			"reset": "重置为默认",
+			"edit": "编辑",
+			"save": "保存",
+			"cancel": "取消",
+			"close": "关闭",
+			"doneEditing": "完成编辑"
+		},
+		"status": {
+			"loading": "加载中...",
+			"error": "错误",
+			"success": "成功"
+		}
+	},
+	"settings": {
+		"language": {
+			"title": "首选语言",
+			"description": "选择 CoolCline 应该使用的通信语言。",
+			"select": "选择语言"
+		},
+		"customInstructions": {
+			"title": "所有模式的自定义指令",
+			"description": "这些指令适用于所有模式。它们提供了一组基本行为，可以通过下面的模式特定指令进行增强。",
+			"loadFrom": "指令也可以从",
+			"inWorkspace": "工作区加载"
+		},
+		"modePrompts": {
+			"title": "模式特定提示",
+			"description": "点击 + 创建新的自定义模式，或者在聊天中直接让 CoolCline 为您创建！",
+			"createMode": "创建新模式",
+			"editConfig": "编辑模式配置",
+			"name": "名称",
+			"specificPrompts": "模式特定提示",
+			"slug": {
+				"title": "标识符",
+				"description": "标识符用于 URL 和文件名中。它应该是小写的，只包含字母、数字和连字符。"
+			},
+			"roleDefinition": {
+				"title": "角色定义",
+				"description": "定义 CoolCline 在此模式下的专业知识和个性。这个描述塑造了 CoolCline 如何展示自己和处理任务。",
+				"createDescription": "定义 CoolCline 在此模式下的专业知识和个性。"
+			},
+			"apiConfig": {
+				"title": "API 配置",
+				"description": "选择此模式要使用的 API 配置",
+				"useCurrentConfig": "使用当前选择的 API 配置",
+				"enhancePrompts": "您可以选择一个专门用于增强提示的 API 配置"
+			},
+			"tools": {
+				"title": "可用工具",
+				"cannotModify": "内置模式的工具无法修改",
+				"selectTools": "选择此模式可以使用的工具",
+				"availableTitle": "可用工具",
+				"selectDescription": "选择此模式可以使用的工具"
+			},
+			"customInstructions": {
+				"title": "模式特定的自定义指令",
+				"description": "为 {mode} 模式添加特定的行为指南。",
+				"loadFrom": "{mode} 模式的自定义指令也可以从",
+				"inWorkspace": "工作区加载",
+				"createDescription": "为此模式添加特定的行为指南。",
+				"modeSpecific": "模式特定的自定义指令"
+			},
+			"preview": "预览系统提示"
+		},
+		"api": {
+			"title": "API 设置",
+			"configProfile": "配置文件",
+			"description": "保存不同的 API 配置，以便快速切换提供商和设置",
+			"model": {
+				"title": "模型",
+				"search": "搜索模型...",
+				"selected": "已选择的模型："
+			},
+			"provider": {
+				"title": "提供商",
+				"openai": "OpenAI",
+				"glama": "Glama",
+				"openRouter": "OpenRouter"
+			}
+		},
+		"experimental": {
+			"title": "实验性功能",
+			"description": "启用或禁用实验性功能"
+		}
+	},
+	"support": {
+		"title": "支持提示",
+		"enhance": {
+			"title": "增强",
+			"testPrompt": "输入提示以测试增强效果",
+			"preview": "预览提示增强",
+			"enterPrompt": "输入提示以测试增强效果"
+		},
+		"prompts": {
+			"enhance": {
+				"label": "增强提示",
+				"description": "使用提示增强功能获取针对您输入的定制建议或改进。这确保 CoolCline 理解您的意图并提供最佳响应。可通过聊天中的 ✨ 图标使用。"
+			},
+			"explain": {
+				"label": "解释代码",
+				"description": "获取代码片段、函数或整个文件的详细解释。对于理解复杂代码或学习新模式很有帮助。可在代码操作（编辑器中的灯泡图标）和编辑器上下文菜单（在选定代码上右键单击）中使用。"
+			},
+			"fix": {
+				"label": "修复问题",
+				"description": "获取帮助以识别和解决错误、bug或代码质量问题。提供逐步修复问题的指导。可在代码操作（编辑器中的灯泡图标）和编辑器上下文菜单（在选定代码上右键单击）中使用。"
+			},
+			"improve": {
+				"label": "改进代码",
+				"description": "在保持功能的同时，获取代码优化、更好的实践和架构改进的建议。可在代码操作（编辑器中的灯泡图标）和编辑器上下文菜单（在选定代码上右键单击）中使用。"
+			},
+			"addToContext": {
+				"label": "添加到上下文",
+				"description": "为当前任务或对话添加上下文。用于提供额外信息或说明。可在代码操作（编辑器中的灯泡图标）和编辑器上下文菜单（在选定代码上右键单击）中使用。"
+			}
+		}
+	}
+}
