@@ -6,6 +6,7 @@ import React, { memo, useMemo, useState, useEffect } from "react"
 import { Fzf } from "fzf"
 import { formatLargeNumber } from "../../utils/format"
 import { highlightFzfMatch } from "../../utils/highlight"
+import { useTranslation } from "react-i18next"
 
 type HistoryViewProps = {
 	onDone: () => void
@@ -15,6 +16,7 @@ type SortOption = "newest" | "oldest" | "mostExpensive" | "mostTokens" | "mostRe
 
 const HistoryView = ({ onDone }: HistoryViewProps) => {
 	const { taskHistory } = useExtensionState()
+	const { t } = useTranslation()
 	const [searchQuery, setSearchQuery] = useState("")
 	const [sortOption, setSortOption] = useState<SortOption>("newest")
 	const [lastNonRelevantSort, setLastNonRelevantSort] = useState<SortOption | null>("newest")
@@ -144,7 +146,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 					}
 				`}
 			</style>
-			{showCopyModal && <div className="copy-modal">Prompt Copied to Clipboard</div>}
+			{showCopyModal && <div className="copy-modal">{String(t("history.preview.promptCopied"))}</div>}
 			<div
 				style={{
 					position: "fixed",
@@ -163,14 +165,14 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 						alignItems: "center",
 						padding: "10px 17px 10px 20px",
 					}}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>History</h3>
-					<VSCodeButton onClick={onDone}>Done</VSCodeButton>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>{String(t("history.title"))}</h3>
+					<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
 				</div>
 				<div style={{ padding: "5px 17px 6px 17px" }}>
 					<div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
 						<VSCodeTextField
 							style={{ width: "100%" }}
-							placeholder="Fuzzy search history..."
+							placeholder={String(t("history.search.placeholder"))}
 							value={searchQuery}
 							onInput={(e) => {
 								const newValue = (e.target as HTMLInputElement)?.value
@@ -187,7 +189,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 							{searchQuery && (
 								<div
 									className="input-icon-button codicon codicon-close"
-									aria-label="Clear search"
+									aria-label={String(t("history.search.clear"))}
 									onClick={() => setSearchQuery("")}
 									slot="end"
 									style={{
@@ -204,15 +206,15 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 							value={sortOption}
 							role="radiogroup"
 							onChange={(e) => setSortOption((e.target as HTMLInputElement).value as SortOption)}>
-							<VSCodeRadio value="newest">Newest</VSCodeRadio>
-							<VSCodeRadio value="oldest">Oldest</VSCodeRadio>
-							<VSCodeRadio value="mostExpensive">Most Expensive</VSCodeRadio>
-							<VSCodeRadio value="mostTokens">Most Tokens</VSCodeRadio>
+							<VSCodeRadio value="newest">{String(t("history.sort.newest"))}</VSCodeRadio>
+							<VSCodeRadio value="oldest">{String(t("history.sort.oldest"))}</VSCodeRadio>
+							<VSCodeRadio value="mostExpensive">{String(t("history.sort.mostExpensive"))}</VSCodeRadio>
+							<VSCodeRadio value="mostTokens">{String(t("history.sort.mostTokens"))}</VSCodeRadio>
 							<VSCodeRadio
 								value="mostRelevant"
 								disabled={!searchQuery}
 								style={{ opacity: searchQuery ? 1 : 0.5 }}>
-								Most Relevant
+								{String(t("history.sort.mostRelevant"))}
 							</VSCodeRadio>
 						</VSCodeRadioGroup>
 					</div>

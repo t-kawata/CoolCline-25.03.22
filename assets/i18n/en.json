@@ -295,5 +295,29 @@
 			"addContext": "(@ to add context",
 			"dragImages": ", hold shift to drag in images"
 		}
+	},
+	"history": {
+		"title": "History",
+		"search": {
+			"placeholder": "Fuzzy search history...",
+			"clear": "Clear search"
+		},
+		"sort": {
+			"newest": "Newest",
+			"oldest": "Oldest",
+			"mostExpensive": "Most Expensive",
+			"mostTokens": "Most Tokens",
+			"mostRelevant": "Most Relevant"
+		},
+		"preview": {
+			"recentTasks": "Recent Tasks",
+			"viewAll": "View all history",
+			"promptCopied": "Prompt Copied to Clipboard",
+			"metrics": {
+				"tokens": "Tokens",
+				"cache": "Cache",
+				"apiCost": "API Cost"
+			}
+		}
 	}
 }

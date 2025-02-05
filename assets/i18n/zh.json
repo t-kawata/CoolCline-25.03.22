@@ -295,5 +295,29 @@
 			"addContext": "(使用 @ 添加上下文",
 			"dragImages": "，按住 Shift 键拖入图片"
 		}
+	},
+	"history": {
+		"title": "历史记录",
+		"search": {
+			"placeholder": "模糊搜索历史...",
+			"clear": "清除搜索"
+		},
+		"sort": {
+			"newest": "最新",
+			"oldest": "最早",
+			"mostExpensive": "最贵",
+			"mostTokens": "最多令牌",
+			"mostRelevant": "最相关"
+		},
+		"preview": {
+			"recentTasks": "最近任务",
+			"viewAll": "查看所有历史",
+			"promptCopied": "提示已复制到剪贴板",
+			"metrics": {
+				"tokens": "令牌",
+				"cache": "缓存",
+				"apiCost": "API 费用"
+			}
+		}
 	}
 }
