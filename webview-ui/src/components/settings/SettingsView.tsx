@@ -11,6 +11,8 @@ import ApiConfigManager from "./ApiConfigManager"
 import { Dropdown } from "vscrui"
 import type { DropdownOption } from "vscrui"
 
+import LanguageSelector from "../common/LanguageSelector"
+
 type SettingsViewProps = {
 	onDone: () => void
 }
@@ -182,6 +184,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>{t("settings.title").toString()}</h3>
 				<VSCodeButton onClick={handleSubmit}>{t("settings.done").toString()}</VSCodeButton>
 			</div>
+
+			<LanguageSelector />
+
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				<div style={{ marginBottom: 40 }}>

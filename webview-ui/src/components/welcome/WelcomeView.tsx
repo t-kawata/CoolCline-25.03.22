@@ -5,6 +5,7 @@ import { validateApiConfiguration } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
 import ApiOptions from "../settings/ApiOptions"
 import { useTranslation } from "react-i18next"
+import LanguageSelector from "../common/LanguageSelector"
 
 const WelcomeView = () => {
 	const { apiConfiguration } = useExtensionState()
@@ -41,6 +42,8 @@ const WelcomeView = () => {
 					{String(t("welcome.readmeLink"))}
 				</VSCodeLink>
 			</p>
+
+			<LanguageSelector />
 
 			<b>{String(t("welcome.apiProviderNeeded"))}</b>
 

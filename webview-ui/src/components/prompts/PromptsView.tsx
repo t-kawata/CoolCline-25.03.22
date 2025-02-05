@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next"
 import { TOOL_GROUPS, GROUP_DISPLAY_NAMES, ToolGroup } from "../../../../src/shared/tool-groups"
 import { vscode } from "../../utils/vscode"
 import i18n, { getLanguageCode } from "../../utils/i18n"
+import LanguageSelector from "../common/LanguageSelector"
 
 // Get all available groups that should show in prompts view
 const availableGroups = (Object.keys(TOOL_GROUPS) as ToolGroup[]).filter((group) => !TOOL_GROUPS[group].alwaysAvailable)
@@ -355,124 +356,64 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0" }}>
 						{String(t("prompts.settings.sections.general"))}
 					</h3>
+					<LanguageSelector />
 					<div style={{ marginBottom: "20px" }}>
 						<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
-							{String(t("prompts.settings.language.title"))}
+							{String(t("prompts.settings.customInstructions.title"))}
 						</div>
-						<select
-							value={preferredLanguage}
+						<div
+							style={{
+								fontSize: "13px",
+								color: "var(--vscode-descriptionForeground)",
+								marginBottom: "8px",
+							}}>
+							{String(t("prompts.settings.customInstructions.description"))}
+						</div>
+						<VSCodeTextArea
+							value={customInstructions ?? ""}
 							onChange={(e) => {
-								const newLanguage = e.target.value
-								const langCode = getLanguageCode(newLanguage)
-								console.log("Changing language:", { newLanguage, langCode })
-
-								// 更新 React 状态
-								setPreferredLanguage(newLanguage)
-
-								// 更新 i18next
-								i18n.changeLanguage(langCode)
-									.then(() => {
-										console.log("Language changed to:", i18n.language)
-									})
-									.catch((err) => {
-										console.error("Failed to change language:", err)
-									})
-
-								// 通知 VSCode
+								const value =
+									(e as CustomEvent)?.detail?.target?.value ||
+									((e as any).target as HTMLTextAreaElement).value
+								setCustomInstructions(value || undefined)
 								vscode.postMessage({
-									type: "preferredLanguage",
-									text: newLanguage,
+									type: "customInstructions",
+									text: value.trim() || undefined,
 								})
 							}}
-							style={{
-								width: "100%",
-								padding: "4px 8px",
-								backgroundColor: "var(--vscode-input-background)",
-								color: "var(--vscode-input-foreground)",
-								border: "1px solid var(--vscode-input-border)",
-								borderRadius: "2px",
-								height: "28px",
-							}}>
-							<option value="English">English</option>
-							<option value="Simplified Chinese">Simplified Chinese - 简体中文</option>
-							<option value="Traditional Chinese">Traditional Chinese - 繁體中文</option>
-							<option value="Arabic">Arabic - العربية</option>
-							<option value="Brazilian Portuguese">Portuguese - Português (Brasil)</option>
-							<option value="Czech">Czech - Čeština</option>
-							<option value="French">French - Français</option>
-							<option value="German">German - Deutsch</option>
-							<option value="Hindi">Hindi - हिन्दी</option>
-							<option value="Hungarian">Hungarian - Magyar</option>
-							<option value="Italian">Italian - Italiano</option>
-							<option value="Japanese">Japanese - 日本語</option>
-							<option value="Korean">Korean - 한국어</option>
-							<option value="Polish">Polish - Polski</option>
-							<option value="Portuguese">Portuguese - Português (Portugal)</option>
-							<option value="Russian">Russian - Русский</option>
-							<option value="Spanish">Spanish - Español</option>
-							<option value="Turkish">Turkish - Türkçe</option>
-						</select>
-						<p
+							rows={4}
+							resize="vertical"
+							style={{ width: "100%" }}
+							data-testid="global-custom-instructions-textarea"
+						/>
+						<div
 							style={{
 								fontSize: "12px",
-								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
+								marginTop: "5px",
+								marginBottom: "40px",
 							}}>
-							{String(t("prompts.settings.language.description"))}
-						</p>
-					</div>
-
-					<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
-						{String(t("prompts.settings.customInstructions.title"))}
-					</div>
-					<div
-						style={{ fontSize: "13px", color: "var(--vscode-descriptionForeground)", marginBottom: "8px" }}>
-						{String(t("prompts.settings.customInstructions.description"))}
-					</div>
-					<VSCodeTextArea
-						value={customInstructions ?? ""}
-						onChange={(e) => {
-							const value =
-								(e as CustomEvent)?.detail?.target?.value ||
-								((e as any).target as HTMLTextAreaElement).value
-							setCustomInstructions(value || undefined)
-							vscode.postMessage({
-								type: "customInstructions",
-								text: value.trim() || undefined,
-							})
-						}}
-						rows={4}
-						resize="vertical"
-						style={{ width: "100%" }}
-						data-testid="global-custom-instructions-textarea"
-					/>
-					<div
-						style={{
-							fontSize: "12px",
-							color: "var(--vscode-descriptionForeground)",
-							marginTop: "5px",
-							marginBottom: "40px",
-						}}>
-						{String(t("prompts.settings.customInstructions.loadFrom"))}{" "}
-						<span
-							style={{
-								color: "var(--vscode-textLink-foreground)",
-								cursor: "pointer",
-								textDecoration: "underline",
-							}}
-							onClick={() =>
-								vscode.postMessage({
-									type: "openFile",
-									text: "./.coolclinerules",
-									values: {
-										create: true,
-										content: "",
-									},
-								})
-							}>
-							.coolclinerules
-						</span>{" "}
-						{String(t("prompts.settings.customInstructions.inWorkspace"))}
+							{String(t("prompts.settings.customInstructions.loadFrom"))}{" "}
+							<span
+								style={{
+									color: "var(--vscode-textLink-foreground)",
+									cursor: "pointer",
+									textDecoration: "underline",
+								}}
+								onClick={() =>
+									vscode.postMessage({
+										type: "openFile",
+										text: "./.coolclinerules",
+										values: {
+											create: true,
+											content: "",
+										},
+									})
+								}>
+								.coolclinerules
+							</span>{" "}
+							{String(t("prompts.settings.customInstructions.inWorkspace"))}
+						</div>
 					</div>
 				</div>
 
