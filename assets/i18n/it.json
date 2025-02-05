@@ -1,0 +1,617 @@
+{
+	"common": {
+		"done": "Fatto",
+		"add": "Aggiungi",
+		"delete": "Elimina",
+		"rename": "Rinomina",
+		"preview": "Anteprima",
+		"save": "Salva",
+		"cancel": "Annulla",
+		"create": "Crea",
+		"prompt": "Prompt",
+		"actions": {
+			"reset": "Ripristina predefiniti",
+			"edit": "Modifica",
+			"save": "Salva",
+			"cancel": "Annulla",
+			"close": "Chiudi",
+			"doneEditing": "Modifica completata"
+		},
+		"status": {
+			"loading": "Caricamento...",
+			"error": "Errore",
+			"success": "Successo"
+		},
+		"noDescription": "Nessuna descrizione",
+		"unknown": "Sconosciuto"
+	},
+	"welcome": {
+		"title": "Benvenuto!",
+		"description": "CoolCline è un assistente di programmazione proattivo che migliora il tuo flusso di lavoro di sviluppo con capacità AI avanzate. Ti aiuta a scrivere codice in modo più efficiente, ottimizzare le query, correggere automaticamente gli errori, eseguire attività da riga di comando e eseguire test di automazione del browser.",
+		"readmeLink": "README",
+		"apiProviderNeeded": "Per iniziare, questa estensione necessita di un provider API.",
+		"letsGo": "Iniziamo!"
+	},
+	"chat": {
+		"welcome": {
+			"title": "Cosa posso fare per te?",
+			"description": "CoolCline è un assistente di programmazione proattivo che migliora il tuo flusso di lavoro di sviluppo con capacità AI avanzate. Ti aiuta a scrivere codice in modo più efficiente, ottimizzare le query, correggere automaticamente gli errori, eseguire attività da riga di comando e eseguire test di automazione del browser.",
+			"readMore": "README"
+		},
+		"browser": {
+			"action": "Azione browser",
+			"launch": "Avvia browser su {url}",
+			"click": "Clic ({coordinate})",
+			"type": "Digita \"{text}\"",
+			"scrollDown": "Scorri verso il basso",
+			"scrollUp": "Scorri verso l'alto",
+			"close": "Chiudi browser"
+		},
+		"task": {
+			"title": "Attività",
+			"seeMore": "Vedi di più",
+			"seeLess": "Vedi di meno",
+			"tokens": "Token",
+			"context": "Contesto",
+			"cache": "Cache",
+			"apiCost": "Costo API",
+			"export": "ESPORTA"
+		},
+		"messages": {
+			"error": "Errore",
+			"trouble": "CoolCline sta avendo problemi...",
+			"executeCommand": "CoolCline vuole eseguire questo comando:",
+			"useTool": "usa uno strumento",
+			"accessResource": "accedi a una risorsa",
+			"taskCompleted": "Attività completata",
+			"apiCancelled": "Richiesta API annullata",
+			"apiStreamingFailed": "Streaming API fallito",
+			"apiRequest": "Richiesta API",
+			"apiFailed": "Richiesta API fallita",
+			"apiInProgress": "Richiesta API...",
+			"question": "CoolCline ha una domanda:",
+			"searchDirectory": "CoolCline vuole cercare in questa directory",
+			"searchedDirectory": "CoolCline ha cercato in questa directory",
+			"switchMode": "CoolCline vuole passare alla modalità",
+			"switchedMode": "CoolCline è passato alla modalità",
+			"modeBecause": "modalità perché:",
+			"mode": "modalità",
+			"response": "Risposta"
+		},
+		"actions": {
+			"edit": "Modifica...",
+			"separator": "────",
+			"newChat": "Nuova chat"
+		},
+		"announcement": {
+			"title": "🎉 Presentazione di CoolCline",
+			"customization": {
+				"title": "Modalità personalizzate: Celebriamo la nostra nuova identità",
+				"description": "Per segnare questo nuovo capitolo, stiamo introducendo il potere di plasmare CoolCline in qualsiasi ruolo tu abbia bisogno! Crea persone specializzate e un intero team di agenti con prompt profondamente personalizzati:",
+				"examples": {
+					"qa": "Ingegneri QA che scrivono casi di test approfonditi e individuano casi limite",
+					"pm": "Product Manager che eccellono nelle user story e nella prioritizzazione delle funzionalità",
+					"ui": "Designer UI/UX che creano interfacce belle e accessibili",
+					"reviewer": "Revisori di codice che assicurano qualità e manutenibilità"
+				},
+				"getStarted": "Basta cliccare sull'icona del taccuino per iniziare con le modalità personalizzate!"
+			},
+			"join": {
+				"title": "Unisciti a noi per il prossimo capitolo",
+				"description": "Non vediamo l'ora di vedere come spingerai il potenziale di CoolCline ancora più lontano! Condividi le tue modalità personalizzate e unisciti alla discussione su"
+			}
+		},
+		"autoApprove": {
+			"title": "Approvazione automatica",
+			"none": "Nessuna",
+			"description": "L'approvazione automatica permette a CoolCline di eseguire azioni senza chiedere il permesso. Attiva solo per le azioni di cui ti fidi completamente.",
+			"actions": {
+				"readFiles": {
+					"label": "Leggi file e directory",
+					"description": "Permette l'accesso in lettura a qualsiasi file sul tuo computer."
+				},
+				"editFiles": {
+					"label": "Modifica file",
+					"description": "Permette la modifica di qualsiasi file sul tuo computer."
+				},
+				"executeCommands": {
+					"label": "Esegui comandi approvati",
+					"description": "Permette l'esecuzione di comandi del terminale approvati. Puoi configurare questo nel pannello delle impostazioni."
+				},
+				"useBrowser": {
+					"label": "Usa il browser",
+					"description": "Permette di avviare e interagire con qualsiasi sito web in un browser headless."
+				},
+				"useMcp": {
+					"label": "Usa server MCP",
+					"description": "Permette l'uso di server MCP configurati che possono modificare il filesystem o interagire con le API."
+				},
+				"switchModes": {
+					"label": "Cambia modalità e crea attività",
+					"description": "Permette il cambio automatico tra diverse modalità AI e la creazione di nuove attività senza richiedere approvazione."
+				},
+				"retryRequests": {
+					"label": "Riprova richieste fallite",
+					"description": "Riprova automaticamente le richieste API fallite quando il provider restituisce una risposta di errore."
+				}
+			}
+		},
+		"contextMenu": {
+			"problems": "Problemi",
+			"pasteUrl": "Incolla URL per ottenere il contenuto",
+			"noResults": "Nessun risultato trovato",
+			"gitCommits": "Commit Git",
+			"addFile": "Aggiungi file",
+			"addFolder": "Aggiungi cartella"
+		},
+		"reasoning": {
+			"title": "Ragionamento"
+		},
+		"input": {
+			"typeMessage": "Scrivi un messaggio...",
+			"typeTask": "Scrivi qui la tua attività...",
+			"addContext": "(@ per aggiungere contesto",
+			"dragImages": ", tieni premuto Shift per trascinare immagini)"
+		}
+	},
+	"prompts": {
+		"settings": {
+			"sections": {
+				"general": "Impostazioni generali dei prompt",
+				"modes": "Impostazioni dei prompt delle modalità",
+				"tools": "Impostazioni dei prompt di supporto"
+			},
+			"language": {
+				"title": "Lingua",
+				"description": "Imposta la lingua di risposta dell'assistente AI, l'interfaccia cambierà anche nella lingua selezionata",
+				"select": "Seleziona lingua"
+			},
+			"customInstructions": {
+				"title": "Istruzioni di comportamento generale",
+				"description": "Queste istruzioni si applicano a tutte le modalità come linee guida di comportamento di base, che possono essere estese da istruzioni specifiche della modalità qui sotto",
+				"loadFrom": "Le istruzioni possono anche essere caricate da",
+				"inWorkspace": "nel tuo spazio di lavoro"
+			},
+			"modePrompts": {
+				"title": "Impostazioni dei prompt",
+				"description": "Clicca su + per creare una nuova modalità, o chiedi semplicemente a CoolCline nella chat di crearne una per te!",
+				"createMode": "Crea nuova modalità",
+				"editConfig": "Modifica configurazione modalità",
+				"name": "Nome",
+				"specificPrompts": "Prompt specifici della modalità",
+				"slug": {
+					"title": "Identificatore",
+					"description": "Un identificatore univoco utilizzato negli URL e nei nomi dei file, deve contenere solo lettere minuscole, numeri e trattini"
+				},
+				"roleDefinition": {
+					"title": "Definizione del ruolo",
+					"description": "Definisci l'esperienza e i tratti della personalità di CoolCline per questa modalità, che determineranno il suo stile di lavoro e comportamento",
+					"createDescription": "Definisci l'esperienza e i tratti della personalità per questa modalità"
+				},
+				"apiConfig": {
+					"title": "Configurazione API",
+					"description": "Seleziona la configurazione API per questa modalità",
+					"useCurrentConfig": "Usa la configurazione API attualmente selezionata",
+					"enhancePrompts": "Puoi selezionare una configurazione API specificamente per il miglioramento dei prompt"
+				},
+				"tools": {
+					"title": "Strumenti disponibili",
+					"cannotModify": "Gli strumenti per le modalità integrate non possono essere modificati",
+					"selectTools": "Seleziona quali strumenti questa modalità può utilizzare",
+					"availableTitle": "Lista degli strumenti disponibili",
+					"selectDescription": "Seleziona quali strumenti questa modalità può utilizzare"
+				},
+				"customInstructions": {
+					"title": "Istruzioni specifiche della modalità",
+					"description": "Aggiungi linee guida comportamentali specifiche per la modalità {mode}",
+					"loadFrom": "Le istruzioni specifiche della modalità {mode} possono anche essere caricate da",
+					"inWorkspace": "nel tuo spazio di lavoro",
+					"createDescription": "Aggiungi linee guida comportamentali specifiche per questa modalità",
+					"modeSpecific": "Istruzioni specifiche della modalità"
+				},
+				"preview": "Anteprima del prompt di sistema"
+			},
+			"api": {
+				"title": "Impostazioni API",
+				"configProfile": {
+					"title": "Profili di configurazione",
+					"description": "Configura i profili API per passare rapidamente tra i provider nella barra di input della chat"
+				},
+				"model": {
+					"title": "Modello",
+					"search": "Cerca modelli...",
+					"selected": "Modello attualmente selezionato:"
+				},
+				"provider": {
+					"title": "Provider",
+					"openai": "OpenAI",
+					"glama": "Glama",
+					"openRouter": "OpenRouter"
+				}
+			},
+			"experimental": {
+				"title": "Funzionalità sperimentali",
+				"description": "Attiva o disattiva le funzionalità sperimentali"
+			}
+		},
+		"support": {
+			"title": "Impostazioni dei prompt di supporto",
+			"enhance": {
+				"title": "Migliora",
+				"testPrompt": "Inserisci un prompt per testare il miglioramento",
+				"preview": "Anteprima del miglioramento del prompt",
+				"enterPrompt": "Inserisci un prompt per testare il miglioramento"
+			},
+			"prompts": {
+				"enhance": {
+					"label": "Miglioramento dei prompt",
+					"description": "Ottieni suggerimenti e miglioramenti più precisi attraverso il miglioramento dei prompt. Questo assicura che CoolCline comprenda con precisione la tua intenzione e fornisca la migliore risposta. Disponibile tramite l'icona ✨ nell'interfaccia della chat."
+				},
+				"explain": {
+					"label": "Spiegazione del codice",
+					"description": "Ottieni spiegazioni dettagliate di frammenti di codice, funzioni o file interi. Adatto per comprendere codice complesso o imparare nuovi pattern di programmazione. Disponibile tramite i suggerimenti intelligenti (icona lampadina) o menu contestuale nell'editor."
+				},
+				"fix": {
+					"label": "Correzione dei problemi",
+					"description": "Aiuta a identificare e risolvere errori di programma, bug o problemi di qualità del codice, fornendo una guida passo passo per la correzione. Disponibile tramite i suggerimenti intelligenti (icona lampadina) o menu contestuale nell'editor."
+				},
+				"improve": {
+					"label": "Ottimizzazione del codice",
+					"description": "Ottieni suggerimenti per l'ottimizzazione del codice, best practice e miglioramenti architetturali mantenendo la funzionalità. Disponibile tramite i suggerimenti intelligenti (icona lampadina) o menu contestuale nell'editor."
+				},
+				"addToContext": {
+					"label": "Aggiungi al contesto",
+					"description": "Aggiungi informazioni supplementari all'attività o alla conversazione corrente. Utilizzato per fornire spiegazioni aggiuntive o dettagli chiarificatori. Disponibile tramite i suggerimenti intelligenti (icona lampadina) o menu contestuale nell'editor."
+				}
+			}
+		}
+	},
+	"mcp": {
+		"title": "Server MCP",
+		"modelContextProtocol": "Protocollo di Contesto del Modello",
+		"description": {
+			"part1": "Attiva la comunicazione con i server MCP locali che forniscono strumenti e risorse aggiuntive per estendere le capacità di CoolCline. Puoi utilizzare",
+			"part2": "o chiedere a CoolCline di creare nuovi strumenti per i tuoi flussi di lavoro (ad esempio, \"crea uno strumento per ottenere l'ultima documentazione npm\")."
+		},
+		"communityServers": "Server della community",
+		"enable": {
+			"title": "Attiva server MCP",
+			"description": "Quando attivato, CoolCline può comunicare con i server MCP per funzionalità speciali. Se non usi MCP, puoi disattivare questo per ridurre l'utilizzo dei token di CoolCline."
+		},
+		"serverCreation": {
+			"title": "Attiva creazione server MCP",
+			"description": "Quando attivato, CoolCline può aiutarti a creare nuovi server MCP con comandi come \"crea strumento...\". Se non hai bisogno di creare server MCP, puoi disattivare questo per ridurre l'utilizzo dei token di CoolCline."
+		},
+		"editSettings": "Modifica impostazioni MCP",
+		"tools": {
+			"title": "Strumenti",
+			"parameters": "Parametri",
+			"alwaysAllow": "Consenti sempre",
+			"noTools": "Nessuno strumento trovato"
+		},
+		"resources": {
+			"title": "Risorse",
+			"returns": "Valori di ritorno",
+			"noResources": "Nessuna risorsa trovata"
+		},
+		"timeout": {
+			"title": "Timeout di rete",
+			"description": "Tempo massimo di attesa per la risposta del server",
+			"15": "15 secondi",
+			"30": "30 secondi",
+			"60": "1 minuto",
+			"300": "5 minuti",
+			"600": "10 minuti",
+			"900": "15 minuti",
+			"1800": "30 minuti",
+			"3600": "60 minuti"
+		},
+		"server": {
+			"restart": "Riavvia server",
+			"restarting": "Riavvio in corso...",
+			"retry": "Riprova connessione",
+			"retrying": "Nuovo tentativo..."
+		}
+	},
+	"history": {
+		"title": "Cronologia",
+		"search": {
+			"placeholder": "Cerca nella cronologia...",
+			"clear": "Cancella ricerca"
+		},
+		"sort": {
+			"newest": "Più recenti",
+			"oldest": "Più vecchi",
+			"mostExpensive": "Più costosi",
+			"mostTokens": "Più token",
+			"mostRelevant": "Più rilevanti"
+		},
+		"preview": {
+			"recentTasks": "Attività recenti",
+			"viewAll": "Visualizza tutta la cronologia",
+			"promptCopied": "Prompt copiato negli appunti",
+			"metrics": {
+				"tokens": "Token",
+				"cache": "Cache",
+				"apiCost": "Costo API"
+			}
+		}
+	},
+	"settings": {
+		"title": "Impostazioni",
+		"done": "Fatto",
+		"provider": {
+			"title": "Provider",
+			"apiProvider": "Provider API",
+			"apiKey": {
+				"title": "Chiave API",
+				"placeholder": "Inserisci la tua chiave API",
+				"storedLocally": "La chiave API viene memorizzata in modo sicuro sul tuo computer",
+				"getKey": "Ottieni chiave API"
+			},
+			"customBaseUrl": {
+				"title": "URL base personalizzato",
+				"placeholder": "Predefinito: {defaultUrl}"
+			},
+			"configProfile": {
+				"title": "Profilo di configurazione",
+				"description": "Salva diverse configurazioni API per passare rapidamente tra provider e impostazioni"
+			},
+			"providers": {
+				"anthropic": {
+					"name": "Anthropic",
+					"title": "Chiave API Anthropic",
+					"baseUrl": "URL base (opzionale)",
+					"enterBaseUrl": "Inserisci l'URL base dell'API",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Puoi ottenere la tua chiave API Anthropic qui"
+				},
+				"openai": {
+					"name": "OpenAI",
+					"title": "Servizio compatibile OpenAI",
+					"baseUrl": "URL base",
+					"enterBaseUrl": "Inserisci l'URL base",
+					"useAzure": "Usa Azure OpenAI",
+					"setAzureVersion": "Imposta versione API Azure",
+					"description": "Usa servizio API compatibile con OpenAI",
+					"streaming": "Attiva streaming",
+					"modelConfig": {
+						"title": "Configurazione del modello",
+						"description": "Configura capacità del modello e informazioni sui prezzi"
+					},
+					"useCustomBaseUrl": "Usa URL base personalizzato"
+				},
+				"openaiNative": {
+					"name": "OpenAI Native",
+					"title": "Chiave API OpenAI",
+					"description": "Usa servizio API ufficiale OpenAI",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Puoi ottenere la tua chiave API OpenAI qui"
+				},
+				"glama": {
+					"name": "Glama",
+					"title": "Chiave API Glama",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Ottieni chiave API Glama"
+				},
+				"bedrock": {
+					"name": "AWS Bedrock",
+					"title": "AWS Bedrock",
+					"credentials": "Credenziali AWS",
+					"profile": "Profilo AWS",
+					"accessKey": "ID chiave di accesso",
+					"secretKey": "Chiave segreta",
+					"sessionToken": "Token di sessione (opzionale)",
+					"region": "Regione",
+					"selectRegion": "Seleziona regione",
+					"useCrossRegion": "Usa inferenza cross-region",
+					"description": "Usa servizio modelli AI AWS Bedrock",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Configura credenziali AWS"
+				},
+				"openRouter": {
+					"name": "OpenRouter",
+					"title": "Chiave API OpenRouter",
+					"getKey": "Ottieni chiave API OpenRouter",
+					"compressPrompts": "Comprimi prompt e catene di messaggi alla dimensione del contesto",
+					"transforms": "Trasformazioni OpenRouter",
+					"useCustomBaseUrl": "Usa URL base personalizzato"
+				},
+				"vertex": {
+					"name": "Google Vertex AI",
+					"title": "Google Vertex AI",
+					"projectId": "ID progetto Google Cloud",
+					"enterProjectId": "Inserisci ID progetto",
+					"region": "Regione Google Cloud",
+					"selectRegion": "Seleziona regione",
+					"description": "Per utilizzare Google Cloud Vertex AI, devi 1) Creare account Google Cloud › Attivare API Vertex AI › Attivare modelli Claude richiesti, 2) Installare Google Cloud CLI › Configurare credenziali applicazione predefinite",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Configura credenziali Google Cloud"
+				},
+				"gemini": {
+					"name": "Google Gemini",
+					"title": "Chiave API Google Gemini",
+					"description": "Usa modelli AI Gemini di Google",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Ottieni chiave API Google Gemini"
+				},
+				"mistral": {
+					"name": "Mistral",
+					"title": "Chiave API Mistral",
+					"description": "Usa servizio modelli AI Mistral",
+					"getKey": "Ottieni chiave API Mistral",
+					"useCustomBaseUrl": "Usa URL base personalizzato"
+				},
+				"ollama": {
+					"name": "Ollama",
+					"title": "Ollama",
+					"baseUrl": "URL base",
+					"modelId": "ID modello",
+					"description": "Ollama ti permette di eseguire modelli di linguaggio open source localmente",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Configura Ollama"
+				},
+				"lmstudio": {
+					"name": "LM Studio",
+					"title": "LM Studio",
+					"baseUrl": "URL base (opzionale)",
+					"modelId": "ID modello",
+					"enterModelId": "Es: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio ti permette di eseguire modelli sulla tua macchina locale. Consulta la guida rapida per iniziare. Devi anche avviare la funzionalità server locale di LM Studio per utilizzarlo con questa estensione. Nota: CoolCline usa prompt complessi che funzionano meglio con i modelli Claude. I modelli più deboli potrebbero non funzionare come previsto.",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Configura LM Studio"
+				},
+				"vscode": {
+					"name": "VS Code",
+					"title": "API LM VS Code",
+					"description": "Usa API modello di linguaggio integrata di VS Code",
+					"modelSelector": "Seleziona modello",
+					"noModels": "Nessun modello di linguaggio trovato. Assicurati di aver installato e attivato le estensioni pertinenti.",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Configura API LM VS Code"
+				},
+				"unbound": {
+					"name": "Unbound",
+					"title": "Chiave API Unbound",
+					"getKey": "Ottieni chiave API Unbound",
+					"useCustomBaseUrl": "Usa URL base personalizzato"
+				},
+				"deepseek": {
+					"name": "DeepSeek",
+					"title": "Chiave API DeepSeek",
+					"description": "DeepSeek fornisce servizi modelli AI ad alte prestazioni",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"getKey": "Puoi ottenere la tua chiave API DeepSeek qui"
+				}
+			},
+			"model": {
+				"title": "Modello",
+				"selectPlaceholder": "Seleziona modello...",
+				"currentlySelected": "Modello attualmente selezionato:",
+				"search": "Cerca modelli..."
+			}
+		},
+		"autoApprove": {
+			"title": "Impostazioni approvazione automatica",
+			"description": "Queste impostazioni permettono a CoolCline di eseguire azioni senza approvazione. Attiva queste impostazioni solo se ti fidi completamente dell'AI e comprendi i rischi per la sicurezza.",
+			"readOnly": {
+				"title": "Approva sempre azioni in sola lettura",
+				"description": "Quando attivato, CoolCline può vedere il contenuto delle directory e leggere i file senza cliccare sul pulsante di approvazione."
+			},
+			"write": {
+				"title": "Approva sempre azioni di scrittura",
+				"description": "Crea e modifica file automaticamente senza approvazione",
+				"delay": {
+					"title": "Ritardo di scrittura",
+					"description": "Ritardo dopo la scrittura per diagnosticare potenziali problemi"
+				}
+			},
+			"browser": {
+				"title": "Approva sempre azioni del browser",
+				"description": "Esegui azioni del browser automaticamente senza approvazione\nNota: si applica solo se il modello supporta l'uso del computer"
+			},
+			"retry": {
+				"title": "Riprova sempre richieste API fallite",
+				"description": "Riprova automaticamente le richieste API fallite quando il server restituisce un errore",
+				"delay": {
+					"title": "Ritardo di ripetizione",
+					"description": "Ritardo prima di riprovare la richiesta"
+				}
+			},
+			"mcp": {
+				"title": "Approva sempre strumenti MCP",
+				"description": "Attiva l'approvazione automatica degli strumenti MCP individuali nella vista server MCP (richiede sia questa impostazione che la casella \"Consenti sempre\" dello strumento individuale)"
+			},
+			"modeSwitch": {
+				"title": "Approva sempre cambi di modalità e creazione attività",
+				"description": "Passa automaticamente tra modalità AI e crea nuove attività senza approvazione"
+			},
+			"execute": {
+				"title": "Approva sempre azioni di esecuzione consentite",
+				"description": "Esegui automaticamente comandi del terminale consentiti senza approvazione",
+				"commands": {
+					"title": "Consenti comandi per esecuzione automatica",
+					"description": "Prefissi di comando che possono essere eseguiti automaticamente quando \"Approva sempre azioni di esecuzione consentite\" è attivato.",
+					"placeholder": "Inserisci un prefisso di comando (es: 'git ')",
+					"add": "Aggiungi"
+				}
+			}
+		},
+		"browser": {
+			"title": "Impostazioni browser",
+			"viewport": {
+				"title": "Dimensione finestra",
+				"description": "Seleziona la dimensione della finestra per le interazioni del browser. Questo influisce su come i siti web vengono visualizzati e interagiscono.",
+				"options": {
+					"largeDesktop": "Desktop grande (1280x800)",
+					"smallDesktop": "Desktop piccolo (900x600)",
+					"tablet": "Tablet (768x1024)",
+					"mobile": "Mobile (360x640)"
+				}
+			},
+			"screenshot": {
+				"title": "Qualità screenshot",
+				"description": "Regola la qualità WebP degli screenshot del browser. Valori più alti forniscono screenshot più nitidi ma aumentano l'utilizzo dei token."
+			}
+		},
+		"notification": {
+			"title": "Impostazioni notifiche",
+			"sound": {
+				"title": "Attiva suono",
+				"description": "Quando attivato, CoolCline riprodurrà suoni per notifiche ed eventi.",
+				"volume": "Volume"
+			}
+		},
+		"advanced": {
+			"title": "Impostazioni avanzate",
+			"experimental": {
+				"warning": "⚠️",
+				"features": {
+					"diffStrategy": {
+						"name": "Usa strategia diff sperimentale",
+						"description": "Quando attivato, CoolCline userà una strategia diff più avanzata in grado di gestire modifiche al codice più complesse. Questo è ancora sperimentale e potrebbe non funzionare in tutti i casi."
+					}
+				}
+			},
+			"rateLimit": {
+				"title": "Limite di frequenza",
+				"description": "Intervallo minimo tra le richieste API."
+			},
+			"terminalOutput": {
+				"title": "Limite output terminale",
+				"description": "Numero massimo di righe da includere nell'output del terminale durante l'esecuzione dei comandi. Le righe nel mezzo verranno rimosse se superato per risparmiare token."
+			},
+			"diff": {
+				"title": "Attiva modifica per diff",
+				"description": "Quando attivato, CoolCline può modificare i file più velocemente e rifiutare automaticamente le scritture complete di file non filtrati. Funziona meglio con i modelli Claude 3.5 Sonnet più recenti.",
+				"matchPrecision": {
+					"title": "Precisione corrispondenza",
+					"description": "Questo cursore controlla quanto precisamente i frammenti di codice devono corrispondere quando si applicano i diff. Valori più bassi permettono corrispondenze più flessibili ma aumentano il rischio di sostituzioni errate. Usa valori inferiori al 100% con cautela."
+				}
+			}
+		},
+		"experiments": {
+			"title": "Funzionalità sperimentali",
+			"description": "Attiva o disattiva funzionalità in sviluppo",
+			"features": {
+				"DIFF_STRATEGY": {
+					"name": "Usa strategia diff unificata sperimentale",
+					"description": "Attiva la strategia diff unificata sperimentale. Questa strategia può ridurre il numero di tentativi dovuti a errori del modello, ma può portare a comportamenti inaspettati o modifiche errate. Attiva solo se comprendi i rischi e sei pronto a rivedere attentamente tutte le modifiche."
+				},
+				"SEARCH_AND_REPLACE": {
+					"name": "Usa strumento cerca e sostituisci sperimentale",
+					"description": "Attiva lo strumento cerca e sostituisci sperimentale che permette a CoolCline di sostituire più istanze di un termine di ricerca in una singola richiesta."
+				},
+				"INSERT_BLOCK": {
+					"name": "Usa strumento inserimento blocco sperimentale",
+					"description": "Attiva lo strumento inserimento blocco sperimentale che permette a CoolCline di inserire contenuto a numeri di riga specifici senza creare un diff."
+				}
+			}
+		},
+		"footer": {
+			"description": "Se hai domande o feedback, apri un issue qui",
+			"resetState": "Reimposta stato",
+			"resetStateDescription": "Questo reimposterà tutto lo stato globale dell'estensione e l'archivio segreto."
+		}
+	}
+}
