@@ -81,7 +81,7 @@ export const ExtensionStateContext = createContext<ExtensionStateContextType | u
 export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [state, setState] = useState<ExtensionState>({
 		version: "",
-		clineMessages: [],
+		coolclineMessages: [],
 		taskHistory: [],
 		shouldShowAnnouncement: false,
 		allowedCommands: [],
@@ -204,11 +204,14 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					const partialMessage = message.partialMessage!
 					setState((prevState) => {
 						// worth noting it will never be possible for a more up-to-date message to be sent here or in normal messages post since the presentAssistantContent function uses lock
-						const lastIndex = findLastIndex(prevState.clineMessages, (msg) => msg.ts === partialMessage.ts)
+						const lastIndex = findLastIndex(
+							prevState.coolclineMessages,
+							(msg) => msg.ts === partialMessage.ts,
+						)
 						if (lastIndex !== -1) {
-							const newClineMessages = [...prevState.clineMessages]
-							newClineMessages[lastIndex] = partialMessage
-							return { ...prevState, clineMessages: newClineMessages }
+							const newCoolClineMessages = [...prevState.coolclineMessages]
+							newCoolClineMessages[lastIndex] = partialMessage
+							return { ...prevState, coolclineMessages: newCoolClineMessages }
 						}
 						return prevState
 					})

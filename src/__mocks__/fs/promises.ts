@@ -45,12 +45,12 @@ const formatRuleContent = (ruleFile: string, content: string): string => {
 }
 
 type RuleFiles = {
-	".clinerules-code": string
-	".clinerules-ask": string
-	".clinerules-architect": string
-	".clinerules-test": string
-	".clinerules-review": string
-	".clinerules": string
+	".coolclinerules-code": string
+	".coolclinerules-ask": string
+	".coolclinerules-architect": string
+	".coolclinerules-test": string
+	".coolclinerules-review": string
+	".coolclinerules": string
 }
 
 // Helper function to ensure directory exists
@@ -73,14 +73,14 @@ const mockFs = {
 
 		// Handle rule files
 		const ruleFiles: RuleFiles = {
-			".clinerules-code": "# Code Mode Rules\n1. Code specific rule",
-			".clinerules-ask": "# Ask Mode Rules\n1. Ask specific rule",
-			".clinerules-architect": "# Architect Mode Rules\n1. Architect specific rule",
-			".clinerules-test":
+			".coolclinerules-code": "# Code Mode Rules\n1. Code specific rule",
+			".coolclinerules-ask": "# Ask Mode Rules\n1. Ask specific rule",
+			".coolclinerules-architect": "# Architect Mode Rules\n1. Architect specific rule",
+			".coolclinerules-test":
 				"# Test Engineer Rules\n1. Always write tests first\n2. Get approval before modifying non-test code",
-			".clinerules-review":
+			".coolclinerules-review":
 				"# Code Reviewer Rules\n1. Provide specific examples in feedback\n2. Focus on maintainability and best practices",
-			".clinerules": "# Test Rules\n1. First rule\n2. Second rule",
+			".coolclinerules": "# Test Rules\n1. First rule\n2. Second rule",
 		}
 
 		// Check for exact file name match
@@ -163,7 +163,7 @@ const mockFs = {
 	_setInitialMockData: () => {
 		// Set up default MCP settings
 		mockFiles.set(
-			"/mock/settings/path/cline_mcp_settings.json",
+			"/mock/settings/path/coolcline_mcp_settings.json",
 			JSON.stringify({
 				mcpServers: {
 					"test-server": {

@@ -1,4 +1,4 @@
-import { VSCodeButton, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeButton, VSCodeTextField, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import { memo, useEffect, useRef, useState } from "react"
 import { ApiConfigMeta } from "../../../../src/shared/ExtensionMessage"
 import { Dropdown } from "vscrui"
@@ -90,11 +90,23 @@ const ApiConfigManager = ({
 					gap: "2px",
 				}}>
 				<label htmlFor="config-profile">
-					<span style={{ fontWeight: "500" }}>Configuration Profile</span>
+					<span style={{ fontWeight: "500" }}>
+						Configuration Profile{" "}
+						<VSCodeLink
+							href="https://github.com/coolcline/coolcline/blob/main/README.md"
+							style={{ display: "inline" }}>
+							README
+						</VSCodeLink>
+					</span>
 				</label>
 
 				{editState ? (
-					<div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+					<div
+						style={{
+							display: "flex",
+							gap: "4px",
+							alignItems: "center",
+						}}>
 						<VSCodeTextField
 							ref={inputRef as any}
 							value={inputValue}
@@ -139,7 +151,12 @@ const ApiConfigManager = ({
 					</div>
 				) : (
 					<>
-						<div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+						<div
+							style={{
+								display: "flex",
+								gap: "4px",
+								alignItems: "center",
+							}}>
 							<Dropdown
 								id="config-profile"
 								value={currentApiConfigName}

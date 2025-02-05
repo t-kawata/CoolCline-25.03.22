@@ -45,7 +45,7 @@ export class CustomModesManager {
 
 	async getCustomModesFilePath(): Promise<string> {
 		const settingsDir = await this.ensureSettingsDirectoryExists()
-		const filePath = path.join(settingsDir, "cline_custom_modes.json")
+		const filePath = path.join(settingsDir, "coolcline_custom_modes.json")
 		const fileExists = await fileExistsAtPath(filePath)
 		if (!fileExists) {
 			await this.queueWrite(async () => {

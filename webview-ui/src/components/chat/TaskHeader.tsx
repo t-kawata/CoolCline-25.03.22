@@ -1,7 +1,7 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 import React, { memo, useEffect, useMemo, useRef, useState } from "react"
 import { useWindowSize } from "react-use"
-import { ClineMessage } from "../../../../src/shared/ExtensionMessage"
+import { CoolClineMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import Thumbnails from "../common/Thumbnails"
@@ -10,7 +10,7 @@ import { formatLargeNumber } from "../../utils/format"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 
 interface TaskHeaderProps {
-	task: ClineMessage
+	task: CoolClineMessage
 	tokensIn: number
 	tokensOut: number
 	doesModelSupportPromptCache: boolean

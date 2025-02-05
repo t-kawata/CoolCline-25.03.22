@@ -2,7 +2,7 @@ import fs from "fs/promises"
 import path from "path"
 
 export async function loadRuleFiles(cwd: string): Promise<string> {
-	const ruleFiles = [".clinerules", ".cursorrules", ".windsurfrules"]
+	const ruleFiles = [".coolclinerules", ".cursorrules", ".windsurfrules"]
 	let combinedRules = ""
 
 	for (const file of ruleFiles) {
@@ -35,7 +35,7 @@ export async function addCustomInstructions(
 	let modeRuleContent = ""
 	if (mode) {
 		try {
-			const modeRuleFile = `.clinerules-${mode}`
+			const modeRuleFile = `.coolclinerules-${mode}`
 			const content = await fs.readFile(path.join(cwd, modeRuleFile), "utf-8")
 			if (content.trim()) {
 				modeRuleContent = content.trim()
@@ -70,7 +70,7 @@ export async function addCustomInstructions(
 
 	// Add mode-specific rules first if they exist
 	if (modeRuleContent && modeRuleContent.trim()) {
-		const modeRuleFile = `.clinerules-${mode}`
+		const modeRuleFile = `.coolclinerules-${mode}`
 		rules.push(`# Rules from ${modeRuleFile}:\n${modeRuleContent}`)
 	}
 

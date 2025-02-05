@@ -22,7 +22,7 @@ import { WebviewMessage } from "../../shared/WebviewMessage"
 import { Mode, CustomModePrompts, PromptComponent, defaultModeSlug } from "../../shared/modes"
 import { SYSTEM_PROMPT } from "../prompts/system"
 import { fileExistsAtPath } from "../../utils/fs"
-import { Cline } from "../Cline"
+import { CoolCline } from "../CoolCline"
 import { openMention } from "../mentions"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
@@ -98,7 +98,7 @@ type GlobalStateKey =
 	| "browserViewportSize"
 	| "screenshotQuality"
 	| "fuzzyMatchThreshold"
-	| "preferredLanguage" // Language setting for Cline's communication
+	| "preferredLanguage" // Language setting for CoolCline's communication
 	| "writeDelayMs"
 	| "terminalOutputLineLimit"
 	| "mcpEnabled"
@@ -124,17 +124,17 @@ export const GlobalFileNames = {
 	uiMessages: "ui_messages.json",
 	glamaModels: "glama_models.json",
 	openRouterModels: "openrouter_models.json",
-	mcpSettings: "cline_mcp_settings.json",
+	mcpSettings: "coolcline_mcp_settings.json",
 }
 
-export class ClineProvider implements vscode.WebviewViewProvider {
-	public static readonly sideBarId = "roo-cline.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
-	public static readonly tabPanelId = "roo-cline.TabPanelProvider"
-	private static activeInstances: Set<ClineProvider> = new Set()
+export class CoolClineProvider implements vscode.WebviewViewProvider {
+	public static readonly sideBarId = "coolcline.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
+	public static readonly tabPanelId = "coolcline.TabPanelProvider"
+	private static activeInstances: Set<CoolClineProvider> = new Set()
 	private disposables: vscode.Disposable[] = []
 	private view?: vscode.WebviewView | vscode.WebviewPanel
 	private isViewLaunched = false
-	private cline?: Cline
+	private coolcline?: CoolCline
 	private workspaceTracker?: WorkspaceTracker
 	mcpHub?: McpHub
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
@@ -145,8 +145,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
 	) {
-		this.outputChannel.appendLine("ClineProvider instantiated")
-		ClineProvider.activeInstances.add(this)
+		this.outputChannel.appendLine("CoolClineProvider instantiated")
+		CoolClineProvider.activeInstances.add(this)
 		this.workspaceTracker = new WorkspaceTracker(this)
 		this.mcpHub = new McpHub(this)
 		this.configManager = new ConfigManager(this.context)
@@ -161,7 +161,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	- https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
 	*/
 	async dispose() {
-		this.outputChannel.appendLine("Disposing ClineProvider...")
+		this.outputChannel.appendLine("Disposing CoolClineProvider...")
 		await this.clearTask()
 		this.outputChannel.appendLine("Cleared task")
 		if (this.view && "dispose" in this.view) {
@@ -180,22 +180,22 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		this.mcpHub = undefined
 		this.customModesManager?.dispose()
 		this.outputChannel.appendLine("Disposed all disposables")
-		ClineProvider.activeInstances.delete(this)
+		CoolClineProvider.activeInstances.delete(this)
 	}
 
-	public static getVisibleInstance(): ClineProvider | undefined {
+	public static getVisibleInstance(): CoolClineProvider | undefined {
 		return findLast(Array.from(this.activeInstances), (instance) => instance.view?.visible === true)
 	}
 
-	public static async getInstance(): Promise<ClineProvider | undefined> {
-		let visibleProvider = ClineProvider.getVisibleInstance()
+	public static async getInstance(): Promise<CoolClineProvider | undefined> {
+		let visibleProvider = CoolClineProvider.getVisibleInstance()
 
 		// If no visible provider, try to show the sidebar view
 		if (!visibleProvider) {
-			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
+			await vscode.commands.executeCommand("coolcline.SidebarProvider.focus")
 			// Wait briefly for the view to become visible
 			await delay(100)
-			visibleProvider = ClineProvider.getVisibleInstance()
+			visibleProvider = CoolClineProvider.getVisibleInstance()
 		}
 
 		// If still no visible provider, return
@@ -207,12 +207,12 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	public static async isActiveTask(): Promise<boolean> {
-		const visibleProvider = await ClineProvider.getInstance()
+		const visibleProvider = await CoolClineProvider.getInstance()
 		if (!visibleProvider) {
 			return false
 		}
 
-		if (visibleProvider.cline) {
+		if (visibleProvider.coolcline) {
 			return true
 		}
 
@@ -224,7 +224,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		promptType: keyof typeof ACTION_NAMES,
 		params: Record<string, string | any[]>,
 	): Promise<void> {
-		const visibleProvider = await ClineProvider.getInstance()
+		const visibleProvider = await CoolClineProvider.getInstance()
 		if (!visibleProvider) {
 			return
 		}
@@ -243,7 +243,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			return
 		}
 
-		if (visibleProvider.cline && command.endsWith("InCurrentTask")) {
+		if (visibleProvider.coolcline && command.endsWith("InCurrentTask")) {
 			await visibleProvider.postMessageToWebview({
 				type: "invoke",
 				invoke: "sendMessage",
@@ -253,7 +253,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			return
 		}
 
-		await visibleProvider.initClineWithTask(prompt)
+		await visibleProvider.initCoolClineWithTask(prompt)
 	}
 
 	async resolveWebviewView(webviewView: vscode.WebviewView | vscode.WebviewPanel) {
@@ -338,7 +338,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		this.outputChannel.appendLine("Webview view resolved")
 	}
 
-	public async initClineWithTask(task?: string, images?: string[]) {
+	public async initCoolClineWithTask(task?: string, images?: string[]) {
 		await this.clearTask()
 		const {
 			apiConfiguration,
@@ -353,7 +353,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
-		this.cline = new Cline(
+		this.coolcline = new CoolCline(
 			this,
 			apiConfiguration,
 			effectiveInstructions,
@@ -366,7 +366,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		)
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem) {
+	public async initCoolClineWithHistoryItem(historyItem: HistoryItem) {
 		await this.clearTask()
 		const {
 			apiConfiguration,
@@ -381,7 +381,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
-		this.cline = new Cline(
+		this.coolcline = new CoolCline(
 			this,
 			apiConfiguration,
 			effectiveInstructions,
@@ -454,7 +454,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 					<meta http-equiv="Content-Security-Policy" content="${csp.join("; ")}">
 					<link rel="stylesheet" type="text/css" href="${stylesUri}">
 					<link href="${codiconsUri}" rel="stylesheet" />
-					<title>Roo Code</title>
+					<title>CoolCline</title>
 				</head>
 				<body>
 					<div id="root"></div>
@@ -529,7 +529,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
             <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}';">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
-            <title>Roo Code</title>
+            <title>CoolCline</title>
           </head>
           <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -663,8 +663,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						// You can send any JSON serializable data.
 						// Could also do this in extension .ts
 						//this.postMessageToWebview({ type: "text", text: `Extension: ${Date.now()}` })
-						// initializing new instance of Cline will make sure that any agentically running promises in old instance don't affect our new task. this essentially creates a fresh slate for the new task
-						await this.initClineWithTask(message.text, message.images)
+						// initializing new instance of CoolCline will make sure that any agentically running promises in old instance don't affect our new task. this essentially creates a fresh slate for the new task
+						await this.initCoolClineWithTask(message.text, message.images)
 						break
 					case "apiConfiguration":
 						if (message.apiConfiguration) {
@@ -700,7 +700,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.postStateToWebview()
 						break
 					case "askResponse":
-						this.cline?.handleWebviewAskResponse(message.askResponse!, message.text, message.images)
+						this.coolcline?.handleWebviewAskResponse(message.askResponse!, message.text, message.images)
 						break
 					case "clearTask":
 						// newTask will start a new task with a given task text, while clear task resets the current session and allows for a new task to be started
@@ -716,7 +716,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.postMessageToWebview({ type: "selectedImages", images })
 						break
 					case "exportCurrentTask":
-						const currentTaskId = this.cline?.taskId
+						const currentTaskId = this.coolcline?.taskId
 						if (currentTaskId) {
 							this.exportTaskWithId(currentTaskId)
 						}
@@ -770,22 +770,22 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						openMention(message.text)
 						break
 					case "cancelTask":
-						if (this.cline) {
-							const { historyItem } = await this.getTaskWithId(this.cline.taskId)
-							this.cline.abortTask()
-							await pWaitFor(() => this.cline === undefined || this.cline.didFinishAborting, {
+						if (this.coolcline) {
+							const { historyItem } = await this.getTaskWithId(this.coolcline.taskId)
+							this.coolcline.abortTask()
+							await pWaitFor(() => this.coolcline === undefined || this.coolcline.didFinishAborting, {
 								timeout: 3_000,
 							}).catch((error) => {
 								this.outputChannel.appendLine(
 									`Failed to abort task ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
 								)
 							})
-							if (this.cline) {
-								// 'abandoned' will prevent this cline instance from affecting future cline instance gui. this may happen if its hanging on a streaming request
-								this.cline.abandoned = true
+							if (this.coolcline) {
+								// 'abandoned' will prevent this coolcline instance from affecting future coolcline instance gui. this may happen if its hanging on a streaming request
+								this.coolcline.abandoned = true
 							}
-							await this.initClineWithHistoryItem(historyItem) // clears task again, so we need to abortTask manually above
-							// await this.postStateToWebview() // new Cline instance will post state when it's ready. having this here sent an empty messages array to webview leading to virtuoso having to reload the entire list
+							await this.initCoolClineWithHistoryItem(historyItem) // clears task again, so we need to abortTask manually above
+							// await this.postStateToWebview() // new CoolCline instance will post state when it's ready. having this here sent an empty messages array to webview leading to virtuoso having to reload the entire list
 						}
 
 						break
@@ -793,7 +793,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.context.globalState.update("allowedCommands", message.commands)
 						// Also update workspace settings
 						await vscode.workspace
-							.getConfiguration("roo-cline")
+							.getConfiguration("coolcline")
 							.update("allowedCommands", message.commands, vscode.ConfigurationTarget.Global)
 						break
 					case "openMcpSettings": {
@@ -993,42 +993,42 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						)
 						if (
 							(answer === "Just this message" || answer === "This and all subsequent messages") &&
-							this.cline &&
+							this.coolcline &&
 							typeof message.value === "number" &&
 							message.value
 						) {
 							const timeCutoff = message.value - 1000 // 1 second buffer before the message to delete
-							const messageIndex = this.cline.clineMessages.findIndex(
+							const messageIndex = this.coolcline.coolclineMessages.findIndex(
 								(msg) => msg.ts && msg.ts >= timeCutoff,
 							)
-							const apiConversationHistoryIndex = this.cline.apiConversationHistory.findIndex(
+							const apiConversationHistoryIndex = this.coolcline.apiConversationHistory.findIndex(
 								(msg) => msg.ts && msg.ts >= timeCutoff,
 							)
 
 							if (messageIndex !== -1) {
-								const { historyItem } = await this.getTaskWithId(this.cline.taskId)
+								const { historyItem } = await this.getTaskWithId(this.coolcline.taskId)
 
 								if (answer === "Just this message") {
 									// Find the next user message first
-									const nextUserMessage = this.cline.clineMessages
+									const nextUserMessage = this.coolcline.coolclineMessages
 										.slice(messageIndex + 1)
 										.find((msg) => msg.type === "say" && msg.say === "user_feedback")
 
 									// Handle UI messages
 									if (nextUserMessage) {
 										// Find absolute index of next user message
-										const nextUserMessageIndex = this.cline.clineMessages.findIndex(
+										const nextUserMessageIndex = this.coolcline.coolclineMessages.findIndex(
 											(msg) => msg === nextUserMessage,
 										)
 										// Keep messages before current message and after next user message
-										await this.cline.overwriteClineMessages([
-											...this.cline.clineMessages.slice(0, messageIndex),
-											...this.cline.clineMessages.slice(nextUserMessageIndex),
+										await this.coolcline.overwriteCoolClineMessages([
+											...this.coolcline.coolclineMessages.slice(0, messageIndex),
+											...this.coolcline.coolclineMessages.slice(nextUserMessageIndex),
 										])
 									} else {
 										// If no next user message, keep only messages before current message
-										await this.cline.overwriteClineMessages(
-											this.cline.clineMessages.slice(0, messageIndex),
+										await this.coolcline.overwriteCoolClineMessages(
+											this.coolcline.coolclineMessages.slice(0, messageIndex),
 										)
 									}
 
@@ -1036,35 +1036,38 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 									if (apiConversationHistoryIndex !== -1) {
 										if (nextUserMessage && nextUserMessage.ts) {
 											// Keep messages before current API message and after next user message
-											await this.cline.overwriteApiConversationHistory([
-												...this.cline.apiConversationHistory.slice(
+											await this.coolcline.overwriteApiConversationHistory([
+												...this.coolcline.apiConversationHistory.slice(
 													0,
 													apiConversationHistoryIndex,
 												),
-												...this.cline.apiConversationHistory.filter(
+												...this.coolcline.apiConversationHistory.filter(
 													(msg) => msg.ts && msg.ts >= nextUserMessage.ts,
 												),
 											])
 										} else {
 											// If no next user message, keep only messages before current API message
-											await this.cline.overwriteApiConversationHistory(
-												this.cline.apiConversationHistory.slice(0, apiConversationHistoryIndex),
+											await this.coolcline.overwriteApiConversationHistory(
+												this.coolcline.apiConversationHistory.slice(
+													0,
+													apiConversationHistoryIndex,
+												),
 											)
 										}
 									}
 								} else if (answer === "This and all subsequent messages") {
 									// Delete this message and all that follow
-									await this.cline.overwriteClineMessages(
-										this.cline.clineMessages.slice(0, messageIndex),
+									await this.coolcline.overwriteCoolClineMessages(
+										this.coolcline.coolclineMessages.slice(0, messageIndex),
 									)
 									if (apiConversationHistoryIndex !== -1) {
-										await this.cline.overwriteApiConversationHistory(
-											this.cline.apiConversationHistory.slice(0, apiConversationHistoryIndex),
+										await this.coolcline.overwriteApiConversationHistory(
+											this.coolcline.apiConversationHistory.slice(0, apiConversationHistoryIndex),
 										)
 									}
 								}
 
-								await this.initClineWithHistoryItem(historyItem)
+								await this.initCoolClineWithHistoryItem(historyItem)
 							}
 						}
 						break
@@ -1336,9 +1339,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 						await this.updateGlobalState("experiments", updatedExperiments)
 
-						// Update diffStrategy in current Cline instance if it exists
-						if (message.values[EXPERIMENT_IDS.DIFF_STRATEGY] !== undefined && this.cline) {
-							await this.cline.updateDiffStrategy(
+						// Update diffStrategy in current CoolCline instance if it exists
+						if (message.values[EXPERIMENT_IDS.DIFF_STRATEGY] !== undefined && this.coolcline) {
+							await this.coolcline.updateDiffStrategy(
 								Experiments.isEnabled(updatedExperiments, EXPERIMENT_IDS.DIFF_STRATEGY),
 							)
 						}
@@ -1522,16 +1525,16 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.storeSecret("mistralApiKey", mistralApiKey)
 		await this.storeSecret("unboundApiKey", unboundApiKey)
 		await this.updateGlobalState("unboundModelId", unboundModelId)
-		if (this.cline) {
-			this.cline.api = buildApiHandler(apiConfiguration)
+		if (this.coolcline) {
+			this.coolcline.api = buildApiHandler(apiConfiguration)
 		}
 	}
 
 	async updateCustomInstructions(instructions?: string) {
 		// User may be clearing the field
 		await this.updateGlobalState("customInstructions", instructions || undefined)
-		if (this.cline) {
-			this.cline.customInstructions = instructions || undefined
+		if (this.coolcline) {
+			this.coolcline.customInstructions = instructions || undefined
 		}
 		await this.postStateToWebview()
 	}
@@ -1539,11 +1542,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	// MCP
 
 	async ensureMcpServersDirectoryExists(): Promise<string> {
-		const mcpServersDir = path.join(os.homedir(), "Documents", "Cline", "MCP")
+		const mcpServersDir = path.join(os.homedir(), "Documents", "CoolCline", "MCP")
 		try {
 			await fs.mkdir(mcpServersDir, { recursive: true })
 		} catch (error) {
-			return "~/Documents/Cline/MCP" // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine since this path is only ever used in the system prompt
+			return "~/Documents/CoolCline/MCP" // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine since this path is only ever used in the system prompt
 		}
 		return mcpServersDir
 	}
@@ -1653,8 +1656,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("apiProvider", openrouter)
 		await this.storeSecret("openRouterApiKey", apiKey)
 		await this.postStateToWebview()
-		if (this.cline) {
-			this.cline.api = buildApiHandler({ apiProvider: openrouter, openRouterApiKey: apiKey })
+		if (this.coolcline) {
+			this.coolcline.api = buildApiHandler({ apiProvider: openrouter, openRouterApiKey: apiKey })
 		}
 		// await this.postMessageToWebview({ type: "action", action: "settingsButtonClicked" }) // bad ux if user is on welcome
 	}
@@ -1685,8 +1688,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("apiProvider", glama)
 		await this.storeSecret("glamaApiKey", apiKey)
 		await this.postStateToWebview()
-		if (this.cline) {
-			this.cline.api = buildApiHandler({
+		if (this.coolcline) {
+			this.coolcline.api = buildApiHandler({
 				apiProvider: glama,
 				glamaApiKey: apiKey,
 			})
@@ -1937,10 +1940,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async showTaskWithId(id: string) {
-		if (id !== this.cline?.taskId) {
+		if (id !== this.coolcline?.taskId) {
 			// non-current task
 			const { historyItem } = await this.getTaskWithId(id)
-			await this.initClineWithHistoryItem(historyItem) // clears existing task
+			await this.initCoolClineWithHistoryItem(historyItem) // clears existing task
 		}
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 	}
@@ -1951,7 +1954,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async deleteTaskWithId(id: string) {
-		if (id === this.cline?.taskId) {
+		if (id === this.coolcline?.taskId) {
 			await this.clearTask()
 		}
 
@@ -2026,7 +2029,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			experiments,
 		} = await this.getState()
 
-		const allowedCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
+		const allowedCommands = vscode.workspace.getConfiguration("coolcline").get<string[]>("allowedCommands") || []
 
 		return {
 			version: this.context.extension?.packageJSON?.version ?? "",
@@ -2039,7 +2042,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			alwaysAllowMcp: alwaysAllowMcp ?? false,
 			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
 			uriScheme: vscode.env.uriScheme,
-			clineMessages: this.cline?.clineMessages || [],
+			coolclineMessages: this.coolcline?.coolclineMessages || [],
 			taskHistory: (taskHistory || [])
 				.filter((item: HistoryItem) => item.ts && item.task)
 				.sort((a: HistoryItem, b: HistoryItem) => b.ts - a.ts),
@@ -2072,19 +2075,19 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async clearTask() {
-		this.cline?.abortTask()
-		this.cline = undefined // removes reference to it, so once promises end it will be garbage collected
+		this.coolcline?.abortTask()
+		this.coolcline = undefined // removes reference to it, so once promises end it will be garbage collected
 	}
 
 	// Caching mechanism to keep track of webview messages + API conversation history per provider instance
 
 	/*
-	Now that we use retainContextWhenHidden, we don't have to store a cache of cline messages in the user's state, but we could to reduce memory footprint in long conversations.
+	Now that we use retainContextWhenHidden, we don't have to store a cache of coolcline messages in the user's state, but we could to reduce memory footprint in long conversations.
 
-	- We have to be careful of what state is shared between ClineProvider instances since there could be multiple instances of the extension running at once. For example when we cached cline messages using the same key, two instances of the extension could end up using the same key and overwriting each other's messages.
+	- We have to be careful of what state is shared between CoolClineProvider instances since there could be multiple instances of the extension running at once. For example when we cached coolcline messages using the same key, two instances of the extension could end up using the same key and overwriting each other's messages.
 	- Some state does need to be shared between the instances, i.e. the API key--however there doesn't seem to be a good way to notfy the other instances that the API key has changed.
 
-	We need to use a unique identifier for each ClineProvider instance's message cache since we could be running several instances of the extension outside of just the sidebar i.e. in editor panels.
+	We need to use a unique identifier for each CoolClineProvider instance's message cache since we could be running several instances of the extension outside of just the sidebar i.e. in editor panels.
 
 	// conversation history to send in API requests
 
@@ -2486,9 +2489,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		}
 		await this.configManager.resetAllConfigs()
 		await this.customModesManager.resetCustomModes()
-		if (this.cline) {
-			this.cline.abortTask()
-			this.cline = undefined
+		if (this.coolcline) {
+			this.coolcline.abortTask()
+			this.coolcline = undefined
 		}
 		await this.postStateToWebview()
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
@@ -2501,6 +2504,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	get messages() {
-		return this.cline?.clineMessages || []
+		return this.coolcline?.coolclineMessages || []
 	}
 }

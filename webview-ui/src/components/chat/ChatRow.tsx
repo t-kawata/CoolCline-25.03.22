@@ -3,10 +3,10 @@ import deepEqual from "fast-deep-equal"
 import React, { memo, useEffect, useMemo, useRef, useState } from "react"
 import { useSize } from "react-use"
 import {
-	ClineApiReqInfo,
-	ClineAskUseMcpServer,
-	ClineMessage,
-	ClineSayTool,
+	CoolClineApiReqInfo,
+	CoolClineAskUseMcpServer,
+	CoolClineMessage,
+	CoolClineSayTool,
 } from "../../../../src/shared/ExtensionMessage"
 import { COMMAND_OUTPUT_STRING } from "../../../../src/shared/combineCommandSequences"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -22,10 +22,10 @@ import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 
 interface ChatRowProps {
-	message: ClineMessage
+	message: CoolClineMessage
 	isExpanded: boolean
 	onToggleExpand: () => void
-	lastModifiedMessage?: ClineMessage
+	lastModifiedMessage?: CoolClineMessage
 	isLast: boolean
 	onHeightChange: (isTaller: boolean) => void
 	isStreaming: boolean
@@ -90,7 +90,7 @@ export const ChatRowContent = ({
 	}, [isLast, message.say])
 	const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] = useMemo(() => {
 		if (message.text !== null && message.text !== undefined && message.say === "api_req_started") {
-			const info: ClineApiReqInfo = JSON.parse(message.text)
+			const info: CoolClineApiReqInfo = JSON.parse(message.text)
 			return [info.cost, info.cancelReason, info.streamingFailedMessage]
 		}
 		return [undefined, undefined, undefined]
@@ -126,7 +126,7 @@ export const ChatRowContent = ({
 					<span
 						className="codicon codicon-error"
 						style={{ color: errorColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: errorColor, fontWeight: "bold" }}>Roo is having trouble...</span>,
+					<span style={{ color: errorColor, fontWeight: "bold" }}>CoolCline is having trouble...</span>,
 				]
 			case "command":
 				return [
@@ -137,10 +137,12 @@ export const ChatRowContent = ({
 							className="codicon codicon-terminal"
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
-					<span style={{ color: normalColor, fontWeight: "bold" }}>Roo wants to execute this command:</span>,
+					<span style={{ color: normalColor, fontWeight: "bold" }}>
+						CoolCline wants to execute this command:
+					</span>,
 				]
 			case "use_mcp_server":
-				const mcpServerUse = JSON.parse(message.text || "{}") as ClineAskUseMcpServer
+				const mcpServerUse = JSON.parse(message.text || "{}") as CoolClineAskUseMcpServer
 				return [
 					isMcpServerResponding ? (
 						<ProgressIndicator />
@@ -150,8 +152,8 @@ export const ChatRowContent = ({
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
 					<span style={{ color: normalColor, fontWeight: "bold" }}>
-						Roo wants to {mcpServerUse.type === "use_mcp_tool" ? "use a tool" : "access a resource"} on the{" "}
-						<code>{mcpServerUse.serverName}</code> MCP server:
+						CoolCline wants to {mcpServerUse.type === "use_mcp_tool" ? "use a tool" : "access a resource"}{" "}
+						on the <code>{mcpServerUse.serverName}</code> MCP server:
 					</span>,
 				]
 			case "completion_result":
@@ -215,7 +217,7 @@ export const ChatRowContent = ({
 					<span
 						className="codicon codicon-question"
 						style={{ color: normalColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: normalColor, fontWeight: "bold" }}>Roo has a question:</span>,
+					<span style={{ color: normalColor, fontWeight: "bold" }}>CoolCline has a question:</span>,
 				]
 			default:
 				return [null, null]
@@ -238,7 +240,7 @@ export const ChatRowContent = ({
 
 	const tool = useMemo(() => {
 		if (message.ask === "tool" || message.say === "tool") {
-			return JSON.parse(message.text || "{}") as ClineSayTool
+			return JSON.parse(message.text || "{}") as CoolClineSayTool
 		}
 		return null
 	}, [message.ask, message.say, message.text])
@@ -257,7 +259,7 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon(tool.tool === "appliedDiff" ? "diff" : "edit")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to edit this file:</span>
+							<span style={{ fontWeight: "bold" }}>CoolCline wants to edit this file:</span>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -273,7 +275,7 @@ export const ChatRowContent = ({
 					<>
 						<div style={headerStyle}>
 							{toolIcon("new-file")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to create a new file:</span>
+							<span style={{ fontWeight: "bold" }}>CoolCline wants to create a new file:</span>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -290,7 +292,9 @@ export const ChatRowContent = ({
 						<div style={headerStyle}>
 							{toolIcon("file-code")}
 							<span style={{ fontWeight: "bold" }}>
-								{message.type === "ask" ? "Roo wants to read this file:" : "Roo read this file:"}
+								{message.type === "ask"
+									? "CoolCline wants to read this file:"
+									: "CoolCline read this file:"}
 							</span>
 						</div>
 						{/* <CodeAccordian
@@ -348,8 +352,8 @@ export const ChatRowContent = ({
 							{toolIcon("folder-opened")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to view the top level files in this directory:"
-									: "Roo viewed the top level files in this directory:"}
+									? "CoolCline wants to view the top level files in this directory:"
+									: "CoolCline viewed the top level files in this directory:"}
 							</span>
 						</div>
 						<CodeAccordian
@@ -368,8 +372,8 @@ export const ChatRowContent = ({
 							{toolIcon("folder-opened")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to recursively view all files in this directory:"
-									: "Roo recursively viewed all files in this directory:"}
+									? "CoolCline wants to recursively view all files in this directory:"
+									: "CoolCline recursively viewed all files in this directory:"}
 							</span>
 						</div>
 						<CodeAccordian
@@ -388,8 +392,8 @@ export const ChatRowContent = ({
 							{toolIcon("file-code")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to view source code definition names used in this directory:"
-									: "Roo viewed source code definition names used in this directory:"}
+									? "CoolCline wants to view source code definition names used in this directory:"
+									: "CoolCline viewed source code definition names used in this directory:"}
 							</span>
 						</div>
 						<CodeAccordian
@@ -408,11 +412,11 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										Roo wants to search this directory for <code>{tool.regex}</code>:
+										CoolCline wants to search this directory for <code>{tool.regex}</code>:
 									</>
 								) : (
 									<>
-										Roo searched this directory for <code>{tool.regex}</code>:
+										CoolCline searched this directory for <code>{tool.regex}</code>:
 									</>
 								)}
 							</span>
@@ -435,9 +439,9 @@ export const ChatRowContent = ({
 			// 				{isInspecting ? <ProgressIndicator /> : toolIcon("inspect")}
 			// 				<span style={{ fontWeight: "bold" }}>
 			// 					{message.type === "ask" ? (
-			// 						<>Roo wants to inspect this website:</>
+			// 						<>CoolCline wants to inspect this website:</>
 			// 					) : (
-			// 						<>Roo is inspecting this website:</>
+			// 						<>CoolCline is inspecting this website:</>
 			// 					)}
 			// 				</span>
 			// 			</div>
@@ -460,12 +464,12 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										Roo wants to switch to <code>{tool.mode}</code> mode
+										CoolCline wants to switch to <code>{tool.mode}</code> mode
 										{tool.reason ? ` because: ${tool.reason}` : ""}
 									</>
 								) : (
 									<>
-										Roo switched to <code>{tool.mode}</code> mode
+										CoolCline switched to <code>{tool.mode}</code> mode
 										{tool.reason ? ` because: ${tool.reason}` : ""}
 									</>
 								)}
@@ -479,7 +483,7 @@ export const ChatRowContent = ({
 						<div style={headerStyle}>
 							{toolIcon("new-file")}
 							<span style={{ fontWeight: "bold" }}>
-								Roo wants to create a new task in <code>{tool.mode}</code> mode:
+								CoolCline wants to create a new task in <code>{tool.mode}</code> mode:
 							</span>
 						</div>
 						<div style={{ paddingLeft: "26px", marginTop: "4px" }}>
@@ -543,7 +547,7 @@ export const ChatRowContent = ({
 												<br />
 												It seems like you're having Windows PowerShell issues, please see this{" "}
 												<a
-													href="https://github.com/cline/cline/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+													href="https://github.com/coolcline/coolcline/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
 													style={{ color: "inherit", textDecoration: "underline" }}>
 													troubleshooting guide
 												</a>
@@ -655,7 +659,7 @@ export const ChatRowContent = ({
 						</div>
 					)
 				case "user_feedback_diff":
-					const tool = JSON.parse(message.text || "{}") as ClineSayTool
+					const tool = JSON.parse(message.text || "{}") as CoolClineSayTool
 					return (
 						<div
 							style={{
@@ -719,12 +723,12 @@ export const ChatRowContent = ({
 									</span>
 								</div>
 								<div>
-									Roo won't be able to view the command's output. Please update VSCode (
+									CoolCline won't be able to view the command's output. Please update VSCode (
 									<code>CMD/CTRL + Shift + P</code> → "Update") and make sure you're using a supported
 									shell: zsh, bash, fish, or PowerShell (<code>CMD/CTRL + Shift + P</code> →
 									"Terminal: Select Default Profile").{" "}
 									<a
-										href="https://github.com/cline/cline/wiki/Troubleshooting-%E2%80%90-Shell-Integration-Unavailable"
+										href="https://github.com/coolcline/coolcline/wiki/Troubleshooting-%E2%80%90-Shell-Integration-Unavailable"
 										style={{ color: "inherit", textDecoration: "underline" }}>
 										Still having trouble?
 									</a>
@@ -854,7 +858,7 @@ export const ChatRowContent = ({
 						</>
 					)
 				case "use_mcp_server":
-					const useMcpServer = JSON.parse(message.text || "{}") as ClineAskUseMcpServer
+					const useMcpServer = JSON.parse(message.text || "{}") as CoolClineAskUseMcpServer
 					const server = mcpServers.find((server) => server.name === useMcpServer.serverName)
 					return (
 						<>

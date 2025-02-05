@@ -1,12 +1,12 @@
-title: Roo Code Documentation
-description: Documentation for the Roo Code project
+title: CoolCline Documentation
+description: Documentation for the CoolCline project
 remote_theme: just-the-docs/just-the-docs
 
-url: https://docs.roocode.com
+url: https://docs.coolcline.com
 
 aux_links:
-  "Roo Code on GitHub":
-    - "//github.com/RooVetGit/Roo-Code"
+  "CoolCline on GitHub":
+    - "//github.com/CoolCline/CoolCline"
 
 # Enable search
 search_enabled: true

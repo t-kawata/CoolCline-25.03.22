@@ -169,7 +169,7 @@ export class TerminalManager {
 				return false
 			}
 			const terminal = t.terminal as ExtendedTerminal
-			const terminalCwd = terminal.shellIntegration?.cwd // one of cline's commands could have changed the cwd of the terminal
+			const terminalCwd = terminal.shellIntegration?.cwd // one of coolcline's commands could have changed the cwd of the terminal
 			if (!terminalCwd) {
 				return false
 			}

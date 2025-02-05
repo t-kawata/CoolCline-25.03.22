@@ -7,7 +7,7 @@
     - Example: `preferredLanguage: string`
 
 2. Add test coverage:
-    - Add the setting to mockState in ClineProvider.test.ts
+    - Add the setting to mockState in CoolClineProvider.test.ts
     - Add test cases for setting persistence and state updates
     - Ensure all tests pass before submitting changes
 
@@ -32,7 +32,7 @@
         }
         ```
 
-3. Add the setting to ClineProvider.ts:
+3. Add the setting to CoolClineProvider.ts:
 
     - Add the setting name to the GlobalStateKey type union
     - Add the setting to the Promise.all array in getState
@@ -91,7 +91,7 @@
         }
         ```
 
-3. Add the setting to ClineProvider.ts:
+3. Add the setting to CoolClineProvider.ts:
 
     - Add the setting name to the GlobalStateKey type union
     - Add the setting to the Promise.all array in getState

@@ -60,7 +60,7 @@ describe("CustomModesManager", () => {
 
 			// Verify file was written with the new mode
 			expect(fs.writeFile).toHaveBeenCalledWith(
-				expect.stringContaining("cline_custom_modes.json"),
+				expect.stringContaining("coolcline_custom_modes.json"),
 				expect.stringContaining(validMode.name),
 			)
 
@@ -107,14 +107,14 @@ describe("CustomModesManager", () => {
 
 	describe("File Operations", () => {
 		test("creates settings directory if it doesn't exist", async () => {
-			const configPath = path.join(mockStoragePath, "settings", "cline_custom_modes.json")
+			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			await manager.getCustomModesFilePath()
 
 			expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(configPath), { recursive: true })
 		})
 
 		test("creates default config if file doesn't exist", async () => {
-			const configPath = path.join(mockStoragePath, "settings", "cline_custom_modes.json")
+			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			await manager.getCustomModesFilePath()
 
 			expect(fs.writeFile).toHaveBeenCalledWith(configPath, JSON.stringify({ customModes: [] }, null, 2))
@@ -122,7 +122,7 @@ describe("CustomModesManager", () => {
 
 		test("watches file for changes", async () => {
 			// Mock file path resolution
-			const configPath = path.join(mockStoragePath, "settings", "cline_custom_modes.json")
+			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			;(fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify({ customModes: [] }))
 
 			// Create manager and wait for initialization

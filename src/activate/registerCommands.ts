@@ -1,12 +1,12 @@
 import * as vscode from "vscode"
 import delay from "delay"
 
-import { ClineProvider } from "../core/webview/ClineProvider"
+import { CoolClineProvider } from "../core/webview/CoolClineProvider"
 
 export type RegisterCommandOptions = {
 	context: vscode.ExtensionContext
 	outputChannel: vscode.OutputChannel
-	provider: ClineProvider
+	provider: CoolClineProvider
 }
 
 export const registerCommands = (options: RegisterCommandOptions) => {
@@ -19,36 +19,36 @@ export const registerCommands = (options: RegisterCommandOptions) => {
 
 const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOptions) => {
 	return {
-		"roo-cline.plusButtonClicked": async () => {
+		"coolcline.plusButtonClicked": async () => {
 			await provider.clearTask()
 			await provider.postStateToWebview()
 			await provider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 		},
-		"roo-cline.mcpButtonClicked": () => {
+		"coolcline.mcpButtonClicked": () => {
 			provider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
 		},
-		"roo-cline.promptsButtonClicked": () => {
+		"coolcline.promptsButtonClicked": () => {
 			provider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
 		},
-		"roo-cline.popoutButtonClicked": () => openClineInNewTab({ context, outputChannel }),
-		"roo-cline.openInNewTab": () => openClineInNewTab({ context, outputChannel }),
-		"roo-cline.settingsButtonClicked": () => {
+		"coolcline.popoutButtonClicked": () => openCoolClineInNewTab({ context, outputChannel }),
+		"coolcline.openInNewTab": () => openCoolClineInNewTab({ context, outputChannel }),
+		"coolcline.settingsButtonClicked": () => {
 			provider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
 		},
-		"roo-cline.historyButtonClicked": () => {
+		"coolcline.historyButtonClicked": () => {
 			provider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
 		},
 	}
 }
 
-const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterCommandOptions, "provider">) => {
-	outputChannel.appendLine("Opening Roo Code in new tab")
+const openCoolClineInNewTab = async ({ context, outputChannel }: Omit<RegisterCommandOptions, "provider">) => {
+	outputChannel.appendLine("Opening CoolCline in new tab")
 
 	// (This example uses webviewProvider activation event which is necessary to
 	// deserialize cached webview, but since we use retainContextWhenHidden, we
 	// don't need to use that event).
 	// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
-	const tabProvider = new ClineProvider(context, outputChannel)
+	const tabProvider = new CoolClineProvider(context, outputChannel)
 	// const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
 	const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 
@@ -62,7 +62,7 @@ const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterComman
 
 	const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
 
-	const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", targetCol, {
+	const panel = vscode.window.createWebviewPanel(CoolClineProvider.tabPanelId, "CoolCline", targetCol, {
 		enableScripts: true,
 		retainContextWhenHidden: true,
 		localResourceRoots: [context.extensionUri],
@@ -71,8 +71,8 @@ const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterComman
 	// TODO: use better svg icon with light and dark variants (see
 	// https://stackoverflow.com/questions/58365687/vscode-extension-iconpath).
 	panel.iconPath = {
-		light: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
-		dark: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
+		light: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "robot_panel_light.png"),
+		dark: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "robot_panel_dark.png"),
 	}
 
 	await tabProvider.resolveWebviewView(panel)

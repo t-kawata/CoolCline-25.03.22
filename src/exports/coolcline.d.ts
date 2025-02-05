@@ -1,4 +1,4 @@
-export interface ClineAPI {
+export interface CoolClineAPI {
 	/**
 	 * Sets the custom instructions in the global storage.
 	 * @param value The custom instructions to be saved.
@@ -38,5 +38,5 @@ export interface ClineAPI {
 	/**
 	 * The sidebar provider instance.
 	 */
-	sidebarProvider: ClineSidebarProvider
+	sidebarProvider: CoolClineSidebarProvider
 }

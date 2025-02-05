@@ -1,7 +1,7 @@
 import { SYSTEM_PROMPT } from "../system"
 import { McpHub } from "../../../services/mcp/McpHub"
 import { McpServer } from "../../../shared/mcp"
-import { ClineProvider } from "../../../core/webview/ClineProvider"
+import { CoolClineProvider } from "../../../core/webview/CoolClineProvider"
 import { SearchReplaceDiffStrategy } from "../../../core/diff/strategies/search-replace"
 import * as vscode from "vscode"
 import fs from "fs/promises"
@@ -44,9 +44,9 @@ jest.mock("../sections/custom-instructions", () => ({
 			// Add rules
 			const rules = []
 			if (mode) {
-				rules.push(`# Rules from .clinerules-${mode}:\nMock mode-specific rules`)
+				rules.push(`# Rules from .coolclinerules-${mode}:\nMock mode-specific rules`)
 			}
-			rules.push(`# Rules from .clinerules:\nMock generic rules`)
+			rules.push(`# Rules from .coolclinerules:\nMock generic rules`)
 
 			if (rules.length > 0) {
 				sections.push(`Rules:\n${rules.join("\n")}`)
@@ -99,13 +99,13 @@ const mockContext = {
 	},
 } as unknown as vscode.ExtensionContext
 
-// Create a minimal mock of ClineProvider
+// Create a minimal mock of CoolClineProvider
 const mockProvider = {
 	ensureMcpServersDirectoryExists: async () => "/mock/mcp/path",
 	ensureSettingsDirectoryExists: async () => "/mock/settings/path",
 	postMessageToWebview: async () => {},
 	context: mockContext,
-} as unknown as ClineProvider
+} as unknown as CoolClineProvider
 
 // Instead of extending McpHub, create a mock that implements just what we need
 const createMockMcpHub = (): McpHub =>

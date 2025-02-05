@@ -1,14 +1,14 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import debounce from "debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDeepCompareEffect, useEvent, useMount } from "react-use"
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso"
 import styled from "styled-components"
 import {
-	ClineAsk,
-	ClineMessage,
-	ClineSayBrowserAction,
-	ClineSayTool,
+	CoolClineAsk,
+	CoolClineMessage,
+	CoolClineSayBrowserAction,
+	CoolClineSayTool,
 	ExtensionMessage,
 } from "../../../../src/shared/ExtensionMessage"
 import { McpServer, McpTool } from "../../../../src/shared/mcp"
@@ -41,7 +41,7 @@ export const MAX_IMAGES_PER_MESSAGE = 20 // Anthropic limits to 20 images
 const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryView }: ChatViewProps) => {
 	const {
 		version,
-		clineMessages: messages,
+		coolclineMessages: messages,
 		taskHistory,
 		apiConfiguration,
 		mcpServers,
@@ -59,7 +59,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	} = useExtensionState()
 
 	//const task = messages.length > 0 ? (messages[0].say === "task" ? messages[0] : undefined) : undefined) : undefined
-	const task = useMemo(() => messages.at(0), [messages]) // leaving this less safe version here since if the first message is not a task, then the extension is in a bad state and needs to be debugged (see Cline.abort)
+	const task = useMemo(() => messages.at(0), [messages]) // leaving this less safe version here since if the first message is not a task, then the extension is in a bad state and needs to be debugged (see CoolCline.abort)
 	const modifiedMessages = useMemo(() => combineApiRequests(combineCommandSequences(messages.slice(1))), [messages])
 	// has to be after api_req_finished are all reduced into api_req_started messages
 	const apiMetrics = useMemo(() => getApiMetrics(modifiedMessages), [modifiedMessages])
@@ -70,7 +70,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const [selectedImages, setSelectedImages] = useState<string[]>([])
 
 	// we need to hold on to the ask because useEffect > lastMessage will always let us know when an ask comes in and handle it, but by the time handleMessage is called, the last message might not be the ask anymore (it could be a say that followed)
-	const [clineAsk, setClineAsk] = useState<ClineAsk | undefined>(undefined)
+	const [coolclineAsk, setCoolClineAsk] = useState<CoolClineAsk | undefined>(undefined)
 	const [enableButtons, setEnableButtons] = useState<boolean>(false)
 	const [primaryButtonText, setPrimaryButtonText] = useState<string | undefined>(undefined)
 	const [secondaryButtonText, setSecondaryButtonText] = useState<string | undefined>(undefined)
@@ -105,7 +105,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						case "api_req_failed":
 							playSound("progress_loop")
 							setTextAreaDisabled(true)
-							setClineAsk("api_req_failed")
+							setCoolClineAsk("api_req_failed")
 							setEnableButtons(true)
 							setPrimaryButtonText("Retry")
 							setSecondaryButtonText("Start New Task")
@@ -113,14 +113,14 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						case "mistake_limit_reached":
 							playSound("progress_loop")
 							setTextAreaDisabled(false)
-							setClineAsk("mistake_limit_reached")
+							setCoolClineAsk("mistake_limit_reached")
 							setEnableButtons(true)
 							setPrimaryButtonText("Proceed Anyways")
 							setSecondaryButtonText("Start New Task")
 							break
 						case "followup":
 							setTextAreaDisabled(isPartial)
-							setClineAsk("followup")
+							setCoolClineAsk("followup")
 							setEnableButtons(isPartial)
 							// setPrimaryButtonText(undefined)
 							// setSecondaryButtonText(undefined)
@@ -130,9 +130,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								playSound("notification")
 							}
 							setTextAreaDisabled(isPartial)
-							setClineAsk("tool")
+							setCoolClineAsk("tool")
 							setEnableButtons(!isPartial)
-							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
+							const tool = JSON.parse(lastMessage.text || "{}") as CoolClineSayTool
 							switch (tool.tool) {
 								case "editedExistingFile":
 								case "appliedDiff":
@@ -151,7 +151,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								playSound("notification")
 							}
 							setTextAreaDisabled(isPartial)
-							setClineAsk("browser_action_launch")
+							setCoolClineAsk("browser_action_launch")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText("Approve")
 							setSecondaryButtonText("Reject")
@@ -161,21 +161,21 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								playSound("notification")
 							}
 							setTextAreaDisabled(isPartial)
-							setClineAsk("command")
+							setCoolClineAsk("command")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText("Run Command")
 							setSecondaryButtonText("Reject")
 							break
 						case "command_output":
 							setTextAreaDisabled(false)
-							setClineAsk("command_output")
+							setCoolClineAsk("command_output")
 							setEnableButtons(true)
 							setPrimaryButtonText("Proceed While Running")
 							setSecondaryButtonText(undefined)
 							break
 						case "use_mcp_server":
 							setTextAreaDisabled(isPartial)
-							setClineAsk("use_mcp_server")
+							setCoolClineAsk("use_mcp_server")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText("Approve")
 							setSecondaryButtonText("Reject")
@@ -184,14 +184,14 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							// extension waiting for feedback. but we can just present a new task button
 							playSound("celebration")
 							setTextAreaDisabled(isPartial)
-							setClineAsk("completion_result")
+							setCoolClineAsk("completion_result")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText("Start New Task")
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
 							setTextAreaDisabled(false)
-							setClineAsk("resume_task")
+							setCoolClineAsk("resume_task")
 							setEnableButtons(true)
 							setPrimaryButtonText("Resume Task")
 							setSecondaryButtonText("Terminate")
@@ -199,7 +199,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							break
 						case "resume_completed_task":
 							setTextAreaDisabled(false)
-							setClineAsk("resume_completed_task")
+							setCoolClineAsk("resume_completed_task")
 							setEnableButtons(true)
 							setPrimaryButtonText("Start New Task")
 							setSecondaryButtonText(undefined)
@@ -219,7 +219,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								setInputValue("")
 								setTextAreaDisabled(true)
 								setSelectedImages([])
-								setClineAsk(undefined)
+								setCoolClineAsk(undefined)
 								setEnableButtons(false)
 							}
 							break
@@ -242,7 +242,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			// this would get called after sending the first message, so we have to watch messages.length instead
 			// No messages, so user has to submit a task
 			// setTextAreaDisabled(false)
-			// setClineAsk(undefined)
+			// setCoolClineAsk(undefined)
 			// setPrimaryButtonText(undefined)
 			// setSecondaryButtonText(undefined)
 		}
@@ -251,7 +251,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEffect(() => {
 		if (messages.length === 0) {
 			setTextAreaDisabled(false)
-			setClineAsk(undefined)
+			setCoolClineAsk(undefined)
 			setEnableButtons(false)
 			setPrimaryButtonText(undefined)
 			setSecondaryButtonText(undefined)
@@ -263,9 +263,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}, [task?.ts])
 
 	const isStreaming = useMemo(() => {
-		const isLastAsk = !!modifiedMessages.at(-1)?.ask // checking clineAsk isn't enough since messages effect may be called again for a tool for example, set clineAsk to its value, and if the next message is not an ask then it doesn't reset. This is likely due to how much more often we're updating messages as compared to before, and should be resolved with optimizations as it's likely a rendering bug. but as a final guard for now, the cancel button will show if the last message is not an ask
+		const isLastAsk = !!modifiedMessages.at(-1)?.ask // checking coolclineAsk isn't enough since messages effect may be called again for a tool for example, set coolclineAsk to its value, and if the next message is not an ask then it doesn't reset. This is likely due to how much more often we're updating messages as compared to before, and should be resolved with optimizations as it's likely a rendering bug. but as a final guard for now, the cancel button will show if the last message is not an ask
 		const isToolCurrentlyAsking =
-			isLastAsk && clineAsk !== undefined && enableButtons && primaryButtonText !== undefined
+			isLastAsk && coolclineAsk !== undefined && enableButtons && primaryButtonText !== undefined
 		if (isToolCurrentlyAsking) {
 			return false
 		}
@@ -290,7 +290,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		}
 
 		return false
-	}, [modifiedMessages, clineAsk, enableButtons, primaryButtonText])
+	}, [modifiedMessages, coolclineAsk, enableButtons, primaryButtonText])
 
 	const handleSendMessage = useCallback(
 		(text: string, images: string[]) => {
@@ -298,8 +298,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			if (text || images.length > 0) {
 				if (messages.length === 0) {
 					vscode.postMessage({ type: "newTask", text, images })
-				} else if (clineAsk) {
-					switch (clineAsk) {
+				} else if (coolclineAsk) {
+					switch (coolclineAsk) {
 						case "followup":
 						case "tool":
 						case "browser_action_launch":
@@ -324,7 +324,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				setInputValue("")
 				setTextAreaDisabled(true)
 				setSelectedImages([])
-				setClineAsk(undefined)
+				setCoolClineAsk(undefined)
 				setEnableButtons(false)
 				// Do not reset mode here as it should persist
 				// setPrimaryButtonText(undefined)
@@ -332,7 +332,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, clineAsk],
+		[messages.length, coolclineAsk],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -354,12 +354,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}, [])
 
 	/*
-	This logic depends on the useEffect[messages] above to set clineAsk, after which buttons are shown and we then send an askResponse to the extension.
+	This logic depends on the useEffect[messages] above to set coolclineAsk, after which buttons are shown and we then send an askResponse to the extension.
 	*/
 	const handlePrimaryButtonClick = useCallback(
 		(text?: string, images?: string[]) => {
 			const trimmedInput = text?.trim()
-			switch (clineAsk) {
+			switch (coolclineAsk) {
 				case "api_req_failed":
 				case "command":
 				case "command_output":
@@ -393,11 +393,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 			}
 			setTextAreaDisabled(true)
-			setClineAsk(undefined)
+			setCoolClineAsk(undefined)
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
 		},
-		[clineAsk, startNewTask],
+		[coolclineAsk, startNewTask],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -409,7 +409,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				return
 			}
 
-			switch (clineAsk) {
+			switch (coolclineAsk) {
 				case "api_req_failed":
 				case "mistake_limit_reached":
 				case "resume_task":
@@ -440,11 +440,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 			}
 			setTextAreaDisabled(true)
-			setClineAsk(undefined)
+			setCoolClineAsk(undefined)
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
 		},
-		[clineAsk, startNewTask, isStreaming],
+		[coolclineAsk, startNewTask, isStreaming],
 	)
 
 	const handleTaskCloseButtonClick = useCallback(() => {
@@ -534,7 +534,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		return modifiedMessages.filter((message) => {
 			switch (message.ask) {
 				case "completion_result":
-					// don't show a chat row for a completion_result ask without text. This specific type of message only occurs if cline wants to execute a command as part of its completion result, in which case we interject the completion_result tool with the execute_command tool.
+					// don't show a chat row for a completion_result ask without text. This specific type of message only occurs if coolcline wants to execute a command as part of its completion result, in which case we interject the completion_result tool with the execute_command tool.
 					if (message.text === "") {
 						return false
 					}
@@ -552,7 +552,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					// Only show the retry message if it's the last message
 					return message === modifiedMessages.at(-1)
 				case "text":
-					// Sometimes cline returns an empty text message, we don't want to render these. (We also use a say text for user messages, so in case they just sent images we still render that)
+					// Sometimes coolcline returns an empty text message, we don't want to render these. (We also use a say text for user messages, so in case they just sent images we still render that)
 					if ((message.text ?? "") === "" && (message.images?.length ?? 0) === 0) {
 						return false
 					}
@@ -564,7 +564,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		})
 	}, [modifiedMessages])
 
-	const isReadOnlyToolAction = useCallback((message: ClineMessage | undefined) => {
+	const isReadOnlyToolAction = useCallback((message: CoolClineMessage | undefined) => {
 		if (message?.type === "ask") {
 			if (!message.text) {
 				return true
@@ -582,7 +582,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		return false
 	}, [])
 
-	const isWriteToolAction = useCallback((message: ClineMessage | undefined) => {
+	const isWriteToolAction = useCallback((message: CoolClineMessage | undefined) => {
 		if (message?.type === "ask") {
 			if (!message.text) {
 				return true
@@ -594,12 +594,16 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}, [])
 
 	const isMcpToolAlwaysAllowed = useCallback(
-		(message: ClineMessage | undefined) => {
+		(message: CoolClineMessage | undefined) => {
 			if (message?.type === "ask" && message.ask === "use_mcp_server") {
 				if (!message.text) {
 					return true
 				}
-				const mcpServerUse = JSON.parse(message.text) as { type: string; serverName: string; toolName: string }
+				const mcpServerUse = JSON.parse(message.text) as {
+					type: string
+					serverName: string
+					toolName: string
+				}
 				if (mcpServerUse.type === "use_mcp_tool") {
 					const server = mcpServers?.find((s: McpServer) => s.name === mcpServerUse.serverName)
 					const tool = server?.tools?.find((t: McpTool) => t.name === mcpServerUse.toolName)
@@ -613,7 +617,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	// Check if a command message is allowed
 	const isAllowedCommand = useCallback(
-		(message: ClineMessage | undefined): boolean => {
+		(message: CoolClineMessage | undefined): boolean => {
 			if (message?.type !== "ask") return false
 			return validateCommand(message.text || "", allowedCommands || [])
 		},
@@ -621,8 +625,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	)
 
 	const isAutoApproved = useCallback(
-		(message: ClineMessage | undefined) => {
-			if (!autoApprovalEnabled || !message || message.type !== "ask") return false
+		(message: CoolClineMessage | undefined) => {
+			if (!autoApprovalEnabled || !message || message.type !== "ask") {
+				return false
+			}
 
 			return (
 				(alwaysAllowBrowser && message.ask === "browser_action_launch") ||
@@ -686,7 +692,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		setWasStreaming(isStreaming)
 	}, [isStreaming, lastMessage, wasStreaming, isAutoApproved])
 
-	const isBrowserSessionMessage = (message: ClineMessage): boolean => {
+	const isBrowserSessionMessage = (message: CoolClineMessage): boolean => {
 		// which of visible messages are browser session messages, see above
 		if (message.type === "ask") {
 			return ["browser_action_launch"].includes(message.ask!)
@@ -698,8 +704,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}
 
 	const groupedMessages = useMemo(() => {
-		const result: (ClineMessage | ClineMessage[])[] = []
-		let currentGroup: ClineMessage[] = []
+		const result: (CoolClineMessage | CoolClineMessage[])[] = []
+		let currentGroup: CoolClineMessage[] = []
 		let isInBrowserSession = false
 
 		const endBrowserSession = () => {
@@ -739,7 +745,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 					// Check if this is a close action
 					if (message.say === "browser_action") {
-						const browserAction = JSON.parse(message.text || "{}") as ClineSayBrowserAction
+						const browserAction = JSON.parse(message.text || "{}") as CoolClineSayBrowserAction
 						if (browserAction.action === "close") {
 							endBrowserSession()
 						}
@@ -885,7 +891,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}, [task, shouldDisableImages])
 
 	const itemContent = useCallback(
-		(index: number, messageOrGroup: ClineMessage | ClineMessage[]) => {
+		(index: number, messageOrGroup: CoolClineMessage | CoolClineMessage[]) => {
 			// browser session group
 			if (Array.isArray(messageOrGroup)) {
 				return (
@@ -933,7 +939,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	useEffect(() => {
 		// Only proceed if we have an ask and buttons are enabled
-		if (!clineAsk || !enableButtons) return
+		if (!coolclineAsk || !enableButtons) return
 
 		const autoApprove = async () => {
 			if (isAutoApproved(lastMessage)) {
@@ -946,7 +952,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		}
 		autoApprove()
 	}, [
-		clineAsk,
+		coolclineAsk,
 		enableButtons,
 		handlePrimaryButtonClick,
 		alwaysAllowBrowser,
@@ -999,30 +1005,33 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
 					<div style={{ padding: "0 20px", flexShrink: 0 }}>
-						<h2>What can Roo do for you?</h2>
+						<h2>What can I do for you?</h2>
 						<p>
-							Thanks to the latest breakthroughs in agentic coding capabilities, I can handle complex
-							software development tasks step-by-step. With tools that let me create & edit files, explore
-							complex projects, use the browser, and execute terminal commands (after you grant
-							permission), I can assist you in ways that go beyond code completion or tech support. I can
-							even use MCP to create new tools and extend my own capabilities.
+							CoolCline is a proactive programming assistant that enhances your development workflow with
+							advanced AI capabilities. It helps you write code more efficiently, optimize queries,
+							auto-fix errors, run command-line tasks, and perform browser automation tests.
+							<VSCodeLink
+								href="https://github.com/coolcline/coolcline/blob/main/README.md"
+								style={{ display: "inline" }}>
+								README
+							</VSCodeLink>
 						</p>
 					</div>
 					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 				</div>
 			)}
 
-			{/* 
+			{/*
 			// Flex layout explanation:
 			// 1. Content div above uses flex: "1 1 0" to:
-			//    - Grow to fill available space (flex-grow: 1) 
+			//    - Grow to fill available space (flex-grow: 1)
 			//    - Shrink when AutoApproveMenu needs space (flex-shrink: 1)
 			//    - Start from zero size (flex-basis: 0) to ensure proper distribution
 			//    minHeight: 0 allows it to shrink below its content height
 			//
 			// 2. AutoApproveMenu uses flex: "0 1 auto" to:
 			//    - Not grow beyond its content (flex-grow: 0)
-			//    - Shrink when viewport is small (flex-shrink: 1) 
+			//    - Shrink when viewport is small (flex-shrink: 1)
 			//    - Use its content size as basis (flex-basis: auto)
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
@@ -1052,7 +1061,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								Footer: () => <div style={{ height: 5 }} />, // Add empty padding at the bottom
 							}}
 							// increasing top by 3_000 to prevent jumping around when user collapses a row
-							increaseViewportBy={{ top: 3_000, bottom: Number.MAX_SAFE_INTEGER }} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
+							increaseViewportBy={{
+								top: 3_000,
+								bottom: Number.MAX_SAFE_INTEGER,
+							}} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
 							data={groupedMessages} // messages is the raw format returned by extension, modifiedMessages is the manipulated structure that combines certain messages of related type, and visibleMessages is the filtered structure that removes messages that should not be rendered
 							itemContent={itemContent}
 							atBottomStateChange={(isAtBottom) => {
@@ -1091,7 +1103,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 											: 0.5
 										: 0,
 								display: "flex",
-								padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
+								padding: `${
+									primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"
+								}px 15px 0px 15px`,
 							}}>
 							{primaryButtonText && !isStreaming && (
 								<VSCodeButton

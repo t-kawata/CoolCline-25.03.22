@@ -5,6 +5,6 @@ nav_order: 2
 has_children: true
 ---
 
-# Getting Started with Roo Code
+# Getting Started with CoolCline
 
-This section will help you get up and running with Roo Code quickly.
+This section will help you get up and running with CoolCline quickly.

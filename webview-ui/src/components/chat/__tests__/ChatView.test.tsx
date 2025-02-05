@@ -5,7 +5,7 @@ import { ExtensionStateContextProvider } from "../../../context/ExtensionStateCo
 import { vscode } from "../../../utils/vscode"
 
 // Define minimal types needed for testing
-interface ClineMessage {
+interface CoolClineMessage {
 	type: "say" | "ask"
 	say?: string
 	ask?: string
@@ -16,7 +16,7 @@ interface ClineMessage {
 
 interface ExtensionState {
 	version: string
-	clineMessages: ClineMessage[]
+	coolclineMessages: CoolClineMessage[]
 	taskHistory: any[]
 	shouldShowAnnouncement: boolean
 	allowedCommands: string[]
@@ -34,14 +34,14 @@ jest.mock("../../../utils/vscode", () => ({
 // Mock components that use ESM dependencies
 jest.mock("../BrowserSessionRow", () => ({
 	__esModule: true,
-	default: function MockBrowserSessionRow({ messages }: { messages: ClineMessage[] }) {
+	default: function MockBrowserSessionRow({ messages }: { messages: CoolClineMessage[] }) {
 		return <div data-testid="browser-session">{JSON.stringify(messages)}</div>
 	},
 }))
 
 jest.mock("../ChatRow", () => ({
 	__esModule: true,
-	default: function MockChatRow({ message }: { message: ClineMessage }) {
+	default: function MockChatRow({ message }: { message: CoolClineMessage }) {
 		return <div data-testid="chat-row">{JSON.stringify(message)}</div>
 	},
 }))
@@ -79,7 +79,7 @@ jest.mock("../ChatTextArea", () => {
 
 jest.mock("../TaskHeader", () => ({
 	__esModule: true,
-	default: function MockTaskHeader({ task }: { task: ClineMessage }) {
+	default: function MockTaskHeader({ task }: { task: CoolClineMessage }) {
 		return <div data-testid="task-header">{JSON.stringify(task)}</div>
 	},
 }))
@@ -131,7 +131,7 @@ const mockPostMessage = (state: Partial<ExtensionState>) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				coolclineMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],
@@ -168,7 +168,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			alwaysAllowWrite: true,
 			alwaysAllowExecute: true,
 			allowedCommands: ["npm test"],
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -206,7 +206,7 @@ describe("ChatView - Auto Approval Tests", () => {
 				alwaysAllowWrite: true,
 				alwaysAllowExecute: true,
 				allowedCommands: ["npm test"],
-				clineMessages: [
+				coolclineMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -247,7 +247,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -261,7 +261,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -303,7 +303,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowReadOnly: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -317,7 +317,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowReadOnly: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -361,7 +361,7 @@ describe("ChatView - Auto Approval Tests", () => {
 				autoApprovalEnabled: true,
 				alwaysAllowWrite: true,
 				writeDelayMs: 0,
-				clineMessages: [
+				coolclineMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -376,7 +376,7 @@ describe("ChatView - Auto Approval Tests", () => {
 				autoApprovalEnabled: true,
 				alwaysAllowWrite: true,
 				writeDelayMs: 0,
-				clineMessages: [
+				coolclineMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -418,7 +418,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			mockPostMessage({
 				autoApprovalEnabled: true,
 				alwaysAllowWrite: true,
-				clineMessages: [
+				coolclineMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -432,7 +432,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			mockPostMessage({
 				autoApprovalEnabled: true,
 				alwaysAllowWrite: true,
-				clineMessages: [
+				coolclineMessages: [
 					{
 						type: "say",
 						say: "task",
@@ -474,7 +474,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			autoApprovalEnabled: true,
 			alwaysAllowExecute: true,
 			allowedCommands: ["npm test"],
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -489,7 +489,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			autoApprovalEnabled: true,
 			alwaysAllowExecute: true,
 			allowedCommands: ["npm test"],
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -532,7 +532,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			autoApprovalEnabled: true,
 			alwaysAllowExecute: true,
 			allowedCommands: ["npm test"],
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -547,7 +547,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			autoApprovalEnabled: true,
 			alwaysAllowExecute: true,
 			allowedCommands: ["npm test"],
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -605,7 +605,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "npm run build", "echo", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -620,7 +620,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "npm run build", "echo", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -679,7 +679,7 @@ describe("ChatView - Auto Approval Tests", () => {
 				mockPostMessage({
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -694,7 +694,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -753,7 +753,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -767,7 +767,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -800,7 +800,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -814,7 +814,7 @@ describe("ChatView - Auto Approval Tests", () => {
 					autoApprovalEnabled: true,
 					alwaysAllowExecute: true,
 					allowedCommands: ["npm test", "Select-String"],
-					clineMessages: [
+					coolclineMessages: [
 						{
 							type: "say",
 							say: "task",
@@ -861,7 +861,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -882,7 +882,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -922,7 +922,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -943,7 +943,7 @@ describe("ChatView - Sound Playing Tests", () => {
 		mockPostMessage({
 			autoApprovalEnabled: true,
 			alwaysAllowBrowser: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -983,7 +983,7 @@ describe("ChatView - Sound Playing Tests", () => {
 
 		// First hydrate state with initial task and streaming
 		mockPostMessage({
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1002,7 +1002,7 @@ describe("ChatView - Sound Playing Tests", () => {
 
 		// Then send the completion result message (streaming finished)
 		mockPostMessage({
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1042,7 +1042,7 @@ describe("ChatView - Sound Playing Tests", () => {
 
 		// First hydrate state with initial task and streaming
 		mockPostMessage({
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -1061,7 +1061,7 @@ describe("ChatView - Sound Playing Tests", () => {
 
 		// Then send the api failure message (streaming finished)
 		mockPostMessage({
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",

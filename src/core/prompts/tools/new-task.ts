@@ -2,7 +2,7 @@ import { ToolArgs } from "./types"
 
 export function getNewTaskDescription(args: ToolArgs): string {
 	return `## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").

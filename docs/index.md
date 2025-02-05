@@ -4,6 +4,6 @@ layout: home
 nav_order: 1
 ---
 
-# Welcome to Roo Code Documentation
+# Welcome to CoolCline Documentation
 
-This is the documentation for Roo Code. Choose a section from the navigation menu to get started.
+This is the documentation for CoolCline. Choose a section from the navigation menu to get started.

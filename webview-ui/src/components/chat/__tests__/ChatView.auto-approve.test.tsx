@@ -72,7 +72,7 @@ const mockPostMessage = (state: any) => {
 			type: "state",
 			state: {
 				version: "1.0.0",
-				clineMessages: [],
+				coolclineMessages: [],
 				taskHistory: [],
 				shouldShowAnnouncement: false,
 				allowedCommands: [],
@@ -106,7 +106,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowReadOnly: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -120,7 +120,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowReadOnly: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -162,7 +162,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowReadOnly: true,
 			autoApprovalEnabled: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -176,7 +176,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowReadOnly: true,
 			autoApprovalEnabled: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -217,7 +217,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			alwaysAllowWrite: true,
 			autoApprovalEnabled: true,
 			writeDelayMs: 0,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -232,7 +232,7 @@ describe("ChatView - Auto Approval Tests", () => {
 			alwaysAllowWrite: true,
 			autoApprovalEnabled: true,
 			writeDelayMs: 0,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -274,7 +274,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowBrowser: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -288,7 +288,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowBrowser: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -330,7 +330,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -344,7 +344,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: true,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -386,7 +386,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: false,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -400,7 +400,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: false,
 			autoApprovalEnabled: true,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -440,7 +440,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: true,
 			autoApprovalEnabled: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",
@@ -454,7 +454,7 @@ describe("ChatView - Auto Approval Tests", () => {
 		mockPostMessage({
 			alwaysAllowModeSwitch: true,
 			autoApprovalEnabled: false,
-			clineMessages: [
+			coolclineMessages: [
 				{
 					type: "say",
 					say: "task",

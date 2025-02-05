@@ -5,8 +5,8 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import {
 	BrowserAction,
 	BrowserActionResult,
-	ClineMessage,
-	ClineSayBrowserAction,
+	CoolClineMessage,
+	CoolClineSayBrowserAction,
 } from "../../../../src/shared/ExtensionMessage"
 import { vscode } from "../../utils/vscode"
 import CodeBlock, { CODE_BLOCK_BG_COLOR } from "../common/CodeBlock"
@@ -14,10 +14,10 @@ import { ChatRowContent, ProgressIndicator } from "./ChatRow"
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 
 interface BrowserSessionRowProps {
-	messages: ClineMessage[]
+	messages: CoolClineMessage[]
 	isExpanded: (messageTs: number) => boolean
 	onToggleExpand: (messageTs: number) => void
-	lastModifiedMessage?: ClineMessage
+	lastModifiedMessage?: CoolClineMessage
 	isLast: boolean
 	onHeightChange: (isTaller: boolean) => void
 	isStreaming: boolean
@@ -62,15 +62,15 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
 				screenshot?: string
 				mousePosition?: string
 				consoleLogs?: string
-				messages: ClineMessage[] // messages up to and including the result
+				messages: CoolClineMessage[] // messages up to and including the result
 			}
 			nextAction?: {
-				messages: ClineMessage[] // messages leading to next result
+				messages: CoolClineMessage[] // messages leading to next result
 			}
 		}[] = []
 
-		let currentStateMessages: ClineMessage[] = []
-		let nextActionMessages: ClineMessage[] = []
+		let currentStateMessages: CoolClineMessage[] = []
+		let nextActionMessages: CoolClineMessage[] = []
 
 		messages.forEach((message) => {
 			if (message.ask === "browser_action_launch") {
@@ -217,7 +217,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
 		for (let i = actions.length - 1; i >= 0; i--) {
 			const message = actions[i]
 			if (message.say === "browser_action") {
-				const browserAction = JSON.parse(message.text || "{}") as ClineSayBrowserAction
+				const browserAction = JSON.parse(message.text || "{}") as CoolClineSayBrowserAction
 				if (browserAction.action === "click" && browserAction.coordinate) {
 					return browserAction.coordinate
 				}
@@ -242,7 +242,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
 						style={{ color: "var(--vscode-foreground)", marginBottom: "-1.5px" }}></span>
 				)}
 				<span style={{ fontWeight: "bold" }}>
-					<>Roo wants to use the browser:</>
+					<>CoolCline wants to use the browser:</>
 				</span>
 			</div>
 			<div
@@ -410,7 +410,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
 }, deepEqual)
 
 interface BrowserSessionRowContentProps extends Omit<BrowserSessionRowProps, "messages"> {
-	message: ClineMessage
+	message: CoolClineMessage
 	setMaxActionHeight: (height: number) => void
 	isStreaming: boolean
 }
@@ -455,7 +455,7 @@ const BrowserSessionRowContent = ({
 					)
 
 				case "browser_action":
-					const browserAction = JSON.parse(message.text || "{}") as ClineSayBrowserAction
+					const browserAction = JSON.parse(message.text || "{}") as CoolClineSayBrowserAction
 					return (
 						<BrowserActionBox
 							action={browserAction.action}

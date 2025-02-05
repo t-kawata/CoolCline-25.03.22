@@ -1,5 +1,5 @@
 import type { McpHub as McpHubType } from "../McpHub"
-import type { ClineProvider } from "../../../core/webview/ClineProvider"
+import type { CoolClineProvider } from "../../../core/webview/CoolClineProvider"
 import type { ExtensionContext, Uri } from "vscode"
 import type { McpConnection } from "../McpHub"
 import { StdioConfigSchema } from "../McpHub"
@@ -9,12 +9,12 @@ const { McpHub } = require("../McpHub")
 
 jest.mock("vscode")
 jest.mock("fs/promises")
-jest.mock("../../../core/webview/ClineProvider")
+jest.mock("../../../core/webview/CoolClineProvider")
 
 describe("McpHub", () => {
 	let mcpHub: McpHubType
-	let mockProvider: Partial<ClineProvider>
-	const mockSettingsPath = "/mock/settings/path/cline_mcp_settings.json"
+	let mockProvider: Partial<CoolClineProvider>
+	const mockSettingsPath = "/mock/settings/path/coolcline_mcp_settings.json"
 
 	beforeEach(() => {
 		jest.clearAllMocks()
@@ -79,7 +79,7 @@ describe("McpHub", () => {
 			}),
 		)
 
-		mcpHub = new McpHub(mockProvider as ClineProvider)
+		mcpHub = new McpHub(mockProvider as CoolClineProvider)
 	})
 
 	describe("toggleToolAlwaysAllow", () => {

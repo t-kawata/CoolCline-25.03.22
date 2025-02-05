@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
 import WorkspaceTracker from "../WorkspaceTracker"
-import { ClineProvider } from "../../../core/webview/ClineProvider"
+import { CoolClineProvider } from "../../../core/webview/CoolClineProvider"
 import { listFiles } from "../../../services/glob/list-files"
 
 // Mock modules
@@ -42,7 +42,7 @@ jest.mock("../../../services/glob/list-files")
 
 describe("WorkspaceTracker", () => {
 	let workspaceTracker: WorkspaceTracker
-	let mockProvider: ClineProvider
+	let mockProvider: CoolClineProvider
 
 	beforeEach(() => {
 		jest.clearAllMocks()
@@ -51,7 +51,7 @@ describe("WorkspaceTracker", () => {
 		// Create provider mock
 		mockProvider = {
 			postMessageToWebview: jest.fn().mockResolvedValue(undefined),
-		} as unknown as ClineProvider & { postMessageToWebview: jest.Mock }
+		} as unknown as CoolClineProvider & { postMessageToWebview: jest.Mock }
 
 		// Create tracker instance
 		workspaceTracker = new WorkspaceTracker(mockProvider)

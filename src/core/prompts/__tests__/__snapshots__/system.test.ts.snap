@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SYSTEM_PROMPT should exclude diff strategy tool description when diffEnabled is false 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -199,7 +199,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -317,14 +317,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should exclude diff strategy tool description when diffEnabled is undefined 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -522,7 +522,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -640,14 +640,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should explicitly handle undefined mcpHub 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -845,7 +845,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -963,14 +963,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should handle different browser viewport sizes 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -1214,7 +1214,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -1335,14 +1335,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should include MCP server info when mcpHub is provided 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -1589,7 +1589,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -2071,14 +2071,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should include browser actions when supportsComputerUse is true 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -2322,7 +2322,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -2443,14 +2443,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should include diff strategy tool description when diffEnabled is true 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -2708,7 +2708,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -2828,14 +2828,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`SYSTEM_PROMPT should maintain consistent system prompt 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -3033,7 +3033,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -3151,9 +3151,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -3172,9 +3172,9 @@ Mode-specific Instructions:
 Custom test instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -3193,14 +3193,14 @@ Mode-specific Instructions:
 Mode-specific instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`addCustomInstructions should exclude MCP server creation info when disabled 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -3447,7 +3447,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -3575,9 +3575,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -3590,14 +3590,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`addCustomInstructions should generate correct prompt for architect mode 1`] = `
-"You are Roo, an experienced technical leader who is inquisitive and an excellent planner. Your goal is to gather information and get context to create a detailed plan for accomplishing the user's task, which the user will review and approve before they switch into another mode to implement the solution.
+"You are CoolCline, an experienced technical leader who is inquisitive and an excellent planner. Your goal is to gather information and get context to create a detailed plan for accomplishing the user's task, which the user will review and approve before they switch into another mode to implement the solution.
 
 ====
 
@@ -3781,7 +3781,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -3904,14 +3904,14 @@ Depending on the user's request, you may need to do some information gathering (
 Then you might ask the user if they are pleased with this plan, or if they would like to make any changes. Think of this as a brainstorming session where you can discuss the task and plan the best way to accomplish it. Finally once it seems like you've reached a good plan, use the switch_mode tool to request that the user switch to another mode to implement the solution.
 
 Rules:
-# Rules from .clinerules-architect:
+# Rules from .coolclinerules-architect:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`addCustomInstructions should generate correct prompt for ask mode 1`] = `
-"You are Roo, a knowledgeable technical assistant focused on answering questions and providing information about software development, technology, and related topics.
+"You are CoolCline, a knowledgeable technical assistant focused on answering questions and providing information about software development, technology, and related topics.
 
 ====
 
@@ -4095,7 +4095,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -4216,9 +4216,9 @@ Mode-specific Instructions:
 You can analyze code, explain concepts, and access external resources. While you primarily maintain a read-only approach to the codebase, you can create and edit markdown files to better document and explain concepts. Make sure to answer the user's questions and don't rush to switch to implementing code.
 
 Rules:
-# Rules from .clinerules-ask:
+# Rules from .coolclinerules-ask:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -4231,9 +4231,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -4246,14 +4246,14 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
 exports[`addCustomInstructions should include MCP server creation info when enabled 1`] = `
-"You are Roo, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
+"You are CoolCline, a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.
 
 ====
 
@@ -4500,7 +4500,7 @@ Example: Requesting to switch to code mode
 </switch_mode>
 
 ## new_task
-Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new Cline instance in the given mode with the provided message.
+Description: Create a new task with a specified starting mode and initial message. This tool instructs the system to create a new CoolCline instance in the given mode with the provided message.
 
 Parameters:
 - mode: (required) The slug of the mode to start the new task in (e.g., "code", "ask", "architect").
@@ -4982,9 +4982,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5000,9 +5000,9 @@ Mode-specific Instructions:
 Custom test instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5018,9 +5018,9 @@ Language Preference:
 You should always speak and think in the Spanish language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5039,9 +5039,9 @@ Mode-specific Instructions:
 Second instruction
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5054,9 +5054,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-architect:
+# Rules from .coolclinerules-architect:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5069,9 +5069,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-ask:
+# Rules from .coolclinerules-ask:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5084,9 +5084,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5099,9 +5099,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-review:
+# Rules from .coolclinerules-review:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5114,9 +5114,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-test:
+# Rules from .coolclinerules-test:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;
 
@@ -5132,8 +5132,8 @@ Mode-specific Instructions:
   Custom mode instructions  
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .coolclinerules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .coolclinerules:
 Mock generic rules"
 `;

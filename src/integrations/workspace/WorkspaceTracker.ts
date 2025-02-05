@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
 import * as path from "path"
 import { listFiles } from "../../services/glob/list-files"
-import { ClineProvider } from "../../core/webview/ClineProvider"
+import { CoolClineProvider } from "../../core/webview/CoolClineProvider"
 import { toRelativePath } from "../../utils/path"
 
 const cwd = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0)
@@ -9,18 +9,18 @@ const MAX_INITIAL_FILES = 1_000
 
 // Note: this is not a drop-in replacement for listFiles at the start of tasks, since that will be done for Desktops when there is no workspace selected
 class WorkspaceTracker {
-	private providerRef: WeakRef<ClineProvider>
+	private providerRef: WeakRef<CoolClineProvider>
 	private disposables: vscode.Disposable[] = []
 	private filePaths: Set<string> = new Set()
 	private updateTimer: NodeJS.Timeout | null = null
 
-	constructor(provider: ClineProvider) {
+	constructor(provider: CoolClineProvider) {
 		this.providerRef = new WeakRef(provider)
 		this.registerListeners()
 	}
 
 	async initializeFilePaths() {
-		// should not auto get filepaths for desktop since it would immediately show permission popup before cline ever creates a file
+		// should not auto get filepaths for desktop since it would immediately show permission popup before coolcline ever creates a file
 		if (!cwd) {
 			return
 		}

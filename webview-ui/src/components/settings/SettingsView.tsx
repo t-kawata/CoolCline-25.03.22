@@ -222,9 +222,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>Auto-Approve Settings</h3>
 					<p style={{ fontSize: "12px", marginBottom: 15, color: "var(--vscode-descriptionForeground)" }}>
-						The following settings allow Roo to automatically perform operations without requiring approval.
-						Enable these settings only if you fully trust the AI and understand the associated security
-						risks.
+						The following settings allow CoolCline to automatically perform operations without requiring
+						approval. Enable these settings only if you fully trust the AI and understand the associated
+						security risks.
 					</p>
 
 					<div style={{ marginBottom: 15 }}>
@@ -239,7 +239,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will automatically view directory contents and read files without
+							When enabled, CoolCline will automatically view directory contents and read files without
 							requiring you to click the Approve button.
 						</p>
 					</div>
@@ -539,7 +539,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will play sound effects for notifications and events.
+							When enabled, CoolCline will play sound effects for notifications and events.
 						</p>
 					</div>
 					{soundEnabled && (
@@ -635,8 +635,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							When enabled, Roo will be able to edit files more quickly and will automatically reject
-							truncated full-file writes. Works best with the latest Claude 3.5 Sonnet model.
+							When enabled, CoolCline will be able to edit files more quickly and will automatically
+							reject truncated full-file writes. Works best with the latest Claude 3.5 Sonnet model.
 						</p>
 
 						{diffEnabled && (
@@ -711,13 +711,13 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						padding: "10px 8px 15px 0px",
 					}}>
 					<p style={{ wordWrap: "break-word", margin: 0, padding: 0 }}>
-						If you have any questions or feedback, feel free to open an issue at{" "}
-						<VSCodeLink href="https://github.com/RooVetGit/Roo-Code" style={{ display: "inline" }}>
-							github.com/RooVetGit/Roo-Code
+						If you have any questions or feedback, feel free to open an issue at GitHub{" "}
+						<VSCodeLink href="https://github.com/CoolCline/CoolCline" style={{ display: "inline" }}>
+							github.com/CoolCline/CoolCline
 						</VSCodeLink>{" "}
-						or join{" "}
-						<VSCodeLink href="https://www.reddit.com/r/RooCode/" style={{ display: "inline" }}>
-							reddit.com/r/RooCode
+						or Gitee{" "}
+						<VSCodeLink href="https://gitee.com/coolcline/coolcline/" style={{ display: "inline" }}>
+							gitee.com/coolcline/coolcline
 						</VSCodeLink>
 					</p>
 					<p style={{ fontStyle: "italic", margin: "10px 0 0 0", padding: 0, marginBottom: 100 }}>

@@ -62,7 +62,7 @@ export interface ExtensionMessage {
 		isActive: boolean
 		path?: string
 	}>
-	partialMessage?: ClineMessage
+	partialMessage?: CoolClineMessage
 	glamaModels?: Record<string, ModelInfo>
 	openRouterModels?: Record<string, ModelInfo>
 	openAiModels?: string[]
@@ -82,7 +82,7 @@ export interface ApiConfigMeta {
 
 export interface ExtensionState {
 	version: string
-	clineMessages: ClineMessage[]
+	coolclineMessages: CoolClineMessage[]
 	taskHistory: HistoryItem[]
 	shouldShowAnnouncement: boolean
 	apiConfiguration?: ApiConfiguration
@@ -122,18 +122,18 @@ export interface ExtensionState {
 	toolRequirements?: Record<string, boolean> // Map of tool names to their requirements (e.g. {"apply_diff": true} if diffEnabled)
 }
 
-export interface ClineMessage {
+export interface CoolClineMessage {
 	ts: number
 	type: "ask" | "say"
-	ask?: ClineAsk
-	say?: ClineSay
+	ask?: CoolClineAsk
+	say?: CoolClineSay
 	text?: string
 	images?: string[]
 	partial?: boolean
 	reasoning?: string
 }
 
-export type ClineAsk =
+export type CoolClineAsk =
 	| "followup"
 	| "command"
 	| "command_output"
@@ -146,7 +146,7 @@ export type ClineAsk =
 	| "browser_action_launch"
 	| "use_mcp_server"
 
-export type ClineSay =
+export type CoolClineSay =
 	| "task"
 	| "error"
 	| "api_req_started"
@@ -169,7 +169,7 @@ export type ClineSay =
 	| "new_task_started"
 	| "new_task"
 
-export interface ClineSayTool {
+export interface CoolClineSayTool {
 	tool:
 		| "editedExistingFile"
 		| "appliedDiff"
@@ -194,7 +194,7 @@ export interface ClineSayTool {
 export const browserActions = ["launch", "click", "type", "scroll_down", "scroll_up", "close"] as const
 export type BrowserAction = (typeof browserActions)[number]
 
-export interface ClineSayBrowserAction {
+export interface CoolClineSayBrowserAction {
 	action: BrowserAction
 	coordinate?: string
 	text?: string
@@ -207,7 +207,7 @@ export type BrowserActionResult = {
 	currentMousePosition?: string
 }
 
-export interface ClineAskUseMcpServer {
+export interface CoolClineAskUseMcpServer {
 	serverName: string
 	type: "use_mcp_tool" | "access_mcp_resource"
 	toolName?: string
@@ -215,15 +215,15 @@ export interface ClineAskUseMcpServer {
 	uri?: string
 }
 
-export interface ClineApiReqInfo {
+export interface CoolClineApiReqInfo {
 	request?: string
 	tokensIn?: number
 	tokensOut?: number
 	cacheWrites?: number
 	cacheReads?: number
 	cost?: number
-	cancelReason?: ClineApiReqCancelReason
+	cancelReason?: CoolClineApiReqCancelReason
 	streamingFailedMessage?: string
 }
 
-export type ClineApiReqCancelReason = "streaming_failed" | "user_cancelled"
+export type CoolClineApiReqCancelReason = "streaming_failed" | "user_cancelled"

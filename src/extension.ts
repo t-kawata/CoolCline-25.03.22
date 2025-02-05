@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
 
-import { ClineProvider } from "./core/webview/ClineProvider"
-import { createClineAPI } from "./exports"
+import { CoolClineProvider } from "./core/webview/CoolClineProvider"
+import { createCoolClineAPI } from "./exports"
 import "./utils/path" // Necessary to have access to String.prototype.toPosix.
 import { CodeActionProvider } from "./core/CodeActionProvider"
 import { DIFF_VIEW_URI_SCHEME } from "./integrations/editor/DiffViewProvider"
@@ -20,22 +20,22 @@ let outputChannel: vscode.OutputChannel
 // This method is called when your extension is activated.
 // Your extension is activated the very first time the command is executed.
 export function activate(context: vscode.ExtensionContext) {
-	outputChannel = vscode.window.createOutputChannel("Roo-Code")
+	outputChannel = vscode.window.createOutputChannel("CoolCline")
 	context.subscriptions.push(outputChannel)
-	outputChannel.appendLine("Roo-Code extension activated")
+	outputChannel.appendLine("CoolCline extension activated")
 
 	// Get default commands from configuration.
-	const defaultCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
+	const defaultCommands = vscode.workspace.getConfiguration("coolcline").get<string[]>("allowedCommands") || []
 
 	// Initialize global state if not already set.
 	if (!context.globalState.get("allowedCommands")) {
 		context.globalState.update("allowedCommands", defaultCommands)
 	}
 
-	const sidebarProvider = new ClineProvider(context, outputChannel)
+	const sidebarProvider = new CoolClineProvider(context, outputChannel)
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, sidebarProvider, {
+		vscode.window.registerWebviewViewProvider(CoolClineProvider.sideBarId, sidebarProvider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
 	)
@@ -79,10 +79,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerCodeActions(context)
 
-	return createClineAPI(outputChannel, sidebarProvider)
+	return createCoolClineAPI(outputChannel, sidebarProvider)
 }
 
 // This method is called when your extension is deactivated.
 export function deactivate() {
-	outputChannel.appendLine("Roo-Code extension deactivated")
+	outputChannel.appendLine("CoolCline extension deactivated")
 }

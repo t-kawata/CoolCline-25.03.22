@@ -8,7 +8,7 @@ coverage/
 
 # Builds
 bin/
-roo-cline-*.vsix
+coolcline-*.vsix
 
 # Local prompts and rules
 /local-prompts
@@ -22,3 +22,5 @@ docs/_site/
 
 # Dotenv
 .env.integration
+
+re/

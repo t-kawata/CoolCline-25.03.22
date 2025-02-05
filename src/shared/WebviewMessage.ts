@@ -85,7 +85,7 @@ export interface WebviewMessage {
 		| "openCustomModesSettings"
 	text?: string
 	disabled?: boolean
-	askResponse?: ClineAskResponse
+	askResponse?: CoolClineAskResponse
 	apiConfiguration?: ApiConfiguration
 	images?: string[]
 	bool?: boolean
@@ -106,4 +106,4 @@ export interface WebviewMessage {
 	timeout?: number
 }
 
-export type ClineAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse"
+export type CoolClineAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse"

@@ -1,9 +1,9 @@
-// npx jest src/core/webview/__tests__/ClineProvider.test.ts
+// npx jest src/core/webview/__tests__/CoolClineProvider.test.ts
 
 import * as vscode from "vscode"
 import axios from "axios"
 
-import { ClineProvider } from "../ClineProvider"
+import { CoolClineProvider } from "../CoolClineProvider"
 import { ExtensionMessage, ExtensionState } from "../../../shared/ExtensionMessage"
 import { setSoundEnabled } from "../../../utils/sound"
 import { defaultModeSlug } from "../../../shared/modes"
@@ -164,17 +164,17 @@ jest.mock("../../../integrations/workspace/WorkspaceTracker", () => {
 	}))
 })
 
-// Mock Cline
-jest.mock("../../Cline", () => ({
-	Cline: jest
+// Mock CoolCline
+jest.mock("../../CoolCline", () => ({
+	CoolCline: jest
 		.fn()
 		.mockImplementation(
 			(provider, apiConfiguration, customInstructions, diffEnabled, fuzzyMatchThreshold, task, taskId) => ({
 				abortTask: jest.fn(),
 				handleWebviewAskResponse: jest.fn(),
-				clineMessages: [],
+				coolclineMessages: [],
 				apiConversationHistory: [],
-				overwriteClineMessages: jest.fn(),
+				overwriteCoolClineMessages: jest.fn(),
 				overwriteApiConversationHistory: jest.fn(),
 				taskId: taskId || "test-task-id",
 			}),
@@ -200,8 +200,8 @@ afterAll(() => {
 	jest.restoreAllMocks()
 })
 
-describe("ClineProvider", () => {
-	let provider: ClineProvider
+describe("CoolClineProvider", () => {
+	let provider: CoolClineProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel
 	let mockWebviewView: vscode.WebviewView
@@ -277,18 +277,18 @@ describe("ClineProvider", () => {
 			}),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new CoolClineProvider(mockContext, mockOutputChannel)
 
 		// @ts-ignore - Accessing private property for testing.
 		provider.customModesManager = mockCustomModesManager
 	})
 
 	test("constructor initializes correctly", () => {
-		expect(provider).toBeInstanceOf(ClineProvider)
+		expect(provider).toBeInstanceOf(CoolClineProvider)
 		// Since getVisibleInstance returns the last instance where view.visible is true
 		// @ts-ignore - accessing private property for testing
 		provider.view = mockWebviewView
-		expect(ClineProvider.getVisibleInstance()).toBe(provider)
+		expect(CoolClineProvider.getVisibleInstance()).toBe(provider)
 	})
 
 	test("resolveWebviewView sets up webview correctly", async () => {
@@ -303,7 +303,7 @@ describe("ClineProvider", () => {
 	})
 
 	test("resolveWebviewView sets up webview correctly in development mode even if local server is not running", async () => {
-		provider = new ClineProvider(
+		provider = new CoolClineProvider(
 			{ ...mockContext, extensionMode: vscode.ExtensionMode.Development },
 			mockOutputChannel,
 		)
@@ -325,7 +325,7 @@ describe("ClineProvider", () => {
 		const mockState: ExtensionState = {
 			version: "1.0.0",
 			preferredLanguage: "English",
-			clineMessages: [],
+			coolclineMessages: [],
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			apiConfiguration: {
@@ -377,13 +377,13 @@ describe("ClineProvider", () => {
 	test("clearTask aborts current task", async () => {
 		const mockAbortTask = jest.fn()
 		// @ts-ignore - accessing private property for testing
-		provider.cline = { abortTask: mockAbortTask }
+		provider.coolcline = { abortTask: mockAbortTask }
 
 		await provider.clearTask()
 
 		expect(mockAbortTask).toHaveBeenCalled()
 		// @ts-ignore - accessing private property for testing
-		expect(provider.cline).toBeUndefined()
+		expect(provider.coolcline).toBeUndefined()
 	})
 
 	test("getState returns correct initial state", async () => {
@@ -631,7 +631,7 @@ describe("ClineProvider", () => {
 		expect(state.customModePrompts).toEqual({})
 	})
 
-	test("uses mode-specific custom instructions in Cline initialization", async () => {
+	test("uses mode-specific custom instructions in CoolCline initialization", async () => {
 		// Setup mock state
 		const modeCustomInstructions = "Code mode instructions"
 		const mockApiConfig = {
@@ -650,15 +650,15 @@ describe("ClineProvider", () => {
 			experiments: experimentDefault,
 		} as any)
 
-		// Reset Cline mock
-		const { Cline } = require("../../Cline")
-		;(Cline as jest.Mock).mockClear()
+		// Reset CoolCline mock
+		const { CoolCline } = require("../../CoolCline")
+		;(CoolCline as jest.Mock).mockClear()
 
-		// Initialize Cline with a task
-		await provider.initClineWithTask("Test task")
+		// Initialize CoolCline with a task
+		await provider.initCoolClineWithTask("Test task")
 
-		// Verify Cline was initialized with mode-specific instructions
-		expect(Cline).toHaveBeenCalledWith(
+		// Verify CoolCline was initialized with mode-specific instructions
+		expect(CoolCline).toHaveBeenCalledWith(
 			provider,
 			mockApiConfig,
 			modeCustomInstructions,
@@ -727,7 +727,7 @@ describe("ClineProvider", () => {
 		} as unknown as vscode.ExtensionContext
 
 		// Create new provider with updated mock context
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new CoolClineProvider(mockContext, mockOutputChannel)
 		await provider.resolveWebviewView(mockWebviewView)
 		const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 
@@ -775,18 +775,18 @@ describe("ClineProvider", () => {
 
 			const mockApiHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }, { ts: 5000 }, { ts: 6000 }]
 
-			// Setup Cline instance with mock data
-			const mockCline = {
-				clineMessages: mockMessages,
+			// Setup CoolCline instance with mock data
+			const mockCoolCline = {
+				coolclineMessages: mockMessages,
 				apiConversationHistory: mockApiHistory,
-				overwriteClineMessages: jest.fn(),
+				overwriteCoolClineMessages: jest.fn(),
 				overwriteApiConversationHistory: jest.fn(),
 				taskId: "test-task-id",
 				abortTask: jest.fn(),
 				handleWebviewAskResponse: jest.fn(),
 			}
 			// @ts-ignore - accessing private property for testing
-			provider.cline = mockCline
+			provider.coolcline = mockCoolCline
 
 			// Mock getTaskWithId
 			;(provider as any).getTaskWithId = jest.fn().mockResolvedValue({
@@ -798,7 +798,7 @@ describe("ClineProvider", () => {
 			await messageHandler({ type: "deleteMessage", value: 4000 })
 
 			// Verify correct messages were kept
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([
+			expect(mockCoolCline.overwriteCoolClineMessages).toHaveBeenCalledWith([
 				mockMessages[0],
 				mockMessages[1],
 				mockMessages[4],
@@ -806,7 +806,7 @@ describe("ClineProvider", () => {
 			])
 
 			// Verify correct API messages were kept
-			expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([
+			expect(mockCoolCline.overwriteApiConversationHistory).toHaveBeenCalledWith([
 				mockApiHistory[0],
 				mockApiHistory[1],
 				mockApiHistory[4],
@@ -828,18 +828,18 @@ describe("ClineProvider", () => {
 
 			const mockApiHistory = [{ ts: 1000 }, { ts: 2000 }, { ts: 3000 }, { ts: 4000 }]
 
-			// Setup Cline instance with mock data
-			const mockCline = {
-				clineMessages: mockMessages,
+			// Setup CoolCline instance with mock data
+			const mockCoolCline = {
+				coolclineMessages: mockMessages,
 				apiConversationHistory: mockApiHistory,
-				overwriteClineMessages: jest.fn(),
+				overwriteCoolClineMessages: jest.fn(),
 				overwriteApiConversationHistory: jest.fn(),
 				taskId: "test-task-id",
 				abortTask: jest.fn(),
 				handleWebviewAskResponse: jest.fn(),
 			}
 			// @ts-ignore - accessing private property for testing
-			provider.cline = mockCline
+			provider.coolcline = mockCoolCline
 
 			// Mock getTaskWithId
 			;(provider as any).getTaskWithId = jest.fn().mockResolvedValue({
@@ -851,33 +851,33 @@ describe("ClineProvider", () => {
 			await messageHandler({ type: "deleteMessage", value: 3000 })
 
 			// Verify only messages before the deleted message were kept
-			expect(mockCline.overwriteClineMessages).toHaveBeenCalledWith([mockMessages[0]])
+			expect(mockCoolCline.overwriteCoolClineMessages).toHaveBeenCalledWith([mockMessages[0]])
 
 			// Verify only API messages before the deleted message were kept
-			expect(mockCline.overwriteApiConversationHistory).toHaveBeenCalledWith([mockApiHistory[0]])
+			expect(mockCoolCline.overwriteApiConversationHistory).toHaveBeenCalledWith([mockApiHistory[0]])
 		})
 
 		test("handles Cancel correctly", async () => {
 			// Mock user selecting "Cancel"
 			;(vscode.window.showInformationMessage as jest.Mock).mockResolvedValue("Cancel")
 
-			const mockCline = {
-				clineMessages: [{ ts: 1000 }, { ts: 2000 }],
+			const mockCoolCline = {
+				coolclineMessages: [{ ts: 1000 }, { ts: 2000 }],
 				apiConversationHistory: [{ ts: 1000 }, { ts: 2000 }],
-				overwriteClineMessages: jest.fn(),
+				overwriteCoolClineMessages: jest.fn(),
 				overwriteApiConversationHistory: jest.fn(),
 				taskId: "test-task-id",
 			}
 			// @ts-ignore - accessing private property for testing
-			provider.cline = mockCline
+			provider.coolcline = mockCoolCline
 
 			// Trigger message deletion
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 			await messageHandler({ type: "deleteMessage", value: 2000 })
 
 			// Verify no messages were deleted
-			expect(mockCline.overwriteClineMessages).not.toHaveBeenCalled()
-			expect(mockCline.overwriteApiConversationHistory).not.toHaveBeenCalled()
+			expect(mockCoolCline.overwriteCoolClineMessages).not.toHaveBeenCalled()
+			expect(mockCoolCline.overwriteApiConversationHistory).not.toHaveBeenCalled()
 		})
 	})
 
@@ -1365,13 +1365,13 @@ describe("ClineProvider", () => {
 					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
 			} as any
 
-			// Setup mock Cline instance
-			const mockCline = {
+			// Setup mock CoolCline instance
+			const mockCoolCline = {
 				api: undefined,
 				abortTask: jest.fn(),
 			}
 			// @ts-ignore - accessing private property for testing
-			provider.cline = mockCline
+			provider.coolcline = mockCoolCline
 
 			const testApiConfig = {
 				apiProvider: "anthropic" as const,
