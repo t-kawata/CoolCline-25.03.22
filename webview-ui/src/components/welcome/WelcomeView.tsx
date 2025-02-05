@@ -4,9 +4,11 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import { validateApiConfiguration } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
 import ApiOptions from "../settings/ApiOptions"
+import { useTranslation } from "react-i18next"
 
 const WelcomeView = () => {
 	const { apiConfiguration } = useExtensionState()
+	const { t } = useTranslation()
 
 	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
 
@@ -30,24 +32,22 @@ const WelcomeView = () => {
 				bottom: 0,
 				padding: "0 20px",
 			}}>
-			<h2>Welcome!</h2>
+			<h2>{String(t("welcome.title"))}</h2>
 			<p>
-				CoolCline is a proactive programming assistant that enhances your development workflow with advanced AI
-				capabilities. It helps you write code more efficiently, optimize queries, auto-fix errors, run
-				command-line tasks, and perform browser automation tests.
+				{String(t("welcome.description"))}
 				<VSCodeLink
 					href="https://github.com/coolcline/coolcline/blob/main/README.md"
 					style={{ display: "inline" }}>
-					README
+					{String(t("welcome.readmeLink"))}
 				</VSCodeLink>
 			</p>
 
-			<b>To get started, this extension needs an API provider.</b>
+			<b>{String(t("welcome.apiProviderNeeded"))}</b>
 
 			<div style={{ marginTop: "10px" }}>
 				<ApiOptions />
 				<VSCodeButton onClick={handleSubmit} disabled={disableLetsGoButton} style={{ marginTop: "3px" }}>
-					Let's go!
+					{String(t("welcome.letsGo"))}
 				</VSCodeButton>
 			</div>
 		</div>

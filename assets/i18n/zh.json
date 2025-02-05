@@ -25,162 +25,12 @@
 		"noDescription": "暂无描述",
 		"unknown": "未知"
 	},
-	"mcp": {
-		"title": "MCP 服务器",
-		"modelContextProtocol": "模型上下文协议(MCP)",
-		"description": {
-			"part1": "可以与本地运行的 MCP 服务器进行通信，这些服务器提供额外的工具和资源来扩展 CoolCline 的功能。您可以使用",
-			"part2": "，或者让 CoolCline 为您的工作流程创建新的专用工具（例如，'添加一个获取最新 npm 文档的工具'）。"
-		},
-		"communityServers": "社区制作的服务器",
-		"enable": {
-			"title": "启用 MCP 服务器",
-			"description": "启用后，CoolCline 将能够与 MCP 服务器交互以获得高级功能。如果您不使用 MCP，可以禁用此功能以减少 CoolCline 的令牌使用量。"
-		},
-		"serverCreation": {
-			"title": "启用 MCP 服务器创建",
-			"description": "启用后，CoolCline 可以通过类似'添加新工具到...'的命令帮助您创建新的 MCP 服务器。如果您不需要创建 MCP 服务器，可以禁用此功能以减少 CoolCline 的令牌使用量。"
-		},
-		"editSettings": "编辑 MCP 设置",
-		"tools": {
-			"title": "工具",
-			"parameters": "参数",
-			"alwaysAllow": "始终允许",
-			"noTools": "未找到工具"
-		},
-		"resources": {
-			"title": "资源",
-			"returns": "返回",
-			"noResources": "未找到资源"
-		},
-		"timeout": {
-			"title": "网络超时",
-			"description": "等待服务器响应的最长时间",
-			"15": "15 秒",
-			"30": "30 秒",
-			"60": "1 分钟",
-			"300": "5 分钟",
-			"600": "10 分钟",
-			"900": "15 分钟",
-			"1800": "30 分钟",
-			"3600": "60 分钟"
-		},
-		"server": {
-			"restart": "重启服务器",
-			"restarting": "正在重启...",
-			"retry": "重试连接",
-			"retrying": "正在重试..."
-		}
-	},
-	"prompts": {
-		"settings": {
-			"sections": {
-				"general": "通用 Prompt 配置",
-				"modes": "角色模式 Prompt 配置",
-				"tools": "辅助功能 Prompt 配置"
-			},
-			"language": {
-				"title": "语言",
-				"description": "设置 AI 助手的回复语言，界面也会相应切换到所选语言",
-				"select": "选择语言"
-			},
-			"customInstructions": {
-				"title": "通用行为指令",
-				"description": "这些指令适用于所有模式，作为基础行为准则，可以通过下方的模式特定指令进行扩展",
-				"loadFrom": "也可以从工作区的",
-				"inWorkspace": "文件中加载指令"
-			},
-			"modePrompts": {
-				"title": "Prompt 配置",
-				"description": "点击 + 创建新模式，或直接在对话中让 CoolCline 为您创建！",
-				"createMode": "新建模式",
-				"editConfig": "编辑模式配置",
-				"name": "名称",
-				"specificPrompts": "模式专属 Prompt",
-				"slug": {
-					"title": "标识符",
-					"description": "用于 URL 和文件名的唯一标识，只能包含小写字母、数字和连字符"
-				},
-				"roleDefinition": {
-					"title": "角色定义",
-					"description": "定义 CoolCline 在此模式下的专业特长和个性特征，这将决定其工作方式和表现形式",
-					"createDescription": "定义此模式下的专业特长和个性特征"
-				},
-				"apiConfig": {
-					"title": "API 配置",
-					"description": "为此模式选择 API 配置",
-					"useCurrentConfig": "使用当前选择的 API 配置",
-					"enhancePrompts": "可以选择专门用于提示增强的 API 配置"
-				},
-				"tools": {
-					"title": "可用工具",
-					"cannotModify": "内置模式的工具无法修改",
-					"selectTools": "选择此模式可使用的工具",
-					"availableTitle": "可用工具列表",
-					"selectDescription": "选择此模式可使用的工具"
-				},
-				"customInstructions": {
-					"title": "模式专属指令",
-					"description": "添加 {mode} 模式的专属行为指南",
-					"loadFrom": "{mode} 模式的专属指令也可以从工作区的",
-					"inWorkspace": "文件中加载",
-					"createDescription": "添加此模式的专属行为指南",
-					"modeSpecific": "模式专属指令"
-				},
-				"preview": "预览系统 Prompt"
-			},
-			"api": {
-				"title": "API 设置",
-				"configProfile": "配置文件",
-				"description": "保存多个 API 配置，方便快速切换不同的服务商和设置",
-				"model": {
-					"title": "模型",
-					"search": "搜索模型...",
-					"selected": "当前选择的模型："
-				},
-				"provider": {
-					"title": "服务商",
-					"openai": "OpenAI",
-					"glama": "Glama",
-					"openRouter": "OpenRouter"
-				}
-			},
-			"experimental": {
-				"title": "实验性功能",
-				"description": "开启或关闭实验性功能"
-			}
-		},
-		"support": {
-			"title": "辅助功能 Prompt 配置",
-			"enhance": {
-				"title": "增强",
-				"testPrompt": "输入 prompt 测试增强效果",
-				"preview": "预览 Prompt 增强效果",
-				"enterPrompt": "输入 prompt 测试增强效果"
-			},
-			"prompts": {
-				"enhance": {
-					"label": "Prompt 增强",
-					"description": "通过 prompt 增强功能获取更精准的建议和改进意见。这能确保 CoolCline 准确理解您的意图并提供最佳回应。可通过聊天界面中的 ✨ 图标使用。"
-				},
-				"explain": {
-					"label": "代码解释",
-					"description": "获取代码片段、函数或整个文件的详细解释。适用于理解复杂代码或学习新的编程模式。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
-				},
-				"fix": {
-					"label": "问题修复",
-					"description": "帮助识别并解决程序错误、bug 或代码质量问题，提供逐步的修复指导。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
-				},
-				"improve": {
-					"label": "代码优化",
-					"description": "在保持功能不变的前提下，提供代码优化建议、最佳实践和架构改进方案。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
-				},
-				"addToContext": {
-					"label": "添加上下文",
-					"description": "为当前任务或对话添加补充信息。用于提供额外说明或澄清细节。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
-				}
-			}
-		}
+	"welcome": {
+		"title": "欢迎！",
+		"description": "CoolCline 是一个主动式编程助手，通过先进的 AI 功能增强您的开发工作流程。它可以帮助您更高效地编写代码、优化查询、自动修复错误、运行命令行任务以及执行浏览器自动化测试。",
+		"readmeLink": "使用说明",
+		"apiProviderNeeded": "要开始使用，此扩展需要一个 API 提供商。",
+		"letsGo": "让我们开始吧！"
 	},
 	"chat": {
 		"welcome": {
@@ -302,6 +152,163 @@
 			"typeTask": "在此输入您的任务...",
 			"addContext": "(使用 @ 添加上下文",
 			"dragImages": "，按住 Shift 键拖入图片"
+		}
+	},
+	"prompts": {
+		"settings": {
+			"sections": {
+				"general": "通用 Prompt 配置",
+				"modes": "角色模式 Prompt 配置",
+				"tools": "辅助功能 Prompt 配置"
+			},
+			"language": {
+				"title": "语言",
+				"description": "设置 AI 助手的回复语言，界面也会相应切换到所选语言",
+				"select": "选择语言"
+			},
+			"customInstructions": {
+				"title": "通用行为指令",
+				"description": "这些指令适用于所有模式，作为基础行为准则，可以通过下方的模式特定指令进行扩展",
+				"loadFrom": "也可以从工作区的",
+				"inWorkspace": "文件中加载指令"
+			},
+			"modePrompts": {
+				"title": "Prompt 配置",
+				"description": "点击 + 创建新模式，或直接在对话中让 CoolCline 为您创建！",
+				"createMode": "新建模式",
+				"editConfig": "编辑模式配置",
+				"name": "名称",
+				"specificPrompts": "模式专属 Prompt",
+				"slug": {
+					"title": "标识符",
+					"description": "用于 URL 和文件名的唯一标识，只能包含小写字母、数字和连字符"
+				},
+				"roleDefinition": {
+					"title": "角色定义",
+					"description": "定义 CoolCline 在此模式下的专业特长和个性特征，这将决定其工作方式和表现形式",
+					"createDescription": "定义此模式下的专业特长和个性特征"
+				},
+				"apiConfig": {
+					"title": "API 配置",
+					"description": "为此模式选择 API 配置",
+					"useCurrentConfig": "使用当前选择的 API 配置",
+					"enhancePrompts": "可以选择专门用于提示增强的 API 配置"
+				},
+				"tools": {
+					"title": "可用工具",
+					"cannotModify": "内置模式的工具无法修改",
+					"selectTools": "选择此模式可使用的工具",
+					"availableTitle": "可用工具列表",
+					"selectDescription": "选择此模式可使用的工具"
+				},
+				"customInstructions": {
+					"title": "模式专属指令",
+					"description": "添加 {mode} 模式的专属行为指南",
+					"loadFrom": "{mode} 模式的专属指令也可以从工作区的",
+					"inWorkspace": "文件中加载",
+					"createDescription": "添加此模式的专属行为指南",
+					"modeSpecific": "模式专属指令"
+				},
+				"preview": "预览系统 Prompt"
+			},
+			"api": {
+				"title": "API 设置",
+				"configProfile": "配置文件",
+				"description": "保存多个 API 配置，方便快速切换不同的服务商和设置",
+				"model": {
+					"title": "模型",
+					"search": "搜索模型...",
+					"selected": "当前选择的模型："
+				},
+				"provider": {
+					"title": "服务商",
+					"openai": "OpenAI",
+					"glama": "Glama",
+					"openRouter": "OpenRouter"
+				}
+			},
+			"experimental": {
+				"title": "实验性功能",
+				"description": "开启或关闭实验性功能"
+			}
+		},
+		"support": {
+			"title": "辅助功能 Prompt 配置",
+			"enhance": {
+				"title": "增强",
+				"testPrompt": "输入 prompt 测试增强效果",
+				"preview": "预览 Prompt 增强效果",
+				"enterPrompt": "输入 prompt 测试增强效果"
+			},
+			"prompts": {
+				"enhance": {
+					"label": "Prompt 增强",
+					"description": "通过 prompt 增强功能获取更精准的建议和改进意见。这能确保 CoolCline 准确理解您的意图并提供最佳回应。可通过聊天界面中的 ✨ 图标使用。"
+				},
+				"explain": {
+					"label": "代码解释",
+					"description": "获取代码片段、函数或整个文件的详细解释。适用于理解复杂代码或学习新的编程模式。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
+				},
+				"fix": {
+					"label": "问题修复",
+					"description": "帮助识别并解决程序错误、bug 或代码质量问题，提供逐步的修复指导。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
+				},
+				"improve": {
+					"label": "代码优化",
+					"description": "在保持功能不变的前提下，提供代码优化建议、最佳实践和架构改进方案。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
+				},
+				"addToContext": {
+					"label": "添加上下文",
+					"description": "为当前任务或对话添加补充信息。用于提供额外说明或澄清细节。可通过编辑器中的智能提示（灯泡图标）或右键菜单使用。"
+				}
+			}
+		}
+	},
+	"mcp": {
+		"title": "MCP 服务器",
+		"modelContextProtocol": "模型上下文协议(MCP)",
+		"description": {
+			"part1": "可以与本地运行的 MCP 服务器进行通信，这些服务器提供额外的工具和资源来扩展 CoolCline 的功能。您可以使用",
+			"part2": "，或者让 CoolCline 为您的工作流程创建新的专用工具（例如，'添加一个获取最新 npm 文档的工具'）。"
+		},
+		"communityServers": "社区制作的服务器",
+		"enable": {
+			"title": "启用 MCP 服务器",
+			"description": "启用后，CoolCline 将能够与 MCP 服务器交互以获得高级功能。如果您不使用 MCP，可以禁用此功能以减少 CoolCline 的令牌使用量。"
+		},
+		"serverCreation": {
+			"title": "启用 MCP 服务器创建",
+			"description": "启用后，CoolCline 可以通过类似'添加新工具到...'的命令帮助您创建新的 MCP 服务器。如果您不需要创建 MCP 服务器，可以禁用此功能以减少 CoolCline 的令牌使用量。"
+		},
+		"editSettings": "编辑 MCP 设置",
+		"tools": {
+			"title": "工具",
+			"parameters": "参数",
+			"alwaysAllow": "始终允许",
+			"noTools": "未找到工具"
+		},
+		"resources": {
+			"title": "资源",
+			"returns": "返回",
+			"noResources": "未找到资源"
+		},
+		"timeout": {
+			"title": "网络超时",
+			"description": "等待服务器响应的最长时间",
+			"15": "15 秒",
+			"30": "30 秒",
+			"60": "1 分钟",
+			"300": "5 分钟",
+			"600": "10 分钟",
+			"900": "15 分钟",
+			"1800": "30 分钟",
+			"3600": "60 分钟"
+		},
+		"server": {
+			"restart": "重启服务器",
+			"restarting": "正在重启...",
+			"retry": "重试连接",
+			"retrying": "正在重试..."
 		}
 	},
 	"history": {
