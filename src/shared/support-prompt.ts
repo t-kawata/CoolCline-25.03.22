@@ -32,15 +32,15 @@ interface SupportPromptConfig {
 
 const supportPromptConfigs: Record<string, SupportPromptConfig> = {
 	ENHANCE: {
-		label: "support.prompts.enhance.label",
-		description: "support.prompts.enhance.description",
+		label: "prompts.support.prompts.enhance.label",
+		description: "prompts.support.prompts.enhance.description",
 		template: `Generate an enhanced version of this prompt (reply with only the enhanced prompt - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):
 
 \${userInput}`,
 	},
 	EXPLAIN: {
-		label: "support.prompts.explain.label",
-		description: "support.prompts.explain.description",
+		label: "prompts.support.prompts.explain.label",
+		description: "prompts.support.prompts.explain.description",
 		template: `Explain the following code from file path @/\${filePath}:
 \${userInput}
 
@@ -54,8 +54,8 @@ Please provide a clear and concise explanation of what this code does, including
 3. Important patterns or techniques used`,
 	},
 	FIX: {
-		label: "support.prompts.fix.label",
-		description: "support.prompts.fix.description",
+		label: "prompts.support.prompts.fix.label",
+		description: "prompts.support.prompts.fix.description",
 		template: `Fix any issues in the following code from file path @/\${filePath}
 \${diagnosticText}
 \${userInput}
@@ -71,8 +71,8 @@ Please:
 4. Explain what was fixed and why`,
 	},
 	IMPROVE: {
-		label: "support.prompts.improve.label",
-		description: "support.prompts.improve.description",
+		label: "prompts.support.prompts.improve.label",
+		description: "prompts.support.prompts.improve.description",
 		template: `Improve the following code from file path @/\${filePath}:
 \${userInput}
 
@@ -89,8 +89,8 @@ Please suggest improvements for:
 Provide the improved code along with explanations for each enhancement.`,
 	},
 	ADD_TO_CONTEXT: {
-		label: "support.prompts.addToContext.label",
-		description: "support.prompts.addToContext.description",
+		label: "prompts.support.prompts.addToContext.label",
+		description: "prompts.support.prompts.addToContext.description",
 		template: `@/\${filePath}:
 \`\`\`
 \${selectedText}

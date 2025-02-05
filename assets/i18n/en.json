@@ -72,106 +72,113 @@
 			"retrying": "Retrying..."
 		}
 	},
-	"settings": {
-		"language": {
-			"title": "Preferred Language",
-			"description": "Select the language that CoolCline should use for communication.",
-			"select": "Select Language"
-		},
-		"customInstructions": {
-			"title": "Custom Instructions for All Modes",
-			"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.",
-			"loadFrom": "Instructions can also be loaded from",
-			"inWorkspace": "in your workspace"
-		},
-		"modePrompts": {
-			"title": "Mode-Specific Prompts",
-			"description": "Hit the + to create a new custom mode, or just ask CoolCline in chat to create one for you!",
-			"createMode": "Create new mode",
-			"editConfig": "Edit modes configuration",
-			"name": "Name",
-			"specificPrompts": "Mode-Specific Prompts",
-			"slug": {
-				"title": "Slug",
-				"description": "The slug is used in URLs and file names. It should be lowercase and contain only letters, numbers, and hyphens."
+	"prompts": {
+		"settings": {
+			"sections": {
+				"general": "General Prompt Settings",
+				"modes": "Role Mode Prompt Settings",
+				"tools": "Support Prompt Settings"
 			},
-			"roleDefinition": {
-				"title": "Role Definition",
-				"description": "Define CoolCline's expertise and personality for this mode. This description shapes how CoolCline presents itself and approaches tasks.",
-				"createDescription": "Define CoolCline's expertise and personality for this mode."
-			},
-			"apiConfig": {
-				"title": "API Configuration",
-				"description": "Select which API configuration to use for this mode",
-				"useCurrentConfig": "Use currently selected API configuration",
-				"enhancePrompts": "You can select an API configuration to always use for enhancing prompts"
-			},
-			"tools": {
-				"title": "Available Tools",
-				"cannotModify": "Tools for built-in modes cannot be modified",
-				"selectTools": "Select which tools this mode can use",
-				"availableTitle": "Available Tools",
-				"selectDescription": "Select which tools this mode can use"
+			"language": {
+				"title": "Language",
+				"description": "Set the AI assistant's response language, the interface will also switch to the selected language",
+				"select": "Select Language"
 			},
 			"customInstructions": {
-				"title": "Mode-specific Custom Instructions",
-				"description": "Add behavioral guidelines specific to {mode} mode.",
-				"loadFrom": "Custom instructions specific to {mode} mode can also be loaded from",
-				"inWorkspace": "in your workspace",
-				"createDescription": "Add behavioral guidelines specific to this mode.",
-				"modeSpecific": "Mode-specific Custom Instructions"
+				"title": "General Behavior Instructions",
+				"description": "These instructions apply to all modes as base behavior guidelines, which can be extended by mode-specific instructions below",
+				"loadFrom": "Instructions can also be loaded from",
+				"inWorkspace": "in your workspace"
 			},
-			"preview": "Preview System Prompt"
-		},
-		"api": {
-			"title": "API Settings",
-			"configProfile": "Configuration Profile",
-			"description": "Save different API configurations to quickly switch between providers and settings",
-			"model": {
-				"title": "Model",
-				"search": "Search models...",
-				"selected": "Selected model:"
+			"modePrompts": {
+				"title": "Prompt Settings",
+				"description": "Hit the + to create a new custom mode, or just ask CoolCline in chat to create one for you!",
+				"createMode": "Create new mode",
+				"editConfig": "Edit modes configuration",
+				"name": "Name",
+				"specificPrompts": "Mode-Specific Prompts",
+				"slug": {
+					"title": "Identifier",
+					"description": "A unique identifier used in URLs and file names, should only contain lowercase letters, numbers, and hyphens"
+				},
+				"roleDefinition": {
+					"title": "Role Definition",
+					"description": "Define CoolCline's expertise and personality traits for this mode, which will determine its working style and behavior",
+					"createDescription": "Define the expertise and personality traits for this mode"
+				},
+				"apiConfig": {
+					"title": "API Configuration",
+					"description": "Select API configuration for this mode",
+					"useCurrentConfig": "Use currently selected API configuration",
+					"enhancePrompts": "You can select an API configuration specifically for prompt enhancement"
+				},
+				"tools": {
+					"title": "Available Tools",
+					"cannotModify": "Tools for built-in modes cannot be modified",
+					"selectTools": "Select which tools this mode can use",
+					"availableTitle": "Available Tools List",
+					"selectDescription": "Select which tools this mode can use"
+				},
+				"customInstructions": {
+					"title": "Mode-specific Instructions",
+					"description": "Add behavioral guidelines specific to {mode} mode",
+					"loadFrom": "Mode-specific instructions for {mode} can also be loaded from",
+					"inWorkspace": "in your workspace",
+					"createDescription": "Add behavioral guidelines specific to this mode",
+					"modeSpecific": "Mode-specific Instructions"
+				},
+				"preview": "Preview System Prompt"
 			},
-			"provider": {
-				"title": "Provider",
-				"openai": "OpenAI",
-				"glama": "Glama",
-				"openRouter": "OpenRouter"
+			"api": {
+				"title": "API Settings",
+				"configProfile": "Configuration Profile",
+				"description": "Save multiple API configurations for quick switching between different providers and settings",
+				"model": {
+					"title": "Model",
+					"search": "Search models...",
+					"selected": "Currently selected model:"
+				},
+				"provider": {
+					"title": "Provider",
+					"openai": "OpenAI",
+					"glama": "Glama",
+					"openRouter": "OpenRouter"
+				}
+			},
+			"experimental": {
+				"title": "Experimental Features",
+				"description": "Enable or disable experimental features"
 			}
 		},
-		"experimental": {
-			"title": "Experimental Features",
-			"description": "Enable or disable experimental features"
-		}
-	},
-	"support": {
-		"title": "Support Prompts",
-		"enhance": {
-			"title": "Enhance",
-			"testPrompt": "Enter a prompt to test the enhancement",
-			"preview": "Preview Prompt Enhancement",
-			"enterPrompt": "Enter a prompt to test the enhancement"
-		},
-		"prompts": {
+		"support": {
+			"title": "Support Prompt Settings",
 			"enhance": {
-				"label": "Enhance Prompt",
-				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures CoolCline understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
+				"title": "Enhance",
+				"testPrompt": "Enter prompt to test enhancement",
+				"preview": "Preview Prompt Enhancement",
+				"enterPrompt": "Enter prompt to test enhancement"
 			},
-			"explain": {
-				"label": "Explain Code",
-				"description": "Get detailed explanations of code snippets, functions, or entire files. Useful for understanding complex code or learning new patterns. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
-			},
-			"fix": {
-				"label": "Fix Issues",
-				"description": "Get help identifying and resolving bugs, errors, or code quality issues. Provides step-by-step guidance for fixing problems. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
-			},
-			"improve": {
-				"label": "Improve Code",
-				"description": "Receive suggestions for code optimization, better practices, and architectural improvements while maintaining functionality. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code)."
-			},
-			"addToContext": {
-				"label": "Add to Context",
-				"description": "Add context to your current task or conversation. Useful for providing additional information or clarifications. Available in code actions (lightbulb icon in the editor). and the editor context menu (right-click on selected code)."
+			"prompts": {
+				"enhance": {
+					"label": "Prompt Enhancement",
+					"description": "Get more precise suggestions and improvements through prompt enhancement. This ensures CoolCline accurately understands your intent and provides the best response. Available via the ✨ icon in chat interface."
+				},
+				"explain": {
+					"label": "Code Explanation",
+					"description": "Get detailed explanations of code snippets, functions, or entire files. Suitable for understanding complex code or learning new programming patterns. Available through smart suggestions (lightbulb icon) or right-click menu in editor."
+				},
+				"fix": {
+					"label": "Issue Fix",
+					"description": "Help identify and resolve program errors, bugs, or code quality issues, providing step-by-step fix guidance. Available through smart suggestions (lightbulb icon) or right-click menu in editor."
+				},
+				"improve": {
+					"label": "Code Optimization",
+					"description": "Get code optimization suggestions, best practices, and architectural improvements while maintaining functionality. Available through smart suggestions (lightbulb icon) or right-click menu in editor."
+				},
+				"addToContext": {
+					"label": "Add Context",
+					"description": "Add supplementary information to current task or conversation. Used for providing additional explanations or clarifying details. Available through smart suggestions (lightbulb icon) or right-click menu in editor."
+				}
 			}
 		}
 	},
