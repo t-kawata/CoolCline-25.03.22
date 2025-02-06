@@ -148,23 +148,30 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		(field: keyof ApiConfiguration, softUpdate?: boolean) => (event: any) => {
 			// Use the functional form of setState to ensure the latest state is used in the update logic.
 			setState((currentState) => {
+				const newValue = event.target.value
+				const updatedConfig = {
+					...currentState.apiConfiguration,
+					[field]: newValue,
+				}
+
 				if (softUpdate) {
-					// Return a new state object with the updated apiConfiguration.
-					// This will trigger a re-render with the new configuration value.
+					// For soft updates, only update the local state without sending a message
 					return {
 						...currentState,
-						apiConfiguration: { ...currentState.apiConfiguration, [field]: event.target.value },
+						apiConfiguration: updatedConfig,
 					}
 				} else {
-					// For non-soft updates, send a message to the VS Code extension with the updated config.
-					// This side effect communicates the change without updating local React state.
+					// For non-soft updates, send a message to the VS Code extension
 					vscode.postMessage({
 						type: "upsertApiConfiguration",
 						text: currentState.currentApiConfigName,
-						apiConfiguration: { ...currentState.apiConfiguration, [field]: event.target.value },
+						apiConfiguration: updatedConfig,
 					})
-					// Return the unchanged state as no local state update is intended in this branch.
-					return currentState
+					// Also update the local state to maintain consistency
+					return {
+						...currentState,
+						apiConfiguration: updatedConfig,
+					}
 				}
 			})
 		},

@@ -9,9 +9,22 @@ export function insertMention(
 ): { newValue: string; mentionIndex: number } {
 	// 处理斜杠命令
 	if (text.startsWith("/")) {
+		const beforeCursor = text.slice(0, position)
+		const afterCursor = text.slice(position)
+		const commandText = beforeCursor.slice(1) // 去掉斜杠
+
+		// 如果命令文本为空或全是空格，直接替换整个命令
+		if (!commandText.trim()) {
+			return {
+				newValue: value,
+				mentionIndex: 0,
+			}
+		}
+
+		// 否则，替换命令部分
 		return {
-			newValue: value, // 恢复为原来的行为，保持用户选择的值
-			mentionIndex: 0,
+			newValue: "/" + value + afterCursor,
+			mentionIndex: value.length + 1, // +1 是为了包含斜杠
 		}
 	}
 
@@ -83,13 +96,13 @@ export function getContextMenuOptions(
 ): ContextMenuQueryItem[] {
 	// 处理斜杠命令模式切换
 	if (query.startsWith("/")) {
-		const modeQuery = query.slice(1)
+		const modeQuery = query.slice(1).trim()
 		if (!modes?.length) return [{ type: ContextMenuOptionType.NoResults }]
 
 		// 创建可搜索的字符串数组
 		const searchableItems = modes.map((mode) => ({
 			original: mode,
-			searchStr: `${mode.name} ${mode.roleDefinition}`,
+			searchStr: `${mode.name} ${mode.roleDefinition} ${mode.slug}`,
 		}))
 
 		// 初始化 fzf 实例进行模糊搜索
@@ -97,20 +110,33 @@ export function getContextMenuOptions(
 			selector: (item) => item.searchStr,
 		})
 
-		// 获取模糊匹配的项目
-		const matchingModes = modeQuery
-			? fzf.find(modeQuery).map((result) => ({
-					type: ContextMenuOptionType.Mode as const,
-					value: result.item.original.slug,
-					label: result.item.original.name,
-					description: result.item.original.roleDefinition.split("\n")[0],
-				}))
-			: modes.map((mode) => ({
-					type: ContextMenuOptionType.Mode as const,
-					value: mode.slug,
-					label: mode.name,
-					description: mode.roleDefinition.split("\n")[0],
-				}))
+		// 获取模糊匹配的项目并排序
+		const getMatchingModes = (items: typeof searchableItems) => {
+			const results = modeQuery ? fzf.find(modeQuery) : items.map((item, idx) => ({ item, score: idx }))
+
+			// 自定义排序逻辑
+			return results.sort((a, b) => {
+				// 优先匹配名称
+				const aNameMatch = a.item.original.name.toLowerCase().includes(modeQuery.toLowerCase())
+				const bNameMatch = b.item.original.name.toLowerCase().includes(modeQuery.toLowerCase())
+				if (aNameMatch !== bNameMatch) return aNameMatch ? -1 : 1
+
+				// 其次匹配 slug
+				const aSlugMatch = a.item.original.slug.toLowerCase().includes(modeQuery.toLowerCase())
+				const bSlugMatch = b.item.original.slug.toLowerCase().includes(modeQuery.toLowerCase())
+				if (aSlugMatch !== bSlugMatch) return aSlugMatch ? -1 : 1
+
+				return a.score - b.score
+			})
+		}
+
+		const matchingModes = getMatchingModes(searchableItems).map((result) => ({
+			type: ContextMenuOptionType.Mode as const,
+			value: result.item.original.slug,
+			label: result.item.original.name,
+			description: result.item.original.roleDefinition.split("\n")[0],
+			icon: "$(symbol-enum)", // 添加图标
+		}))
 
 		return matchingModes.length > 0 ? matchingModes : [{ type: ContextMenuOptionType.NoResults }]
 	}

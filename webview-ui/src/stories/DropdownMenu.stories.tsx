@@ -24,10 +24,13 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
+	DropdownMenuCheckboxItem,
+	DropdownMenuRadioItem,
+	DropdownMenuRadioGroup,
 } from "@/components/ui"
 
 const meta = {
-	title: "@shadcn/DropdownMenu",
+	title: "UI/DropdownMenu",
 	component: DropdownMenu,
 	parameters: { layout: "centered" },
 	tags: ["autodocs"],
@@ -55,23 +58,95 @@ export const Default: Story = {
 						Item 2<DropdownMenuShortcut>⌘2</DropdownMenuShortcut>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	),
+}
+
+export const Basic: Story = {
+	render: () => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline">Open Menu</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56">
+				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
+					<DropdownMenuItem>
+						Profile
+						<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+					</DropdownMenuItem>
+					<DropdownMenuItem>
+						Billing
+						<DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+					</DropdownMenuItem>
+					<DropdownMenuItem>
+						Settings
+						<DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	),
+}
+
+export const WithSubmenu: Story = {
+	render: () => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline">Open Menu</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56">
+				<DropdownMenuLabel>My Account</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuGroup>
+					<DropdownMenuItem>Profile</DropdownMenuItem>
 					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>Submenu</DropdownMenuSubTrigger>
-						<DropdownMenuPortal>
-							<DropdownMenuSubContent>
-								<DropdownMenuItem>Foo</DropdownMenuItem>
-								<DropdownMenuItem>
-									Bar
-									<DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem>Baz</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuPortal>
+						<DropdownMenuSubTrigger>More Options</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent>
+							<DropdownMenuItem>About</DropdownMenuItem>
+							<DropdownMenuItem>Help</DropdownMenuItem>
+							<DropdownMenuItem>Contact</DropdownMenuItem>
+						</DropdownMenuSubContent>
 					</DropdownMenuSub>
 				</DropdownMenuGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	),
+}
+
+export const WithCheckboxItems: Story = {
+	render: () => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline">Open Menu</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56">
+				<DropdownMenuLabel>Appearance</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuCheckboxItem checked>Show Line Numbers</DropdownMenuCheckboxItem>
+				<DropdownMenuCheckboxItem>Show Minimap</DropdownMenuCheckboxItem>
+				<DropdownMenuCheckboxItem>Show Breadcrumbs</DropdownMenuCheckboxItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	),
+}
+
+export const WithRadioItems: Story = {
+	render: () => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline">Open Menu</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56">
+				<DropdownMenuLabel>Theme</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuRadioGroup value="light">
+					<DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
+					<DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
+					<DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>
+				</DropdownMenuRadioGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	),
