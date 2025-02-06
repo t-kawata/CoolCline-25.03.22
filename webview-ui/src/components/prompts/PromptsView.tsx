@@ -68,7 +68,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 	const [isToolsEditMode, setIsToolsEditMode] = useState(false)
 	const [isCreateModeDialogOpen, setIsCreateModeDialogOpen] = useState(false)
 	const [activeSupportTab, setActiveSupportTab] = useState<SupportPromptType>("ENHANCE")
-	const [selectedModeTab, setSelectedModeTab] = useState<string>(mode)
 
 	// Direct update functions
 	const updateAgentPrompt = useCallback(
@@ -117,20 +116,22 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 	// Handle mode tab selection without actually switching modes
 	const handleModeSwitch = useCallback(
 		(modeConfig: ModeConfig) => {
-			if (modeConfig.slug === selectedModeTab) return // Prevent unnecessary updates
+			if (modeConfig.slug === mode) return // Prevent unnecessary updates
 
-			// Update selected tab and reset tools edit mode
-			setSelectedModeTab(modeConfig.slug)
+			// First switch the mode
+			switchMode(modeConfig.slug)
+
+			// Exit tools edit mode when switching modes
 			setIsToolsEditMode(false)
 		},
-		[selectedModeTab, setIsToolsEditMode],
+		[mode, switchMode, setIsToolsEditMode],
 	)
 
 	// Helper function to get current mode's config
 	const getCurrentMode = useCallback((): ModeConfig | undefined => {
-		const findMode = (m: ModeConfig): boolean => m.slug === selectedModeTab
+		const findMode = (m: ModeConfig): boolean => m.slug === mode
 		return customModes?.find(findMode) || modes.find(findMode)
-	}, [selectedModeTab, customModes, modes])
+	}, [mode, customModes, modes])
 
 	// Helper function to safely access mode properties
 	const getModeProperty = <T extends keyof ModeConfig>(
@@ -155,11 +156,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 			setNewModeCustomInstructions("")
 		}
 	}, [isCreateModeDialogOpen])
-
-	// Keep selected tab in sync with actual mode
-	useEffect(() => {
-		setSelectedModeTab(mode)
-	}, [mode])
 
 	// 初始化语言
 	useEffect(() => {
@@ -468,7 +464,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							padding: "4px 0",
 						}}>
 						{modes.map((modeConfig) => {
-							const isActive = selectedModeTab === modeConfig.slug
+							const isActive = mode === modeConfig.slug
 							return (
 								<button
 									key={modeConfig.slug}
@@ -496,22 +492,20 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 
 				<div style={{ marginBottom: "20px" }}>
 					{/* Only show name and delete for custom modes */}
-					{selectedModeTab && findModeBySlug(selectedModeTab, customModes) && (
+					{mode && findModeBySlug(mode, customModes) && (
 						<div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
 							<div style={{ flex: 1 }}>
 								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>Name</div>
 								<div style={{ display: "flex", gap: "8px" }}>
 									<VSCodeTextField
-										value={
-											getModeProperty(findModeBySlug(selectedModeTab, customModes), "name") ?? ""
-										}
+										value={getModeProperty(findModeBySlug(mode, customModes), "name") ?? ""}
 										onChange={(e: Event | React.FormEvent<HTMLElement>) => {
 											const target =
 												(e as CustomEvent)?.detail?.target ||
 												((e as any).target as HTMLInputElement)
-											const customMode = findModeBySlug(selectedModeTab, customModes)
+											const customMode = findModeBySlug(mode, customModes)
 											if (customMode) {
-												updateCustomMode(selectedModeTab, {
+												updateCustomMode(mode, {
 													...customMode,
 													name: target.value,
 												})
@@ -525,7 +519,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										onClick={() => {
 											vscode.postMessage({
 												type: "deleteCustomMode",
-												slug: selectedModeTab,
+												slug: mode,
 											})
 										}}>
 										<span className="codicon codicon-trash"></span>
@@ -545,7 +539,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							<div style={{ fontWeight: "bold" }}>
 								{String(t("prompts.settings.modePrompts.roleDefinition.title"))}
 							</div>
-							{!findModeBySlug(selectedModeTab, customModes) && (
+							{!findModeBySlug(mode, customModes) && (
 								<VSCodeButton
 									appearance="icon"
 									onClick={() => {
@@ -570,28 +564,24 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						</div>
 						<VSCodeTextArea
 							value={(() => {
-								const customMode = findModeBySlug(selectedModeTab, customModes)
-								const prompt = customModePrompts?.[selectedModeTab] as PromptComponent
-								return (
-									customMode?.roleDefinition ??
-									prompt?.roleDefinition ??
-									getRoleDefinition(selectedModeTab)
-								)
+								const customMode = findModeBySlug(mode, customModes)
+								const prompt = customModePrompts?.[mode] as PromptComponent
+								return customMode?.roleDefinition ?? prompt?.roleDefinition ?? getRoleDefinition(mode)
 							})()}
 							onChange={(e) => {
 								const value =
 									(e as CustomEvent)?.detail?.target?.value ||
 									((e as any).target as HTMLTextAreaElement).value
-								const customMode = findModeBySlug(selectedModeTab, customModes)
+								const customMode = findModeBySlug(mode, customModes)
 								if (customMode) {
 									// For custom modes, update the JSON file
-									updateCustomMode(selectedModeTab, {
+									updateCustomMode(mode, {
 										...customMode,
 										roleDefinition: value.trim() || "",
 									})
 								} else {
 									// For built-in modes, update the prompts
-									updateAgentPrompt(selectedModeTab, {
+									updateAgentPrompt(mode, {
 										roleDefinition: value.trim() || undefined,
 									})
 								}
@@ -763,7 +753,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							<div style={{ fontWeight: "bold" }}>
 								{String(t("prompts.settings.modePrompts.customInstructions.title"))}
 							</div>
-							{!findModeBySlug(selectedModeTab, customModes) && (
+							{!findModeBySlug(mode, customModes) && (
 								<VSCodeButton
 									appearance="icon"
 									onClick={() => {
@@ -792,29 +782,29 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						</div>
 						<VSCodeTextArea
 							value={(() => {
-								const customMode = findModeBySlug(selectedModeTab, customModes)
-								const prompt = customModePrompts?.[selectedModeTab] as PromptComponent
+								const customMode = findModeBySlug(mode, customModes)
+								const prompt = customModePrompts?.[mode] as PromptComponent
 								return (
 									customMode?.customInstructions ??
 									prompt?.customInstructions ??
-									getCustomInstructions(selectedModeTab, customModes)
+									getCustomInstructions(mode, customModes)
 								)
 							})()}
 							onChange={(e) => {
 								const value =
 									(e as CustomEvent)?.detail?.target?.value ||
 									((e as any).target as HTMLTextAreaElement).value
-								const customMode = findModeBySlug(selectedModeTab, customModes)
+								const customMode = findModeBySlug(mode, customModes)
 								if (customMode) {
 									// For custom modes, update the JSON file
-									updateCustomMode(selectedModeTab, {
+									updateCustomMode(mode, {
 										...customMode,
 										customInstructions: value.trim() || undefined,
 									})
 								} else {
 									// For built-in modes, update the prompts
-									const existingPrompt = customModePrompts?.[selectedModeTab] as PromptComponent
-									updateAgentPrompt(selectedModeTab, {
+									const existingPrompt = customModePrompts?.[mode] as PromptComponent
+									updateAgentPrompt(mode, {
 										...existingPrompt,
 										customInstructions: value.trim() || undefined,
 									})

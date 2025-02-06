@@ -56,7 +56,7 @@ describe("PromptsView", () => {
 		expect(architectTab).toHaveAttribute("data-active", "false")
 	})
 
-	it("switches between tabs correctly", async () => {
+	it("switches between tabs correctly", () => {
 		const { rerender } = render(
 			<ExtensionStateContext.Provider value={{ ...mockExtensionState, mode: "code" } as any}>
 				<PromptsView onDone={jest.fn()} />
@@ -72,8 +72,14 @@ describe("PromptsView", () => {
 		expect(askTab).toHaveAttribute("data-active", "false")
 		expect(architectTab).toHaveAttribute("data-active", "false")
 
-		// Click Ask tab and update context
+		// Click Ask tab
 		fireEvent.click(askTab)
+		expect(vscode.postMessage).toHaveBeenCalledWith({
+			type: "mode",
+			text: "ask",
+		})
+
+		// Simulate mode change through context
 		rerender(
 			<ExtensionStateContext.Provider value={{ ...mockExtensionState, mode: "ask" } as any}>
 				<PromptsView onDone={jest.fn()} />
@@ -84,8 +90,14 @@ describe("PromptsView", () => {
 		expect(codeTab).toHaveAttribute("data-active", "false")
 		expect(architectTab).toHaveAttribute("data-active", "false")
 
-		// Click Architect tab and update context
+		// Click Architect tab
 		fireEvent.click(architectTab)
+		expect(vscode.postMessage).toHaveBeenCalledWith({
+			type: "mode",
+			text: "architect",
+		})
+
+		// Simulate mode change through context
 		rerender(
 			<ExtensionStateContext.Provider value={{ ...mockExtensionState, mode: "architect" } as any}>
 				<PromptsView onDone={jest.fn()} />
