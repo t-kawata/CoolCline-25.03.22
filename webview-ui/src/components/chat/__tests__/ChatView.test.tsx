@@ -245,8 +245,6 @@ describe("ChatView - Auto Approval Tests", () => {
 
 		// First hydrate state with initial task
 		mockPostMessage({
-			autoApprovalEnabled: true,
-			alwaysAllowBrowser: true,
 			coolclineMessages: [
 				{
 					type: "say",
@@ -256,6 +254,16 @@ describe("ChatView - Auto Approval Tests", () => {
 				},
 			],
 		})
+
+		// 等待 webview 加载完成
+		await waitFor(() => {
+			expect(vscode.postMessage).toHaveBeenCalledWith({
+				type: "webviewDidLaunch",
+			})
+		})
+
+		// 清除之前的调用记录
+		;(vscode.postMessage as jest.Mock).mockClear()
 
 		// Then send the browser action ask message
 		mockPostMessage({
