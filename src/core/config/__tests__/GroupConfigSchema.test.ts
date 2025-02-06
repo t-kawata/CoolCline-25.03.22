@@ -21,7 +21,7 @@ describe("GroupConfigSchema", () => {
 		test("accepts multiple groups", () => {
 			const mode = {
 				...validBaseMode,
-				groups: ["read", "edit", "browser"] as const,
+				groups: ["read", "write", "browser"] as const,
 			} satisfies ModeConfig
 
 			expect(() => CustomModeSchema.parse(mode)).not.toThrow()
@@ -30,7 +30,7 @@ describe("GroupConfigSchema", () => {
 		test("accepts all available groups", () => {
 			const mode = {
 				...validBaseMode,
-				groups: ["read", "edit", "browser", "command", "mcp"] as const,
+				groups: ["read", "write", "browser", "command", "mcp"] as const,
 			} satisfies ModeConfig
 
 			expect(() => CustomModeSchema.parse(mode)).not.toThrow()

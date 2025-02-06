@@ -20,7 +20,7 @@ describe("CustomModeSchema", () => {
 				slug: "test",
 				name: "Test Mode",
 				roleDefinition: "Test role definition",
-				groups: ["read", "edit", "browser"] as const,
+				groups: ["read", "write", "browser"] as const,
 			} satisfies ModeConfig
 
 			expect(() => validateCustomMode(validMode)).not.toThrow()
@@ -118,53 +118,105 @@ describe("CustomModeSchema", () => {
 				expect(() => validateCustomMode(input)).toThrow(ZodError)
 			})
 		})
+
+		it("rejects mode with invalid slug", () => {
+			const invalidMode = {
+				slug: "test@invalid",
+				name: "Test",
+				roleDefinition: "Test",
+				groups: ["read"],
+			} satisfies ModeConfig
+
+			expect(() => validateCustomMode(invalidMode)).toThrow()
+		})
+
+		it("rejects mode with empty name", () => {
+			const invalidMode = {
+				slug: "test",
+				name: "",
+				roleDefinition: "Test",
+				groups: ["read"],
+			} satisfies ModeConfig
+
+			expect(() => validateCustomMode(invalidMode)).toThrow()
+		})
+
+		it("rejects mode with empty roleDefinition", () => {
+			const invalidMode = {
+				slug: "test",
+				name: "Test",
+				roleDefinition: "",
+				groups: ["read"],
+			} satisfies ModeConfig
+
+			expect(() => validateCustomMode(invalidMode)).toThrow()
+		})
+
+		it("rejects mode with invalid groups", () => {
+			const invalidMode = {
+				slug: "test",
+				name: "Test",
+				roleDefinition: "Test",
+				groups: ["invalid-group"],
+			} as unknown as ModeConfig
+
+			expect(() => validateCustomMode(invalidMode)).toThrow()
+		})
+
+		it("rejects mode with empty groups", () => {
+			const invalidMode = {
+				slug: "test",
+				name: "Test",
+				roleDefinition: "Test",
+				groups: [],
+			} satisfies ModeConfig
+
+			expect(() => validateCustomMode(invalidMode)).toThrow()
+		})
 	})
 
 	describe("fileRegex", () => {
 		it("validates a mode with file restrictions and descriptions", () => {
 			const modeWithJustRegex = {
-				slug: "markdown-editor",
-				name: "Markdown Editor",
-				roleDefinition: "Markdown editing mode",
-				groups: ["read", ["edit", { fileRegex: "\\.md$" }], "browser"],
-			}
+				slug: "test",
+				name: "Test",
+				roleDefinition: "Test",
+				groups: ["read", ["write", { fileRegex: "^src/.*\\.ts$" }]],
+			} satisfies ModeConfig
 
 			const modeWithDescription = {
-				slug: "docs-editor",
-				name: "Documentation Editor",
-				roleDefinition: "Documentation editing mode",
-				groups: [
-					"read",
-					["edit", { fileRegex: "\\.(md|txt)$", description: "Documentation files only" }],
-					"browser",
-				],
-			}
+				slug: "test",
+				name: "Test",
+				roleDefinition: "Test",
+				groups: ["read", ["write", { fileRegex: "^src/.*\\.ts$", description: "TypeScript files in src" }]],
+			} satisfies ModeConfig
 
 			expect(() => CustomModeSchema.parse(modeWithJustRegex)).not.toThrow()
 			expect(() => CustomModeSchema.parse(modeWithDescription)).not.toThrow()
 		})
 
 		it("validates file regex patterns", () => {
-			const validPatterns = ["\\.md$", ".*\\.txt$", "[a-z]+\\.js$"]
-			const invalidPatterns = ["[", "(unclosed", "\\"]
+			const validPatterns = ["^src/.*\\.ts$", ".*\\.js$", "^test/", "\\.(ts|js)$"]
 
 			validPatterns.forEach((pattern) => {
 				const mode = {
 					slug: "test",
 					name: "Test",
 					roleDefinition: "Test",
-					groups: ["read", ["edit", { fileRegex: pattern }]],
-				}
+					groups: ["read", ["write", { fileRegex: pattern }]],
+				} satisfies ModeConfig
 				expect(() => CustomModeSchema.parse(mode)).not.toThrow()
 			})
+
+			const invalidPatterns = ["[", "(", "\\"]
 
 			invalidPatterns.forEach((pattern) => {
 				const mode = {
 					slug: "test",
 					name: "Test",
 					roleDefinition: "Test",
-					groups: ["read", ["edit", { fileRegex: pattern }]],
-				}
+					groups: ["read", ["write", { fileRegex: pattern }]],
+				} satisfies ModeConfig
 				expect(() => CustomModeSchema.parse(mode)).toThrow()
 			})
 		})
@@ -174,8 +226,13 @@ describe("CustomModeSchema", () => {
 				slug: "test",
 				name: "Test",
 				roleDefinition: "Test",
-				groups: ["read", "read", ["edit", { fileRegex: "\\.md$" }], ["edit", { fileRegex: "\\.txt$" }]],
-			}
+				groups: [
+					"read",
+					["read", { fileRegex: "^src/.*\\.ts$" }],
+					["write", { fileRegex: "^test/.*\\.ts$" }],
+					["write", { fileRegex: "^src/.*\\.ts$" }],
+				],
+			} satisfies ModeConfig
 
 			expect(() => CustomModeSchema.parse(modeWithDuplicates)).toThrow(/Duplicate groups/)
 		})

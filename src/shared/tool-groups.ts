@@ -25,10 +25,10 @@ export const TOOL_DISPLAY_NAMES = {
 // Define available tool groups
 export const TOOL_GROUPS: Record<string, ToolGroupConfig> = {
 	read: {
-		tools: ["read_file", "search_files", "list_files", "list_code_definition_names"],
+		tools: ["read_file", "codebase_search", "search_files", "list_files", "list_code_definition_names"],
 	},
-	edit: {
-		tools: ["write_to_file", "apply_diff", "insert_content", "search_and_replace"],
+	write: {
+		tools: ["write_to_file", "edit_file", "apply_diff", "insert_content", "search_and_replace"],
 	},
 	browser: {
 		tools: ["browser_action"],

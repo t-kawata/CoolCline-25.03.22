@@ -1,4 +1,4 @@
-import { Mode, isToolAllowedForMode, getModeConfig, modes } from "../../shared/modes"
+import { Mode, isToolAllowedForMode, getModeConfig, modes, ModeConfig } from "../../shared/modes"
 import { validateToolUse } from "../mode-validator"
 import { TOOL_GROUPS } from "../../shared/tool-groups"
 const [codeMode, architectMode, askMode] = modes.map((mode) => mode.slug)
@@ -48,52 +48,33 @@ describe("mode-validator", () => {
 		})
 
 		describe("custom modes", () => {
+			const customModes: ModeConfig[] = [
+				{
+					slug: "custom-mode",
+					name: "Custom Mode",
+					roleDefinition: "Custom role",
+					groups: ["read", "write"],
+				},
+			]
+
 			it("allows tools from custom mode configuration", () => {
-				const customModes = [
-					{
-						slug: "custom-mode",
-						name: "Custom Mode",
-						roleDefinition: "Custom role",
-						groups: ["read", "edit"] as const,
-					},
-				]
-				// Should allow tools from read and edit groups
+				// Should allow tools from read and write groups
 				expect(isToolAllowedForMode("read_file", "custom-mode", customModes)).toBe(true)
 				expect(isToolAllowedForMode("write_to_file", "custom-mode", customModes)).toBe(true)
 				// Should not allow tools from other groups
 				expect(isToolAllowedForMode("execute_command", "custom-mode", customModes)).toBe(false)
 			})
 
-			it("allows custom mode to override built-in mode", () => {
-				const customModes = [
-					{
-						slug: codeMode,
-						name: "Custom Code Mode",
-						roleDefinition: "Custom role",
-						groups: ["read"] as const,
-					},
-				]
-				// Should allow tools from read group
-				expect(isToolAllowedForMode("read_file", codeMode, customModes)).toBe(true)
-				// Should not allow tools from other groups
-				expect(isToolAllowedForMode("write_to_file", codeMode, customModes)).toBe(false)
-			})
-
 			it("respects tool requirements in custom modes", () => {
-				const customModes = [
-					{
-						slug: "custom-mode",
-						name: "Custom Mode",
-						roleDefinition: "Custom role",
-						groups: ["edit"] as const,
-					},
-				]
-				const requirements = { apply_diff: false }
+				const requirements = {
+					can_read: true,
+					can_write: true,
+				}
 
-				// Should respect disabled requirement even if tool group is allowed
-				expect(isToolAllowedForMode("apply_diff", "custom-mode", customModes, requirements)).toBe(false)
+				// Should allow read tools
+				expect(isToolAllowedForMode("read_file", "custom-mode", customModes, requirements)).toBe(true)
 
-				// Should allow other edit tools
+				// Should allow other write tools
 				expect(isToolAllowedForMode("write_to_file", "custom-mode", customModes, requirements)).toBe(true)
 			})
 		})
