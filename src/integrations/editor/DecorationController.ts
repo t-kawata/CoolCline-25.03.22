@@ -1,36 +1,37 @@
 import * as vscode from "vscode"
 
-const fadedOverlayDecorationType = vscode.window.createTextEditorDecorationType({
-	backgroundColor: "rgba(255, 255, 0, 0.1)",
-	opacity: "0.4",
-	isWholeLine: true,
-})
-
-const activeLineDecorationType = vscode.window.createTextEditorDecorationType({
-	backgroundColor: "rgba(255, 255, 0, 0.3)",
-	opacity: "1",
-	isWholeLine: true,
-	border: "1px solid rgba(255, 255, 0, 0.5)",
-})
-
-type DecorationType = "fadedOverlay" | "activeLine"
-
 export class DecorationController {
-	private decorationType: DecorationType
+	private fadedOverlayDecorationType: vscode.TextEditorDecorationType
+	private activeLineDecorationType: vscode.TextEditorDecorationType
+	private decorationType: "fadedOverlay" | "activeLine"
 	private editor: vscode.TextEditor
 	private ranges: vscode.Range[] = []
 
-	constructor(decorationType: DecorationType, editor: vscode.TextEditor) {
+	constructor(decorationType: "fadedOverlay" | "activeLine", editor: vscode.TextEditor) {
 		this.decorationType = decorationType
 		this.editor = editor
+
+		// 创建装饰类型
+		this.fadedOverlayDecorationType = vscode.window.createTextEditorDecorationType({
+			backgroundColor: "rgba(255, 255, 0, 0.1)",
+			opacity: "0.4",
+			isWholeLine: true,
+		})
+
+		this.activeLineDecorationType = vscode.window.createTextEditorDecorationType({
+			backgroundColor: "rgba(255, 255, 0, 0.3)",
+			opacity: "1",
+			isWholeLine: true,
+			border: "1px solid rgba(255, 255, 0, 0.5)",
+		})
 	}
 
 	getDecoration() {
 		switch (this.decorationType) {
 			case "fadedOverlay":
-				return fadedOverlayDecorationType
+				return this.fadedOverlayDecorationType
 			case "activeLine":
-				return activeLineDecorationType
+				return this.activeLineDecorationType
 		}
 	}
 

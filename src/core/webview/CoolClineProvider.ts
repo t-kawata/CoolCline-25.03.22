@@ -256,6 +256,41 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await visibleProvider.initCoolClineWithTask(prompt)
 	}
 
+	public static async handleTerminalAction(
+		command: string,
+		promptType: "TERMINAL_ADD_TO_CONTEXT" | "TERMINAL_FIX" | "TERMINAL_EXPLAIN",
+		terminalContent: string,
+	): Promise<void> {
+		const visibleProvider = await CoolClineProvider.getInstance()
+		if (!visibleProvider) {
+			return
+		}
+
+		const { customSupportPrompts } = await visibleProvider.getState()
+
+		const prompt = supportPrompt.create(promptType, { terminalContent }, customSupportPrompts)
+
+		if (command.endsWith("AddToContext")) {
+			await visibleProvider.postMessageToWebview({
+				type: "invoke",
+				invoke: "setChatBoxMessage",
+				text: prompt,
+			})
+			return
+		}
+
+		if (visibleProvider.coolcline && command.endsWith("InCurrentTask")) {
+			await visibleProvider.postMessageToWebview({
+				type: "invoke",
+				invoke: "sendMessage",
+				text: prompt,
+			})
+			return
+		}
+
+		await visibleProvider.initCoolClineWithTask(prompt)
+	}
+
 	async resolveWebviewView(webviewView: vscode.WebviewView | vscode.WebviewPanel) {
 		this.outputChannel.appendLine("Resolving webview view")
 		this.view = webviewView

@@ -1417,4 +1417,105 @@ describe("CoolClineProvider", () => {
 			expect(mockContext.globalState.update).toHaveBeenCalledWith("currentApiConfigName", "test-config")
 		})
 	})
+
+	describe("handleTerminalAction", () => {
+		it("should handle terminal add to context action", async () => {
+			const mockProvider = {
+				getState: jest.fn().mockResolvedValue({ customSupportPrompts: undefined }),
+				postMessageToWebview: jest.fn(),
+			}
+
+			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
+
+			await CoolClineProvider.handleTerminalAction(
+				"coolcline.terminalAddToContext",
+				"TERMINAL_ADD_TO_CONTEXT",
+				"test content",
+			)
+
+			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
+				type: "invoke",
+				invoke: "setChatBoxMessage",
+				text: expect.stringContaining("test content"),
+			})
+		})
+
+		it("should handle terminal fix command in current task", async () => {
+			const mockProvider = {
+				getState: jest.fn().mockResolvedValue({ customSupportPrompts: undefined }),
+				postMessageToWebview: jest.fn(),
+				coolcline: {}, // 模拟存在的 coolcline 实例
+			}
+
+			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
+
+			await CoolClineProvider.handleTerminalAction(
+				"coolcline.terminalFixCommandInCurrentTask",
+				"TERMINAL_FIX",
+				"test command",
+			)
+
+			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
+				type: "invoke",
+				invoke: "sendMessage",
+				text: expect.stringContaining("test command"),
+			})
+		})
+
+		it("should handle terminal explain command with new task", async () => {
+			const mockProvider = {
+				getState: jest.fn().mockResolvedValue({ customSupportPrompts: undefined }),
+				postMessageToWebview: jest.fn(),
+				initCoolClineWithTask: jest.fn(),
+			}
+
+			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
+
+			await CoolClineProvider.handleTerminalAction(
+				"coolcline.terminalExplainCommand",
+				"TERMINAL_EXPLAIN",
+				"test command",
+			)
+
+			expect(mockProvider.initCoolClineWithTask).toHaveBeenCalledWith(expect.stringContaining("test command"))
+		})
+
+		it("should do nothing when no provider is available", async () => {
+			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(undefined)
+
+			await CoolClineProvider.handleTerminalAction(
+				"coolcline.terminalAddToContext",
+				"TERMINAL_ADD_TO_CONTEXT",
+				"test content",
+			)
+
+			// 验证没有抛出错误
+		})
+
+		it("should use custom support prompts when available", async () => {
+			const customPrompt = "Custom prompt template: ${terminalContent}"
+			const mockProvider = {
+				getState: jest.fn().mockResolvedValue({
+					customSupportPrompts: {
+						TERMINAL_ADD_TO_CONTEXT: customPrompt,
+					},
+				}),
+				postMessageToWebview: jest.fn(),
+			}
+
+			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
+
+			await CoolClineProvider.handleTerminalAction(
+				"coolcline.terminalAddToContext",
+				"TERMINAL_ADD_TO_CONTEXT",
+				"test content",
+			)
+
+			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
+				type: "invoke",
+				invoke: "setChatBoxMessage",
+				text: "Custom prompt template: test content",
+			})
+		})
+	})
 })

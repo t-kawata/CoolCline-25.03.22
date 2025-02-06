@@ -131,6 +131,31 @@
 				"command": "coolcline.addToContext",
 				"title": "CoolCline: Add To Context",
 				"category": "CoolCline"
+			},
+			{
+				"command": "coolcline.terminalAddToContext",
+				"title": "CoolCline: Add Terminal Content to Context",
+				"category": "Terminal"
+			},
+			{
+				"command": "coolcline.terminalFixCommand",
+				"title": "CoolCline: Fix This Command",
+				"category": "Terminal"
+			},
+			{
+				"command": "coolcline.terminalExplainCommand",
+				"title": "CoolCline: Explain This Command",
+				"category": "Terminal"
+			},
+			{
+				"command": "coolcline.terminalFixCommandInCurrentTask",
+				"title": "CoolCline: Fix This Command (Current Task)",
+				"category": "Terminal"
+			},
+			{
+				"command": "coolcline.terminalExplainCommandInCurrentTask",
+				"title": "CoolCline: Explain This Command (Current Task)",
+				"category": "Terminal"
 			}
 		],
 		"menus": {
@@ -154,6 +179,28 @@
 					"command": "coolcline.addToContext",
 					"when": "editorHasSelection",
 					"group": "CoolCline@4"
+				}
+			],
+			"terminal/context": [
+				{
+					"command": "coolcline.terminalAddToContext",
+					"group": "CoolCline@1"
+				},
+				{
+					"command": "coolcline.terminalFixCommand",
+					"group": "CoolCline@2"
+				},
+				{
+					"command": "coolcline.terminalExplainCommand",
+					"group": "CoolCline@3"
+				},
+				{
+					"command": "coolcline.terminalFixCommandInCurrentTask",
+					"group": "CoolCline@5"
+				},
+				{
+					"command": "coolcline.terminalExplainCommandInCurrentTask",
+					"group": "CoolCline@6"
 				}
 			],
 			"view/title": [

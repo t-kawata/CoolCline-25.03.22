@@ -224,4 +224,48 @@ export class TerminalManager {
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
 	}
+
+	/**
+	 * Gets the terminal contents based on the number of commands to include
+	 * @param commands Number of previous commands to include (-1 for all)
+	 * @returns The selected terminal contents
+	 */
+	public async getTerminalContents(commands = -1): Promise<string> {
+		// Save current clipboard content
+		const tempCopyBuffer = await vscode.env.clipboard.readText()
+
+		try {
+			// Select terminal content
+			if (commands < 0) {
+				await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
+			} else {
+				for (let i = 0; i < commands; i++) {
+					await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
+				}
+			}
+
+			// Copy selection and clear it
+			await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
+
+			// 等待一段时间以确保剪贴板内容已更新
+			await new Promise((resolve) => setTimeout(resolve, 100))
+
+			const content = await vscode.env.clipboard.readText()
+			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
+
+			// Restore original clipboard content
+			await vscode.env.clipboard.writeText(tempCopyBuffer)
+
+			// Return empty string if no content was copied
+			if (content === tempCopyBuffer) {
+				return ""
+			}
+
+			return content
+		} catch (error) {
+			// Restore original clipboard content on error
+			await vscode.env.clipboard.writeText(tempCopyBuffer)
+			throw error
+		}
+	}
 }
