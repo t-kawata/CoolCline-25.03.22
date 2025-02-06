@@ -299,7 +299,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 										marginTop: "5px",
 										color: "var(--vscode-descriptionForeground)",
 									}}>
-									{t("settings.autoApprove.write.delayDescription").toString()}
+									{t("settings.autoApprove.write.delay.description").toString()}
 								</p>
 							</div>
 						)}
@@ -320,8 +320,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								color: "var(--vscode-descriptionForeground)",
 							}}>
 							{t("settings.autoApprove.browser.description").toString()}
-							<br />
-							{t("settings.autoApprove.browser.note").toString()}
 						</p>
 					</div>
 
