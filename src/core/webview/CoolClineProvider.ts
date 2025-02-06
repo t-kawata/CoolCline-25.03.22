@@ -259,7 +259,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	public static async handleTerminalAction(
 		command: string,
 		promptType: "TERMINAL_ADD_TO_CONTEXT" | "TERMINAL_FIX" | "TERMINAL_EXPLAIN",
-		terminalContent: string,
+		params: Record<string, string | any[]>,
 	): Promise<void> {
 		const visibleProvider = await CoolClineProvider.getInstance()
 		if (!visibleProvider) {
@@ -268,7 +268,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 		const { customSupportPrompts } = await visibleProvider.getState()
 
-		const prompt = supportPrompt.create(promptType, { terminalContent }, customSupportPrompts)
+		const prompt = supportPrompt.create(promptType, params, customSupportPrompts)
 
 		if (command.endsWith("AddToContext")) {
 			await visibleProvider.postMessageToWebview({

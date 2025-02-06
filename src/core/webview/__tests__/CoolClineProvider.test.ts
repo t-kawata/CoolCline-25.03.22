@@ -1427,11 +1427,9 @@ describe("CoolClineProvider", () => {
 
 			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
 
-			await CoolClineProvider.handleTerminalAction(
-				"coolcline.terminalAddToContext",
-				"TERMINAL_ADD_TO_CONTEXT",
-				"test content",
-			)
+			await CoolClineProvider.handleTerminalAction("coolcline.terminalAddToContext", "TERMINAL_ADD_TO_CONTEXT", {
+				terminalContent: "test content",
+			})
 
 			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 				type: "invoke",
@@ -1449,11 +1447,9 @@ describe("CoolClineProvider", () => {
 
 			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
 
-			await CoolClineProvider.handleTerminalAction(
-				"coolcline.terminalFixCommandInCurrentTask",
-				"TERMINAL_FIX",
-				"test command",
-			)
+			await CoolClineProvider.handleTerminalAction("coolcline.terminalFixCommandInCurrentTask", "TERMINAL_FIX", {
+				terminalContent: "test command",
+			})
 
 			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 				type: "invoke",
@@ -1471,11 +1467,9 @@ describe("CoolClineProvider", () => {
 
 			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
 
-			await CoolClineProvider.handleTerminalAction(
-				"coolcline.terminalExplainCommand",
-				"TERMINAL_EXPLAIN",
-				"test command",
-			)
+			await CoolClineProvider.handleTerminalAction("coolcline.terminalExplainCommand", "TERMINAL_EXPLAIN", {
+				terminalContent: "test command",
+			})
 
 			expect(mockProvider.initCoolClineWithTask).toHaveBeenCalledWith(expect.stringContaining("test command"))
 		})
@@ -1483,11 +1477,9 @@ describe("CoolClineProvider", () => {
 		it("should do nothing when no provider is available", async () => {
 			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(undefined)
 
-			await CoolClineProvider.handleTerminalAction(
-				"coolcline.terminalAddToContext",
-				"TERMINAL_ADD_TO_CONTEXT",
-				"test content",
-			)
+			await CoolClineProvider.handleTerminalAction("coolcline.terminalAddToContext", "TERMINAL_ADD_TO_CONTEXT", {
+				terminalContent: "test content",
+			})
 
 			// 验证没有抛出错误
 		})
@@ -1505,11 +1497,9 @@ describe("CoolClineProvider", () => {
 
 			jest.spyOn(CoolClineProvider, "getInstance").mockResolvedValue(mockProvider as any)
 
-			await CoolClineProvider.handleTerminalAction(
-				"coolcline.terminalAddToContext",
-				"TERMINAL_ADD_TO_CONTEXT",
-				"test content",
-			)
+			await CoolClineProvider.handleTerminalAction("coolcline.terminalAddToContext", "TERMINAL_ADD_TO_CONTEXT", {
+				terminalContent: "test content",
+			})
 
 			expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 				type: "invoke",

@@ -84,7 +84,9 @@ describe("registerTerminalActions", () => {
 		expect(CoolClineProvider.handleTerminalAction).toHaveBeenCalledWith(
 			"coolcline.terminalAddToContext",
 			"TERMINAL_ADD_TO_CONTEXT",
-			"terminal content",
+			{
+				terminalContent: "terminal content",
+			},
 		)
 	})
 
@@ -116,7 +118,9 @@ describe("registerTerminalActions", () => {
 		expect(CoolClineProvider.handleTerminalAction).toHaveBeenCalledWith(
 			"coolcline.terminalAddToContext",
 			"TERMINAL_ADD_TO_CONTEXT",
-			"selected content",
+			{
+				terminalContent: "selected content",
+			},
 		)
 	})
 })
