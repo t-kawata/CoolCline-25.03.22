@@ -190,23 +190,26 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		[generateSlug],
 	)
 
-	const handleCreateMode = useCallback(() => {
-		if (!newModeName.trim() || !newModeSlug.trim()) return
+	const handleUpdateCustomMode = useCallback(() => {
+		if (!newModeName || !newModeSlug) {
+			return
+		}
 
 		const newMode: ModeConfig = {
-			slug: newModeSlug,
 			name: newModeName,
-			roleDefinition: newModeRoleDefinition.trim() || "",
-			customInstructions: newModeCustomInstructions.trim() || undefined,
+			slug: newModeSlug,
+			roleDefinition: newModeRoleDefinition,
+			customInstructions: newModeCustomInstructions,
 			groups: newModeGroups,
 		}
 		updateCustomMode(newModeSlug, newMode)
-		setIsCreateModeDialogOpen(false)
+
 		setNewModeName("")
 		setNewModeSlug("")
 		setNewModeRoleDefinition("")
 		setNewModeCustomInstructions("")
 		setNewModeGroups(availableGroups)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newModeName, newModeSlug, newModeRoleDefinition, newModeCustomInstructions, newModeGroups, updateCustomMode])
 
 	const isNameOrSlugTaken = useCallback(
@@ -1222,7 +1225,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							</VSCodeButton>
 							<VSCodeButton
 								appearance="primary"
-								onClick={handleCreateMode}
+								onClick={handleUpdateCustomMode}
 								disabled={!newModeName.trim() || !newModeSlug.trim()}>
 								{String(t("common.create"))}
 							</VSCodeButton>
