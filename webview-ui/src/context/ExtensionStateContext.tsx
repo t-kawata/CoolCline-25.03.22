@@ -177,10 +177,12 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 			switch (message.type) {
 				case "state": {
 					const newState = message.state!
-					setState((prevState) => ({
-						...prevState,
-						...newState,
-					}))
+					setState((prevState) => {
+						return {
+							...prevState,
+							...newState,
+						}
+					})
 					const config = newState.apiConfiguration
 					const hasKey = checkExistKey(config)
 					setShowWelcome(!hasKey)
@@ -188,7 +190,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 
 					// 初始化语言设置
 					if (newState.preferredLanguage) {
-						console.log("Initializing language from state:", newState.preferredLanguage)
 						initializeLanguage(newState.preferredLanguage)
 					}
 					break
@@ -302,7 +303,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 			setState((prevState) => ({ ...prevState, browserViewportSize: value })),
 		setFuzzyMatchThreshold: (value) => setState((prevState) => ({ ...prevState, fuzzyMatchThreshold: value })),
 		setPreferredLanguage: useCallback((value: string) => {
-			console.log("Setting preferred language:", value)
 			setState((prevState) => ({ ...prevState, preferredLanguage: value }))
 			initializeLanguage(value)
 		}, []),
@@ -319,7 +319,15 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setCurrentApiConfigName: (value) => setState((prevState) => ({ ...prevState, currentApiConfigName: value })),
 		setListApiConfigMeta,
 		onUpdateApiConfig,
-		setMode: (value: Mode) => setState((prevState) => ({ ...prevState, mode: value })),
+		setMode: useCallback((value: Mode) => {
+			setState((prevState) => {
+				return { ...prevState, mode: value }
+			})
+			vscode.postMessage({
+				type: "mode",
+				text: value,
+			})
+		}, []),
 		setCustomModePrompts: (value) => setState((prevState) => ({ ...prevState, customModePrompts: value })),
 		setCustomSupportPrompts: (value) => setState((prevState) => ({ ...prevState, customSupportPrompts: value })),
 		setEnhancementApiConfigId: (value) =>

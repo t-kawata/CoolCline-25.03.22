@@ -181,6 +181,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					return
 				}
 
+				if (type === ContextMenuOptionType.Mode && value) {
+					setMode(value)
+					setInputValue("")
+					setShowContextMenu(false)
+					vscode.postMessage({
+						type: "mode",
+						text: value,
+					})
+					return
+				}
+
 				if (
 					type === ContextMenuOptionType.File ||
 					type === ContextMenuOptionType.Folder ||
@@ -607,15 +618,24 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					e.preventDefault()
 				}}>
 				{showContextMenu && (
-					<div ref={contextMenuContainerRef}>
+					<div
+						ref={contextMenuContainerRef}
+						style={{
+							position: "absolute",
+							bottom: "calc(100% - 10px)",
+							left: 15,
+							right: 15,
+							overflowX: "hidden",
+						}}
+						onMouseDown={handleMenuMouseDown}>
 						<ContextMenu
 							onSelect={handleMentionSelect}
 							searchQuery={searchQuery}
-							onMouseDown={handleMenuMouseDown}
 							selectedIndex={selectedMenuIndex}
 							setSelectedIndex={setSelectedMenuIndex}
 							selectedType={selectedType}
 							queryItems={queryItems}
+							modes={getAllModes(customModes)}
 						/>
 					</div>
 				)}
