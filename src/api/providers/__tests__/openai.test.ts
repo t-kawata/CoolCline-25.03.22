@@ -92,6 +92,14 @@ describe("OpenAiHandler", () => {
 			})
 			expect(handlerWithCustomUrl).toBeInstanceOf(OpenAiHandler)
 		})
+
+		it("should handle invalid base URL without throwing", () => {
+			const handlerWithInvalidUrl = new OpenAiHandler({
+				...mockOptions,
+				openAiBaseUrl: "invalid-url",
+			})
+			expect(handlerWithInvalidUrl).toBeInstanceOf(OpenAiHandler)
+		})
 	})
 
 	describe("createMessage", () => {

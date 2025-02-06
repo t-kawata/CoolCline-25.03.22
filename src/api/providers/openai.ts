@@ -18,10 +18,19 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 
 	constructor(options: ApiHandlerOptions) {
 		this.options = options
-		// Azure API shape slightly differs from the core API shape:
-		// https://github.com/openai/openai-node?tab=readme-ov-file#microsoft-azure-openai
-		const urlHost = new URL(this.options.openAiBaseUrl ?? "").host
+
+		let urlHost: string
+
+		try {
+			urlHost = new URL(this.options.openAiBaseUrl ?? "").host
+		} catch (error) {
+			// 可能是无效的 openAiBaseUrl，我们仍在完善设置验证
+			urlHost = ""
+		}
+
 		if (urlHost === "azure.com" || urlHost.endsWith(".azure.com") || options.openAiUseAzure) {
+			// Azure API 的形状与核心 API 略有不同：
+			// https://github.com/openai/openai-node?tab=readme-ov-file#microsoft-azure-openai
 			this.client = new AzureOpenAI({
 				baseURL: this.options.openAiBaseUrl,
 				apiKey: this.options.openAiApiKey,
