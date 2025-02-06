@@ -1,4 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk"
+import { ModelInfo } from "../../shared/api"
 
 /*
 We can't implement a dynamically updating sliding window as it would break prompt cache
@@ -23,4 +24,8 @@ export function truncateHalfConversation(
 	truncatedMessages.push(...remainingMessages)
 
 	return truncatedMessages
+}
+
+export function getTruncFractionForNonPromptCachingModels(modelInfo: ModelInfo): number {
+	return Math.min(40_000 / modelInfo.contextWindow, 0.2)
 }
