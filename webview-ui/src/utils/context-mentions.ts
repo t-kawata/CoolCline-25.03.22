@@ -10,7 +10,7 @@ export function insertMention(
 	// 处理斜杠命令
 	if (text.startsWith("/")) {
 		return {
-			newValue: value,
+			newValue: value, // 恢复为原来的行为，保持用户选择的值
 			mentionIndex: 0,
 		}
 	}
@@ -89,7 +89,7 @@ export function getContextMenuOptions(
 		// 创建可搜索的字符串数组
 		const searchableItems = modes.map((mode) => ({
 			original: mode,
-			searchStr: mode.name,
+			searchStr: `${mode.name} ${mode.roleDefinition}`,
 		}))
 
 		// 初始化 fzf 实例进行模糊搜索
@@ -100,13 +100,13 @@ export function getContextMenuOptions(
 		// 获取模糊匹配的项目
 		const matchingModes = modeQuery
 			? fzf.find(modeQuery).map((result) => ({
-					type: ContextMenuOptionType.Mode,
+					type: ContextMenuOptionType.Mode as const,
 					value: result.item.original.slug,
 					label: result.item.original.name,
 					description: result.item.original.roleDefinition.split("\n")[0],
 				}))
 			: modes.map((mode) => ({
-					type: ContextMenuOptionType.Mode,
+					type: ContextMenuOptionType.Mode as const,
 					value: mode.slug,
 					label: mode.name,
 					description: mode.roleDefinition.split("\n")[0],

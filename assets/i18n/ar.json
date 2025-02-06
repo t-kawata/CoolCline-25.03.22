@@ -72,7 +72,7 @@
 			"question": "لدى CoolCline سؤال:",
 			"searchDirectory": "يريد CoolCline البحث في هذا الدليل عن",
 			"searchedDirectory": "بحث CoolCline في هذا الدليل عن",
-			"switchMode": "يريد CoolCline التبديل إلى",
+			"switchMode": "، / لتغيير الوضع",
 			"switchedMode": "قام CoolCline بالتبديل إلى",
 			"modeBecause": "الوضع لأن:",
 			"mode": "وضع",
@@ -150,8 +150,9 @@
 		"input": {
 			"typeMessage": "اكتب رسالة...",
 			"typeTask": "اكتب مهمتك هنا...",
-			"addContext": "(@ لإضافة سياق",
-			"dragImages": "، اضغط Shift لسحب الصور)"
+			"addContext": "(@ لإضافة السياق",
+			"switchMode": "، / لتغيير الوضع",
+			"dragImages": "، اضغط Shift لسحب الصور"
 		}
 	},
 	"prompts": {

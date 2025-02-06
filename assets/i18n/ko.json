@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "메시지 입력...",
-			"typeTask": "여기에 작업을 입력하세요...",
+			"typeTask": "작업 입력...",
 			"addContext": "(@ 로 컨텍스트 추가",
-			"dragImages": ", Shift를 누른 채로 이미지 드래그)"
+			"switchMode": ", / 로 모드 전환",
+			"dragImages": ", Shift 를 누른 채 이미지 드래그"
 		}
 	},
 	"prompts": {

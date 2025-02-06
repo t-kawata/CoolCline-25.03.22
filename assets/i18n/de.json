@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "Nachricht eingeben...",
-			"typeTask": "Geben Sie hier Ihre Aufgabe ein...",
+			"typeTask": "Aufgabe hier eingeben...",
 			"addContext": "(@ für Kontext hinzufügen",
-			"dragImages": ", Shift halten zum Einziehen von Bildern)"
+			"switchMode": ", / für Moduswechsel",
+			"dragImages": ", Shift halten zum Bilder ziehen"
 		}
 	},
 	"prompts": {

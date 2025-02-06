@@ -151,7 +151,8 @@
 			"typeMessage": "Tapez un message...",
 			"typeTask": "Tapez votre tâche ici...",
 			"addContext": "(@ pour ajouter du contexte",
-			"dragImages": ", maintenez Shift pour glisser des images)"
+			"switchMode": ", / pour changer de mode",
+			"dragImages": ", maintenez Shift pour glisser des images"
 		}
 	},
 	"prompts": {

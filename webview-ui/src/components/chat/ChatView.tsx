@@ -888,8 +888,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const placeholderText = useMemo(() => {
 		const baseText = task ? String(t("chat.input.typeMessage")) : String(t("chat.input.typeTask"))
 		const contextText = String(t("chat.input.addContext"))
+		const switchModeText = String(t("chat.input.switchMode"))
 		const imageText = shouldDisableImages ? "" : String(t("chat.input.dragImages"))
-		const helpText = imageText ? `\n${contextText}${imageText})` : `\n${contextText})`
+		const helpText = imageText
+			? `\n${contextText}${switchModeText}${imageText})`
+			: `\n${contextText}${switchModeText})`
 		return baseText + helpText
 	}, [task, shouldDisableImages, t])
 

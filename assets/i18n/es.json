@@ -148,10 +148,11 @@
 			"title": "Razonamiento"
 		},
 		"input": {
-			"typeMessage": "Escriba un mensaje...",
-			"typeTask": "Escriba su tarea aquí...",
-			"addContext": "(@ para agregar contexto",
-			"dragImages": ", mantenga Shift para arrastrar imágenes)"
+			"typeMessage": "Escribe un mensaje...",
+			"typeTask": "Escribe tu tarea aquí...",
+			"addContext": "(@ para añadir contexto",
+			"switchMode": ", / para cambiar modo",
+			"dragImages": ", mantén Shift para arrastrar imágenes"
 		}
 	},
 	"prompts": {

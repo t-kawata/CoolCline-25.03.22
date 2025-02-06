@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "Írjon üzenetet...",
-			"typeTask": "Írja be feladatát ide...",
+			"typeTask": "Írja be a feladatot ide...",
 			"addContext": "(@ kontextus hozzáadásához",
-			"dragImages": ", tartsa lenyomva a Shift-et képek húzásához)"
+			"switchMode": ", / módváltáshoz",
+			"dragImages": ", tartsa lenyomva a Shift-et képek húzásához"
 		}
 	},
 	"prompts": {

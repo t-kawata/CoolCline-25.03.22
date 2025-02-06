@@ -151,7 +151,8 @@
 			"typeMessage": "Wpisz wiadomość...",
 			"typeTask": "Wpisz swoje zadanie tutaj...",
 			"addContext": "(@ aby dodać kontekst",
-			"dragImages": ", przytrzymaj Shift, aby przeciągnąć obrazy)"
+			"switchMode": ", / aby zmienić tryb",
+			"dragImages": ", przytrzymaj Shift aby przeciągnąć obrazy"
 		}
 	},
 	"prompts": {

@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "输入消息...",
-			"typeTask": "在此输入您的任务...",
-			"addContext": "(使用 @ 添加上下文",
-			"dragImages": "，按住 Shift 键拖入图片"
+			"typeTask": "在此输入任务...",
+			"addContext": "(@ 添加上下文",
+			"switchMode": "，/ 切换模式",
+			"dragImages": "，按住 Shift 拖入图片"
 		}
 	},
 	"prompts": {

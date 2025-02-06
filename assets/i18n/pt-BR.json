@@ -137,7 +137,8 @@
 			"typeMessage": "Digite uma mensagem...",
 			"typeTask": "Digite sua tarefa aqui...",
 			"addContext": "(@ para adicionar contexto",
-			"dragImages": ", segure Shift para arrastar imagens)"
+			"switchMode": ", / para mudar de modo",
+			"dragImages": ", segure Shift para arrastar imagens"
 		}
 	},
 	"prompts": {

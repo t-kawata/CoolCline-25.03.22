@@ -150,8 +150,9 @@
 		"input": {
 			"typeMessage": "Bir mesaj yazın...",
 			"typeTask": "Görevinizi buraya yazın...",
-			"addContext": "(@ ile bağlam ekleyin",
-			"dragImages": ", görüntüleri sürüklemek için Shift tuşunu basılı tutun)"
+			"addContext": "(@ bağlam eklemek için",
+			"switchMode": ", / mod değiştirmek için",
+			"dragImages": ", resim sürüklemek için Shift tuşunu basılı tutun"
 		}
 	},
 	"prompts": {

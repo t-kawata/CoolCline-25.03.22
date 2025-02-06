@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "Scrivi un messaggio...",
-			"typeTask": "Scrivi qui la tua attività...",
+			"typeTask": "Scrivi il tuo compito qui...",
 			"addContext": "(@ per aggiungere contesto",
-			"dragImages": ", tieni premuto Shift per trascinare immagini)"
+			"switchMode": ", / per cambiare modalità",
+			"dragImages": ", tieni premuto Shift per trascinare le immagini"
 		}
 	},
 	"prompts": {

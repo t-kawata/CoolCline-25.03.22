@@ -151,6 +151,7 @@
 			"typeMessage": "Type a message...",
 			"typeTask": "Type your task here...",
 			"addContext": "(@ to add context",
+			"switchMode": ", / to switch modes",
 			"dragImages": ", hold shift to drag in images"
 		}
 	},

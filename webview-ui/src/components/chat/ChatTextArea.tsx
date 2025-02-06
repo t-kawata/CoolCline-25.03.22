@@ -182,7 +182,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				}
 
 				if (type === ContextMenuOptionType.Mode && value) {
-					setMode(value)
+					setMode(value as Mode)
 					setInputValue("")
 					setShowContextMenu(false)
 					vscode.postMessage({
@@ -226,20 +226,23 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					)
 
 					setInputValue(newValue)
-					const newCursorPosition = newValue.indexOf(" ", mentionIndex + insertValue.length) + 1
-					setCursorPosition(newCursorPosition)
-					setIntendedCursorPosition(newCursorPosition)
+					if (newValue) {
+						// 只有在有新值时才设置光标位置
+						const newCursorPosition = newValue.indexOf(" ", mentionIndex + insertValue.length) + 1
+						setCursorPosition(newCursorPosition)
+						setIntendedCursorPosition(newCursorPosition)
 
-					// scroll to cursor
-					setTimeout(() => {
-						if (textAreaRef.current) {
-							textAreaRef.current.blur()
-							textAreaRef.current.focus()
-						}
-					}, 0)
+						// scroll to cursor
+						setTimeout(() => {
+							if (textAreaRef.current) {
+								textAreaRef.current.blur()
+								textAreaRef.current.focus()
+							}
+						}, 0)
+					}
 				}
 			},
-			[setInputValue, cursorPosition],
+			[setInputValue, cursorPosition, setMode],
 		)
 
 		const handleKeyDown = useCallback(

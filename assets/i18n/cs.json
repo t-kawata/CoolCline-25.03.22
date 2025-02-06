@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "Napište zprávu...",
-			"typeTask": "Zde napište svůj úkol...",
+			"typeTask": "Napište svůj úkol zde...",
 			"addContext": "(@ pro přidání kontextu",
-			"dragImages": ", podržte Shift pro přetažení obrázků)"
+			"switchMode": ", / pro změnu režimu",
+			"dragImages": ", podržte Shift pro přetažení obrázků"
 		}
 	},
 	"prompts": {

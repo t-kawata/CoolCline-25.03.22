@@ -149,9 +149,10 @@
 		},
 		"input": {
 			"typeMessage": "メッセージを入力...",
-			"typeTask": "タスクをここに入力...",
+			"typeTask": "タスクを入力...",
 			"addContext": "(@ でコンテキストを追加",
-			"dragImages": "、Shiftを押しながら画像をドラッグ)"
+			"switchMode": "，/ でモード切替",
+			"dragImages": "，Shift を押しながら画像をドラッグ"
 		}
 	},
 	"prompts": {
