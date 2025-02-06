@@ -190,20 +190,18 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		[generateSlug],
 	)
 
-	const handleUpdateCustomMode = useCallback(() => {
-		if (!newModeName || !newModeSlug) {
-			return
-		}
+	const handleCreateMode = useCallback(() => {
+		if (!newModeName.trim() || !newModeSlug.trim()) return
 
 		const newMode: ModeConfig = {
-			name: newModeName,
 			slug: newModeSlug,
-			roleDefinition: newModeRoleDefinition,
-			customInstructions: newModeCustomInstructions,
+			name: newModeName,
+			roleDefinition: newModeRoleDefinition.trim() || "",
+			customInstructions: newModeCustomInstructions.trim() || undefined,
 			groups: newModeGroups,
 		}
 		updateCustomMode(newModeSlug, newMode)
-
+		setIsCreateModeDialogOpen(false)
 		setNewModeName("")
 		setNewModeSlug("")
 		setNewModeRoleDefinition("")
@@ -1225,7 +1223,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							</VSCodeButton>
 							<VSCodeButton
 								appearance="primary"
-								onClick={handleUpdateCustomMode}
+								onClick={handleCreateMode}
 								disabled={!newModeName.trim() || !newModeSlug.trim()}>
 								{String(t("common.create"))}
 							</VSCodeButton>
