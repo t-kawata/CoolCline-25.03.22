@@ -369,16 +369,55 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "OpenAI kompatibilis szolgáltatás",
+					"title": "OpenAI-kompatibilis szolgáltatás",
 					"baseUrl": "Alap URL",
 					"enterBaseUrl": "Adja meg az alap URL-t",
 					"useAzure": "Azure OpenAI használata",
 					"setAzureVersion": "Azure API verzió beállítása",
-					"description": "OpenAI kompatibilis API szolgáltatás használata",
+					"description": "OpenAI-kompatibilis API szolgáltatás használata",
 					"streaming": "Streaming engedélyezése",
 					"modelConfig": {
 						"title": "Modell konfiguráció",
-						"description": "Modell képességek és árazási információk beállítása"
+						"description": "Modell képességek és árazási információk konfigurálása",
+						"capabilities": {
+							"title": "Modell képességek",
+							"description": "Konfigurálja az egyéni OpenAI-kompatibilis modellje képességeit és árazását",
+							"warning": "Legyen óvatos a modell képességeivel, mivel ezek befolyásolhatják a CoolCline működését",
+							"maxTokens": {
+								"title": "Maximális kimeneti tokenek",
+								"description": "A modell által egy válaszban generálható tokenek maximális száma",
+								"note": "(-1 szervertől függ)"
+							},
+							"contextWindow": {
+								"title": "Kontextus ablak mérete",
+								"description": "A modell által feldolgozható összes token száma (bemenet + kimenet). Ez segíti a CoolCline Code megfelelő működését"
+							}
+						},
+						"features": {
+							"title": "Modell funkciók",
+							"imageSupport": {
+								"title": "Képtámogatás",
+								"description": "Engedélyezze, ha a modell képes feldolgozni és értelmezni a bemeneti képeket. Képalapú segítségnyújtáshoz és vizuális kódértelmezéshez szükséges",
+								"note": "Lehetővé teszi a modell számára a képek elemzését és megértését, ami elengedhetetlen a kód vizuális segítségnyújtásához"
+							},
+							"computerUse": {
+								"title": "Számítógép használat",
+								"description": "Engedélyezze, ha a modell képes parancsok és fájlműveletek révén kommunikálni a számítógépével. Automatizált feladatokhoz és fájlmódosításokhoz szükséges",
+								"note": "Ez a modell funkció a számítógép használatához való, mint a sonnet 3.5 támogatás"
+							}
+						},
+						"pricing": {
+							"title": "Modell árazás",
+							"description": "Token alapú árazás konfigurálása USD-ben millió tokenenként",
+							"inputPrice": {
+								"title": "Bemeneti ár",
+								"description": "Költség millió tokenenként a bemenetben/promptban. Ez befolyásolja a kontextus és utasítások modellnek való küldésének költségét"
+							},
+							"outputPrice": {
+								"title": "Kimeneti ár",
+								"description": "Költség millió tokenenként a modell válaszában. Ez befolyásolja a generált tartalom és kiegészítések költségét"
+							}
+						}
 					},
 					"useCustomBaseUrl": "Egyéni alap URL használata"
 				},

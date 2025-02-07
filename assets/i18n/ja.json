@@ -369,18 +369,56 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "OpenAI互換サービス",
-					"baseUrl": "ベースURL",
-					"enterBaseUrl": "ベースURLを入力",
-					"useAzure": "Azure OpenAIを使用",
-					"setAzureVersion": "Azure APIバージョンを設定",
-					"description": "OpenAI互換APIサービスを使用",
+					"title": "OpenAI 互換サービス",
+					"baseUrl": "ベース URL",
+					"enterBaseUrl": "ベース URL を入力",
+					"useAzure": "Azure OpenAI を使用",
+					"setAzureVersion": "Azure API バージョンを設定",
+					"description": "OpenAI 互換 API サービスを使用",
 					"streaming": "ストリーミングを有効化",
 					"modelConfig": {
 						"title": "モデル設定",
-						"description": "モデルの機能と価格情報を設定"
-					},
-					"useCustomBaseUrl": "カスタムベースURLを使用"
+						"description": "モデルの機能と価格情報を設定",
+						"capabilities": {
+							"title": "モデル機能",
+							"description": "カスタム OpenAI 互換モデルの機能と価格を設定",
+							"warning": "モデルの機能は CoolCline の動作に影響を与えるため、慎重に設定してください",
+							"maxTokens": {
+								"title": "最大出力トークン数",
+								"description": "モデルが1回のレスポンスで生成できる最大トークン数",
+								"note": "(-1 はサーバーに依存)"
+							},
+							"contextWindow": {
+								"title": "コンテキストウィンドウサイズ",
+								"description": "モデルが処理できる総トークン数（入力 + 出力）。CoolCline Code の正常な動作を支援します"
+							}
+						},
+						"features": {
+							"title": "モデル機能",
+							"imageSupport": {
+								"title": "画像サポート",
+								"description": "モデルが入力内の画像を処理・理解できる場合に有効化。画像ベースの支援と視覚的コード理解に必要です",
+								"note": "モデルが画像を分析・理解し、視覚的コード支援に不可欠です"
+							},
+							"computerUse": {
+								"title": "コンピュータ使用",
+								"description": "モデルがコマンドとファイル操作でコンピュータと対話できる場合に有効化。自動化タスクとファイル修正に必要です",
+								"note": "この機能は sonnet 3.5 のようなコンピュータ使用をサポートします"
+							}
+						},
+						"pricing": {
+							"title": "モデル価格",
+							"description": "100万トークンあたりのUSD価格を設定",
+							"inputPrice": {
+								"title": "入力価格",
+								"description": "入力/プロンプトの100万トークンあたりのコスト。コンテキストと指示をモデルに送信するコストに影響します"
+							},
+							"outputPrice": {
+								"title": "出力価格",
+								"description": "モデルレスポンスの100万トークンあたりのコスト。生成コンテンツと補完のコストに影響します"
+							}
+						}
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

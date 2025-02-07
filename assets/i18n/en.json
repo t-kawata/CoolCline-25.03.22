@@ -379,9 +379,47 @@
 					"streaming": "Enable streaming",
 					"modelConfig": {
 						"title": "Model Configuration",
-						"description": "Configure model capabilities and pricing information"
-					},
-					"useCustomBaseUrl": "Use custom base URL"
+						"description": "Configure model capabilities and pricing information",
+						"capabilities": {
+							"title": "Model Capabilities",
+							"description": "Configure the capabilities and pricing for your custom OpenAI-compatible model",
+							"warning": "Be careful for the model capabilities, as they can affect how CoolCline can work",
+							"maxTokens": {
+								"title": "Max Output Tokens",
+								"description": "Maximum number of tokens the model can generate in a response",
+								"note": "(-1 is depend on server)"
+							},
+							"contextWindow": {
+								"title": "Context Window Size",
+								"description": "Total tokens (input + output) the model can process. This will help CoolCline Code run correctly"
+							}
+						},
+						"features": {
+							"title": "Model Features",
+							"imageSupport": {
+								"title": "Image Support",
+								"description": "Enable if the model can process and understand images in the input. Required for image-based assistance and visual code understanding",
+								"note": "Allows the model to analyze and understand images, essential for visual code assistance"
+							},
+							"computerUse": {
+								"title": "Computer Use",
+								"description": "Enable if the model can interact with your computer through commands and file operations. Required for automated tasks and file modifications",
+								"note": "This model feature is for computer use like sonnet 3.5 support"
+							}
+						},
+						"pricing": {
+							"title": "Model Pricing",
+							"description": "Configure token-based pricing in USD per million tokens",
+							"inputPrice": {
+								"title": "Input Price",
+								"description": "Cost per million tokens in the input/prompt. This affects the cost of sending context and instructions to the model"
+							},
+							"outputPrice": {
+								"title": "Output Price",
+								"description": "Cost per million tokens in the model's response. This affects the cost of generated content and completions"
+							}
+						}
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

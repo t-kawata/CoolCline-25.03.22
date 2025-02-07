@@ -371,14 +371,53 @@
 					"name": "OpenAI",
 					"title": "Servicio compatible con OpenAI",
 					"baseUrl": "URL base",
-					"enterBaseUrl": "Ingrese la URL base",
+					"enterBaseUrl": "Ingresar URL base",
 					"useAzure": "Usar Azure OpenAI",
 					"setAzureVersion": "Establecer versión de API de Azure",
 					"description": "Usar servicio de API compatible con OpenAI",
-					"streaming": "Activar streaming",
+					"streaming": "Habilitar streaming",
 					"modelConfig": {
 						"title": "Configuración del modelo",
-						"description": "Configurar capacidades del modelo e información de precios"
+						"description": "Configurar capacidades e información de precios del modelo",
+						"capabilities": {
+							"title": "Capacidades del modelo",
+							"description": "Configure las capacidades y precios de su modelo personalizado compatible con OpenAI",
+							"warning": "Tenga cuidado con las capacidades del modelo, ya que pueden afectar el funcionamiento de CoolCline",
+							"maxTokens": {
+								"title": "Tokens máximos de salida",
+								"description": "Número máximo de tokens que el modelo puede generar en una respuesta",
+								"note": "(-1 depende del servidor)"
+							},
+							"contextWindow": {
+								"title": "Tamaño de ventana de contexto",
+								"description": "Número total de tokens (entrada + salida) que el modelo puede procesar. Esto ayuda a que CoolCline Code funcione correctamente"
+							}
+						},
+						"features": {
+							"title": "Características del modelo",
+							"imageSupport": {
+								"title": "Soporte de imágenes",
+								"description": "Habilite si el modelo puede procesar y entender imágenes en la entrada. Necesario para asistencia basada en imágenes y comprensión visual del código",
+								"note": "Permite al modelo analizar y entender imágenes, esencial para la asistencia visual del código"
+							},
+							"computerUse": {
+								"title": "Uso de computadora",
+								"description": "Habilite si el modelo puede interactuar con su computadora a través de comandos y operaciones de archivos. Necesario para tareas automatizadas y modificaciones de archivos",
+								"note": "Esta característica del modelo es para uso de computadora como el soporte de sonnet 3.5"
+							}
+						},
+						"pricing": {
+							"title": "Precios del modelo",
+							"description": "Configure los precios basados en tokens en USD por millón de tokens",
+							"inputPrice": {
+								"title": "Precio de entrada",
+								"description": "Costo por millón de tokens en la entrada/prompt. Esto afecta el costo de enviar contexto e instrucciones al modelo"
+							},
+							"outputPrice": {
+								"title": "Precio de salida",
+								"description": "Costo por millón de tokens en la respuesta del modelo. Esto afecta el costo del contenido generado y las completaciones"
+							}
+						}
 					},
 					"useCustomBaseUrl": "Usar URL base personalizada"
 				},

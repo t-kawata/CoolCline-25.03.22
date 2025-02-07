@@ -369,18 +369,57 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "Usługa kompatybilna z OpenAI",
-					"baseUrl": "URL bazowy",
-					"enterBaseUrl": "Wprowadź URL bazowy",
+					"title": "Usługa zgodna z OpenAI",
+					"baseUrl": "Podstawowy URL",
+					"enterBaseUrl": "Wprowadź podstawowy URL",
 					"useAzure": "Użyj Azure OpenAI",
 					"setAzureVersion": "Ustaw wersję API Azure",
-					"description": "Użyj usługi API kompatybilnej z OpenAI",
+					"description": "Użyj usługi API zgodnej z OpenAI",
 					"streaming": "Włącz strumieniowanie",
 					"modelConfig": {
 						"title": "Konfiguracja modelu",
-						"description": "Skonfiguruj możliwości modelu i informacje o cenach"
+						"description": "Skonfiguruj możliwości i informacje o cenach modelu",
+						"capabilities": {
+							"title": "Możliwości modelu",
+							"description": "Skonfiguruj możliwości i ceny swojego niestandardowego modelu zgodnego z OpenAI",
+							"warning": "Zachowaj ostrożność przy ustawianiu możliwości modelu, ponieważ mogą one wpłynąć na działanie CoolCline",
+							"maxTokens": {
+								"title": "Maksymalna liczba tokenów wyjściowych",
+								"description": "Maksymalna liczba tokenów, które model może wygenerować w jednej odpowiedzi",
+								"note": "(-1 zależy od serwera)"
+							},
+							"contextWindow": {
+								"title": "Rozmiar okna kontekstowego",
+								"description": "Całkowita liczba tokenów (wejście + wyjście), które model może przetworzyć. Pomaga to CoolCline Code działać poprawnie"
+							}
+						},
+						"features": {
+							"title": "Funkcje modelu",
+							"imageSupport": {
+								"title": "Obsługa obrazów",
+								"description": "Włącz, jeśli model może przetwarzać i rozumieć obrazy w danych wejściowych. Wymagane do pomocy opartej na obrazach i wizualnego zrozumienia kodu",
+								"note": "Pozwala modelowi analizować i rozumieć obrazy, co jest kluczowe dla wizualnej pomocy z kodem"
+							},
+							"computerUse": {
+								"title": "Użycie komputera",
+								"description": "Włącz, jeśli model może wchodzić w interakcję z Twoim komputerem poprzez polecenia i operacje na plikach. Wymagane do zautomatyzowanych zadań i modyfikacji plików",
+								"note": "Ta funkcja modelu jest przeznaczona do użycia komputera, jak wsparcie sonnet 3.5"
+							}
+						},
+						"pricing": {
+							"title": "Ceny modelu",
+							"description": "Skonfiguruj ceny tokenów w USD za milion tokenów",
+							"inputPrice": {
+								"title": "Cena wejściowa",
+								"description": "Koszt za milion tokenów w danych wejściowych/promptach. Wpływa to na koszt wysyłania kontekstu i instrukcji do modelu"
+							},
+							"outputPrice": {
+								"title": "Cena wyjściowa",
+								"description": "Koszt za milion tokenów w odpowiedzi modelu. Wpływa to na koszt generowanej treści i uzupełnień"
+							}
+						}
 					},
-					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego"
+					"useCustomBaseUrl": "Użyj niestandardowego podstawowego URL"
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

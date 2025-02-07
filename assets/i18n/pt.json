@@ -371,16 +371,54 @@
 					"name": "OpenAI",
 					"title": "Serviço compatível com OpenAI",
 					"baseUrl": "URL base",
-					"enterBaseUrl": "Digite a URL base",
+					"enterBaseUrl": "Inserir URL base",
 					"useAzure": "Usar Azure OpenAI",
 					"setAzureVersion": "Definir versão da API Azure",
 					"description": "Usar serviço de API compatível com OpenAI",
 					"streaming": "Ativar streaming",
 					"modelConfig": {
 						"title": "Configuração do modelo",
-						"description": "Configurar recursos do modelo e informações de preços"
-					},
-					"useCustomBaseUrl": "Usar URL base personalizada"
+						"description": "Configurar capacidades e informações de preços do modelo",
+						"capabilities": {
+							"title": "Capacidades do modelo",
+							"description": "Configure as capacidades e preços do seu modelo personalizado compatível com OpenAI",
+							"warning": "Tenha cuidado com as capacidades do modelo, pois elas podem afetar como o CoolCline funciona",
+							"maxTokens": {
+								"title": "Tokens máximos de saída",
+								"description": "Número máximo de tokens que o modelo pode gerar em uma resposta",
+								"note": "(-1 depende do servidor)"
+							},
+							"contextWindow": {
+								"title": "Tamanho da janela de contexto",
+								"description": "Número total de tokens (entrada + saída) que o modelo pode processar. Isso ajuda o CoolCline Code a funcionar corretamente"
+							}
+						},
+						"features": {
+							"title": "Recursos do modelo",
+							"imageSupport": {
+								"title": "Suporte a imagens",
+								"description": "Ative se o modelo puder processar e entender imagens na entrada. Necessário para assistência baseada em imagens e compreensão visual do código",
+								"note": "Permite que o modelo analise e entenda imagens, essencial para assistência visual do código"
+							},
+							"computerUse": {
+								"title": "Uso do computador",
+								"description": "Ative se o modelo puder interagir com seu computador através de comandos e operações de arquivo. Necessário para tarefas automatizadas e modificações de arquivos",
+								"note": "Este recurso do modelo é para uso do computador como o suporte sonnet 3.5"
+							}
+						},
+						"pricing": {
+							"title": "Preços do modelo",
+							"description": "Configure os preços baseados em tokens em USD por milhão de tokens",
+							"inputPrice": {
+								"title": "Preço de entrada",
+								"description": "Custo por milhão de tokens na entrada/prompt. Isso afeta o custo de enviar contexto e instruções para o modelo"
+							},
+							"outputPrice": {
+								"title": "Preço de saída",
+								"description": "Custo por milhão de tokens na resposta do modelo. Isso afeta o custo do conteúdo gerado e das conclusões"
+							}
+						}
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

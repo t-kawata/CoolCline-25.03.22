@@ -369,7 +369,7 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "OpenAI uyumlu hizmet",
+					"title": "OpenAI Uyumlu Hizmet",
 					"baseUrl": "Temel URL",
 					"enterBaseUrl": "Temel URL'yi girin",
 					"useAzure": "Azure OpenAI kullan",
@@ -377,8 +377,47 @@
 					"description": "OpenAI uyumlu API hizmeti kullan",
 					"streaming": "Akışı etkinleştir",
 					"modelConfig": {
-						"title": "Model yapılandırması",
-						"description": "Model yeteneklerini ve fiyatlandırma bilgilerini yapılandır"
+						"title": "Model Yapılandırması",
+						"description": "Model yeteneklerini ve fiyatlandırma bilgilerini yapılandırın",
+						"capabilities": {
+							"title": "Model Yetenekleri",
+							"description": "Özel OpenAI uyumlu modelinizin yeteneklerini ve fiyatlandırmasını yapılandırın",
+							"warning": "Model yetenekleri konusunda dikkatli olun, çünkü bunlar CoolCline'ın nasıl çalışacağını etkileyebilir",
+							"maxTokens": {
+								"title": "Maksimum Çıktı Token'ları",
+								"description": "Modelin bir yanıtta üretebileceği maksimum token sayısı",
+								"note": "(-1 sunucuya bağlıdır)"
+							},
+							"contextWindow": {
+								"title": "Bağlam Penceresi Boyutu",
+								"description": "Modelin işleyebileceği toplam token sayısı (giriş + çıkış). Bu, CoolCline Code'un doğru çalışmasına yardımcı olur"
+							}
+						},
+						"features": {
+							"title": "Model Özellikleri",
+							"imageSupport": {
+								"title": "Görüntü Desteği",
+								"description": "Model girişteki görüntüleri işleyebilir ve anlayabilirse etkinleştirin. Görüntü tabanlı yardım ve görsel kod anlama için gereklidir",
+								"note": "Modelin görüntüleri analiz etmesine ve anlamasına izin verir, kod görsel yardımı için önemlidir"
+							},
+							"computerUse": {
+								"title": "Bilgisayar Kullanımı",
+								"description": "Model komutlar ve dosya işlemleri aracılığıyla bilgisayarınızla etkileşime girebilirse etkinleştirin. Otomatik görevler ve dosya değişiklikleri için gereklidir",
+								"note": "Bu model özelliği, sonnet 3.5 desteği gibi bilgisayar kullanımı içindir"
+							}
+						},
+						"pricing": {
+							"title": "Model Fiyatlandırması",
+							"description": "Token başına USD cinsinden token fiyatlandırmasını yapılandırın",
+							"inputPrice": {
+								"title": "Giriş Fiyatı",
+								"description": "Giriş/prompt'taki milyon token başına maliyet. Bu, modele bağlam ve talimatları göndermenin maliyetini etkiler"
+							},
+							"outputPrice": {
+								"title": "Çıkış Fiyatı",
+								"description": "Model yanıtındaki milyon token başına maliyet. Bu, oluşturulan içerik ve tamamlamaların maliyetini etkiler"
+							}
+						}
 					},
 					"useCustomBaseUrl": "Özel temel URL kullan"
 				},

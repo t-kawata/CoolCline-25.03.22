@@ -369,16 +369,55 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "Servizio compatibile OpenAI",
+					"title": "Servizio compatibile con OpenAI",
 					"baseUrl": "URL base",
-					"enterBaseUrl": "Inserisci l'URL base",
+					"enterBaseUrl": "Inserisci URL base",
 					"useAzure": "Usa Azure OpenAI",
 					"setAzureVersion": "Imposta versione API Azure",
 					"description": "Usa servizio API compatibile con OpenAI",
-					"streaming": "Attiva streaming",
+					"streaming": "Abilita streaming",
 					"modelConfig": {
 						"title": "Configurazione del modello",
-						"description": "Configura capacità del modello e informazioni sui prezzi"
+						"description": "Configura capacità e informazioni sui prezzi del modello",
+						"capabilities": {
+							"title": "Capacità del modello",
+							"description": "Configura le capacità e i prezzi del tuo modello personalizzato compatibile con OpenAI",
+							"warning": "Fai attenzione alle capacità del modello, poiché possono influenzare il funzionamento di CoolCline",
+							"maxTokens": {
+								"title": "Token massimi di output",
+								"description": "Numero massimo di token che il modello può generare in una risposta",
+								"note": "(-1 dipende dal server)"
+							},
+							"contextWindow": {
+								"title": "Dimensione finestra di contesto",
+								"description": "Numero totale di token (input + output) che il modello può elaborare. Questo aiuta CoolCline Code a funzionare correttamente"
+							}
+						},
+						"features": {
+							"title": "Funzionalità del modello",
+							"imageSupport": {
+								"title": "Supporto immagini",
+								"description": "Abilita se il modello può elaborare e comprendere le immagini nell'input. Necessario per assistenza basata su immagini e comprensione visiva del codice",
+								"note": "Permette al modello di analizzare e comprendere le immagini, essenziale per l'assistenza visiva del codice"
+							},
+							"computerUse": {
+								"title": "Uso del computer",
+								"description": "Abilita se il modello può interagire con il tuo computer tramite comandi e operazioni sui file. Necessario per attività automatizzate e modifiche ai file",
+								"note": "Questa funzionalità del modello è per l'uso del computer come il supporto sonnet 3.5"
+							}
+						},
+						"pricing": {
+							"title": "Prezzi del modello",
+							"description": "Configura i prezzi basati sui token in USD per milione di token",
+							"inputPrice": {
+								"title": "Prezzo di input",
+								"description": "Costo per milione di token nell'input/prompt. Questo influisce sul costo di invio del contesto e delle istruzioni al modello"
+							},
+							"outputPrice": {
+								"title": "Prezzo di output",
+								"description": "Costo per milione di token nella risposta del modello. Questo influisce sul costo del contenuto generato e dei completamenti"
+							}
+						}
 					},
 					"useCustomBaseUrl": "Usa URL base personalizzato"
 				},

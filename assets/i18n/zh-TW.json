@@ -378,7 +378,46 @@
 					"streaming": "啟用串流",
 					"modelConfig": {
 						"title": "模型設定",
-						"description": "設定模型功能和定價資訊"
+						"description": "設定模型功能和價格資訊",
+						"capabilities": {
+							"title": "模型功能",
+							"description": "設定您的自訂 OpenAI 相容模型的功能和價格",
+							"warning": "請謹慎設定模型功能，因為這會影響 CoolCline 的運作方式",
+							"maxTokens": {
+								"title": "最大輸出權杖數",
+								"description": "模型在一次回應中可以生成的最大權杖數",
+								"note": "(-1 取決於伺服器)"
+							},
+							"contextWindow": {
+								"title": "上下文視窗大小",
+								"description": "模型可以處理的總權杖數（輸入 + 輸出）。這有助於 CoolCline Code 正確運作"
+							}
+						},
+						"features": {
+							"title": "模型特性",
+							"imageSupport": {
+								"title": "圖片支援",
+								"description": "如果模型可以處理和理解輸入中的圖片，請啟用此選項。這對於基於圖片的協助和程式碼視覺理解是必需的",
+								"note": "允許模型分析和理解圖片，這對於程式碼視覺協助至關重要"
+							},
+							"computerUse": {
+								"title": "電腦使用",
+								"description": "如果模型可以通過命令和檔案操作與您的電腦互動，請啟用此選項。這對於自動化任務和檔案修改是必需的",
+								"note": "此模型功能用於電腦使用，如 sonnet 3.5 支援"
+							}
+						},
+						"pricing": {
+							"title": "模型價格",
+							"description": "設定以每百萬權杖美元計價的權杖價格",
+							"inputPrice": {
+								"title": "輸入價格",
+								"description": "輸入/提示中每百萬權杖的成本。這影響向模型發送上下文和指令的成本"
+							},
+							"outputPrice": {
+								"title": "輸出價格",
+								"description": "模型回應中每百萬權杖的成本。這影響生成內容和補全的成本"
+							}
+						}
 					},
 					"useCustomBaseUrl": "使用自訂基礎 URL"
 				},

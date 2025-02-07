@@ -378,9 +378,47 @@
 					"streaming": "Streaming aktivieren",
 					"modelConfig": {
 						"title": "Modellkonfiguration",
-						"description": "Modellkapazitäten und Preisinformationen konfigurieren"
-					},
-					"useCustomBaseUrl": "Benutzerdefinierte Basis-URL verwenden"
+						"description": "Modellfunktionen und Preisinformationen konfigurieren",
+						"capabilities": {
+							"title": "Modellfähigkeiten",
+							"description": "Konfigurieren Sie die Fähigkeiten und Preise für Ihr benutzerdefiniertes OpenAI-kompatibles Modell",
+							"warning": "Seien Sie vorsichtig mit den Modellfähigkeiten, da sie die Funktionsweise von CoolCline beeinflussen können",
+							"maxTokens": {
+								"title": "Maximale Ausgabe-Token",
+								"description": "Maximale Anzahl von Token, die das Modell in einer Antwort generieren kann",
+								"note": "(-1 ist serverabhängig)"
+							},
+							"contextWindow": {
+								"title": "Kontextfenstergröße",
+								"description": "Gesamtanzahl der Token (Eingabe + Ausgabe), die das Modell verarbeiten kann. Dies hilft CoolCline Code, korrekt zu funktionieren"
+							}
+						},
+						"features": {
+							"title": "Modellfunktionen",
+							"imageSupport": {
+								"title": "Bildunterstützung",
+								"description": "Aktivieren Sie dies, wenn das Modell Bilder in der Eingabe verarbeiten und verstehen kann. Erforderlich für bildbasierte Unterstützung und visuelles Codeverständnis",
+								"note": "Ermöglicht dem Modell, Bilder zu analysieren und zu verstehen, was für die visuelle Code-Unterstützung essentiell ist"
+							},
+							"computerUse": {
+								"title": "Computernutzung",
+								"description": "Aktivieren Sie dies, wenn das Modell über Befehle und Dateioperationen mit Ihrem Computer interagieren kann. Erforderlich für automatisierte Aufgaben und Dateiänderungen",
+								"note": "Diese Modellfunktion ist für die Computernutzung wie bei sonnet 3.5 Support"
+							}
+						},
+						"pricing": {
+							"title": "Modellpreise",
+							"description": "Konfigurieren Sie die tokenbasierte Preisgestaltung in USD pro Million Token",
+							"inputPrice": {
+								"title": "Eingabepreis",
+								"description": "Kosten pro Million Token in der Eingabe/Prompt. Dies beeinflusst die Kosten für das Senden von Kontext und Anweisungen an das Modell"
+							},
+							"outputPrice": {
+								"title": "Ausgabepreis",
+								"description": "Kosten pro Million Token in der Modellantwort. Dies beeinflusst die Kosten für generierte Inhalte und Vervollständigungen"
+							}
+						}
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

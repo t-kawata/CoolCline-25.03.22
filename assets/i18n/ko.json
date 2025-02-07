@@ -378,7 +378,46 @@
 					"streaming": "스트리밍 활성화",
 					"modelConfig": {
 						"title": "모델 구성",
-						"description": "모델 기능 및 가격 정보 구성"
+						"description": "모델 기능 및 가격 정보 구성",
+						"capabilities": {
+							"title": "모델 기능",
+							"description": "사용자 정의 OpenAI 호환 모델의 기능 및 가격 구성",
+							"warning": "모델 기능은 CoolCline의 작동 방식에 영향을 미칠 수 있으므로 주의하세요",
+							"maxTokens": {
+								"title": "최대 출력 토큰",
+								"description": "모델이 한 번의 응답에서 생성할 수 있는 최대 토큰 수",
+								"note": "(-1은 서버에 따라 다름)"
+							},
+							"contextWindow": {
+								"title": "컨텍스트 윈도우 크기",
+								"description": "모델이 처리할 수 있는 총 토큰 수(입력 + 출력). CoolCline Code가 올바르게 작동하도록 도움"
+							}
+						},
+						"features": {
+							"title": "모델 기능",
+							"imageSupport": {
+								"title": "이미지 지원",
+								"description": "모델이 입력의 이미지를 처리하고 이해할 수 있는 경우 활성화. 이미지 기반 지원 및 시각적 코드 이해에 필요",
+								"note": "모델이 이미지를 분석하고 이해하여 시각적 코드 지원에 필수적"
+							},
+							"computerUse": {
+								"title": "컴퓨터 사용",
+								"description": "모델이 명령과 파일 작업으로 컴퓨터와 상호 작용할 수 있는 경우 활성화. 자동화 작업 및 파일 수정에 필요",
+								"note": "이 모델 기능은 sonnet 3.5와 같은 컴퓨터 사용을 지원"
+							}
+						},
+						"pricing": {
+							"title": "모델 가격",
+							"description": "백만 토큰당 USD 가격 구성",
+							"inputPrice": {
+								"title": "입력 가격",
+								"description": "입력/프롬프트의 백만 토큰당 비용. 컨텍스트와 지시를 모델에 보내는 비용에 영향"
+							},
+							"outputPrice": {
+								"title": "출력 가격",
+								"description": "모델 응답의 백만 토큰당 비용. 생성된 콘텐츠와 완성의 비용에 영향"
+							}
+						}
 					},
 					"useCustomBaseUrl": "사용자 정의 기본 URL 사용"
 				},

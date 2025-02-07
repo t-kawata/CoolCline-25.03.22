@@ -379,9 +379,47 @@
 					"streaming": "启用流式输出",
 					"modelConfig": {
 						"title": "模型配置",
-						"description": "配置模型功能和定价信息"
-					},
-					"useCustomBaseUrl": "使用自定义基础 URL"
+						"description": "配置模型功能和定价信息",
+						"capabilities": {
+							"title": "模型能力",
+							"description": "配置您的自定义 OpenAI 兼容模型的功能和定价",
+							"warning": "请谨慎设置模型功能，因为这会影响 CoolCline 的工作方式",
+							"maxTokens": {
+								"title": "最大输出令牌数",
+								"description": "模型在一次响应中可以生成的最大令牌数",
+								"note": "(-1 表示依赖服务器)"
+							},
+							"contextWindow": {
+								"title": "上下文窗口大小",
+								"description": "模型可以处理的总令牌数（输入 + 输出）。这将帮助 CoolCline Code 正确运行"
+							}
+						},
+						"features": {
+							"title": "模型特性",
+							"imageSupport": {
+								"title": "图像支持",
+								"description": "如果模型可以处理和理解输入中的图像，请启用此选项。这对于基于图像的辅助和视觉代码理解是必需的",
+								"note": "允许模型分析和理解图像，对于视觉代码辅助至关重要"
+							},
+							"computerUse": {
+								"title": "计算机使用",
+								"description": "如果模型可以通过命令和文件操作与计算机交互，请启用此选项。这对于自动化任务和文件修改是必需的",
+								"note": "此模型功能用于像 sonnet 3.5 支持的计算机使用"
+							}
+						},
+						"pricing": {
+							"title": "模型定价",
+							"description": "配置每百万令牌的美元定价",
+							"inputPrice": {
+								"title": "输入价格",
+								"description": "输入/提示中每百万令牌的成本。这会影响发送上下文和指令到模型的成本"
+							},
+							"outputPrice": {
+								"title": "输出价格",
+								"description": "模型响应中每百万令牌的成本。这会影响生成内容和补全的成本"
+							}
+						}
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",

@@ -370,16 +370,55 @@
 				},
 				"openai": {
 					"name": "OpenAI",
-					"title": "OpenAI kompatibilní služba",
+					"title": "Služba kompatibilní s OpenAI",
 					"baseUrl": "Základní URL",
 					"enterBaseUrl": "Zadejte základní URL",
 					"useAzure": "Použít Azure OpenAI",
 					"setAzureVersion": "Nastavit verzi Azure API",
-					"description": "Použít OpenAI-kompatibilní API službu",
-					"streaming": "Povolit streaming",
+					"description": "Použít službu API kompatibilní s OpenAI",
+					"streaming": "Povolit streamování",
 					"modelConfig": {
 						"title": "Konfigurace modelu",
-						"description": "Konfigurovat schopnosti modelu a informace o cenách"
+						"description": "Nakonfigurujte schopnosti a cenové informace modelu",
+						"capabilities": {
+							"title": "Schopnosti modelu",
+							"description": "Nakonfigurujte schopnosti a ceny vašeho vlastního modelu kompatibilního s OpenAI",
+							"warning": "Buďte opatrní se schopnostmi modelu, protože mohou ovlivnit způsob fungování CoolCline",
+							"maxTokens": {
+								"title": "Maximální výstupní tokeny",
+								"description": "Maximální počet tokenů, které model může vygenerovat v jedné odpovědi",
+								"note": "(-1 závisí na serveru)"
+							},
+							"contextWindow": {
+								"title": "Velikost kontextového okna",
+								"description": "Celkový počet tokenů (vstup + výstup), které model může zpracovat. To pomáhá CoolCline Code správně fungovat"
+							}
+						},
+						"features": {
+							"title": "Funkce modelu",
+							"imageSupport": {
+								"title": "Podpora obrázků",
+								"description": "Povolte, pokud model může zpracovávat a rozumět obrázkům ve vstupu. Nutné pro asistenci založenou na obrázcích a vizuální porozumění kódu",
+								"note": "Umožňuje modelu analyzovat a rozumět obrázkům, což je klíčové pro vizuální asistenci s kódem"
+							},
+							"computerUse": {
+								"title": "Použití počítače",
+								"description": "Povolte, pokud model může komunikovat s vaším počítačem prostřednictvím příkazů a operací se soubory. Nutné pro automatizované úkoly a úpravy souborů",
+								"note": "Tato funkce modelu je pro použití počítače jako podpora sonnet 3.5"
+							}
+						},
+						"pricing": {
+							"title": "Ceny modelu",
+							"description": "Nakonfigurujte ceny tokenů v USD za milion tokenů",
+							"inputPrice": {
+								"title": "Vstupní cena",
+								"description": "Náklady za milion tokenů ve vstupu/promptu. To ovlivňuje náklady na odesílání kontextu a instrukcí modelu"
+							},
+							"outputPrice": {
+								"title": "Výstupní cena",
+								"description": "Náklady za milion tokenů v odpovědi modelu. To ovlivňuje náklady na generovaný obsah a dokončení"
+							}
+						}
 					},
 					"useCustomBaseUrl": "Použít vlastní základní URL"
 				},

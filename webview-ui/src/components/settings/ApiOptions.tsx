@@ -631,8 +631,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									margin: "0 0 15px 0",
 									lineHeight: "1.4",
 								}}>
-								Configure the capabilities and pricing for your custom OpenAI-compatible model. <br />
-								Be careful for the model capabilities, as they can affect how CoolCline can work.
+								{t(
+									"settings.provider.providers.openai.modelConfig.capabilities.description",
+								).toString()}
+								<br />
+								{t("settings.provider.providers.openai.modelConfig.capabilities.warning").toString()}
 							</p>
 
 							{/* Capabilities Section */}
@@ -651,7 +654,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 										marginBottom: 12,
 										color: "var(--vscode-editor-foreground)",
 									}}>
-									Model Capabilities
+									{t("settings.provider.providers.openai.modelConfig.capabilities.title").toString()}
 								</span>
 								<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 									<div className="token-config-field">
@@ -672,7 +675,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 														: "var(--vscode-errorForeground)"
 												})(),
 											}}
-											title="Maximum number of tokens the model can generate in a single response"
+											title={t(
+												"settings.provider.providers.openai.modelConfig.capabilities.maxTokens.description",
+											).toString()}
 											onChange={(e: any) => {
 												const value = parseInt(e.target.value)
 												handleInputChange("openAiCustomModelInfo")({
@@ -686,7 +691,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												})
 											}}
 											placeholder="e.g. 4096">
-											<span style={{ fontWeight: 500 }}>Max Output Tokens</span>
+											<span style={{ fontWeight: 500 }}>
+												{t(
+													"settings.provider.providers.openai.modelConfig.capabilities.maxTokens.title",
+												).toString()}
+											</span>
 										</VSCodeTextField>
 										<div
 											style={{
@@ -699,8 +708,13 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											}}>
 											<i className="codicon codicon-info" style={{ fontSize: "12px" }}></i>
 											<span>
-												Maximum number of tokens the model can generate in a response. <br />
-												(-1 is depend on server)
+												{t(
+													"settings.provider.providers.openai.modelConfig.capabilities.maxTokens.description",
+												).toString()}
+												<br />
+												{t(
+													"settings.provider.providers.openai.modelConfig.capabilities.maxTokens.note",
+												).toString()}
 											</span>
 										</div>
 									</div>
@@ -723,7 +737,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 														: "var(--vscode-errorForeground)"
 												})(),
 											}}
-											title="Total number of tokens (input + output) the model can process in a single request"
+											title={t(
+												"settings.provider.providers.openai.modelConfig.capabilities.contextWindow.description",
+											).toString()}
 											onChange={(e: any) => {
 												const parsed = parseInt(e.target.value)
 												handleInputChange("openAiCustomModelInfo")({
@@ -742,7 +758,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												})
 											}}
 											placeholder="e.g. 128000">
-											<span style={{ fontWeight: 500 }}>Context Window Size</span>
+											<span style={{ fontWeight: 500 }}>
+												{t(
+													"settings.provider.providers.openai.modelConfig.capabilities.contextWindow.title",
+												).toString()}
+											</span>
 										</VSCodeTextField>
 										<div
 											style={{
@@ -755,8 +775,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											}}>
 											<i className="codicon codicon-info" style={{ fontSize: "12px" }}></i>
 											<span>
-												Total tokens (input + output) the model can process. This will help
-												CoolCline Code run correctly.
+												{t(
+													"settings.provider.providers.openai.modelConfig.capabilities.contextWindow.description",
+												).toString()}
 											</span>
 										</div>
 									</div>
@@ -778,7 +799,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												display: "block",
 												marginBottom: "10px",
 											}}>
-											Model Features
+											{t(
+												"settings.provider.providers.openai.modelConfig.features.title",
+											).toString()}
 										</span>
 
 										<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -800,11 +823,17 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span style={{ fontWeight: 500 }}>Image Support</span>
+														<span style={{ fontWeight: 500 }}>
+															{t(
+																"settings.provider.providers.openai.modelConfig.features.imageSupport.title",
+															).toString()}
+														</span>
 													</Checkbox>
 													<i
 														className="codicon codicon-info"
-														title="Enable if the model can process and understand images in the input. Required for image-based assistance and visual code understanding."
+														title={t(
+															"settings.provider.providers.openai.modelConfig.features.imageSupport.description",
+														).toString()}
 														style={{
 															fontSize: "12px",
 															color: "var(--vscode-descriptionForeground)",
@@ -820,8 +849,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 														marginTop: "4px",
 														lineHeight: "1.4",
 													}}>
-													Allows the model to analyze and understand images, essential for
-													visual code assistance
+													{t(
+														"settings.provider.providers.openai.modelConfig.features.imageSupport.note",
+													).toString()}
 												</p>
 											</div>
 
@@ -848,11 +878,17 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span style={{ fontWeight: 500 }}>Computer Use</span>
+														<span style={{ fontWeight: 500 }}>
+															{t(
+																"settings.provider.providers.openai.modelConfig.features.computerUse.title",
+															).toString()}
+														</span>
 													</Checkbox>
 													<i
 														className="codicon codicon-info"
-														title="Enable if the model can interact with your computer through commands and file operations. Required for automated tasks and file modifications."
+														title={t(
+															"settings.provider.providers.openai.modelConfig.features.computerUse.description",
+														).toString()}
 														style={{
 															fontSize: "12px",
 															color: "var(--vscode-descriptionForeground)",
@@ -868,7 +904,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 														marginTop: "4px",
 														lineHeight: "1.4",
 													}}>
-													This model feature is for computer use like sonnet 3.5 support
+													{t(
+														"settings.provider.providers.openai.modelConfig.features.computerUse.note",
+													).toString()}
 												</p>
 											</div>
 										</div>
@@ -893,7 +931,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											display: "block",
 											marginBottom: "4px",
 										}}>
-										Model Pricing
+										{t("settings.provider.providers.openai.modelConfig.pricing.title").toString()}
 									</span>
 									<span
 										style={{
@@ -901,7 +939,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											color: "var(--vscode-descriptionForeground)",
 											display: "block",
 										}}>
-										Configure token-based pricing in USD per million tokens
+										{t(
+											"settings.provider.providers.openai.modelConfig.pricing.description",
+										).toString()}
 									</span>
 								</div>
 
@@ -951,10 +991,16 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											}}
 											placeholder="e.g. 0.0001">
 											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-												<span style={{ fontWeight: 500 }}>Input Price</span>
+												<span style={{ fontWeight: 500 }}>
+													{t(
+														"settings.provider.providers.openai.modelConfig.pricing.inputPrice.title",
+													).toString()}
+												</span>
 												<i
 													className="codicon codicon-info"
-													title="Cost per million tokens in the input/prompt. This affects the cost of sending context and instructions to the model."
+													title={t(
+														"settings.provider.providers.openai.modelConfig.pricing.inputPrice.description",
+													).toString()}
 													style={{
 														fontSize: "12px",
 														color: "var(--vscode-descriptionForeground)",
@@ -1002,10 +1048,16 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											}}
 											placeholder="e.g. 0.0002">
 											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-												<span style={{ fontWeight: 500 }}>Output Price</span>
+												<span style={{ fontWeight: 500 }}>
+													{t(
+														"settings.provider.providers.openai.modelConfig.pricing.outputPrice.title",
+													).toString()}
+												</span>
 												<i
 													className="codicon codicon-info"
-													title="Cost per million tokens in the model's response. This affects the cost of generated content and completions."
+													title={t(
+														"settings.provider.providers.openai.modelConfig.pricing.outputPrice.description",
+													).toString()}
 													style={{
 														fontSize: "12px",
 														color: "var(--vscode-descriptionForeground)",
