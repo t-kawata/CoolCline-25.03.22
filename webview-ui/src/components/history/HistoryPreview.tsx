@@ -4,6 +4,7 @@ import { vscode } from "../../utils/vscode"
 import { memo } from "react"
 import { formatLargeNumber } from "../../utils/format"
 import { useTranslation } from "react-i18next"
+import { useCopyToClipboard } from "../../utils/clipboard"
 
 type HistoryPreviewProps = {
 	showHistoryView: () => void
@@ -12,6 +13,8 @@ type HistoryPreviewProps = {
 const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 	const { taskHistory } = useExtensionState()
 	const { t } = useTranslation()
+	const { showCopyFeedback, copyWithFeedback } = useCopyToClipboard()
+
 	const handleHistorySelect = (id: string) => {
 		vscode.postMessage({ type: "showTaskWithId", text: id })
 	}
@@ -31,8 +34,18 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 			.toUpperCase()
 	}
 
+	if (!taskHistory?.length) {
+		return null
+	}
+
+	const recentTasks = taskHistory
+		.filter((item) => item.ts && item.task)
+		.sort((a, b) => b.ts - a.ts)
+		.slice(0, 3)
+
 	return (
 		<div style={{ flexShrink: 0 }}>
+			{showCopyFeedback && <div className="copy-modal">{String(t("history.preview.promptCopied"))}</div>}
 			<style>
 				{`
 					.history-preview-item {
@@ -48,6 +61,19 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 						background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 100%, transparent);
 						opacity: 1;
 						pointer-events: auto;
+					}
+					.copy-modal {
+						position: fixed;
+						top: 50%;
+						left: 50%;
+						transform: translate(-50%, -50%);
+						background-color: var(--vscode-notifications-background);
+						color: var(--vscode-notifications-foreground);
+						padding: 12px 20px;
+						border-radius: 4px;
+						box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+						z-index: 1000;
+						transition: opacity 0.2s ease-in-out;
 					}
 				`}
 			</style>
@@ -73,70 +99,70 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 			</div>
 
 			<div style={{ padding: "0px 20px 0 20px" }}>
-				{taskHistory
-					.filter((item) => item.ts && item.task)
-					.slice(0, 3)
-					.map((item) => (
-						<div
-							key={item.id}
-							className="history-preview-item"
-							onClick={() => handleHistorySelect(item.id)}>
-							<div style={{ padding: "12px" }}>
-								<div style={{ marginBottom: "8px" }}>
-									<span
-										style={{
-											color: "var(--vscode-descriptionForeground)",
-											fontWeight: 500,
-											fontSize: "0.85em",
-											textTransform: "uppercase",
-										}}>
-										{formatDate(item.ts)}
-									</span>
-								</div>
-								<div
+				{recentTasks.map((item) => (
+					<div key={item.id} className="history-preview-item" onClick={() => handleHistorySelect(item.id)}>
+						<div style={{ padding: "12px" }}>
+							<div style={{ marginBottom: "8px" }}>
+								<span
 									style={{
-										fontSize: "var(--vscode-font-size)",
 										color: "var(--vscode-descriptionForeground)",
-										marginBottom: "8px",
-										display: "-webkit-box",
-										WebkitLineClamp: 3,
-										WebkitBoxOrient: "vertical",
-										overflow: "hidden",
-										whiteSpace: "pre-wrap",
-										wordBreak: "break-word",
-										overflowWrap: "anywhere",
+										fontWeight: 500,
+										fontSize: "0.85em",
+										textTransform: "uppercase",
 									}}>
-									{item.task}
-								</div>
-								<div style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}>
-									<span>
-										{String(t("history.preview.metrics.tokens"))}: ↑
-										{formatLargeNumber(item.tokensIn || 0)} ↓
-										{formatLargeNumber(item.tokensOut || 0)}
-									</span>
-									{!!item.cacheWrites && (
-										<>
-											{" • "}
-											<span>
-												{String(t("history.preview.metrics.cache"))}: +
-												{formatLargeNumber(item.cacheWrites || 0)} →{" "}
-												{formatLargeNumber(item.cacheReads || 0)}
-											</span>
-										</>
-									)}
-									{!!item.totalCost && (
-										<>
-											{" • "}
-											<span>
-												{String(t("history.preview.metrics.apiCost"))}: $
-												{item.totalCost?.toFixed(4)}
-											</span>
-										</>
-									)}
-								</div>
+									{formatDate(item.ts)}
+								</span>
 							</div>
+							<div
+								style={{
+									fontSize: "var(--vscode-font-size)",
+									color: "var(--vscode-descriptionForeground)",
+									marginBottom: "8px",
+									display: "-webkit-box",
+									WebkitLineClamp: 3,
+									WebkitBoxOrient: "vertical",
+									overflow: "hidden",
+									whiteSpace: "pre-wrap",
+									wordBreak: "break-word",
+									overflowWrap: "anywhere",
+								}}>
+								{item.task}
+							</div>
+							<div style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}>
+								<span>
+									{String(t("history.preview.metrics.tokens"))}: ↑
+									{formatLargeNumber(item.tokensIn || 0)} ↓{formatLargeNumber(item.tokensOut || 0)}
+								</span>
+								{!!item.cacheWrites && (
+									<>
+										{" • "}
+										<span>
+											{String(t("history.preview.metrics.cache"))}: +
+											{formatLargeNumber(item.cacheWrites || 0)} →{" "}
+											{formatLargeNumber(item.cacheReads || 0)}
+										</span>
+									</>
+								)}
+								{!!item.totalCost && (
+									<>
+										{" • "}
+										<span>
+											{String(t("history.preview.metrics.apiCost"))}: $
+											{item.totalCost?.toFixed(4)}
+										</span>
+									</>
+								)}
+							</div>
+							<button
+								title={String(t("history.preview.copyPrompt"))}
+								className="copy-button"
+								data-appearance="icon"
+								onClick={(e) => copyWithFeedback(item.task, e)}>
+								<span className="codicon codicon-copy"></span>
+							</button>
 						</div>
-					))}
+					</div>
+				))}
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
 					<VSCodeButton
 						appearance="icon"

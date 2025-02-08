@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline modu değiştirdi",
 			"modeBecause": "mod, çünkü:",
 			"mode": "mod",
-			"response": "Yanıt"
+			"response": "Yanıt",
+			"copyAsMarkdown": "Markdown olarak kopyala"
 		},
 		"actions": {
 			"edit": "Düzenle...",
@@ -352,6 +353,7 @@
 			"recentTasks": "Son görevler",
 			"viewAll": "Tüm geçmişi görüntüle",
 			"promptCopied": "Prompt panoya kopyalandı",
+			"copyPrompt": "Kopyalandı",
 			"metrics": {
 				"tokens": "Tokenler",
 				"cache": "Önbellek",

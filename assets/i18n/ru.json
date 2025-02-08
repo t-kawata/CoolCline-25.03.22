@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline переключился в режим",
 			"modeBecause": "режим, потому что:",
 			"mode": "режим",
-			"response": "Ответ"
+			"response": "Ответ",
+			"copyAsMarkdown": "Копировать как Markdown"
 		},
 		"actions": {
 			"edit": "Редактировать...",
@@ -352,6 +353,7 @@
 			"recentTasks": "Недавние задачи",
 			"viewAll": "Просмотреть всю историю",
 			"promptCopied": "Промпт скопирован в буфер обмена",
+			"copyPrompt": "Скопировано",
 			"metrics": {
 				"tokens": "токенов",
 				"cache": "Cache",

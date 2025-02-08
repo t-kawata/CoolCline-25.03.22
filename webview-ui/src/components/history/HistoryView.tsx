@@ -6,6 +6,7 @@ import React, { memo, useMemo, useState, useEffect } from "react"
 import { Fzf } from "fzf"
 import { formatLargeNumber } from "../../utils/format"
 import { highlightFzfMatch } from "../../utils/highlight"
+import { useCopyToClipboard } from "../../utils/clipboard"
 import { useTranslation } from "react-i18next"
 
 type HistoryViewProps = {
@@ -20,7 +21,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 	const [searchQuery, setSearchQuery] = useState("")
 	const [sortOption, setSortOption] = useState<SortOption>("newest")
 	const [lastNonRelevantSort, setLastNonRelevantSort] = useState<SortOption | null>("newest")
-	const [showCopyModal, setShowCopyModal] = useState(false)
+	const { showCopyFeedback, copyWithFeedback } = useCopyToClipboard()
 
 	useEffect(() => {
 		if (searchQuery && sortOption !== "mostRelevant" && !lastNonRelevantSort) {
@@ -38,17 +39,6 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
 	const handleDeleteHistoryItem = (id: string) => {
 		vscode.postMessage({ type: "deleteTaskWithId", text: id })
-	}
-
-	const handleCopyTask = async (e: React.MouseEvent, task: string) => {
-		e.stopPropagation()
-		try {
-			await navigator.clipboard.writeText(task)
-			setShowCopyModal(true)
-			setTimeout(() => setShowCopyModal(false), 2000)
-		} catch (error) {
-			console.error("Failed to copy to clipboard:", error)
-		}
 	}
 
 	const formatDate = (timestamp: number) => {
@@ -146,7 +136,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 					}
 				`}
 			</style>
-			{showCopyModal && <div className="copy-modal">{String(t("history.preview.promptCopied"))}</div>}
+			{showCopyFeedback && <div className="copy-modal">{String(t("history.preview.promptCopied"))}</div>}
 			<div
 				style={{
 					position: "fixed",
@@ -270,10 +260,10 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 										</span>
 										<div style={{ display: "flex", gap: "4px" }}>
 											<button
-												title="Copy Prompt"
+												title={String(t("history.preview.copyPrompt"))}
 												className="copy-button"
 												data-appearance="icon"
-												onClick={(e) => handleCopyTask(e, item.task)}>
+												onClick={(e) => copyWithFeedback(item.task, e)}>
 												<span className="codicon codicon-copy"></span>
 											</button>
 											<button

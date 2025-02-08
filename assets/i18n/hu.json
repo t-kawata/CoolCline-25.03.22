@@ -85,7 +85,8 @@
 			"switchedMode": "A CoolCline átváltott",
 			"modeBecause": "módra, mert:",
 			"mode": "mód",
-			"response": "Válasz"
+			"response": "Válasz",
+			"copyAsMarkdown": "Másolás Markdown formátumban"
 		},
 		"actions": {
 			"edit": "Szerkesztés...",
@@ -352,6 +353,7 @@
 			"recentTasks": "Legutóbbi feladatok",
 			"viewAll": "Összes előzmény megtekintése",
 			"promptCopied": "Prompt a vágólapra másolva",
+			"copyPrompt": "Másolva",
 			"metrics": {
 				"tokens": "Tokenek",
 				"cache": "Gyorsítótár",

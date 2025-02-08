@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline이 모드를 전환했습니다",
 			"modeBecause": "모드 이유:",
 			"mode": "모드",
-			"response": "응답"
+			"response": "응답",
+			"copyAsMarkdown": "마크다운으로 복사"
 		},
 		"actions": {
 			"edit": "편집...",
@@ -352,6 +353,7 @@
 			"recentTasks": "최근 작업",
 			"viewAll": "전체 기록 보기",
 			"promptCopied": "프롬프트가 클립보드에 복사됨",
+			"copyPrompt": "복사됨",
 			"metrics": {
 				"tokens": "토큰",
 				"cache": "캐시",

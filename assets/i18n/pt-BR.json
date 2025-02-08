@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline mudou para",
 			"modeBecause": "modo porque:",
 			"mode": "modo",
-			"response": "Resposta"
+			"response": "Resposta",
+			"copyAsMarkdown": "Copiar como Markdown"
 		},
 		"actions": {
 			"edit": "Editar...",
@@ -352,6 +353,7 @@
 			"recentTasks": "Tarefas recentes",
 			"viewAll": "Ver todo o histórico",
 			"promptCopied": "Prompt copiado para a área de transferência",
+			"copyPrompt": "Copiado",
 			"metrics": {
 				"tokens": "tokens",
 				"cache": "cache",

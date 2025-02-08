@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline 已切换到",
 			"modeBecause": "模式，原因：",
 			"mode": "模式",
-			"response": "响应"
+			"response": "响应",
+			"copyAsMarkdown": "复制为 Markdown"
 		},
 		"actions": {
 			"edit": "编辑...",
@@ -352,6 +353,7 @@
 			"recentTasks": "最近任务",
 			"viewAll": "查看所有历史",
 			"promptCopied": "提示已复制到剪贴板",
+			"copyPrompt": "已复制",
 			"metrics": {
 				"tokens": "令牌",
 				"cache": "缓存",

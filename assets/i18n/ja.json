@@ -85,7 +85,8 @@
 			"switchedMode": "CoolClineはモードを切り替えました",
 			"modeBecause": "モードの理由：",
 			"mode": "モード",
-			"response": "応答"
+			"response": "応答",
+			"copyAsMarkdown": "Markdownとしてコピー"
 		},
 		"actions": {
 			"edit": "編集...",
@@ -352,6 +353,7 @@
 			"recentTasks": "最近のタスク",
 			"viewAll": "すべての履歴を表示",
 			"promptCopied": "プロンプトをクリップボードにコピーしました",
+			"copyPrompt": "コピー完了",
 			"metrics": {
 				"tokens": "トークン",
 				"cache": "キャッシュ",

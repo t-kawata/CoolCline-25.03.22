@@ -21,6 +21,7 @@ import McpResourceRow from "../mcp/McpResourceRow"
 import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 import { useTranslation } from "react-i18next"
+import { useCopyToClipboard } from "../../utils/clipboard"
 
 interface ChatRowProps {
 	message: CoolClineMessage
@@ -1010,6 +1011,8 @@ export const ProgressIndicator = () => (
 
 const Markdown = memo(({ markdown, partial }: { markdown?: string; partial?: boolean }) => {
 	const [isHovering, setIsHovering] = useState(false)
+	const { copyWithFeedback } = useCopyToClipboard(200) // 复制按钮闪烁反馈时间较短
+	const { t } = useTranslation()
 
 	return (
 		<div
@@ -1046,18 +1049,19 @@ const Markdown = memo(({ markdown, partial }: { markdown?: string; partial?: boo
 							background: "var(--vscode-editor-background)",
 							transition: "background 0.2s ease-in-out",
 						}}
-						onClick={() => {
-							navigator.clipboard.writeText(markdown)
-							// Flash the button background briefly to indicate success
-							const button = document.activeElement as HTMLElement
-							if (button) {
-								button.style.background = "var(--vscode-button-background)"
-								setTimeout(() => {
-									button.style.background = ""
-								}, 200)
+						onClick={async (e) => {
+							const success = await copyWithFeedback(markdown, e)
+							if (success) {
+								const button = document.activeElement as HTMLElement
+								if (button) {
+									button.style.background = "var(--vscode-button-background)"
+									setTimeout(() => {
+										button.style.background = ""
+									}, 200)
+								}
 							}
 						}}
-						title="Copy as markdown">
+						title={String(t("chat.messages.copyAsMarkdown"))}>
 						<span className="codicon codicon-copy"></span>
 					</VSCodeButton>
 				</div>

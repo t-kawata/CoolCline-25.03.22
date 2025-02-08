@@ -85,7 +85,8 @@
 			"switchedMode": "قام CoolCline بالتبديل إلى",
 			"modeBecause": "الوضع لأن:",
 			"mode": "وضع",
-			"response": "استجابة"
+			"response": "استجابة",
+			"copyAsMarkdown": "نسخ كمارك داون"
 		},
 		"actions": {
 			"edit": "تحرير...",
@@ -352,6 +353,7 @@
 			"recentTasks": "المهام الأخيرة",
 			"viewAll": "عرض كل السجل",
 			"promptCopied": "تم نسخ الموجه إلى الحافظة",
+			"copyPrompt": "Copied",
 			"metrics": {
 				"tokens": "الرموز",
 				"cache": "الذاكرة المؤقتة",

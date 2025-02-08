@@ -180,20 +180,20 @@ describe("HistoryView", () => {
 		const taskContainer = screen.getByTestId("virtuoso-item-1")
 		fireEvent.mouseEnter(taskContainer)
 
-		const copyButton = within(taskContainer).getByTitle("Copy Prompt")
+		const copyButton = within(taskContainer).getByTitle("复制提示")
 		await userEvent.click(copyButton)
 
 		// Verify clipboard API was called
 		expect(navigator.clipboard.writeText).toHaveBeenCalledWith("Test task 1")
 
 		// Wait for copy modal to appear
-		const copyModal = await screen.findByText("Prompt Copied to Clipboard")
+		const copyModal = await screen.findByText("提示已复制到剪贴板")
 		expect(copyModal).toBeInTheDocument()
 
 		// Fast-forward timers and wait for modal to disappear
 		jest.advanceTimersByTime(2000)
 		await waitFor(() => {
-			expect(screen.queryByText("Prompt Copied to Clipboard")).not.toBeInTheDocument()
+			expect(screen.queryByText("提示已复制到剪贴板")).not.toBeInTheDocument()
 		})
 	})
 

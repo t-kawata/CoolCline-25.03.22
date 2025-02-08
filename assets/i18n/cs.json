@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline přepnul do",
 			"modeBecause": "režimu protože:",
 			"mode": "režim",
-			"response": "Odpověď"
+			"response": "Odpověď",
+			"copyAsMarkdown": "Kopírovat jako Markdown"
 		},
 		"actions": {
 			"edit": "Upravit...",
@@ -352,6 +353,7 @@
 			"recentTasks": "Nedávné úkoly",
 			"viewAll": "Zobrazit celou historii",
 			"promptCopied": "Prompt zkopírován do schránky",
+			"copyPrompt": "Zkopírováno",
 			"metrics": {
 				"tokens": "Tokeny",
 				"cache": "Mezipaměť",

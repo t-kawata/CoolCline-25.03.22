@@ -85,7 +85,8 @@
 			"switchedMode": "CoolCline ने स्विच किया",
 			"modeBecause": "मोड क्योंकि:",
 			"mode": "मोड",
-			"response": "प्रतिक्रिया"
+			"response": "प्रतिक्रिया",
+			"copyAsMarkdown": "मार्कडाउन के रूप में कॉपी करें"
 		},
 		"actions": {
 			"edit": "संपादित करें...",
@@ -352,6 +353,7 @@
 			"recentTasks": "हाल के कार्य",
 			"viewAll": "सभी इतिहास देखें",
 			"promptCopied": "प्रॉम्प्ट क्लिपबोर्ड पर कॉपी किया गया",
+			"copyPrompt": "कॉपी किया गया",
 			"metrics": {
 				"tokens": "टोकन",
 				"cache": "कैश",
