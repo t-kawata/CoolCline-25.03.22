@@ -59,6 +59,10 @@
 	--radius-sm: calc(var(--radius) - 4px);
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
 	:root {
 		--background: var(--vscode-editor-background);
@@ -80,14 +84,6 @@
 		--border: var(--vscode-input-border);
 		--input: var(--vscode-input-background);
 		--ring: var(--vscode-input-border);
-		--chart-1: var(--vscode-charts-red);
-		--chart-2: var(--vscode-charts-blue);
-		--chart-3: var(--vscode-charts-yellow);
-		--chart-4: var(--vscode-charts-orange);
-		--chart-5: var(--vscode-charts-green);
-		--chart-6: var(--vscode-charts-purple);
-		--chart-7: var(--vscode-charts-foreground);
-		--chart-8: var(--vscode-charts-lines);
 		--radius: 0.5rem;
 	}
 
