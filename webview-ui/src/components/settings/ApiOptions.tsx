@@ -1372,7 +1372,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 			{apiErrorMessage && (
 				<p
 					style={{
-						margin: "-10px 0 4px 0",
+						margin: "-4px 0 4px 0",
 						fontSize: 12,
 						color: "var(--vscode-errorForeground)",
 					}}>
