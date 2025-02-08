@@ -130,14 +130,14 @@ CoolCline 可以自主构建和配置新工具（需要您的批准），以立�
 
 ## 本地设置和开发
 
-参考 CONTRIBUTING 文件中的说明 : [English](./CONTRIBUTING.md) | [简体中文](./CONTRIBUTING_zh.md)
+参考 CONTRIBUTING 文件中的说明 : [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 ---
 
 ## 贡献
 
 我们欢迎社区贡献！以下是参与方式：
-CONTRIBUTING: [English](./CONTRIBUTING.md) | [简体中文](./CONTRIBUTING_zh.md)
+CONTRIBUTING: [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 ---
 

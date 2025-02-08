@@ -36,6 +36,7 @@ import { EXPERIMENT_IDS, experiments as Experiments, experimentDefault, Experime
 import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt"
 
 import { ACTION_NAMES } from "../CodeActionProvider"
+import { McpServerManager } from "../../services/mcp/McpServerManager"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -148,7 +149,14 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		this.outputChannel.appendLine("CoolClineProvider instantiated")
 		CoolClineProvider.activeInstances.add(this)
 		this.workspaceTracker = new WorkspaceTracker(this)
-		this.mcpHub = new McpHub(this)
+		// Initialize MCP Hub through the singleton manager
+		McpServerManager.getInstance(this.context, this)
+			.then((hub) => {
+				this.mcpHub = hub
+			})
+			.catch((error) => {
+				this.outputChannel.appendLine(`Failed to initialize MCP Hub: ${error}`)
+			})
 		this.configManager = new ConfigManager(this.context)
 		this.customModesManager = new CustomModesManager(this.context, async () => {
 			await this.postStateToWebview()
@@ -181,6 +189,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		this.customModesManager?.dispose()
 		this.outputChannel.appendLine("Disposed all disposables")
 		CoolClineProvider.activeInstances.delete(this)
+
+		// Unregister from McpServerManager
+		McpServerManager.unregisterProvider(this)
 	}
 
 	public static getVisibleInstance(): CoolClineProvider | undefined {
