@@ -1,27 +1,23 @@
 /**
- * Normally we'd import tailwind with the following:
+ * We're using Tailwind's @tailwind directives to import styles:
+ * - @tailwind base: Core styles and base utilities
+ * - @tailwind components: Component classes
+ * - @tailwind utilities: Utility classes
  *
- * @import "tailwindcss";
- *
- * However, we need to customize the preflight styles since the extension's
+ * We're customizing the base styles since the extension's
  * current UI assumes there's no CSS resetting or normalization.
  *
- * We're excluding tailwind's default preflight and importing our own, which
- * is based on the original:
- * https://github.com/tailwindlabs/tailwindcss/blob/main/packages/tailwindcss/preflight.css
- *
- * Reference: https://tailwindcss.com/docs/preflight
+ * Reference: https://tailwindcss.com/docs/functions-and-directives#tailwind
  */
 
-@layer theme, base, components, utilities;
+/**
+ * Tailwind CSS imports
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@import "tailwindcss/theme.css" layer(theme);
-@import "./preflight.css" layer(base);
-@import "tailwindcss/utilities.css" layer(utilities);
-
-@plugin "tailwindcss-animate";
-
-@theme {
+:root {
 	--font-display: var(--vscode-font-family);
 	--text-sm: calc(var(--vscode-font-size) * 0.9);
 	--text-base: var(--vscode-font-size);
@@ -58,10 +54,6 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
 	:root {
