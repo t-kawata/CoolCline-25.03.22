@@ -30,7 +30,9 @@ export async function openFile(filePath: string, options: OpenFileOptions = {}) 
 		// Get workspace root
 		const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
 		if (!workspaceRoot) {
-			throw new Error("No workspace root found")
+			throw new Error(
+				"No project folder is currently open in VS Code. Please open a project folder to use this feature.",
+			)
 		}
 
 		// If path starts with ./, resolve it relative to workspace root
