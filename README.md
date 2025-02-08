@@ -130,14 +130,14 @@ Two installation methods, choose one:
 
 ## Local Setup and Development
 
-Refer to the instructions in the CONTRIBUTING file: [English](./CONTRIBUTING.md) | [简体中文](./CONTRIBUTING_zh.md)
+Refer to the instructions in the CONTRIBUTING file: [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 ---
 
 ## Contributing
 
 We welcome community contributions! Here’s how to get involved:
-CONTRIBUTING: [English](./CONTRIBUTING.md) | [简体中文](./CONTRIBUTING_zh.md)
+CONTRIBUTING: [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 ---
 
