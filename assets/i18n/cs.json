@@ -9,6 +9,15 @@
 		"cancel": "Zrušit",
 		"create": "Vytvořit",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "Musíte zadat platný API klíč nebo zvolit jiného poskytovatele.",
+			"provideRegion": "Musíte zvolit region pro použití s AWS Bedrock.",
+			"provideProjectAndRegion": "Musíte zadat platné ID projektu a region Google Cloud.",
+			"provideBaseUrlAndKey": "Musíte zadat platnou základní URL, API klíč a ID modelu.",
+			"provideModelId": "Musíte zadat platné ID modelu.",
+			"provideModelSelector": "Musíte zadat platný selektor modelu.",
+			"modelNotAvailable": "Zadané ID modelu není k dispozici. Prosím, vyberte jiný model."
+		},
 		"actions": {
 			"reset": "Obnovit výchozí",
 			"edit": "Upravit",

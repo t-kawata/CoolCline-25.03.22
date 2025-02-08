@@ -9,6 +9,15 @@
 		"cancel": "İptal",
 		"create": "Oluştur",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "Geçerli bir API anahtarı sağlamalısınız veya farklı bir sağlayıcı seçmelisiniz.",
+			"provideRegion": "AWS Bedrock ile kullanmak için bir bölge seçmelisiniz.",
+			"provideProjectAndRegion": "Geçerli bir Google Cloud Proje Kimliği ve Bölge sağlamalısınız.",
+			"provideBaseUrlAndKey": "Geçerli bir temel URL, API anahtarı ve model kimliği sağlamalısınız.",
+			"provideModelId": "Geçerli bir model kimliği sağlamalısınız.",
+			"provideModelSelector": "Geçerli bir model seçici sağlamalısınız.",
+			"modelNotAvailable": "Sağladığınız model kimliği mevcut değil. Lütfen başka bir model seçin."
+		},
 		"actions": {
 			"reset": "Varsayılana Sıfırla",
 			"edit": "Düzenle",

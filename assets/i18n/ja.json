@@ -3,12 +3,21 @@
 		"done": "完了",
 		"add": "追加",
 		"delete": "削除",
-		"rename": "名前変更",
+		"rename": "名前を変更",
 		"preview": "プレビュー",
 		"save": "保存",
 		"cancel": "キャンセル",
 		"create": "作成",
-		"prompt": "Prompt",
+		"prompt": "プロンプト",
+		"validation": {
+			"provideApiKey": "有効なAPIキーを入力するか、別のプロバイダーを選択してください。",
+			"provideRegion": "AWS Bedrockで使用するリージョンを選択してください。",
+			"provideProjectAndRegion": "有効なGoogle CloudプロジェクトIDとリージョンを入力してください。",
+			"provideBaseUrlAndKey": "有効なベースURL、APIキー、モデルIDを入力してください。",
+			"provideModelId": "有効なモデルIDを入力してください。",
+			"provideModelSelector": "有効なモデルセレクターを入力してください。",
+			"modelNotAvailable": "指定されたモデルIDは利用できません。別のモデルを選択してください。"
+		},
 		"actions": {
 			"reset": "デフォルトにリセット",
 			"edit": "編集",

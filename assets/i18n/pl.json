@@ -9,6 +9,15 @@
 		"cancel": "Anuluj",
 		"create": "Utwórz",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "Musisz podać prawidłowy klucz API lub wybrać innego dostawcę.",
+			"provideRegion": "Musisz wybrać region do użycia z AWS Bedrock.",
+			"provideProjectAndRegion": "Musisz podać prawidłowy identyfikator projektu i region Google Cloud.",
+			"provideBaseUrlAndKey": "Musisz podać prawidłowy URL bazowy, klucz API i identyfikator modelu.",
+			"provideModelId": "Musisz podać prawidłowy identyfikator modelu.",
+			"provideModelSelector": "Musisz podać prawidłowy selektor modelu.",
+			"modelNotAvailable": "Podany identyfikator modelu jest niedostępny. Wybierz inny model."
+		},
 		"actions": {
 			"reset": "Przywróć domyślne",
 			"edit": "Edytuj",

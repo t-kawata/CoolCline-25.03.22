@@ -9,6 +9,15 @@
 		"cancel": "Cancel",
 		"create": "Create",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "You must provide a valid API key or choose a different provider.",
+			"provideRegion": "You must choose a region to use with AWS Bedrock.",
+			"provideProjectAndRegion": "You must provide a valid Google Cloud Project ID and Region.",
+			"provideBaseUrlAndKey": "You must provide a valid base URL, API key, and model ID.",
+			"provideModelId": "You must provide a valid model ID.",
+			"provideModelSelector": "You must provide a valid model selector.",
+			"modelNotAvailable": "The model ID you provided is not available. Please choose a different model."
+		},
 		"actions": {
 			"reset": "Reset to default",
 			"edit": "Edit",

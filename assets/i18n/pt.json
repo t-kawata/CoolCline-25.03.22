@@ -2,13 +2,22 @@
 	"common": {
 		"done": "Concluído",
 		"add": "Adicionar",
-		"delete": "Excluir",
+		"delete": "Eliminar",
 		"rename": "Renomear",
-		"preview": "Visualizar",
-		"save": "Salvar",
+		"preview": "Pré-visualizar",
+		"save": "Guardar",
 		"cancel": "Cancelar",
 		"create": "Criar",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "Deve fornecer uma chave de API válida ou escolher outro fornecedor.",
+			"provideRegion": "Deve escolher uma região para usar com o AWS Bedrock.",
+			"provideProjectAndRegion": "Deve fornecer um ID de projeto e região válidos do Google Cloud.",
+			"provideBaseUrlAndKey": "Deve fornecer um URL base, chave de API e ID do modelo válidos.",
+			"provideModelId": "Deve fornecer um ID de modelo válido.",
+			"provideModelSelector": "Deve fornecer um seletor de modelo válido.",
+			"modelNotAvailable": "O ID do modelo fornecido não está disponível. Por favor, escolha outro modelo."
+		},
 		"actions": {
 			"reset": "Restaurar padrão",
 			"edit": "Editar",

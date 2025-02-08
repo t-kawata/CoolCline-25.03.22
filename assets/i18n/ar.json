@@ -9,6 +9,15 @@
 		"cancel": "إلغاء",
 		"create": "إنشاء",
 		"prompt": "موجه",
+		"validation": {
+			"provideApiKey": "يجب تقديم مفتاح API صالح أو اختيار مزود آخر.",
+			"provideRegion": "يجب اختيار منطقة لاستخدامها مع AWS Bedrock.",
+			"provideProjectAndRegion": "يجب تقديم معرف مشروع Google Cloud ومنطقة صالحين.",
+			"provideBaseUrlAndKey": "يجب تقديم عنوان URL أساسي ومفتاح API ومعرف نموذج صالحين.",
+			"provideModelId": "يجب تقديم معرف نموذج صالح.",
+			"provideModelSelector": "يجب تقديم محدد نموذج صالح.",
+			"modelNotAvailable": "معرف النموذج الذي قدمته غير متوفر. يرجى اختيار نموذج آخر."
+		},
 		"actions": {
 			"reset": "إعادة تعيين للافتراضي",
 			"edit": "تحرير",

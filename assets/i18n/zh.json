@@ -9,6 +9,15 @@
 		"cancel": "取消",
 		"create": "创建",
 		"prompt": "提示",
+		"validation": {
+			"provideApiKey": "请提供有效的 API 密钥或选择其他服务提供商。",
+			"provideRegion": "请选择 AWS Bedrock 的区域。",
+			"provideProjectAndRegion": "请提供有效的 Google Cloud 项目 ID 和区域。",
+			"provideBaseUrlAndKey": "请提供有效的基础 URL、API 密钥和模型 ID。",
+			"provideModelId": "请提供有效的模型 ID。",
+			"provideModelSelector": "请提供有效的模型选择器。",
+			"modelNotAvailable": "您提供的模型 ID 不可用，请选择其他模型。"
+		},
 		"actions": {
 			"reset": "重置为默认",
 			"edit": "编辑",

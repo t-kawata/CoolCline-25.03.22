@@ -9,6 +9,15 @@
 		"cancel": "रद्द करें",
 		"create": "बनाएं",
 		"prompt": "प्रॉम्प्ट",
+		"validation": {
+			"provideApiKey": "आपको एक मान्य API कुंजी प्रदान करनी होगी या दूसरा प्रदाता चुनना होगा।",
+			"provideRegion": "आपको AWS Bedrock के साथ उपयोग करने के लिए एक क्षेत्र चुनना होगा।",
+			"provideProjectAndRegion": "आपको एक मान्य Google Cloud प्रोजेक्ट ID और क्षेत्र प्रदान करना होगा।",
+			"provideBaseUrlAndKey": "आपको एक मान्य बेस URL, API कुंजी और मॉडल ID प्रदान करनी होगी।",
+			"provideModelId": "आपको एक मान्य मॉडल ID प्रदान करनी होगी।",
+			"provideModelSelector": "आपको एक मान्य मॉडल चयनकर्ता प्रदान करना होगा।",
+			"modelNotAvailable": "आपके द्वारा प्रदान की गई मॉडल ID उपलब्ध नहीं है। कृपया दूसरा मॉडल चुनें।"
+		},
 		"actions": {
 			"reset": "डिफ़ॉल्ट पर रीसेट करें",
 			"edit": "संपादित करें",

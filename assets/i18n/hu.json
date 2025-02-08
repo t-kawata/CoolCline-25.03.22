@@ -9,6 +9,15 @@
 		"cancel": "Mégse",
 		"create": "Létrehozás",
 		"prompt": "Prompt",
+		"validation": {
+			"provideApiKey": "Érvényes API kulcsot kell megadnia, vagy válasszon másik szolgáltatót.",
+			"provideRegion": "Ki kell választania egy régiót az AWS Bedrock használatához.",
+			"provideProjectAndRegion": "Érvényes Google Cloud projekt azonosítót és régiót kell megadnia.",
+			"provideBaseUrlAndKey": "Érvényes alap URL-t, API kulcsot és modell azonosítót kell megadnia.",
+			"provideModelId": "Érvényes modell azonosítót kell megadnia.",
+			"provideModelSelector": "Érvényes modell választót kell megadnia.",
+			"modelNotAvailable": "A megadott modell azonosító nem érhető el. Kérjük, válasszon másik modellt."
+		},
 		"actions": {
 			"reset": "Alapértelmezésre állítás",
 			"edit": "Szerkesztés",
