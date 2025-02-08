@@ -296,8 +296,6 @@
 			"noResources": "Nessuna risorsa trovata"
 		},
 		"timeout": {
-			"title": "Timeout di rete",
-			"description": "Tempo massimo di attesa per la risposta del server",
 			"15": "15 secondi",
 			"30": "30 secondi",
 			"60": "1 minuto",
@@ -305,7 +303,9 @@
 			"600": "10 minuti",
 			"900": "15 minuti",
 			"1800": "30 minuti",
-			"3600": "60 minuti"
+			"3600": "60 minuti",
+			"title": "Timeout di rete",
+			"description": "Tempo massimo di attesa per la risposta del server"
 		},
 		"server": {
 			"restart": "Riavvia server",
@@ -368,7 +368,7 @@
 					"getKey": "Puoi ottenere la tua chiave API Anthropic qui"
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI compatibile",
 					"title": "Servizio compatibile con OpenAI",
 					"baseUrl": "URL base",
 					"enterBaseUrl": "Inserisci URL base",
@@ -418,8 +418,7 @@
 								"description": "Costo per milione di token nella risposta del modello. Questo influisce sul costo del contenuto generato e dei completamenti"
 							}
 						}
-					},
-					"useCustomBaseUrl": "Usa URL base personalizzato"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -460,55 +459,64 @@
 				"vertex": {
 					"name": "Google Vertex AI",
 					"title": "Google Vertex AI",
-					"projectId": "ID progetto Google Cloud",
+					"projectId": "ID Progetto Google Cloud",
 					"enterProjectId": "Inserisci ID progetto",
 					"region": "Regione Google Cloud",
 					"selectRegion": "Seleziona regione",
-					"description": "Per utilizzare Google Cloud Vertex AI, devi 1) Creare account Google Cloud › Attivare API Vertex AI › Attivare modelli Claude richiesti, 2) Installare Google Cloud CLI › Configurare credenziali applicazione predefinite",
+					"description": "Per utilizzare Google Cloud Vertex AI, devi 1) creare un account Google Cloud › attivare l'API Vertex AI › attivare i modelli Claude richiesti, 2) installare Google Cloud CLI › configurare le credenziali predefinite dell'applicazione.",
 					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Configura credenziali Google Cloud"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Chiave API Google Gemini",
-					"description": "Usa modelli AI Gemini di Google",
-					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Ottieni chiave API Google Gemini"
+					"getKey": "Ottieni chiave API Google Vertex AI"
 				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Chiave API Mistral",
-					"description": "Usa servizio modelli AI Mistral",
-					"getKey": "Ottieni chiave API Mistral",
-					"useCustomBaseUrl": "Usa URL base personalizzato"
+					"description": "Usa il servizio di modelli Mistral AI",
+					"getKey": "Puoi registrarti qui per ottenere una chiave API Mistral",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"placeholder": "Inserisci la chiave API..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Chiave API Gemini",
+					"description": "Usa il modello Gemini AI di Google",
+					"getKey": "Ottieni chiave API Gemini",
+					"useCustomBaseUrl": "Usa URL base personalizzato",
+					"placeholder": "Inserisci la chiave API..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "URL base",
-					"modelId": "ID modello",
-					"description": "Ollama ti permette di eseguire modelli di linguaggio open source localmente",
+					"baseUrl": "URL Base",
+					"enterBaseUrl": "Inserisci URL base",
+					"modelId": "ID Modello",
+					"enterModelId": "Esempio: meta-llama-3.1-8b-instruct",
+					"description": "Ollama permette di eseguire modelli linguistici open source localmente",
 					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Configura Ollama"
+					"getKey": "Configura Ollama",
+					"quickstartGuide": "Guida rapida",
+					"localServer": "Server locale"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "URL base (opzionale)",
 					"modelId": "ID modello",
-					"enterModelId": "Es: meta-llama-3.1-8b-instruct",
-					"description": "LM Studio ti permette di eseguire modelli sulla tua macchina locale. Consulta la guida rapida per iniziare. Devi anche avviare la funzionalità server locale di LM Studio per utilizzarlo con questa estensione. Nota: CoolCline usa prompt complessi che funzionano meglio con i modelli Claude. I modelli più deboli potrebbero non funzionare come previsto.",
+					"enterModelId": "Esempio: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio ti permette di eseguire modelli sul tuo computer locale. Consulta la guida rapida per istruzioni su come iniziare. Dovrai anche avviare la funzione server locale di LM Studio per utilizzarlo con questa estensione.",
 					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Configura LM Studio"
+					"getKey": "Configura LM Studio",
+					"quickstartGuide": "Guida rapida",
+					"localServer": "Server locale"
 				},
 				"vscode": {
 					"name": "VS Code",
-					"title": "API LM VS Code",
-					"description": "Usa API modello di linguaggio integrata di VS Code",
-					"modelSelector": "Seleziona modello",
-					"noModels": "Nessun modello di linguaggio trovato. Assicurati di aver installato e attivato le estensioni pertinenti.",
-					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Configura API LM VS Code"
+					"title": "VS Code LM API",
+					"description": "Usa l'API del modello linguistico integrato di VS Code",
+					"modelSelector": "Modello linguistico",
+					"selectModel": "Seleziona modello...",
+					"noModels": "L'API del modello linguistico di VS Code ti permette di eseguire modelli forniti da altre estensioni di VS Code (incluso, ma non limitato a, GitHub Copilot). Il modo più semplice per iniziare è installare le estensioni Copilot e Copilot Chat dal marketplace di VS Code.",
+					"experimentalNote": "Nota: Questa è un'integrazione molto sperimentale e potrebbe non funzionare come previsto. Per favore, segnala eventuali problemi al repository GitHub di CoolCline.",
+					"useCustomBaseUrl": "Usa URL base personalizzato"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,9 +527,10 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "Chiave API DeepSeek",
-					"description": "DeepSeek fornisce servizi modelli AI ad alte prestazioni",
+					"description": "Usa il servizio di modelli AI ad alte prestazioni di DeepSeek",
+					"getKey": "Puoi registrarti qui per ottenere una chiave API DeepSeek",
 					"useCustomBaseUrl": "Usa URL base personalizzato",
-					"getKey": "Puoi ottenere la tua chiave API DeepSeek qui"
+					"placeholder": "Inserisci la chiave API..."
 				}
 			},
 			"model": {
@@ -529,6 +538,9 @@
 				"selectPlaceholder": "Seleziona modello...",
 				"currentlySelected": "Modello attualmente selezionato:",
 				"search": "Cerca modelli..."
+			},
+			"common": {
+				"modelCapabilityNote": "Nota: CoolCline utilizza prompt complessi e funziona meglio con i modelli Claude. I modelli con capacità limitate potrebbero non funzionare come previsto."
 			}
 		},
 		"autoApprove": {
@@ -548,7 +560,7 @@
 			},
 			"browser": {
 				"title": "Approva sempre azioni del browser",
-				"description": "Esegui azioni del browser automaticamente senza approvazione\nNota: si applica solo se il modello supporta l'uso del computer"
+				"description": "Esegui azioni del browser automaticamente senza approvazione Nota: si applica solo se il modello supporta l'uso del computer"
 			},
 			"retry": {
 				"title": "Riprova sempre richieste API fallite",

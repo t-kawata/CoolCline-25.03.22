@@ -296,8 +296,6 @@
 			"noResources": "Žádné zdroje nenalezeny"
 		},
 		"timeout": {
-			"title": "Síťový timeout",
-			"description": "Maximální doba čekání na odpovědi serveru",
 			"15": "15 sekund",
 			"30": "30 sekund",
 			"60": "1 minuta",
@@ -305,7 +303,9 @@
 			"600": "10 minut",
 			"900": "15 minut",
 			"1800": "30 minut",
-			"3600": "60 minut"
+			"3600": "60 minut",
+			"title": "Síťový timeout",
+			"description": "Maximální doba čekání na odpovědi serveru"
 		},
 		"server": {
 			"restart": "Restartovat server",
@@ -341,7 +341,6 @@
 	"settings": {
 		"title": "Nastavení",
 		"done": "Hotovo",
-
 		"provider": {
 			"title": "Poskytovatel",
 			"apiProvider": "API poskytovatel",
@@ -369,7 +368,7 @@
 					"getKey": "Anthropic API klíč můžete získat registrací zde."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI kompatibilní",
 					"title": "Služba kompatibilní s OpenAI",
 					"baseUrl": "Základní URL",
 					"enterBaseUrl": "Zadejte základní URL",
@@ -419,8 +418,7 @@
 								"description": "Náklady za milion tokenů v odpovědi modelu. To ovlivňuje náklady na generovaný obsah a dokončení"
 							}
 						}
-					},
-					"useCustomBaseUrl": "Použít vlastní základní URL"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -461,68 +459,78 @@
 				"vertex": {
 					"name": "Google Vertex AI",
 					"title": "Google Vertex AI",
-					"projectId": "Google Cloud Project ID",
-					"enterProjectId": "Zadejte Project ID",
-					"region": "Google Cloud Region",
-					"selectRegion": "Vybrat region",
-					"description": "Pro použití Google Cloud Vertex AI potřebujete 1) vytvořit Google Cloud účet › povolit Vertex AI API › povolit požadované Claude modely, 2) nainstalovat Google Cloud CLI › nakonfigurovat Application Default Credentials.",
+					"projectId": "ID projektu Google Cloud",
+					"enterProjectId": "Zadejte ID projektu",
+					"region": "Oblast Google Cloud",
+					"selectRegion": "Vyberte oblast",
+					"description": "Pro použití Google Cloud Vertex AI musíte 1) vytvořit účet Google Cloud › aktivovat Vertex AI API › aktivovat požadované modely Claude, 2) nainstalovat Google Cloud CLI › nakonfigurovat výchozí přihlašovací údaje aplikace.",
 					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Konfigurovat Google Cloud přihlašovací údaje"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini API klíč",
-					"description": "Použít Google's Gemini AI modely",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Získat Google Gemini API klíč"
+					"getKey": "Získat klíč API Google Vertex AI"
 				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral API klíč",
-					"description": "Použít Mistral AI model službu",
-					"getKey": "Získat Mistral API klíč",
-					"useCustomBaseUrl": "Použít vlastní základní URL"
+					"description": "Použít službu modelů Mistral AI",
+					"getKey": "Můžete se zde zaregistrovat pro získání Mistral API klíče",
+					"useCustomBaseUrl": "Použít vlastní základní URL",
+					"placeholder": "Zadejte API klíč..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini API klíč",
+					"description": "Použít model Gemini AI od Google",
+					"getKey": "Získat Gemini API klíč",
+					"useCustomBaseUrl": "Použít vlastní základní URL",
+					"placeholder": "Zadejte API klíč..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "Základní URL",
+					"enterBaseUrl": "Enter base URL",
 					"modelId": "ID modelu",
-					"description": "Ollama vám umožňuje spouštět open-source jazykové modely lokálně",
+					"enterModelId": "Příklad: meta-llama-3.1-8b-instruct",
+					"description": "Ollama umožňuje lokálně spouštět open source jazykové modely",
 					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Konfigurovat Ollama"
+					"getKey": "Nakonfigurovat Ollama",
+					"quickstartGuide": "Průvodce rychlým startem",
+					"localServer": "Lokální server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "Základní URL (volitelné)",
 					"modelId": "ID modelu",
-					"enterModelId": "např. meta-llama-3.1-8b-instruct",
-					"description": "LM Studio vám umožňuje spouštět modely na vašem lokálním počítači. Pro začátek se podívejte na jejich rychlý průvodce. Budete také potřebovat spustit funkci lokálního serveru LM Studio pro použití s tímto rozšířením. Poznámka: CoolCline používá komplexní prompty, které fungují nejlépe s Claude modely. Méně schopné modely nemusí fungovat podle očekávání.",
+					"enterModelId": "Příklad: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio vám umožňuje spouštět modely na vašem lokálním počítači. Podívejte se do průvodce rychlým startem pro pokyny, jak začít. Budete také muset spustit funkci lokálního serveru LM Studio, abyste jej mohli používat s tímto rozšířením.",
 					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Konfigurovat LM Studio"
+					"getKey": "Nastavit LM Studio",
+					"quickstartGuide": "Průvodce rychlým startem",
+					"localServer": "Lokální server"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
 					"description": "Použít vestavěné API jazykového modelu VS Code",
-					"modelSelector": "Vybrat model",
-					"noModels": "Nebyly nalezeny žádné jazykové modely. Ujistěte se, že máte nainstalovaná a povolená příslušná rozšíření.",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Konfigurovat VS Code LM API"
+					"modelSelector": "Jazykový model",
+					"selectModel": "Vybrat model...",
+					"noModels": "API jazykového modelu VS Code vám umožňuje spouštět modely poskytované jinými rozšířeními VS Code (včetně, ale ne pouze, GitHub Copilot). Nejjednodušší způsob, jak začít, je nainstalovat rozšíření Copilot a Copilot Chat z marketplace VS Code.",
+					"experimentalNote": "Poznámka: Toto je velmi experimentální integrace a nemusí fungovat podle očekávání. Prosím, nahlaste jakékoli problémy do repozitáře CoolCline na GitHubu.",
+					"useCustomBaseUrl": "Použít vlastní základní URL"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound API klíč",
-					"getKey": "Získat Unbound API klíč",
+					"title": "Klíč API Unbound",
+					"getKey": "Získat klíč API Unbound",
 					"useCustomBaseUrl": "Použít vlastní základní URL"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API klíč",
-					"description": "DeepSeek poskytuje vysoce výkonnou AI model službu",
+					"description": "Použít vysoce výkonnou službu modelů AI od DeepSeek",
+					"getKey": "Můžete se zde zaregistrovat pro získání DeepSeek API klíče",
 					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "DeepSeek API klíč můžete získat registrací zde"
+					"placeholder": "Zadejte API klíč..."
 				}
 			},
 			"model": {
@@ -530,18 +538,18 @@
 				"selectPlaceholder": "Vyberte model...",
 				"currentlySelected": "Aktuálně vybraný model:",
 				"search": "Hledat modely..."
+			},
+			"common": {
+				"modelCapabilityNote": "Poznámka: CoolCline používá složité prompty a funguje nejlépe s modely Claude. Modely s omezenými schopnostmi nemusí fungovat podle očekávání."
 			}
 		},
-
 		"autoApprove": {
 			"title": "Nastavení automatického schvalování",
 			"description": "Následující nastavení umožňují CoolCline automaticky provádět operace bez nutnosti schválení. Povolte tato nastavení pouze pokud plně důvěřujete AI a rozumíte souvisejícím bezpečnostním rizikům.",
-
 			"readOnly": {
 				"title": "Vždy schválit operace pouze pro čtení",
 				"description": "Když je povoleno, CoolCline bude automaticky zobrazovat obsah adresářů a číst soubory bez nutnosti kliknout na tlačítko Schválit."
 			},
-
 			"write": {
 				"title": "Vždy schválit operace zápisu",
 				"description": "Automaticky vytvářet a upravovat soubory bez nutnosti schválení",
@@ -550,12 +558,10 @@
 					"description": "Zpoždění po zápisech pro umožnění diagnostiky detekovat potenciální problémy"
 				}
 			},
-
 			"browser": {
 				"title": "Vždy schválit akce prohlížeče",
-				"description": "Automaticky provádět akce prohlížeče bez nutnosti schválení\nPoznámka: Platí pouze když model podporuje použití počítače"
+				"description": "Automaticky provádět akce prohlížeče bez nutnosti schválení Poznámka: Platí pouze když model podporuje použití počítače"
 			},
-
 			"retry": {
 				"title": "Vždy opakovat neúspěšné API požadavky",
 				"description": "Automaticky opakovat neúspěšné API požadavky, když server vrátí chybovou odpověď",
@@ -564,17 +570,14 @@
 					"description": "Zpoždění před opakováním požadavku"
 				}
 			},
-
 			"mcp": {
 				"title": "Vždy schválit MCP nástroje",
 				"description": "Povolit automatické schvalování jednotlivých MCP nástrojů v zobrazení MCP serverů (vyžaduje toto nastavení i zaškrtnutí políčka \"Vždy povolit\" u nástroje)"
 			},
-
 			"modeSwitch": {
 				"title": "Vždy schválit přepínání režimů a vytváření úkolů",
 				"description": "Automaticky přepínat mezi různými AI režimy a vytvářet nové úkoly bez nutnosti schválení"
 			},
-
 			"execute": {
 				"title": "Vždy schválit povolené operace spuštění",
 				"description": "Automaticky spouštět povolené příkazy terminálu bez nutnosti schválení",
@@ -586,7 +589,6 @@
 				}
 			}
 		},
-
 		"browser": {
 			"title": "Nastavení prohlížeče",
 			"viewport": {
@@ -604,7 +606,6 @@
 				"description": "Upravte WebP kvalitu snímků obrazovky prohlížeče. Vyšší hodnoty poskytují jasnější snímky, ale zvyšují využití tokenů."
 			}
 		},
-
 		"notification": {
 			"title": "Nastavení oznámení",
 			"sound": {
@@ -613,7 +614,6 @@
 				"volume": "Hlasitost"
 			}
 		},
-
 		"advanced": {
 			"title": "Pokročilá nastavení",
 			"experimental": {
@@ -642,7 +642,6 @@
 				}
 			}
 		},
-
 		"experiments": {
 			"title": "Experimentální funkce",
 			"description": "Povolit nebo zakázat experimentální funkce, které jsou stále ve vývoji",
@@ -661,7 +660,6 @@
 				}
 			}
 		},
-
 		"footer": {
 			"description": "Pokud máte jakékoli otázky nebo zpětnou vazbu, neváhejte otevřít issue na",
 			"resetState": "Resetovat stav",

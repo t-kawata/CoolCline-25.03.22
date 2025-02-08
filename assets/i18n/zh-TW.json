@@ -296,8 +296,6 @@
 			"noResources": "未找到資源"
 		},
 		"timeout": {
-			"title": "網路逾時",
-			"description": "等待伺服器回應的最長時間",
 			"15": "15 秒",
 			"30": "30 秒",
 			"60": "1 分鐘",
@@ -305,7 +303,9 @@
 			"600": "10 分鐘",
 			"900": "15 分鐘",
 			"1800": "30 分鐘",
-			"3600": "60 分鐘"
+			"3600": "60 分鐘",
+			"title": "網路逾時",
+			"description": "等待伺服器回應的最長時間"
 		},
 		"server": {
 			"restart": "重新啟動伺服器",
@@ -368,7 +368,7 @@
 					"getKey": "您可以在此註冊以取得 Anthropic API 金鑰。"
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI 相容",
 					"title": "OpenAI 相容服務",
 					"baseUrl": "基礎 URL",
 					"enterBaseUrl": "輸入基礎 URL",
@@ -418,8 +418,7 @@
 								"description": "模型回應中每百萬權杖的成本。這影響生成內容和補全的成本"
 							}
 						}
-					},
-					"useCustomBaseUrl": "使用自訂基礎 URL"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -466,30 +465,32 @@
 					"selectRegion": "選擇區域",
 					"description": "要使用 Google Cloud Vertex AI，您需要 1) 建立 Google Cloud 帳戶 › 啟用 Vertex AI API › 啟用所需的 Claude 模型，2) 安裝 Google Cloud CLI › 設定應用程式預設憑證。",
 					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "設定 Google Cloud 憑證"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini API 金鑰",
-					"description": "使用 Google 的 Gemini AI 模型",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "取得 Google Gemini API 金鑰"
+					"getKey": "取得 Google Vertex AI API 金鑰"
 				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral API 金鑰",
 					"description": "使用 Mistral AI 模型服務",
-					"getKey": "取得 Mistral API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL"
+					"getKey": "您可以在此註冊以取得 Mistral API 金鑰",
+					"useCustomBaseUrl": "使用自訂基礎 URL",
+					"placeholder": "輸入 API 金鑰..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini API 金鑰",
+					"description": "使用 Google 的 Gemini AI 模型",
+					"getKey": "取得 Gemini API 金鑰",
+					"useCustomBaseUrl": "使用自訂基礎 URL",
+					"placeholder": "輸入 API 金鑰..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "基礎 URL",
-					"modelId": "模型 ID",
-					"description": "Ollama 允許您在本機執行開源語言模型",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "設定 Ollama"
+					"enterBaseUrl": "輸入基礎 URL",
+					"enterModelId": "範例：meta-llama-3.1-8b-instruct",
+					"quickstartGuide": "快速入門指南",
+					"localServer": "本機伺服器"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
@@ -497,18 +498,21 @@
 					"baseUrl": "基礎 URL（選填）",
 					"modelId": "模型 ID",
 					"enterModelId": "例如：meta-llama-3.1-8b-instruct",
-					"description": "LM Studio 允許您在本機執行模型。請參閱其快速入門指南以開始使用。您還需要啟動 LM Studio 的本機伺服器功能才能與此擴充功能一起使用。注意：CoolCline 使用複雜的提示，這些提示在 Claude 模型上效果最好。功能較少的模型可能無法如預期運作。",
+					"description": "LM Studio 允許您在本機電腦上執行模型。有關如何開始使用的說明，請參閱他們的快速入門指南。您還需要啟動 LM Studio 的本機伺服器功能才能將其與此擴充功能一起使用。",
 					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "設定 LM Studio"
+					"getKey": "設定 LM Studio",
+					"quickstartGuide": "快速入門指南",
+					"localServer": "本機伺服器"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
 					"description": "使用 VS Code 內建的語言模型 API",
-					"modelSelector": "選擇模型",
-					"noModels": "未找到語言模型。請確保您已安裝並啟用相關擴充功能。",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "設定 VS Code LM API"
+					"modelSelector": "語言模型",
+					"selectModel": "選擇模型...",
+					"noModels": "VS Code 語言模型 API 允許您執行由其他 VS Code 擴充功能（包括但不限於 GitHub Copilot）提供的模型。最簡單的入門方式是從 VS Code 市集安裝 Copilot 和 Copilot Chat 擴充功能。",
+					"experimentalNote": "注意：這是一個非常實驗性的整合，可能無法如預期運作。請將任何問題回報給 CoolCline GitHub 儲存庫。",
+					"useCustomBaseUrl": "使用自訂基礎 URL"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,16 +523,20 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API 金鑰",
-					"description": "DeepSeek 提供高效能 AI 模型服務",
+					"description": "使用 DeepSeek 的高效能 AI 模型服務",
+					"getKey": "您可以在此註冊以取得 DeepSeek API 金鑰",
 					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "您可以在此註冊以取得 DeepSeek API 金鑰"
+					"placeholder": "輸入 API 金鑰..."
 				}
 			},
 			"model": {
 				"title": "模型",
-				"selectPlaceholder": "選擇一個模型...",
+				"selectPlaceholder": "選擇模型...",
 				"currentlySelected": "目前選擇的模型：",
 				"search": "搜尋模型..."
+			},
+			"common": {
+				"modelCapabilityNote": "注意：CoolCline 使用複雜的提示，最適合與 Claude 模型配合使用。能力較弱的模型可能無法如預期運作。"
 			}
 		},
 		"autoApprove": {
@@ -548,7 +556,7 @@
 			},
 			"browser": {
 				"title": "永遠核准瀏覽器操作",
-				"description": "自動執行瀏覽器操作，無需核准\n注意：僅在模型支援電腦使用時適用"
+				"description": "自動執行瀏覽器操作，無需核准 注意：僅在模型支援電腦使用時適用"
 			},
 			"retry": {
 				"title": "永遠重試失敗的 API 請求",

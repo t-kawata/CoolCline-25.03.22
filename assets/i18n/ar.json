@@ -296,8 +296,6 @@
 			"noResources": "لم يتم العثور على موارد"
 		},
 		"timeout": {
-			"title": "مهلة الشبكة",
-			"description": "الحد الأقصى لوقت الانتظار لاستجابات الخادم",
 			"15": "15 ثانية",
 			"30": "30 ثانية",
 			"60": "دقيقة واحدة",
@@ -305,7 +303,9 @@
 			"600": "10 دقائق",
 			"900": "15 دقيقة",
 			"1800": "30 دقيقة",
-			"3600": "60 دقيقة"
+			"3600": "60 دقيقة",
+			"title": "مهلة الشبكة",
+			"description": "الحد الأقصى لوقت الانتظار لاستجابات الخادم"
 		},
 		"server": {
 			"restart": "إعادة تشغيل الخادم",
@@ -368,7 +368,7 @@
 					"getKey": "يمكنك الحصول على مفتاح API Anthropic بالتسجيل هنا."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI متوافق",
 					"title": "خدمة متوافقة مع OpenAI",
 					"baseUrl": "عنوان URL الأساسي",
 					"enterBaseUrl": "أدخل عنوان URL الأساسي",
@@ -418,8 +418,7 @@
 								"description": "التكلفة لكل مليون رمز في استجابة النموذج. هذا يؤثر على تكلفة المحتوى المُنشأ والإكمالات"
 							}
 						}
-					},
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -468,28 +467,34 @@
 					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
 					"getKey": "تكوين بيانات اعتماد Google Cloud"
 				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "مفتاح API Google Gemini",
-					"description": "استخدام نماذج Gemini AI من Google",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "الحصول على مفتاح API Google Gemini"
-				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "مفتاح API Mistral",
-					"description": "استخدام خدمة نماذج Mistral AI",
-					"getKey": "الحصول على مفتاح API Mistral",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص"
+					"title": "مفتاح API لـ Mistral",
+					"description": "استخدم خدمة نماذج Mistral AI",
+					"getKey": "يمكنك التسجيل والحصول على مفتاح API لـ Mistral هنا",
+					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
+					"placeholder": "أدخل مفتاح API..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "مفتاح API لـ Gemini",
+					"description": "استخدم نموذج Gemini AI من Google",
+					"getKey": "احصل على مفتاح API لـ Gemini",
+					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
+					"placeholder": "أدخل مفتاح API..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "عنوان URL الأساسي",
+					"enterBaseUrl": "Enter base URL",
 					"modelId": "معرف النموذج",
+					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
 					"description": "يتيح لك Ollama تشغيل نماذج اللغة مفتوحة المصدر محلياً",
 					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "تكوين Ollama"
+					"getKey": "تكوين Ollama",
+					"quickstartGuide": "Quick Start Guide",
+					"localServer": "Local Server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
@@ -497,18 +502,21 @@
 					"baseUrl": "عنوان URL الأساسي (اختياري)",
 					"modelId": "معرف النموذج",
 					"enterModelId": "مثال: meta-llama-3.1-8b-instruct",
-					"description": "يتيح لك LM Studio تشغيل النماذج على جهازك المحلي. للبدء، راجع دليل البدء السريع الخاص بهم. ستحتاج أيضاً إلى بدء ميزة الخادم المحلي لـ LM Studio لاستخدامها مع هذا الامتداد. ملاحظة: يستخدم CoolCline موجهات معقدة تعمل بشكل أفضل مع نماذج Claude. قد لا تعمل النماذج ذات القدرات الأقل كما هو متوقع.",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "تكوين LM Studio"
+					"description": "يتيح لك LM Studio تشغيل النماذج على جهازك المحلي. راجع دليل البدء السريع للحصول على إرشادات حول كيفية البدء. ستحتاج أيضًا إلى تشغيل وظيفة الخادم المحلي لـ LM Studio لاستخدامه مع هذا الامتداد.",
+					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
+					"getKey": "إعداد LM Studio",
+					"quickstartGuide": "دليل البدء السريع",
+					"localServer": "الخادم المحلي"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "استخدام API نماذج اللغة المدمجة في VS Code",
-					"modelSelector": "اختر النموذج",
-					"noModels": "لم يتم العثور على نماذج لغة. تأكد من تثبيت وتمكين الامتدادات ذات الصلة.",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "تكوين VS Code LM API"
+					"description": "استخدم واجهة برمجة تطبيقات نموذج اللغة المدمجة في VS Code",
+					"modelSelector": "نموذج اللغة",
+					"selectModel": "اختر نموذجًا...",
+					"noModels": "تتيح لك واجهة برمجة تطبيقات نموذج اللغة في VS Code تشغيل النماذج المقدمة من امتدادات VS Code الأخرى (بما في ذلك GitHub Copilot على سبيل المثال لا الحصر). أسهل طريقة للبدء هي تثبيت امتدادات Copilot و Copilot Chat من متجر VS Code.",
+					"experimentalNote": "ملاحظة: هذا تكامل تجريبي للغاية وقد لا يعمل كما هو متوقع. يرجى الإبلاغ عن أي مشكلات إلى مستودع CoolCline على GitHub.",
+					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -518,10 +526,11 @@
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "مفتاح API DeepSeek",
-					"description": "يوفر DeepSeek خدمة نماذج AI عالية الأداء",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "يمكنك الحصول على مفتاح API DeepSeek بالتسجيل هنا"
+					"title": "مفتاح API لـ DeepSeek",
+					"description": "استخدم خدمة نماذج AI عالية الأداء من DeepSeek",
+					"getKey": "يمكنك التسجيل والحصول على مفتاح API لـ DeepSeek هنا",
+					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
+					"placeholder": "أدخل مفتاح API..."
 				}
 			},
 			"model": {
@@ -529,6 +538,9 @@
 				"selectPlaceholder": "اختر نموذجاً...",
 				"currentlySelected": "النموذج المحدد حالياً:",
 				"search": "البحث عن النماذج..."
+			},
+			"common": {
+				"modelCapabilityNote": "ملاحظة: يستخدم CoolCline موجهات معقدة ويعمل بشكل أفضل مع نماذج Claude. قد لا تعمل النماذج ذات القدرات المحدودة كما هو متوقع."
 			}
 		},
 		"autoApprove": {
@@ -548,7 +560,7 @@
 			},
 			"browser": {
 				"title": "الموافقة دائماً على إجراءات المتصفح",
-				"description": "تنفيذ إجراءات المتصفح تلقائياً دون الحاجة إلى موافقة\nملاحظة: ينطبق فقط عندما يدعم النموذج استخدام الكمبيوتر"
+				"description": "تنفيذ إجراءات المتصفح تلقائياً دون الحاجة إلى موافقة ملاحظة: ينطبق فقط عندما يدعم النموذج استخدام الكمبيوتر"
 			},
 			"retry": {
 				"title": "إعادة محاولة طلبات API الفاشلة دائماً",

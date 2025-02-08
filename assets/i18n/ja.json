@@ -296,8 +296,6 @@
 			"noResources": "リソースが見つかりません"
 		},
 		"timeout": {
-			"title": "ネットワークタイムアウト",
-			"description": "サーバー応答の最大待機時間",
 			"15": "15秒",
 			"30": "30秒",
 			"60": "1分",
@@ -305,7 +303,9 @@
 			"600": "10分",
 			"900": "15分",
 			"1800": "30分",
-			"3600": "60分"
+			"3600": "60分",
+			"title": "ネットワークタイムアウト",
+			"description": "サーバー応答の最大待機時間"
 		},
 		"server": {
 			"restart": "サーバーを再起動",
@@ -368,7 +368,7 @@
 					"getKey": "Anthropic APIキーはこちらで取得できます"
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI 互換",
 					"title": "OpenAI 互換サービス",
 					"baseUrl": "ベース URL",
 					"enterBaseUrl": "ベース URL を入力",
@@ -467,47 +467,56 @@
 					"useCustomBaseUrl": "カスタムベースURLを使用",
 					"getKey": "Google Cloud認証情報を設定"
 				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini APIキー",
-					"description": "GoogleのGemini AIモデルを使用",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "Google Gemini APIキーを取得"
-				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral APIキー",
 					"description": "Mistral AIモデルサービスを使用",
-					"getKey": "Mistral APIキーを取得",
-					"useCustomBaseUrl": "カスタムベースURLを使用"
+					"getKey": "ここでMistral APIキーを登録して取得できます",
+					"useCustomBaseUrl": "カスタムベースURLを使用",
+					"placeholder": "APIキーを入力..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini APIキー",
+					"description": "GoogleのGemini AIモデルを使用",
+					"getKey": "Gemini APIキーを取得",
+					"useCustomBaseUrl": "カスタムベースURLを使用",
+					"placeholder": "APIキーを入力..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "ベースURL",
+					"enterBaseUrl": "ベースURLを入力",
 					"modelId": "モデルID",
+					"enterModelId": "例：meta-llama-3.1-8b-instruct",
 					"description": "Ollamaを使用すると、オープンソースの言語モデルをローカルで実行できます",
 					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "Ollamaを設定"
+					"getKey": "Ollamaを設定",
+					"quickstartGuide": "クイックスタートガイド",
+					"localServer": "ローカルサーバー"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "ベースURL（オプション）",
 					"modelId": "モデルID",
-					"enterModelId": "例: meta-llama-3.1-8b-instruct",
-					"description": "LM Studioを使用すると、ローカルマシンでモデルを実行できます。クイックスタートガイドを参照して開始してください。この拡張機能で使用するには、LM Studioのローカルサーバー機能も起動する必要があります。注意：CoolClineはClaudeモデルで最もよく機能する複雑なプロンプトを使用します。より弱いモデルは期待通りに機能しない場合があります。",
+					"enterModelId": "例：meta-llama-3.1-8b-instruct",
+					"description": "LM Studioを使用すると、ローカルコンピュータでモデルを実行できます。使い方については、クイックスタートガイドを参照してください。また、この拡張機能と一緒に使用するには、LM Studioのローカルサーバー機能を起動する必要があります。",
 					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "LM Studioを設定"
+					"getKey": "LM Studioを設定",
+					"quickstartGuide": "クイックスタートガイド",
+					"localServer": "ローカルサーバー"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "VS Codeの組み込み言語モデルAPIを使用",
-					"modelSelector": "モデルを選択",
-					"noModels": "言語モデルが見つかりません。関連する拡張機能がインストールされ、有効になっていることを確認してください。",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "VS Code LM APIを設定"
+					"description": "VS Code内蔵の言語モデルAPIを使用",
+					"modelSelector": "言語モデル",
+					"selectModel": "モデルを選択...",
+					"noModels": "VS Code言語モデルAPIを使用すると、他のVS Code拡張機能（GitHub Copilotを含むがこれに限定されない）が提供するモデルを実行できます。最も簡単な始め方は、VS CodeマーケットプレースからCopilotとCopilot Chat拡張機能をインストールすることです。",
+					"experimentalNote": "注意：これは非常に実験的な統合であり、予期通りに動作しない可能性があります。問題がある場合は、CoolCline GitHubリポジトリに報告してください。",
+					"useCustomBaseUrl": "カスタムベースURLを使用"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -518,9 +527,10 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek APIキー",
-					"description": "DeepSeekは高性能AIモデルサービスを提供します",
+					"description": "DeepSeekの高性能AIモデルサービスを使用",
+					"getKey": "ここでDeepSeek APIキーを登録して取得できます",
 					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "DeepSeek APIキーはこちらで取得できます"
+					"placeholder": "APIキーを入力..."
 				}
 			},
 			"model": {
@@ -528,6 +538,9 @@
 				"selectPlaceholder": "モデルを選択...",
 				"currentlySelected": "現在選択されているモデル：",
 				"search": "モデルを検索..."
+			},
+			"common": {
+				"modelCapabilityNote": "注意：CoolClineは複雑なプロンプトを使用し、Claudeモデルと最も相性が良いです。機能が制限されたモデルは予期通りに動作しない可能性があります。"
 			}
 		},
 		"autoApprove": {
@@ -547,7 +560,7 @@
 			},
 			"browser": {
 				"title": "ブラウザアクションを常に承認",
-				"description": "承認なしで自動的にブラウザアクションを実行\n注意：モデルがコンピュータの使用をサポートしている場合にのみ適用されます"
+				"description": "承認なしで自動的にブラウザアクションを実行 注意：モデルがコンピュータの使用をサポートしている場合にのみ適用されます"
 			},
 			"retry": {
 				"title": "失敗したAPIリクエストを常に再試行",

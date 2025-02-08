@@ -283,8 +283,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("mistralApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>Mistral API Key</span>
+						placeholder={t("settings.provider.providers.mistral.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.mistral.title").toString()}
+						</span>
 					</VSCodeTextField>
 					<p
 						style={{
@@ -300,7 +302,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									display: "inline",
 									fontSize: "inherit",
 								}}>
-								You can get a Mistral API key by signing up here.
+								{t("settings.provider.providers.mistral.getKey").toString()}
 							</VSCodeLink>
 						)}
 					</p>
@@ -515,8 +517,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("geminiApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>Gemini API Key</span>
+						placeholder={t("settings.provider.providers.gemini.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.gemini.title").toString()}
+						</span>
 					</VSCodeTextField>
 					<p
 						style={{
@@ -690,7 +694,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 													},
 												})
 											}}
-											placeholder="e.g. 4096">
+											placeholder={t(
+												"settings.provider.modelConfig.capabilities.maxTokens.example",
+												{ value: "4096" },
+											).toString()}>
 											<span style={{ fontWeight: 500 }}>
 												{t(
 													"settings.provider.providers.openai.modelConfig.capabilities.maxTokens.title",
@@ -757,7 +764,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 													},
 												})
 											}}
-											placeholder="e.g. 128000">
+											placeholder={t(
+												"settings.provider.modelConfig.capabilities.contextWindow.example",
+												{ value: "128000" },
+											).toString()}>
 											<span style={{ fontWeight: 500 }}>
 												{t(
 													"settings.provider.providers.openai.modelConfig.capabilities.contextWindow.title",
@@ -989,7 +999,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 													},
 												})
 											}}
-											placeholder="e.g. 0.0001">
+											placeholder={t("settings.provider.modelConfig.pricing.inputPrice.example", {
+												value: "0.0001",
+											}).toString()}>
 											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
 												<span style={{ fontWeight: 500 }}>
 													{t(
@@ -1046,7 +1058,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 													},
 												})
 											}}
-											placeholder="e.g. 0.0002">
+											placeholder={t(
+												"settings.provider.modelConfig.pricing.outputPrice.example",
+												{ value: "0.0002" },
+											).toString()}>
 											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
 												<span style={{ fontWeight: 500 }}>
 													{t(
@@ -1086,8 +1101,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							color: "var(--vscode-descriptionForeground)",
 						}}>
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
-							(<span style={{ fontWeight: 500 }}>Note:</span> CoolCline uses complex prompts and works
-							best with Claude models. Less capable models may not work as expected.)
+							({t("settings.provider.common.modelCapabilityNote").toString()})
 						</span>
 					</p>
 				</div>
@@ -1100,15 +1114,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="url"
 						onInput={handleInputChange("lmStudioBaseUrl")}
-						placeholder={"Default: http://localhost:1234"}>
-						<span style={{ fontWeight: 500 }}>Base URL (optional)</span>
+						placeholder={t("settings.provider.providers.lmstudio.enterBaseUrl").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.lmstudio.baseUrl").toString()}
+						</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.lmStudioModelId || ""}
 						style={{ width: "100%" }}
 						onInput={handleInputChange("lmStudioModelId")}
-						placeholder={"e.g. meta-llama-3.1-8b-instruct"}>
-						<span style={{ fontWeight: 500 }}>Model ID</span>
+						placeholder={t("settings.provider.providers.lmstudio.enterModelId").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.lmstudio.modelId").toString()}
+						</span>
 					</VSCodeTextField>
 					{lmStudioModels.length > 0 && (
 						<VSCodeRadioGroup
@@ -1145,18 +1163,17 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						LM Studio allows you to run models locally on your computer. For instructions on how to get
 						started, see their
 						<VSCodeLink href="https://lmstudio.ai/docs" style={{ display: "inline", fontSize: "inherit" }}>
-							quickstart guide.
+							{t("settings.provider.providers.lmstudio.quickstartGuide").toString()}
 						</VSCodeLink>
 						You will also need to start LM Studio's{" "}
 						<VSCodeLink
 							href="https://lmstudio.ai/docs/basics/server"
 							style={{ display: "inline", fontSize: "inherit" }}>
-							local server
+							{t("settings.provider.providers.lmstudio.localServer").toString()}
 						</VSCodeLink>{" "}
 						feature to use it with this extension.{" "}
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
-							(<span style={{ fontWeight: 500 }}>Note:</span> CoolCline uses complex prompts and works
-							best with Claude models. Less capable models may not work as expected.)
+							({t("settings.provider.common.modelCapabilityNote").toString()})
 						</span>
 					</p>
 				</div>
@@ -1169,8 +1186,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="password"
 						onInput={handleInputChange("deepSeekApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>DeepSeek API Key</span>
+						placeholder={t("settings.provider.providers.deepseek.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.deepseek.title").toString()}
+						</span>
 					</VSCodeTextField>
 					<p
 						style={{
@@ -1183,7 +1202,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							<VSCodeLink
 								href="https://platform.deepseek.com/"
 								style={{ display: "inline", fontSize: "inherit" }}>
-								You can get a DeepSeek API key by signing up here.
+								{t("settings.provider.providers.deepseek.getKey").toString()}
 							</VSCodeLink>
 						)}
 					</p>
@@ -1194,7 +1213,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<div className="dropdown-container">
 						<label htmlFor="vscode-lm-model">
-							<span style={{ fontWeight: 500 }}>Language Model</span>
+							<span style={{ fontWeight: 500 }}>
+								{t("settings.provider.providers.vscode.modelSelector").toString()}
+							</span>
 						</label>
 						{vsCodeLmModels.length > 0 ? (
 							<Dropdown
@@ -1218,7 +1239,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								}}
 								style={{ width: "100%" }}
 								options={[
-									{ value: "", label: "Select a model..." },
+									{
+										value: "",
+										label: t("settings.provider.providers.vscode.selectModel").toString(),
+									},
 									...vsCodeLmModels.map((model) => ({
 										value: `${model.vendor}/${model.family}`,
 										label: `${model.vendor} - ${model.family}`,
@@ -1232,9 +1256,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									marginTop: "5px",
 									color: "var(--vscode-descriptionForeground)",
 								}}>
-								The VS Code Language Model API allows you to run models provided by other VS Code
-								extensions (including but not limited to GitHub Copilot). The easiest way to get started
-								is to install the Copilot and Copilot Chat extensions from the VS Code Marketplace.
+								{t("settings.provider.providers.vscode.noModels").toString()}
 							</p>
 						)}
 
@@ -1245,8 +1267,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								color: "var(--vscode-errorForeground)",
 								fontWeight: 500,
 							}}>
-							Note: This is a very experimental integration and may not work as expected. Please report
-							any issues to the CoolCline GitHub repository.
+							{t("settings.provider.providers.vscode.experimentalNote").toString()}
 						</p>
 					</div>
 				</div>
@@ -1259,15 +1280,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						style={{ width: "100%" }}
 						type="url"
 						onInput={handleInputChange("ollamaBaseUrl")}
-						placeholder={"Default: http://localhost:11434"}>
-						<span style={{ fontWeight: 500 }}>Base URL (optional)</span>
+						placeholder={t("settings.provider.providers.ollama.enterBaseUrl").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.ollama.baseUrl").toString()}
+						</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.ollamaModelId || ""}
 						style={{ width: "100%" }}
 						onInput={handleInputChange("ollamaModelId")}
-						placeholder={"e.g. llama3.1"}>
-						<span style={{ fontWeight: 500 }}>Model ID</span>
+						placeholder={t("settings.provider.providers.ollama.enterModelId").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.ollama.modelId").toString()}
+						</span>
 					</VSCodeTextField>
 					{ollamaModels.length > 0 && (
 						<VSCodeRadioGroup
@@ -1309,8 +1334,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							quickstart guide.
 						</VSCodeLink>
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
-							(<span style={{ fontWeight: 500 }}>Note:</span> CoolCline uses complex prompts and works
-							best with Claude models. Less capable models may not work as expected.)
+							({t("settings.provider.common.modelCapabilityNote").toString()})
 						</span>
 					</p>
 				</div>

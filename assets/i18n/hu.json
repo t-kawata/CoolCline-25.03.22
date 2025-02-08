@@ -296,8 +296,6 @@
 			"noResources": "Nem találhatók erőforrások"
 		},
 		"timeout": {
-			"title": "Hálózati időtúllépés",
-			"description": "Maximális várakozási idő a szerver válaszára",
 			"15": "15 másodperc",
 			"30": "30 másodperc",
 			"60": "1 perc",
@@ -305,7 +303,9 @@
 			"600": "10 perc",
 			"900": "15 perc",
 			"1800": "30 perc",
-			"3600": "60 perc"
+			"3600": "60 perc",
+			"title": "Hálózati időtúllépés",
+			"description": "Maximális várakozási idő a szerver válaszára"
 		},
 		"server": {
 			"restart": "Szerver újraindítása",
@@ -368,7 +368,7 @@
 					"getKey": "Itt regisztrálhat Anthropic API kulcsért."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI kompatibilis",
 					"title": "OpenAI-kompatibilis szolgáltatás",
 					"baseUrl": "Alap URL",
 					"enterBaseUrl": "Adja meg az alap URL-t",
@@ -418,8 +418,7 @@
 								"description": "Költség millió tokenenként a modell válaszában. Ez befolyásolja a generált tartalom és kiegészítések költségét"
 							}
 						}
-					},
-					"useCustomBaseUrl": "Egyéni alap URL használata"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -464,51 +463,60 @@
 					"enterProjectId": "Adja meg a projekt azonosítót",
 					"region": "Google Cloud régió",
 					"selectRegion": "Régió kiválasztása",
-					"description": "A Google Cloud Vertex AI használatához szükséges: 1) Google Cloud fiók létrehozása › Vertex AI API engedélyezése › szükséges Claude modellek engedélyezése, 2) Google Cloud CLI telepítése › alkalmazás alapértelmezett hitelesítő adatainak beállítása.",
+					"description": "A Google Cloud Vertex AI használatához 1) létre kell hoznia egy Google Cloud fiókot › aktiválnia kell a Vertex AI API-t › aktiválnia kell a szükséges Claude modelleket, 2) telepítenie kell a Google Cloud CLI-t › konfigurálnia kell az alapértelmezett alkalmazás hitelesítő adatokat.",
 					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Google Cloud hitelesítő adatok beállítása"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini API kulcs",
-					"description": "Google Gemini AI modellek használata",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Google Gemini API kulcs beszerzése"
+					"getKey": "Google Vertex AI API kulcs beszerzése"
 				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral API kulcs",
-					"description": "Mistral AI modell szolgáltatás használata",
-					"getKey": "Mistral API kulcs beszerzése",
-					"useCustomBaseUrl": "Egyéni alap URL használata"
+					"description": "Használja a Mistral AI modell szolgáltatást",
+					"getKey": "Itt regisztrálhat a Mistral API kulcs megszerzéséhez",
+					"useCustomBaseUrl": "Egyéni alap URL használata",
+					"placeholder": "Írja be az API kulcsot..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini API kulcs",
+					"description": "Használja a Google Gemini AI modelljét",
+					"getKey": "Gemini API kulcs beszerzése",
+					"useCustomBaseUrl": "Egyéni alap URL használata",
+					"placeholder": "Írja be az API kulcsot..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "Alap URL",
+					"enterBaseUrl": "Enter base URL",
 					"modelId": "Modell azonosító",
-					"description": "Az Ollama lehetővé teszi nyílt forráskódú nyelvi modellek helyi futtatását",
+					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
+					"description": "Az Ollama lehetővé teszi a nyílt forráskódú nyelvi modellek helyi futtatását",
 					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Ollama beállítása"
+					"getKey": "Ollama konfigurálása",
+					"quickstartGuide": "Quick Start Guide",
+					"localServer": "Local Server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "Alap URL (opcionális)",
 					"modelId": "Modell azonosító",
-					"enterModelId": "Például: meta-llama-3.1-8b-instruct",
-					"description": "Az LM Studio lehetővé teszi modellek futtatását helyi gépen. A kezdéshez tekintse meg a gyors kezdési útmutatójukat. A bővítménnyel való használathoz el kell indítania az LM Studio helyi szerver funkcióját is. Megjegyzés: A CoolCline összetett promptokat használ, amelyek a Claude modelleken működnek a legjobban. A gyengébb modellek esetleg nem működnek a várt módon.",
+					"enterModelId": "Példa: meta-llama-3.1-8b-instruct",
+					"description": "Az LM Studio lehetővé teszi a modellek futtatását a helyi számítógépén. A kezdéshez tekintse meg a gyors kezdési útmutatót. A bővítménnyel való használathoz el kell indítania az LM Studio helyi szerver funkcióját is.",
 					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "LM Studio beállítása"
+					"getKey": "LM Studio beállítása",
+					"quickstartGuide": "Gyors kezdési útmutató",
+					"localServer": "Helyi szerver"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "VS Code beépített nyelvi modell API használata",
-					"modelSelector": "Modell kiválasztása",
-					"noModels": "Nem találhatók nyelvi modellek. Győződjön meg róla, hogy telepítette és engedélyezte a megfelelő bővítményeket.",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "VS Code LM API beállítása"
+					"description": "Használja a VS Code beépített nyelvi modell API-ját",
+					"modelSelector": "Nyelvi modell",
+					"selectModel": "Modell kiválasztása...",
+					"noModels": "A VS Code nyelvi modell API lehetővé teszi más VS Code bővítmények (beleértve, de nem kizárólag a GitHub Copilot) által biztosított modellek futtatását. A legegyszerűbb módja a kezdésnek a Copilot és Copilot Chat bővítmények telepítése a VS Code piactérről.",
+					"experimentalNote": "Megjegyzés: Ez egy nagyon kísérleti integráció, és lehet, hogy nem a várt módon működik. Kérjük, jelentse a problémákat a CoolCline GitHub tárolójában.",
+					"useCustomBaseUrl": "Egyéni alap URL használata"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,16 +527,20 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API kulcs",
-					"description": "A DeepSeek nagy teljesítményű AI modell szolgáltatásokat kínál",
+					"description": "Használja a DeepSeek nagy teljesítményű AI modell szolgáltatását",
+					"getKey": "Itt regisztrálhat a DeepSeek API kulcs megszerzéséhez",
 					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Itt regisztrálhat DeepSeek API kulcsért"
+					"placeholder": "Írja be az API kulcsot..."
 				}
 			},
 			"model": {
 				"title": "Modell",
-				"selectPlaceholder": "Válasszon modellt...",
+				"selectPlaceholder": "Modell kiválasztása...",
 				"currentlySelected": "Jelenleg kiválasztott modell:",
 				"search": "Modellek keresése..."
+			},
+			"common": {
+				"modelCapabilityNote": "Megjegyzés: A CoolCline összetett promptokat használ, és a Claude modellekkel működik a legjobban. A korlátozott képességű modellek lehet, hogy nem a várt módon működnek."
 			}
 		},
 		"autoApprove": {
@@ -548,7 +560,7 @@
 			},
 			"browser": {
 				"title": "Böngésző műveletek automatikus jóváhagyása",
-				"description": "Böngésző műveletek automatikus végrehajtása jóváhagyás nélkül\nMegjegyzés: Csak akkor alkalmazható, ha a modell támogatja a számítógép használatát"
+				"description": "Böngésző műveletek automatikus végrehajtása jóváhagyás nélkül Megjegyzés: Csak akkor alkalmazható, ha a modell támogatja a számítógép használatát"
 			},
 			"retry": {
 				"title": "Sikertelen API kérések automatikus újrapróbálása",

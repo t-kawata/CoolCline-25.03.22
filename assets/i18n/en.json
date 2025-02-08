@@ -296,8 +296,6 @@
 			"noResources": "No resources found"
 		},
 		"timeout": {
-			"title": "Network Timeout",
-			"description": "Maximum time to wait for server responses",
 			"15": "15 seconds",
 			"30": "30 seconds",
 			"60": "1 minute",
@@ -305,7 +303,9 @@
 			"600": "10 minutes",
 			"900": "15 minutes",
 			"1800": "30 minutes",
-			"3600": "60 minutes"
+			"3600": "60 minutes",
+			"title": "Network Timeout",
+			"description": "Maximum time to wait for server responses"
 		},
 		"server": {
 			"restart": "Restart Server",
@@ -341,7 +341,6 @@
 	"settings": {
 		"title": "Settings",
 		"done": "Done",
-
 		"provider": {
 			"title": "Provider",
 			"apiProvider": "API Provider",
@@ -369,7 +368,7 @@
 					"getKey": "You can get an Anthropic API key by signing up here."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI Compatible",
 					"title": "OpenAI Compatible Service",
 					"baseUrl": "Base URL",
 					"enterBaseUrl": "Enter base URL",
@@ -468,28 +467,34 @@
 					"useCustomBaseUrl": "Use custom base URL",
 					"getKey": "Configure Google Cloud credentials"
 				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini API Key",
-					"description": "Use Google's Gemini AI models",
-					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "Get Google Gemini API Key"
-				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral API Key",
-					"description": "Use Mistral AI's model service",
-					"getKey": "Get Mistral API Key",
-					"useCustomBaseUrl": "Use custom base URL"
+					"description": "Use Mistral AI model service",
+					"getKey": "You can get a Mistral API key by signing up here",
+					"useCustomBaseUrl": "Use custom base URL",
+					"placeholder": "Enter API Key..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini API Key",
+					"description": "Use Google's Gemini AI models",
+					"getKey": "Get Gemini API key",
+					"useCustomBaseUrl": "Use custom base URL",
+					"placeholder": "Enter API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "Base URL",
+					"enterBaseUrl": "Enter base URL",
 					"modelId": "Model ID",
+					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
 					"description": "Ollama allows you to run open-source language models locally",
 					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "Configure Ollama"
+					"getKey": "Configure Ollama",
+					"quickstartGuide": "Quick Start Guide",
+					"localServer": "Local Server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
@@ -497,18 +502,21 @@
 					"baseUrl": "Base URL (optional)",
 					"modelId": "Model ID",
 					"enterModelId": "e.g. meta-llama-3.1-8b-instruct",
-					"description": "LM Studio allows you to run models on your local machine. To get started, see their quick start guide. You'll also need to start LM Studio's local server feature to use it with this extension. Note: CoolCline uses complex prompts that work best with Claude models. Less capable models may not work as expected.",
+					"description": "LM Studio allows you to run models locally on your computer. For instructions on how to get started, see their quickstart guide. You will also need to start LM Studio's local server feature to use it with this extension.",
 					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "Configure LM Studio"
+					"getKey": "Set up LM Studio",
+					"quickstartGuide": "quickstart guide",
+					"localServer": "local server"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
 					"description": "Use VS Code's built-in language model API",
-					"modelSelector": "Select Model",
-					"noModels": "No language models found. Make sure you have installed and enabled the relevant extensions.",
-					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "Configure VS Code LM API"
+					"modelSelector": "Language Model",
+					"selectModel": "Select a model...",
+					"noModels": "The VS Code Language Model API allows you to run models provided by other VS Code extensions (including but not limited to GitHub Copilot). The easiest way to get started is to install the Copilot and Copilot Chat extensions from the VS Code Marketplace.",
+					"experimentalNote": "Note: This is a very experimental integration and may not work as expected. Please report any issues to the CoolCline GitHub repository.",
+					"useCustomBaseUrl": "Use custom base URL"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,9 +527,10 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API Key",
-					"description": "DeepSeek provides high-performance AI model service",
+					"description": "Use DeepSeek's high-performance AI model service",
+					"getKey": "You can get a DeepSeek API key by signing up here",
 					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "You can get a DeepSeek API key by signing up here"
+					"placeholder": "Enter API key..."
 				}
 			},
 			"model": {
@@ -529,18 +538,18 @@
 				"selectPlaceholder": "Select a model...",
 				"currentlySelected": "Currently selected model:",
 				"search": "Search models..."
+			},
+			"common": {
+				"modelCapabilityNote": "Note: CoolCline uses complex prompts and works best with Claude models. Less capable models may not work as expected."
 			}
 		},
-
 		"autoApprove": {
 			"title": "Auto-Approve Settings",
 			"description": "The following settings allow CoolCline to automatically perform operations without requiring approval. Enable these settings only if you fully trust the AI and understand the associated security risks.",
-
 			"readOnly": {
 				"title": "Always approve read-only operations",
 				"description": "When enabled, CoolCline will automatically view directory contents and read files without requiring you to click the Approve button."
 			},
-
 			"write": {
 				"title": "Always approve write operations",
 				"description": "Automatically create and edit files without requiring approval",
@@ -549,12 +558,10 @@
 					"description": "Delay after writes to allow diagnostics to detect potential problems"
 				}
 			},
-
 			"browser": {
 				"title": "Always approve browser actions",
 				"description": "Automatically perform browser actions without requiring approval\nNote: Only applies when the model supports computer use"
 			},
-
 			"retry": {
 				"title": "Always retry failed API requests",
 				"description": "Automatically retry failed API requests when server returns an error response",
@@ -563,17 +570,14 @@
 					"description": "Delay before retrying the request"
 				}
 			},
-
 			"mcp": {
 				"title": "Always approve MCP tools",
 				"description": "Enable auto-approval of individual MCP tools in the MCP Servers view (requires both this setting and the tool's individual \"Always allow\" checkbox)"
 			},
-
 			"modeSwitch": {
 				"title": "Always approve mode switching & task creation",
 				"description": "Automatically switch between different AI modes and create new tasks without requiring approval"
 			},
-
 			"execute": {
 				"title": "Always approve allowed execute operations",
 				"description": "Automatically execute allowed terminal commands without requiring approval",
@@ -585,7 +589,6 @@
 				}
 			}
 		},
-
 		"browser": {
 			"title": "Browser Settings",
 			"viewport": {
@@ -603,7 +606,6 @@
 				"description": "Adjust the WebP quality of browser screenshots. Higher values provide clearer screenshots but increase token usage."
 			}
 		},
-
 		"notification": {
 			"title": "Notification Settings",
 			"sound": {
@@ -612,7 +614,6 @@
 				"volume": "Volume"
 			}
 		},
-
 		"advanced": {
 			"title": "Advanced Settings",
 			"experimental": {
@@ -641,7 +642,6 @@
 				}
 			}
 		},
-
 		"experiments": {
 			"title": "Experimental Features",
 			"description": "Enable or disable experimental features that are still under development",
@@ -660,7 +660,6 @@
 				}
 			}
 		},
-
 		"footer": {
 			"description": "If you have any questions or feedback, feel free to open an issue at",
 			"resetState": "Reset State",

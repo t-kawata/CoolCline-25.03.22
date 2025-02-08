@@ -296,8 +296,6 @@
 			"noResources": "Nie znaleziono zasobów"
 		},
 		"timeout": {
-			"title": "Limit czasu sieci",
-			"description": "Maksymalny czas oczekiwania na odpowiedź serwera",
 			"15": "15 sekund",
 			"30": "30 sekund",
 			"60": "1 minuta",
@@ -305,7 +303,9 @@
 			"600": "10 minut",
 			"900": "15 minut",
 			"1800": "30 minut",
-			"3600": "60 minut"
+			"3600": "60 minut",
+			"title": "Limit czasu sieci",
+			"description": "Maksymalny czas oczekiwania na odpowiedź serwera"
 		},
 		"server": {
 			"restart": "Uruchom ponownie serwer",
@@ -368,7 +368,7 @@
 					"getKey": "Możesz zarejestrować się tutaj, aby uzyskać klucz API Anthropic."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI kompatybilny",
 					"title": "Usługa zgodna z OpenAI",
 					"baseUrl": "Podstawowy URL",
 					"enterBaseUrl": "Wprowadź podstawowy URL",
@@ -418,8 +418,7 @@
 								"description": "Koszt za milion tokenów w odpowiedzi modelu. Wpływa to na koszt generowanej treści i uzupełnień"
 							}
 						}
-					},
-					"useCustomBaseUrl": "Użyj niestandardowego podstawowego URL"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -464,51 +463,60 @@
 					"enterProjectId": "Wprowadź ID projektu",
 					"region": "Region Google Cloud",
 					"selectRegion": "Wybierz region",
-					"description": "Aby używać Google Cloud Vertex AI, musisz 1) utworzyć konto Google Cloud › włączyć API Vertex AI › włączyć wymagane modele Claude, 2) zainstalować Google Cloud CLI › skonfigurować domyślne poświadczenia aplikacji.",
+					"description": "Aby korzystać z Google Cloud Vertex AI, musisz 1) utworzyć konto Google Cloud › aktywować API Vertex AI › aktywować wymagane modele Claude, 2) zainstalować Google Cloud CLI › skonfigurować domyślne poświadczenia aplikacji.",
 					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Skonfiguruj poświadczenia Google Cloud"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Klucz API Google Gemini",
-					"description": "Użyj modeli AI Google Gemini",
-					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Uzyskaj klucz API Google Gemini"
+					"getKey": "Uzyskaj klucz API Google Vertex AI"
 				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Klucz API Mistral",
 					"description": "Użyj usługi modeli Mistral AI",
-					"getKey": "Uzyskaj klucz API Mistral",
-					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego"
+					"getKey": "Możesz zarejestrować się tutaj, aby uzyskać klucz API Mistral",
+					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
+					"placeholder": "Wprowadź klucz API..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Klucz API Gemini",
+					"description": "Użyj modelu Gemini AI od Google",
+					"getKey": "Uzyskaj klucz API Gemini",
+					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
+					"placeholder": "Wprowadź klucz API..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "URL bazowy",
+					"enterBaseUrl": "Wprowadź URL bazowy",
 					"modelId": "ID modelu",
+					"enterModelId": "Przykład: meta-llama-3.1-8b-instruct",
 					"description": "Ollama pozwala na lokalne uruchamianie modeli językowych open source",
 					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Skonfiguruj Ollama"
+					"getKey": "Skonfiguruj Ollama",
+					"quickstartGuide": "Przewodnik szybkiego startu",
+					"localServer": "Serwer lokalny"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "URL bazowy (opcjonalnie)",
 					"modelId": "ID modelu",
-					"enterModelId": "Na przykład: meta-llama-3.1-8b-instruct",
-					"description": "LM Studio pozwala na uruchamianie modeli na Twoim lokalnym komputerze. Aby rozpocząć, zapoznaj się z ich przewodnikiem szybkiego startu. Musisz również uruchomić funkcję serwera lokalnego LM Studio, aby używać go z tym rozszerzeniem. Uwaga: CoolCline używa złożonych promptów, które działają najlepiej na modelach Claude. Słabsze modele mogą nie działać zgodnie z oczekiwaniami.",
+					"enterModelId": "Przykład: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio pozwala uruchamiać modele na lokalnym komputerze. Zobacz przewodnik szybkiego startu, aby uzyskać instrukcje, jak rozpocząć. Musisz również uruchomić funkcję lokalnego serwera LM Studio, aby używać go z tym rozszerzeniem.",
 					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Skonfiguruj LM Studio"
+					"getKey": "Skonfiguruj LM Studio",
+					"quickstartGuide": "Przewodnik szybkiego startu",
+					"localServer": "Serwer lokalny"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
 					"description": "Użyj wbudowanego API modelu językowego VS Code",
-					"modelSelector": "Wybierz model",
-					"noModels": "Nie znaleziono modeli językowych. Upewnij się, że zainstalowałeś i włączyłeś odpowiednie rozszerzenia.",
-					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Skonfiguruj VS Code LM API"
+					"modelSelector": "Model językowy",
+					"selectModel": "Wybierz model...",
+					"noModels": "API modelu językowego VS Code pozwala uruchamiać modele dostarczane przez inne rozszerzenia VS Code (w tym, ale nie tylko, GitHub Copilot). Najłatwiejszym sposobem na rozpoczęcie jest zainstalowanie rozszerzeń Copilot i Copilot Chat z marketplace VS Code.",
+					"experimentalNote": "Uwaga: To jest bardzo eksperymentalna integracja i może nie działać zgodnie z oczekiwaniami. Prosimy o zgłaszanie wszelkich problemów do repozytorium CoolCline na GitHub.",
+					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,9 +527,10 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "Klucz API DeepSeek",
-					"description": "DeepSeek oferuje wysokowydajne usługi modeli AI",
+					"description": "Użyj wysokowydajnej usługi modeli AI od DeepSeek",
+					"getKey": "Możesz zarejestrować się tutaj, aby uzyskać klucz API DeepSeek",
 					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego",
-					"getKey": "Możesz zarejestrować się tutaj, aby uzyskać klucz API DeepSeek"
+					"placeholder": "Wprowadź klucz API..."
 				}
 			},
 			"model": {
@@ -529,6 +538,9 @@
 				"selectPlaceholder": "Wybierz model...",
 				"currentlySelected": "Aktualnie wybrany model:",
 				"search": "Szukaj modeli..."
+			},
+			"common": {
+				"modelCapabilityNote": "Uwaga: CoolCline używa złożonych promptów i działa najlepiej z modelami Claude. Modele o ograniczonych możliwościach mogą nie działać zgodnie z oczekiwaniami."
 			}
 		},
 		"autoApprove": {
@@ -548,7 +560,7 @@
 			},
 			"browser": {
 				"title": "Zawsze zatwierdzaj operacje przeglądarki",
-				"description": "Automatycznie wykonuj operacje przeglądarki bez zatwierdzania\nUwaga: Dotyczy tylko gdy model obsługuje użycie komputera"
+				"description": "Automatycznie wykonuj operacje przeglądarki bez zatwierdzania Uwaga: Dotyczy tylko gdy model obsługuje użycie komputera"
 			},
 			"retry": {
 				"title": "Zawsze ponawiaj nieudane żądania API",

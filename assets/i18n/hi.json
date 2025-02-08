@@ -296,8 +296,6 @@
 			"noResources": "कोई संसाधन नहीं मिला"
 		},
 		"timeout": {
-			"title": "नेटवर्क टाइमआउट",
-			"description": "सर्वर प्रतिक्रियाओं के लिए प्रतीक्षा की अधिकतम अवधि",
 			"15": "15 सेकंड",
 			"30": "30 सेकंड",
 			"60": "1 मिनट",
@@ -305,7 +303,9 @@
 			"600": "10 मिनट",
 			"900": "15 मिनट",
 			"1800": "30 मिनट",
-			"3600": "60 मिनट"
+			"3600": "60 मिनट",
+			"title": "नेटवर्क टाइमआउट",
+			"description": "सर्वर प्रतिक्रियाओं के लिए प्रतीक्षा की अधिकतम अवधि"
 		},
 		"server": {
 			"restart": "सर्वर पुनः प्रारंभ करें",
@@ -368,7 +368,7 @@
 					"getKey": "आप यहां साइन अप करके Anthropic API कुंजी प्राप्त कर सकते हैं।"
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI संगत",
 					"title": "OpenAI संगत सेवा",
 					"baseUrl": "बेस URL",
 					"enterBaseUrl": "बेस URL दर्ज करें",
@@ -418,8 +418,7 @@
 								"description": "मॉडल प्रतिक्रिया में प्रति मिलियन टोकन की लागत। यह उत्पन्न सामग्री और पूर्णताओं की लागत को प्रभावित करता है"
 							}
 						}
-					},
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -460,55 +459,64 @@
 				"vertex": {
 					"name": "Google Vertex AI",
 					"title": "Google Vertex AI",
-					"projectId": "Google Cloud प्रोजेक्ट ID",
-					"enterProjectId": "प्रोजेक्ट ID दर्ज करें",
+					"projectId": "Google Cloud प्रोजेक्ट आईडी",
+					"enterProjectId": "प्रोजेक्ट आईडी दर्ज करें",
 					"region": "Google Cloud क्षेत्र",
 					"selectRegion": "क्षेत्र चुनें",
 					"description": "Google Cloud Vertex AI का उपयोग करने के लिए, आपको 1) Google Cloud खाता बनाना होगा › Vertex AI API सक्षम करें › वांछित Claude मॉडल सक्षम करें, 2) Google Cloud CLI इंस्टॉल करें › एप्लिकेशन डिफ़ॉल्ट क्रेडेंशियल्स कॉन्फ़िगर करें।",
 					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
 					"getKey": "Google Cloud क्रेडेंशियल्स कॉन्फ़िगर करें"
 				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Google Gemini API कुंजी",
-					"description": "Google के Gemini AI मॉडल का उपयोग करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "Google Gemini API कुंजी प्राप्त करें"
-				},
 				"mistral": {
 					"name": "Mistral",
 					"title": "Mistral API कुंजी",
 					"description": "Mistral AI मॉडल सेवा का उपयोग करें",
-					"getKey": "Mistral API कुंजी प्राप्त करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
+					"getKey": "आप यहां Mistral API कुंजी के लिए पंजीकरण कर सकते हैं",
+					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"placeholder": "API कुंजी दर्ज करें..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Gemini API कुंजी",
+					"description": "Google के Gemini AI मॉडल का उपयोग करें",
+					"getKey": "Gemini API कुंजी प्राप्त करें",
+					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"placeholder": "API कुंजी दर्ज करें..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
 					"baseUrl": "बेस URL",
+					"enterBaseUrl": "बेस URL दर्ज करें",
 					"modelId": "मॉडल ID",
+					"enterModelId": "उदाहरण: meta-llama-3.1-8b-instruct",
 					"description": "Ollama आपको स्थानीय रूप से ओपन-सोर्स भाषा मॉडल चलाने की अनुमति देता है",
 					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "Ollama कॉन्फ़िगर करें"
+					"getKey": "Ollama कॉन्फ़िगर करें",
+					"quickstartGuide": "त्वरित आरंभ गाइड",
+					"localServer": "स्थानीय सर्वर"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "बेस URL (वैकल्पिक)",
 					"modelId": "मॉडल ID",
-					"enterModelId": "उदा. meta-llama-3.1-8b-instruct",
-					"description": "LM Studio आपको अपने स्थानीय मशीन पर मॉडल चलाने की अनुमति देता है। आरंभ करने के लिए, उनके त्वरित आरंभ गाइड देखें। आपको इस एक्सटेंशन के साथ उपयोग करने के लिए LM Studio की स्थानीय सर्वर सुविधा भी शुरू करनी होगी। नोट: CoolCline जटिल प्रॉम्प्ट का उपयोग करता है जो Claude मॉडल के साथ सबसे अच्छा काम करते हैं। कम क्षमता वाले मॉडल अपेक्षित रूप से काम नहीं कर सकते हैं।",
+					"enterModelId": "उदाहरण: meta-llama-3.1-8b-instruct",
+					"description": "LM Studio आपको अपने स्थानीय कंप्यूटर पर मॉडल चलाने की अनुमति देता है। आरंभ करने के निर्देशों के लिए क्विक स्टार्ट गाइड देखें। इस एक्सटेंशन के साथ उपयोग करने के लिए आपको LM Studio के स्थानीय सर्वर फ़ीचर को भी शुरू करना होगा।",
 					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "LM Studio कॉन्फ़िगर करें"
+					"getKey": "LM Studio सेटअप करें",
+					"quickstartGuide": "क्विक स्टार्ट गाइड",
+					"localServer": "स्थानीय सर्वर"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "VS Code के अंतर्निर्मित भाषा मॉडल API का उपयोग करें",
-					"modelSelector": "मॉडल चुनें",
-					"noModels": "कोई भाषा मॉडल नहीं मिला। सुनिश्चित करें कि आपने प्रासंगिक एक्सटेंशन इंस्टॉल और सक्षम किए हैं।",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "VS Code LM API कॉन्फ़िगर करें"
+					"description": "VS Code में बिल्ट-इन भाषा मॉडल API का उपयोग करें",
+					"modelSelector": "भाषा मॉडल",
+					"selectModel": "मॉडल चुनें...",
+					"noModels": "VS Code भाषा मॉडल API आपको अन्य VS Code एक्सटेंशन (GitHub Copilot सहित लेकिन इस तक सीमित नहीं) द्वारा प्रदान किए गए मॉडल चलाने की अनुमति देता है। आरंभ करने का सबसे आसान तरीका VS Code मार्केटप्लेस से Copilot और Copilot Chat एक्सटेंशन इंस्टॉल करना है।",
+					"experimentalNote": "नोट: यह एक बहुत ही प्रायोगिक एकीकरण है और अपेक्षित रूप से काम नहीं कर सकता है। कृपया किसी भी समस्या की रिपोर्ट CoolCline GitHub रिपॉजिटरी को करें।",
+					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
 				},
 				"unbound": {
 					"name": "Unbound",
@@ -519,9 +527,10 @@
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API कुंजी",
-					"description": "DeepSeek उच्च-प्रदर्शन AI मॉडल सेवा प्रदान करता है",
+					"description": "DeepSeek की उच्च प्रदर्शन AI मॉडल सेवा का उपयोग करें",
+					"getKey": "आप यहां DeepSeek API कुंजी के लिए पंजीकरण कर सकते हैं",
 					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "आप यहां साइन अप करके DeepSeek API कुंजी प्राप्त कर सकते हैं"
+					"placeholder": "API कुंजी दर्ज करें..."
 				}
 			},
 			"model": {
@@ -529,6 +538,9 @@
 				"selectPlaceholder": "एक मॉडल चुनें...",
 				"currentlySelected": "वर्तमान में चयनित मॉडल:",
 				"search": "मॉडल खोजें..."
+			},
+			"common": {
+				"modelCapabilityNote": "नोट: CoolCline जटिल प्रॉम्प्ट का उपयोग करता है और Claude मॉडल के साथ सबसे अच्छा काम करता है। कम क्षमता वाले मॉडल अपेक्षित रूप से काम नहीं कर सकते हैं।"
 			}
 		},
 		"autoApprove": {
@@ -548,7 +560,7 @@
 			},
 			"browser": {
 				"title": "ब्राउज़र कार्यों को हमेशा स्वीकृत करें",
-				"description": "स्वीकृति की आवश्यकता के बिना स्वचालित रूप से ब्राउज़र कार्य करें\nनोट: केवल तभी लागू होता है जब मॉडल कंप्यूटर उपयोग का समर्थन करता है"
+				"description": "स्वीकृति की आवश्यकता के बिना स्वचालित रूप से ब्राउज़र कार्य करें नोट: केवल तभी लागू होता है जब मॉडल कंप्यूटर उपयोग का समर्थन करता है"
 			},
 			"retry": {
 				"title": "विफल API अनुरोधों को हमेशा पुनः प्रयास करें",

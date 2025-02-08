@@ -1,15 +1,29 @@
 {
 	"common": {
 		"done": "Concluído",
+		"add": "Add",
+		"delete": "Delete",
+		"rename": "Rename",
+		"preview": "Preview",
+		"save": "Save",
+		"cancel": "Cancel",
 		"create": "Criar",
 		"prompt": "Prompt",
 		"actions": {
+			"reset": "Reset to default",
+			"edit": "Editar",
+			"save": "Save",
 			"cancel": "Cancelar",
 			"close": "Fechar",
-			"resetToDefault": "Restaurar padrão",
-			"edit": "Editar",
 			"doneEditing": "Concluir edição"
-		}
+		},
+		"status": {
+			"loading": "Loading...",
+			"error": "Error",
+			"success": "Success"
+		},
+		"noDescription": "No description",
+		"unknown": "Unknown"
 	},
 	"welcome": {
 		"title": "Bem-vindo!",
@@ -150,7 +164,8 @@
 			},
 			"language": {
 				"title": "Idioma",
-				"description": "Selecione o idioma preferido para a interface"
+				"description": "Selecione o idioma preferido para a interface",
+				"select": "Select Language"
 			},
 			"customInstructions": {
 				"title": "Instruções Personalizadas",
@@ -164,7 +179,7 @@
 				"createMode": "Criar Novo Modo",
 				"editConfig": "Editar Configuração",
 				"name": "Nome",
-				"preview": "Visualizar Prompt do Sistema",
+				"specificPrompts": "Mode-Specific Prompts",
 				"slug": {
 					"title": "Slug",
 					"description": "Identificador único para este modo (apenas letras minúsculas, números e hífens)"
@@ -174,25 +189,50 @@
 					"description": "Defina o papel e comportamento da IA neste modo",
 					"createDescription": "Defina como a IA deve se comportar neste modo"
 				},
-				"customInstructions": {
-					"title": "Instruções Específicas do Modo",
-					"description": "Adicione instruções personalizadas para o modo {{mode}}",
-					"createDescription": "Adicione instruções específicas para este modo",
-					"loadFrom": "Carregar de",
-					"inWorkspace": "no seu workspace"
-				},
 				"apiConfig": {
 					"title": "Configuração da API",
 					"description": "Selecione a configuração da API para usar",
-					"enhancePrompts": "Selecione uma configuração específica da API para aprimoramento de prompt",
-					"useCurrentConfig": "Usar configuração atual"
+					"useCurrentConfig": "Usar configuração atual",
+					"enhancePrompts": "Selecione uma configuração específica da API para aprimoramento de prompt"
 				},
 				"tools": {
 					"title": "Ferramentas Disponíveis",
 					"cannotModify": "As configurações de ferramentas para modos integrados não podem ser modificadas",
+					"selectTools": "Select which tools this mode can use",
 					"availableTitle": "Grupos de Ferramentas",
 					"selectDescription": "Selecione quais grupos de ferramentas devem estar disponíveis neste modo"
+				},
+				"customInstructions": {
+					"title": "Instruções Específicas do Modo",
+					"description": "Adicione instruções personalizadas para o modo {{mode}}",
+					"loadFrom": "Carregar de",
+					"inWorkspace": "no seu workspace",
+					"createDescription": "Adicione instruções específicas para este modo",
+					"modeSpecific": "Mode-specific Instructions"
+				},
+				"preview": "Visualizar Prompt do Sistema"
+			},
+			"api": {
+				"title": "API Settings",
+				"configProfile": {
+					"title": "Configuration Profiles",
+					"description": "Configure API profiles for quick switching between providers in the chat input bar"
+				},
+				"model": {
+					"title": "Model",
+					"search": "Search models...",
+					"selected": "Currently selected model:"
+				},
+				"provider": {
+					"title": "Provider",
+					"openai": "OpenAI",
+					"glama": "Glama",
+					"openRouter": "OpenRouter"
 				}
+			},
+			"experimental": {
+				"title": "Experimental Features",
+				"description": "Enable or disable experimental features"
 			}
 		},
 		"support": {
@@ -256,8 +296,6 @@
 			"noResources": "Nenhum recurso encontrado"
 		},
 		"timeout": {
-			"title": "Timeout de rede",
-			"description": "Tempo máximo de espera para respostas do servidor",
 			"15": "15 segundos",
 			"30": "30 segundos",
 			"60": "1 minuto",
@@ -265,7 +303,9 @@
 			"600": "10 minutos",
 			"900": "15 minutos",
 			"1800": "30 minutos",
-			"3600": "60 minutos"
+			"3600": "60 minutos",
+			"title": "Timeout de rede",
+			"description": "Tempo máximo de espera para respostas do servidor"
 		},
 		"server": {
 			"restart": "Reiniciar servidor",
@@ -328,7 +368,7 @@
 					"getKey": "Você pode obter uma chave de API Anthropic registrando-se aqui."
 				},
 				"openai": {
-					"name": "OpenAI",
+					"name": "OpenAI compatível",
 					"title": "Serviço Compatível com OpenAI",
 					"baseUrl": "URL Base",
 					"enterBaseUrl": "Inserir URL Base",
@@ -378,8 +418,7 @@
 								"description": "Custo por milhão de tokens na resposta do modelo. Isso afeta o custo do conteúdo gerado e das conclusões"
 							}
 						}
-					},
-					"useCustomBaseUrl": "Usar URL base personalizada"
+					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
@@ -420,68 +459,78 @@
 				"vertex": {
 					"name": "Google Vertex AI",
 					"title": "Google Vertex AI",
-					"projectId": "ID do projeto Google Cloud",
+					"projectId": "ID do Projeto Google Cloud",
 					"enterProjectId": "Digite o ID do projeto",
 					"region": "Região do Google Cloud",
-					"selectRegion": "Selecione a região",
-					"description": "Para usar o Google Cloud Vertex AI, você precisa 1) criar uma conta Google Cloud › habilitar Vertex AI API › habilitar os modelos Claude desejados, 2) instalar Google Cloud CLI › configurar credenciais padrão do aplicativo.",
+					"selectRegion": "Selecionar região",
+					"description": "Para usar o Google Cloud Vertex AI, você precisa 1) criar uma conta Google Cloud › ativar a API Vertex AI › ativar os modelos Claude necessários, 2) instalar o Google Cloud CLI › configurar as credenciais padrão do aplicativo.",
 					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Configurar credenciais Google Cloud"
-				},
-				"gemini": {
-					"name": "Google Gemini",
-					"title": "Chave de API Google Gemini",
-					"description": "Usar modelos AI Gemini do Google",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Obter chave de API Google Gemini"
+					"getKey": "Obter chave API do Google Vertex AI"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Chave de API Mistral",
-					"description": "Usar serviço de modelos AI Mistral",
-					"getKey": "Obter chave de API Mistral",
-					"useCustomBaseUrl": "Usar URL base personalizada"
+					"title": "Chave API Mistral",
+					"description": "Use o serviço de modelos Mistral AI",
+					"getKey": "Você pode se registrar aqui para obter uma chave API Mistral",
+					"useCustomBaseUrl": "Usar URL base personalizada",
+					"placeholder": "Digite a chave API..."
+				},
+				"gemini": {
+					"name": "Gemini",
+					"title": "Chave API Gemini",
+					"description": "Use o modelo Gemini AI do Google",
+					"getKey": "Obter chave API Gemini",
+					"useCustomBaseUrl": "Usar URL base personalizada",
+					"placeholder": "Digite a chave API..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "URL base",
-					"modelId": "ID do modelo",
-					"description": "Ollama permite que você execute modelos de linguagem de código aberto localmente",
+					"baseUrl": "URL Base",
+					"enterBaseUrl": "Enter base URL",
+					"modelId": "ID do Modelo",
+					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
+					"description": "Ollama permite executar modelos de linguagem de código aberto localmente",
 					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Configurar Ollama"
+					"getKey": "Configurar Ollama",
+					"quickstartGuide": "Quick Start Guide",
+					"localServer": "Local Server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
 					"baseUrl": "URL base (opcional)",
 					"modelId": "ID do modelo",
-					"enterModelId": "ex. meta-llama-3.1-8b-instruct",
-					"description": "LM Studio permite que você execute modelos em sua máquina local. Para começar, consulte seu guia de início rápido. Você também precisará iniciar o recurso de servidor local do LM Studio para usar com esta extensão. Nota: CoolCline usa prompts complexos que funcionam melhor com modelos Claude. Modelos com menos capacidades podem não funcionar como esperado.",
+					"enterModelId": "Exemplo: meta-llama-3.1-8b-instruct",
+					"description": "O LM Studio permite executar modelos em seu computador local. Consulte o guia de início rápido para obter instruções sobre como começar. Você também precisará iniciar o recurso de servidor local do LM Studio para usá-lo com esta extensão.",
 					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Configurar LM Studio"
+					"getKey": "Configurar LM Studio",
+					"quickstartGuide": "Guia de início rápido",
+					"localServer": "Servidor local"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "Usar API de modelos de linguagem integrada do VS Code",
-					"modelSelector": "Selecione o modelo",
-					"noModels": "Nenhum modelo de linguagem encontrado. Certifique-se de ter instalado e habilitado as extensões relevantes.",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Configurar VS Code LM API"
+					"description": "Use a API de modelo de linguagem integrada do VS Code",
+					"modelSelector": "Modelo de linguagem",
+					"selectModel": "Selecionar modelo...",
+					"noModels": "A API de modelo de linguagem do VS Code permite executar modelos fornecidos por outras extensões do VS Code (incluindo, mas não se limitando ao GitHub Copilot). A maneira mais fácil de começar é instalar as extensões Copilot e Copilot Chat do marketplace do VS Code.",
+					"experimentalNote": "Nota: Esta é uma integração muito experimental e pode não funcionar conforme o esperado. Por favor, relate quaisquer problemas ao repositório CoolCline no GitHub.",
+					"useCustomBaseUrl": "Usar URL base personalizada"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Chave de API Unbound",
-					"getKey": "Obter chave de API Unbound",
+					"title": "Chave API do Unbound",
+					"getKey": "Obter chave API do Unbound",
 					"useCustomBaseUrl": "Usar URL base personalizada"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "Chave de API DeepSeek",
-					"description": "DeepSeek fornece serviço de modelos AI de alto desempenho",
+					"title": "Chave API DeepSeek",
+					"description": "Use o serviço de modelos AI de alto desempenho da DeepSeek",
+					"getKey": "Você pode se registrar aqui para obter uma chave API DeepSeek",
 					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Você pode obter uma chave de API DeepSeek registrando-se aqui"
+					"placeholder": "Digite a chave API..."
 				}
 			},
 			"model": {
@@ -489,6 +538,9 @@
 				"selectPlaceholder": "Selecione um modelo...",
 				"currentlySelected": "Modelo atualmente selecionado:",
 				"search": "Pesquisar modelos..."
+			},
+			"common": {
+				"modelCapabilityNote": "Nota: O CoolCline usa prompts complexos e funciona melhor com modelos Claude. Modelos com capacidades limitadas podem não funcionar conforme o esperado."
 			}
 		},
 		"autoApprove": {
@@ -508,7 +560,7 @@
 			},
 			"browser": {
 				"title": "Sempre aprovar ações do navegador",
-				"description": "Executar ações do navegador automaticamente sem necessidade de aprovação\nNota: aplica-se apenas quando o modelo suporta uso do computador"
+				"description": "Executar ações do navegador automaticamente sem necessidade de aprovação Nota: aplica-se apenas quando o modelo suporta uso do computador"
 			},
 			"retry": {
 				"title": "Sempre tentar novamente requisições de API falhas",
