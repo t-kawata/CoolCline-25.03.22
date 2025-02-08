@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Agregar al contexto",
 					"description": "Agregue información complementaria a la tarea o conversación actual. Se utiliza para proporcionar explicaciones adicionales o detalles aclaratorios. Disponible a través de sugerencias inteligentes (ícono de bombilla) o menú contextual en el editor."
+				},
+				"terminalAddToContext": {
+					"label": "Agregar contenido de terminal al contexto",
+					"description": "Agregar la salida de terminal a tu tarea o conversación actual. Útil para proporcionar salidas de comandos o registros. Disponible en el menú contextual de la terminal (clic derecho en el contenido seleccionado de la terminal)."
+				},
+				"terminalFix": {
+					"label": "Corregir comando de terminal",
+					"description": "Obtener ayuda para corregir comandos de terminal que fallaron o necesitan mejoras. Disponible en el menú contextual de la terminal (clic derecho en el contenido seleccionado de la terminal)."
+				},
+				"terminalExplain": {
+					"label": "Explicar comando de terminal",
+					"description": "Obtener explicaciones detalladas de los comandos de terminal y sus salidas. Disponible en el menú contextual de la terminal (clic derecho en el contenido seleccionado de la terminal)."
 				}
 			}
 		}

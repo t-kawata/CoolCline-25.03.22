@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "添加上下文",
 					"description": "為當前任務或對話添加補充資訊。用於提供額外說明或澄清細節。可透過智慧建議（燈泡圖示）或編輯器右鍵選單使用。"
+				},
+				"terminalAddToContext": {
+					"label": "添加終端內容到上下文",
+					"description": "將終端輸出添加到當前任務或對話中。適用於提供命令輸出或日誌。可通過終端上下文菜單（右鍵單擊所選終端內容）使用。"
+				},
+				"terminalFix": {
+					"label": "修復終端命令",
+					"description": "幫助修復失敗或需要改進的終端命令。可通過終端上下文菜單（右鍵單擊所選終端內容）使用。"
+				},
+				"terminalExplain": {
+					"label": "解釋終端命令",
+					"description": "獲取終端命令及其輸出的詳細解釋。可通過終端上下文菜單（右鍵單擊所選終端內容）使用。"
 				}
 			}
 		}
@@ -488,7 +500,11 @@
 					"title": "Ollama",
 					"baseUrl": "基礎 URL",
 					"enterBaseUrl": "輸入基礎 URL",
+					"modelId": "Model ID",
 					"enterModelId": "範例：meta-llama-3.1-8b-instruct",
+					"description": "Ollama allows you to run open-source language models locally",
+					"useCustomBaseUrl": "Use custom base URL",
+					"getKey": "Configure Ollama",
 					"quickstartGuide": "快速入門指南",
 					"localServer": "本機伺服器"
 				},

@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Bağlam ekle",
 					"description": "Mevcut göreve veya konuşmaya tamamlayıcı bilgiler ekleyin. Ek açıklamalar veya açıklayıcı detaylar sağlamak için kullanılır. Editördeki akıllı öneriler (ampul simgesi) veya sağ tıklama menüsü aracılığıyla kullanılabilir."
+				},
+				"terminalAddToContext": {
+					"label": "Terminal içeriğini bağlama ekle",
+					"description": "Terminal çıktısını mevcut görevinize veya konuşmanıza ekleyin. Komut çıktılarını veya günlükleri sağlamak için kullanışlıdır. Terminal bağlam menüsünde kullanılabilir (seçili terminal içeriğine sağ tıklayın)."
+				},
+				"terminalFix": {
+					"label": "Terminal Komutunu Düzelt",
+					"description": "Başarısız olan veya iyileştirme gerektiren terminal komutlarını düzeltmek için yardım alın. Terminal bağlam menüsünde kullanılabilir (seçili terminal içeriğine sağ tıklayın)."
+				},
+				"terminalExplain": {
+					"label": "Terminal Komutunu Açıkla",
+					"description": "Terminal komutları ve çıktıları hakkında ayrıntılı açıklamalar alın. Terminal bağlam menüsünde kullanılabilir (seçili terminal içeriğine sağ tıklayın)."
 				}
 			}
 		}

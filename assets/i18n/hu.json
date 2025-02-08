@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Kontextus hozzáadása",
 					"description": "Kiegészítő információkat adhat az aktuális feladathoz vagy beszélgetéshez. További magyarázatok vagy tisztázó részletek biztosítására használható. Elérhető az intelligens javaslatok (villanykörte ikon) vagy a szerkesztő jobb kattintásos menüjén keresztül."
+				},
+				"terminalAddToContext": {
+					"label": "Terminál tartalmának hozzáadása a kontextushoz",
+					"description": "Terminál kimenetének hozzáadása az aktuális feladathoz vagy beszélgetéshez. Hasznos parancsok kimenetének vagy naplók biztosításához. Elérhető a terminál helyi menüjében (jobb kattintás a kijelölt terminál tartalmon)."
+				},
+				"terminalFix": {
+					"label": "Terminál parancs javítása",
+					"description": "Segítség kérése a sikertelen vagy fejlesztésre szoruló terminál parancsok javításához. Elérhető a terminál helyi menüjében (jobb kattintás a kijelölt terminál tartalmon)."
+				},
+				"terminalExplain": {
+					"label": "Terminál parancs magyarázata",
+					"description": "Részletes magyarázatok a terminál parancsokról és kimeneteikről. Elérhető a terminál helyi menüjében (jobb kattintás a kijelölt terminál tartalmon)."
 				}
 			}
 		}

@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Přidat kontext",
 					"description": "Přidejte doplňující informace k aktuálnímu úkolu nebo konverzaci. Používá se pro poskytnutí dodatečných vysvětlení nebo upřesňujících detailů. Dostupné přes chytré návrhy (ikona žárovky) nebo kontextové menu v editoru."
+				},
+				"terminalAddToContext": {
+					"label": "Přidat obsah terminálu do kontextu",
+					"description": "Přidejte výstup terminálu do aktuálního úkolu nebo konverzace. Užitečné pro poskytování výstupů příkazů nebo protokolů. Dostupné v kontextové nabídce terminálu (pravý klik na vybraný obsah terminálu)."
+				},
+				"terminalFix": {
+					"label": "Opravit příkaz terminálu",
+					"description": "Získejte pomoc s opravou příkazů terminálu, které selhaly nebo potřebují vylepšení. Dostupné v kontextové nabídce terminálu (pravý klik na vybraný obsah terminálu)."
+				},
+				"terminalExplain": {
+					"label": "Vysvětlit příkaz terminálu",
+					"description": "Získejte podrobná vysvětlení příkazů terminálu a jejich výstupů. Dostupné v kontextové nabídce terminálu (pravý klik na vybraný obsah terminálu)."
 				}
 			}
 		}

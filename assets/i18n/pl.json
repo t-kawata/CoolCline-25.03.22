@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Dodaj do kontekstu",
 					"description": "Dodaj informacje uzupełniające do bieżącego zadania lub rozmowy. Używane do dostarczania dodatkowych wyjaśnień lub szczegółów wyjaśniających. Dostępne przez inteligentne sugestie (ikona żarówki) lub menu kontekstowe w edytorze."
+				},
+				"terminalAddToContext": {
+					"label": "Dodaj zawartość terminala do kontekstu",
+					"description": "Dodaj wyjście terminala do bieżącego zadania lub rozmowy. Przydatne do dostarczania wyjść poleceń lub logów. Dostępne w menu kontekstowym terminala (kliknij prawym przyciskiem myszy na wybraną zawartość terminala)."
+				},
+				"terminalFix": {
+					"label": "Napraw polecenie terminala",
+					"description": "Uzyskaj pomoc w naprawianiu poleceń terminala, które nie powiodły się lub wymagają ulepszenia. Dostępne w menu kontekstowym terminala (kliknij prawym przyciskiem myszy na wybraną zawartość terminala)."
+				},
+				"terminalExplain": {
+					"label": "Wyjaśnij polecenie terminala",
+					"description": "Uzyskaj szczegółowe wyjaśnienia poleceń terminala i ich wyjść. Dostępne w menu kontekstowym terminala (kliknij prawym przyciskiem myszy na wybraną zawartość terminala)."
 				}
 			}
 		}

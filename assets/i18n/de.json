@@ -263,6 +263,18 @@
 				"addToContext": {
 					"label": "Kontext hinzufügen",
 					"description": "Fügen Sie ergänzende Informationen zur aktuellen Aufgabe oder Konversation hinzu. Wird verwendet, um zusätzliche Erklärungen oder klärende Details bereitzustellen. Verfügbar über Smart-Vorschläge (Glühbirnen-Symbol) oder Rechtsklick-Menü im Editor."
+				},
+				"terminalAddToContext": {
+					"label": "Terminal-Inhalt zum Kontext hinzufügen",
+					"description": "Fügen Sie die Terminal-Ausgabe zu Ihrer aktuellen Aufgabe oder Konversation hinzu. Nützlich für die Bereitstellung von Befehlsausgaben oder Protokollen. Verfügbar im Terminal-Kontextmenü (Rechtsklick auf ausgewählten Terminal-Inhalt)."
+				},
+				"terminalFix": {
+					"label": "Terminal-Befehl korrigieren",
+					"description": "Hilfe beim Beheben von fehlgeschlagenen oder verbesserungsbedürftigen Terminal-Befehlen erhalten. Verfügbar im Terminal-Kontextmenü (Rechtsklick auf ausgewählten Terminal-Inhalt)."
+				},
+				"terminalExplain": {
+					"label": "Terminal-Befehl erklären",
+					"description": "Detaillierte Erklärungen zu Terminal-Befehlen und deren Ausgaben erhalten. Verfügbar im Terminal-Kontextmenü (Rechtsklick auf ausgewählten Terminal-Inhalt)."
 				}
 			}
 		}
