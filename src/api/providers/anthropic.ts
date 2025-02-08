@@ -17,7 +17,7 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 	constructor(options: ApiHandlerOptions) {
 		this.options = options
 		this.client = new Anthropic({
-			apiKey: this.options.apiKey,
+			apiKey: this.options.apiKey ?? "anthropic-api-key-not-configured",
 			baseURL: this.options.anthropicBaseUrl || undefined,
 		})
 	}

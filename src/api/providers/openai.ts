@@ -33,13 +33,13 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 			// https://github.com/openai/openai-node?tab=readme-ov-file#microsoft-azure-openai
 			this.client = new AzureOpenAI({
 				baseURL: this.options.openAiBaseUrl,
-				apiKey: this.options.openAiApiKey,
+				apiKey: this.options.openAiApiKey ?? "azure-openai-api-key-not-configured",
 				apiVersion: this.options.azureApiVersion || azureOpenAiDefaultApiVersion,
 			})
 		} else {
 			this.client = new OpenAI({
 				baseURL: this.options.openAiBaseUrl,
-				apiKey: this.options.openAiApiKey,
+				apiKey: this.options.openAiApiKey ?? "openai-api-key-not-configured",
 			})
 		}
 	}

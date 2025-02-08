@@ -27,14 +27,15 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 
 	constructor(options: ApiHandlerOptions) {
 		this.options = options
-		this.client = new OpenAI({
-			baseURL: this.options.openRouterBaseUrl || "https://openrouter.ai/api/v1",
-			apiKey: this.options.openRouterApiKey,
-			defaultHeaders: {
-				"HTTP-Referer": "https://github.com/CoolCline/CoolCline",
-				"X-Title": "CoolCline",
-			},
-		})
+		const baseURL = this.options.openRouterBaseUrl || "https://openrouter.ai/api/v1"
+		const apiKey = this.options.openRouterApiKey ?? "openrouter-api-key-not-configured"
+
+		const defaultHeaders = {
+			"HTTP-Referer": "https://github.com/coolcline/coolcline",
+			"X-Title": "CoolCline",
+		}
+
+		this.client = new OpenAI({ baseURL, apiKey, defaultHeaders })
 	}
 
 	async *createMessage(

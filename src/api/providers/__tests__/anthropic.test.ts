@@ -106,12 +106,16 @@ describe("AnthropicHandler", () => {
 		})
 
 		it("should initialize with undefined API key", () => {
-			// The SDK will handle API key validation, so we just verify it initializes
 			const handlerWithoutKey = new AnthropicHandler({
 				...mockOptions,
 				apiKey: undefined,
 			})
 			expect(handlerWithoutKey).toBeInstanceOf(AnthropicHandler)
+			expect(Anthropic).toHaveBeenCalledWith(
+				expect.objectContaining({
+					apiKey: "anthropic-api-key-not-configured",
+				}),
+			)
 		})
 
 		it("should use custom base URL if provided", () => {

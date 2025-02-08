@@ -22,7 +22,7 @@ export class MistralHandler implements ApiHandler {
 		this.options = options
 		this.client = new Mistral({
 			serverURL: "https://codestral.mistral.ai",
-			apiKey: this.options.mistralApiKey,
+			apiKey: this.options.mistralApiKey ?? "mistral-api-key-not-configured",
 		})
 	}
 
