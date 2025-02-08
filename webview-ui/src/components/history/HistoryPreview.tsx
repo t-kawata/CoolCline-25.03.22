@@ -155,6 +155,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 							</div>
 							<button
 								title={String(t("history.preview.copyPrompt"))}
+								aria-label={String(t("history.preview.copyPrompt"))}
 								className="copy-button"
 								data-appearance="icon"
 								onClick={(e) => copyWithFeedback(item.task, e)}>
