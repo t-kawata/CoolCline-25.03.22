@@ -26,3 +26,12 @@ Object.defineProperty(window, "matchMedia", {
 		dispatchEvent: jest.fn(),
 	})),
 })
+
+// Mock clipboard API
+Object.defineProperty(navigator, "clipboard", {
+	value: {
+		writeText: jest.fn(),
+		readText: jest.fn(),
+	},
+	writable: true,
+})

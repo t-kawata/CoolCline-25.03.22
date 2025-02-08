@@ -33,7 +33,8 @@ jest.mock("react-i18next", () => ({
 				"history.sort.mostExpensive": "Most Expensive",
 				"history.sort.mostTokens": "Most Tokens",
 				"history.sort.mostRelevant": "Most Relevant",
-				"history.preview.promptCopied": "Prompt Copied to Clipboard",
+				"history.preview.copyPrompt": "复制提示",
+				"history.preview.promptCopied": "提示已复制到剪贴板",
 			}
 			return translations[key] || key
 		},

@@ -34,8 +34,8 @@ module.exports = {
 	transformIgnorePatterns: [
 		"node_modules/(?!(@modelcontextprotocol|delay|p-wait-for|globby|serialize-error|strip-ansi|default-shell|os-name)/)",
 	],
-	roots: ["<rootDir>/src", "<rootDir>/webview-ui/src"],
-	modulePathIgnorePatterns: [".vscode-test"],
+	roots: ["<rootDir>/src"],
+	modulePathIgnorePatterns: [".vscode-test", "webview-ui"],
 	reporters: [["jest-simple-dot-reporter", {}]],
 	setupFiles: [],
 }
