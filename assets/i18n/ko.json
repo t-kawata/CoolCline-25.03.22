@@ -35,7 +35,7 @@
 		"unknown": "알 수 없음"
 	},
 	"welcome": {
-		"title": "환영합니다!",
+		"title": "CoolCline이란?",
 		"description": "CoolCline은 고급 AI 기능으로 개발 워크플로우를 향상시키는 능동적인 프로그래밍 어시스턴트입니다. 코드를 더 효율적으로 작성하고, 쿼리를 최적화하며, 오류를 자동으로 수정하고, 명령줄 작업을 실행하며, 브라우저 자동화 테스트를 수행하는 데 도움을 줍니다.",
 		"readmeLink": "README",
 		"apiProviderNeeded": "시작하려면 이 확장 프로그램에 API 제공자가 필요합니다.",

@@ -35,7 +35,7 @@
 		"unknown": "不明"
 	},
 	"welcome": {
-		"title": "ようこそ！",
+		"title": "CoolClineとは？",
 		"description": "CoolClineは、高度なAI機能であなたの開発ワークフローを強化するプロアクティブなプログラミングアシスタントです。コードの効率的な作成、クエリの最適化、エラーの自動修正、コマンドラインタスクの実行、ブラウザ自動化テストの実行をサポートします。",
 		"readmeLink": "README",
 		"apiProviderNeeded": "開始するには、このエクステンションにAPIプロバイダーが必要です。",

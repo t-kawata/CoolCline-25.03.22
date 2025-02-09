@@ -35,7 +35,7 @@
 		"unknown": "Neznámý"
 	},
 	"welcome": {
-		"title": "Vítejte!",
+		"title": "Co je CoolCline?",
 		"description": "CoolCline je proaktivní programovací asistent, který vylepšuje váš vývojový workflow pomocí pokročilých AI schopností. Pomáhá vám efektivněji psát kód, optimalizovat dotazy, automaticky opravovat chyby, spouštět příkazy v příkazové řádce a provádět automatizované testy prohlížeče.",
 		"readmeLink": "README",
 		"apiProviderNeeded": "Pro začátek potřebuje toto rozšíření poskytovatele API.",

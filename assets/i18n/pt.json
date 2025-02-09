@@ -35,7 +35,7 @@
 		"unknown": "Desconhecido"
 	},
 	"welcome": {
-		"title": "Bem-vindo!",
+		"title": "O que é o CoolCline?",
 		"description": "CoolCline é um assistente de programação proativo que aprimora seu processo de desenvolvimento com recursos avançados de IA. Ele ajuda você a escrever código de forma mais eficiente, otimizar consultas, corrigir erros automaticamente, executar tarefas de linha de comando e realizar testes de automação de navegador.",
 		"readmeLink": "README",
 		"apiProviderNeeded": "Para começar, esta extensão precisa de um provedor de API.",

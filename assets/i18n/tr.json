@@ -35,7 +35,7 @@
 		"unknown": "Bilinmiyor"
 	},
 	"welcome": {
-		"title": "Hoş Geldiniz!",
+		"title": "CoolCline nedir?",
 		"description": "CoolCline, gelişmiş AI yetenekleriyle geliştirme sürecinizi iyileştiren proaktif bir programlama asistanıdır. Kodu daha verimli yazmanıza, sorguları optimize etmenize, hataları otomatik olarak düzeltmenize, komut satırı görevlerini yürütmenize ve tarayıcı otomasyon testleri yapmanıza yardımcı olur.",
 		"readmeLink": "README",
 		"apiProviderNeeded": "Başlamak için, bu uzantının bir API sağlayıcısına ihtiyacı var.",

@@ -43,7 +43,7 @@
 	},
 	"chat": {
 		"welcome": {
-			"title": "What can I do for you?",
+			"title": "What is CoolCline?",
 			"description": "CoolCline is a proactive programming assistant that enhances your development workflow with advanced AI capabilities. It helps you write code more efficiently, optimize queries, auto-fix errors, run command-line tasks, and perform browser automation tests.",
 			"readMore": "README"
 		},

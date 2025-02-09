@@ -35,7 +35,7 @@
 		"unknown": "未知"
 	},
 	"welcome": {
-		"title": "歡迎！",
+		"title": "CoolCline 是什麼？",
 		"description": "CoolCline 是一個主動式程式設計助手，透過先進的 AI 功能增強您的開發工作流程。它可以幫助您更高效地編寫程式碼、最佳化查詢、自動修復錯誤、執行命令列任務以及執行瀏覽器自動化測試。",
 		"readmeLink": "使用說明",
 		"apiProviderNeeded": "要開始使用，此擴充功能需要一個 API 提供者。",
