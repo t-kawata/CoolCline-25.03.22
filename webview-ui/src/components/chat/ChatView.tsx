@@ -1013,11 +1013,18 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					<div style={{ padding: "0 20px", flexShrink: 0 }}>
 						<h2>{String(t("chat.welcome.title"))}</h2>
 						<p>
-							{String(t("chat.welcome.description"))}
+							{String(t("chat.welcome.description"))} {String(t("chat.welcome.readMore"))}
+							{":"}
 							<VSCodeLink
-								href="https://github.com/coolcline/coolcline/blob/main/README.md"
+								href="https://github.com/coolcline/coolcline/blob/main/README_en.md"
 								style={{ display: "inline" }}>
-								{String(t("chat.welcome.readMore"))}
+								en
+							</VSCodeLink>
+							{"|"}
+							<VSCodeLink
+								href="https://gitee.com/coolcline/coolcline/blob/main/README.md"
+								style={{ display: "inline" }}>
+								简体中文
 							</VSCodeLink>
 						</p>
 					</div>

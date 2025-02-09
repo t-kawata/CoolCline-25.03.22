@@ -33,7 +33,7 @@ describe("Tree-sitter Service", () => {
 		})
 
 		it("should parse TypeScript files correctly", async () => {
-			const mockFiles = ["/test/path/file1.ts", "/test/path/file2.tsx", "/test/path/readme.md"]
+			const mockFiles = ["/test/path/file1.ts", "/test/path/file2.tsx", "/test/path/README.md"]
 
 			;(listFiles as jest.Mock).mockResolvedValue([mockFiles, new Set()])
 
@@ -65,7 +65,7 @@ describe("Tree-sitter Service", () => {
 
 			expect(result).toContain("file1.ts")
 			expect(result).toContain("file2.tsx")
-			expect(result).not.toContain("readme.md")
+			expect(result).not.toContain("README.md")
 			expect(result).toContain("export class TestClass")
 		})
 

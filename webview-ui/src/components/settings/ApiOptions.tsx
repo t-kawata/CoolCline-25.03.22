@@ -4,10 +4,9 @@ import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField } from "@vsc
 import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
 import { useEvent, useInterval } from "react-use"
 import {
-	ApiConfiguration,
-	ModelInfo,
 	anthropicDefaultModelId,
 	anthropicModels,
+	ApiConfiguration,
 	azureOpenAiDefaultApiVersion,
 	bedrockDefaultModelId,
 	bedrockModels,
@@ -19,15 +18,16 @@ import {
 	glamaDefaultModelInfo,
 	mistralDefaultModelId,
 	mistralModels,
+	ModelInfo,
 	openAiModelInfoSaneDefaults,
 	openAiNativeDefaultModelId,
 	openAiNativeModels,
 	openRouterDefaultModelId,
 	openRouterDefaultModelInfo,
-	vertexDefaultModelId,
-	vertexModels,
 	unboundDefaultModelId,
 	unboundModels,
+	vertexDefaultModelId,
+	vertexModels,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -65,9 +65,15 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 	// Poll ollama/lmstudio models
 	const requestLocalModels = useCallback(() => {
 		if (selectedProvider === "ollama") {
-			vscode.postMessage({ type: "requestOllamaModels", text: apiConfiguration?.ollamaBaseUrl })
+			vscode.postMessage({
+				type: "requestOllamaModels",
+				text: apiConfiguration?.ollamaBaseUrl,
+			})
 		} else if (selectedProvider === "lmstudio") {
-			vscode.postMessage({ type: "requestLmStudioModels", text: apiConfiguration?.lmStudioBaseUrl })
+			vscode.postMessage({
+				type: "requestLmStudioModels",
+				text: apiConfiguration?.lmStudioBaseUrl,
+			})
 		} else if (selectedProvider === "vscode-lm") {
 			vscode.postMessage({ type: "requestVsCodeLmModels" })
 		}
@@ -97,7 +103,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 
 	const createDropdown = (models: Record<string, ModelInfo>) => {
 		const options: DropdownOption[] = [
-			{ value: "", label: t("settings.provider.model.selectPlaceholder").toString() },
+			{
+				value: "",
+				label: t("settings.provider.model.selectPlaceholder").toString(),
+			},
 			...Object.keys(models).map((modelId) => ({
 				value: modelId,
 				label: modelId,
@@ -139,25 +148,68 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							},
 						})
 					}}
-					style={{ minWidth: 130, position: "relative", zIndex: OPENROUTER_MODEL_PICKER_Z_INDEX + 1 }}
+					style={{
+						minWidth: 130,
+						position: "relative",
+						zIndex: OPENROUTER_MODEL_PICKER_Z_INDEX + 1,
+					}}
 					options={[
-						{ value: "openrouter", label: t("settings.provider.providers.openRouter.name").toString() },
-						{ value: "anthropic", label: t("settings.provider.providers.anthropic.name").toString() },
-						{ value: "gemini", label: t("settings.provider.providers.gemini.name").toString() },
-						{ value: "deepseek", label: t("settings.provider.providers.deepseek.name").toString() },
+						{
+							value: "openrouter",
+							label: t("settings.provider.providers.openRouter.name").toString(),
+						},
+						{
+							value: "anthropic",
+							label: t("settings.provider.providers.anthropic.name").toString(),
+						},
+						{
+							value: "gemini",
+							label: t("settings.provider.providers.gemini.name").toString(),
+						},
+						{
+							value: "deepseek",
+							label: t("settings.provider.providers.deepseek.name").toString(),
+						},
 						{
 							value: "openai-native",
 							label: t("settings.provider.providers.openaiNative.name").toString(),
 						},
-						{ value: "openai", label: t("settings.provider.providers.openai.name").toString() },
-						{ value: "vertex", label: t("settings.provider.providers.vertex.name").toString() },
-						{ value: "bedrock", label: t("settings.provider.providers.bedrock.name").toString() },
-						{ value: "glama", label: t("settings.provider.providers.glama.name").toString() },
-						{ value: "vscode-lm", label: t("settings.provider.providers.vscode.name").toString() },
-						{ value: "mistral", label: t("settings.provider.providers.mistral.name").toString() },
-						{ value: "lmstudio", label: t("settings.provider.providers.lmstudio.name").toString() },
-						{ value: "ollama", label: t("settings.provider.providers.ollama.name").toString() },
-						{ value: "unbound", label: t("settings.provider.providers.unbound.name").toString() },
+						{
+							value: "openai",
+							label: t("settings.provider.providers.openai.name").toString(),
+						},
+						{
+							value: "vertex",
+							label: t("settings.provider.providers.vertex.name").toString(),
+						},
+						{
+							value: "bedrock",
+							label: t("settings.provider.providers.bedrock.name").toString(),
+						},
+						{
+							value: "glama",
+							label: t("settings.provider.providers.glama.name").toString(),
+						},
+						{
+							value: "vscode-lm",
+							label: t("settings.provider.providers.vscode.name").toString(),
+						},
+						{
+							value: "mistral",
+							label: t("settings.provider.providers.mistral.name").toString(),
+						},
+						{
+							value: "lmstudio",
+							label: t("settings.provider.providers.lmstudio.name").toString(),
+						},
+						{
+							value: "ollama",
+							label: t("settings.provider.providers.ollama.name").toString(),
+						},
+						{
+							value: "unbound",
+							label: t("settings.provider.providers.unbound.name").toString(),
+						},
 					]}
 				/>
 			</div>
@@ -212,7 +264,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{!apiConfiguration?.apiKey && (
 							<VSCodeLink
 								href="https://console.anthropic.com/settings/keys"
-								style={{ display: "inline", fontSize: "inherit" }}>
+								style={{
+									display: "inline",
+									fontSize: "inherit",
+								}}>
 								{t("settings.provider.providers.anthropic.getKey").toString()}
 							</VSCodeLink>
 						)}
@@ -429,10 +484,22 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							}}
 							style={{ minWidth: 130 }}
 							options={[
-								{ value: "us-east-1", label: "US East (N. Virginia)" },
-								{ value: "us-west-2", label: "US West (Oregon)" },
-								{ value: "ap-northeast-1", label: "Asia Pacific (Tokyo)" },
-								{ value: "eu-central-1", label: "Europe (Frankfurt)" },
+								{
+									value: "us-east-1",
+									label: "US East (N. Virginia)",
+								},
+								{
+									value: "us-west-2",
+									label: "US West (Oregon)",
+								},
+								{
+									value: "ap-northeast-1",
+									label: "Asia Pacific (Tokyo)",
+								},
+								{
+									value: "eu-central-1",
+									label: "Europe (Frankfurt)",
+								},
 							]}
 						/>
 					</div>
@@ -491,10 +558,22 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							}}
 							style={{ minWidth: 130 }}
 							options={[
-								{ value: "us-central1", label: "US Central (Iowa)" },
-								{ value: "us-east4", label: "US East (N. Virginia)" },
-								{ value: "europe-west4", label: "Europe West (Netherlands)" },
-								{ value: "asia-southeast1", label: "Asia Southeast (Singapore)" },
+								{
+									value: "us-central1",
+									label: "US Central (Iowa)",
+								},
+								{
+									value: "us-east4",
+									label: "US East (N. Virginia)",
+								},
+								{
+									value: "europe-west4",
+									label: "Europe West (Netherlands)",
+								},
+								{
+									value: "asia-southeast1",
+									label: "Asia Southeast (Singapore)",
+								},
 							]}
 						/>
 					</div>
@@ -532,7 +611,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{!apiConfiguration?.geminiApiKey && (
 							<VSCodeLink
 								href="https://ai.google.dev/"
-								style={{ display: "inline", fontSize: "inherit" }}>
+								style={{
+									display: "inline",
+									fontSize: "inherit",
+								}}>
 								{t("settings.provider.providers.gemini.getKey").toString()}.
 							</VSCodeLink>
 						)}
@@ -541,7 +623,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 			)}
 
 			{selectedProvider === "openai" && (
-				<div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						rowGap: "5px",
+					}}>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiBaseUrl || ""}
 						style={{ width: "100%", marginTop: 3 }}
@@ -619,7 +706,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								iconName: "refresh",
 								onClick: () =>
 									handleInputChange("openAiCustomModelInfo")({
-										target: { value: openAiModelInfoSaneDefaults },
+										target: {
+											value: openAiModelInfoSaneDefaults,
+										},
 									}),
 							},
 						]}>
@@ -660,7 +749,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									}}>
 									{t("settings.provider.providers.openai.modelConfig.capabilities.title").toString()}
 								</span>
-								<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+								<div
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										gap: 12,
+									}}>
 									<div className="token-config-field">
 										<VSCodeTextField
 											value={
@@ -673,7 +767,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												width: "100%",
 												borderColor: (() => {
 													const value = apiConfiguration?.openAiCustomModelInfo?.maxTokens
-													if (!value) return "var(--vscode-input-border)"
+													if (!value) {
+														return "var(--vscode-input-border)"
+													}
 													return value > 0
 														? "var(--vscode-charts-green)"
 														: "var(--vscode-errorForeground)"
@@ -738,7 +834,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												width: "100%",
 												borderColor: (() => {
 													const value = apiConfiguration?.openAiCustomModelInfo?.contextWindow
-													if (!value) return "var(--vscode-input-border)"
+													if (!value) {
+														return "var(--vscode-input-border)"
+													}
 													return value > 0
 														? "var(--vscode-charts-green)"
 														: "var(--vscode-errorForeground)"
@@ -814,9 +912,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											).toString()}
 										</span>
 
-										<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: "12px",
+											}}>
 											<div className="feature-toggle">
-												<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+												<div
+													style={{
+														display: "flex",
+														alignItems: "center",
+														gap: "8px",
+													}}>
 													<Checkbox
 														checked={
 															apiConfiguration?.openAiCustomModelInfo?.supportsImages ??
@@ -833,7 +941,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span style={{ fontWeight: 500 }}>
+														<span
+															style={{
+																fontWeight: 500,
+															}}>
 															{t(
 																"settings.provider.providers.openai.modelConfig.features.imageSupport.title",
 															).toString()}
@@ -871,7 +982,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 													borderTop: "1px solid var(--vscode-input-border)",
 													paddingTop: "12px",
 												}}>
-												<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+												<div
+													style={{
+														display: "flex",
+														alignItems: "center",
+														gap: "8px",
+													}}>
 													<Checkbox
 														checked={
 															apiConfiguration?.openAiCustomModelInfo
@@ -888,7 +1004,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span style={{ fontWeight: 500 }}>
+														<span
+															style={{
+																fontWeight: 500,
+															}}>
 															{t(
 																"settings.provider.providers.openai.modelConfig.features.computerUse.title",
 															).toString()}
@@ -976,7 +1095,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												width: "100%",
 												borderColor: (() => {
 													const value = apiConfiguration?.openAiCustomModelInfo?.inputPrice
-													if (!value && value !== 0) return "var(--vscode-input-border)"
+													if (!value && value !== 0) {
+														return "var(--vscode-input-border)"
+													}
 													return value >= 0
 														? "var(--vscode-charts-green)"
 														: "var(--vscode-errorForeground)"
@@ -1002,7 +1123,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 											placeholder={t("settings.provider.modelConfig.pricing.inputPrice.example", {
 												value: "0.0001",
 											}).toString()}>
-											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													gap: "4px",
+												}}>
 												<span style={{ fontWeight: 500 }}>
 													{t(
 														"settings.provider.providers.openai.modelConfig.pricing.inputPrice.title",
@@ -1035,7 +1161,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												width: "100%",
 												borderColor: (() => {
 													const value = apiConfiguration?.openAiCustomModelInfo?.outputPrice
-													if (!value && value !== 0) return "var(--vscode-input-border)"
+													if (!value && value !== 0) {
+														return "var(--vscode-input-border)"
+													}
 													return value >= 0
 														? "var(--vscode-charts-green)"
 														: "var(--vscode-errorForeground)"
@@ -1062,7 +1190,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 												"settings.provider.modelConfig.pricing.outputPrice.example",
 												{ value: "0.0002" },
 											).toString()}>
-											<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													gap: "4px",
+												}}>
 												<span style={{ fontWeight: 500 }}>
 													{t(
 														"settings.provider.providers.openai.modelConfig.pricing.outputPrice.title",
@@ -1201,7 +1334,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{!apiConfiguration?.deepSeekApiKey && (
 							<VSCodeLink
 								href="https://platform.deepseek.com/"
-								style={{ display: "inline", fontSize: "inherit" }}>
+								style={{
+									display: "inline",
+									fontSize: "inherit",
+								}}>
 								{t("settings.provider.providers.deepseek.getKey").toString()}
 							</VSCodeLink>
 						)}
@@ -1222,7 +1358,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								id="vscode-lm-model"
 								value={
 									apiConfiguration?.vsCodeLmModelSelector
-										? `${apiConfiguration.vsCodeLmModelSelector.vendor ?? ""}/${apiConfiguration.vsCodeLmModelSelector.family ?? ""}`
+										? `${apiConfiguration.vsCodeLmModelSelector.vendor ?? ""}/${
+												apiConfiguration.vsCodeLmModelSelector.family ?? ""
+											}`
 										: ""
 								}
 								onChange={(value: unknown) => {
@@ -1329,9 +1467,15 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						Ollama allows you to run models locally on your computer. For instructions on how to get
 						started, see their
 						<VSCodeLink
-							href="https://github.com/ollama/ollama/blob/main/README.md"
-							style={{ display: "inline", fontSize: "inherit" }}>
-							quickstart guide.
+							href="https://github.com/coolcline/coolcline/blob/main/README_en.md"
+							style={{ display: "inline" }}>
+							en
+						</VSCodeLink>
+						{"|"}
+						<VSCodeLink
+							href="https://gitee.com/coolcline/coolcline/blob/main/README.md"
+							style={{ display: "inline" }}>
+							简体中文
 						</VSCodeLink>
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
 							({t("settings.provider.common.modelCapabilityNote").toString()})
@@ -1531,7 +1675,12 @@ export const ModelInfoView = ({
 	].filter(Boolean)
 
 	return (
-		<p style={{ fontSize: "12px", marginTop: "2px", color: "var(--vscode-descriptionForeground)" }}>
+		<p
+			style={{
+				fontSize: "12px",
+				marginTop: "2px",
+				color: "var(--vscode-descriptionForeground)",
+			}}>
 			{infoItems.map((item, index) => (
 				<Fragment key={index}>
 					{item}
@@ -1584,7 +1733,11 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 			selectedModelId = defaultId
 			selectedModelInfo = models[defaultId]
 		}
-		return { selectedProvider: provider, selectedModelId, selectedModelInfo }
+		return {
+			selectedProvider: provider,
+			selectedModelId,
+			selectedModelInfo,
+		}
 	}
 	switch (provider) {
 		case "anthropic":

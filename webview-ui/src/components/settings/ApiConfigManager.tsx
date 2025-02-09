@@ -93,11 +93,20 @@ const ApiConfigManager = ({
 				}}>
 				<label htmlFor="config-profile">
 					<span style={{ fontWeight: "500" }}>
-						{String(t("settings.provider.configProfile.title"))}{" "}
+						{String(t("settings.provider.configProfile.title"))}
+						{", "}
+						{String(t("chat.welcome.readMore"))}
+						{":"}
 						<VSCodeLink
-							href="https://github.com/coolcline/coolcline/blob/main/README.md"
+							href="https://github.com/coolcline/coolcline/blob/main/README_en.md"
 							style={{ display: "inline" }}>
-							README
+							en
+						</VSCodeLink>
+						{"|"}
+						<VSCodeLink
+							href="https://gitee.com/coolcline/coolcline/blob/main/README.md"
+							style={{ display: "inline" }}>
+							简体中文
 						</VSCodeLink>
 					</span>
 				</label>
