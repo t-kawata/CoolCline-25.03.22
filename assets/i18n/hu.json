@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "Szerkesztés...",
 			"separator": "────",
-			"newChat": "Új beszélgetés"
+			"newChat": "Új beszélgetés",
+			"cancel": "Mégse",
+			"retry": "Újra",
+			"startNewTask": "Új feladat indítása",
+			"proceedAnyways": "Folytatás mindenképp",
+			"save": "Mentés",
+			"reject": "Elutasítás",
+			"approve": "Jóváhagyás",
+			"runCommand": "Parancs futtatása",
+			"proceedWhileRunning": "Folytatás futás közben",
+			"resumeTask": "Feladat folytatása",
+			"terminate": "Megszakítás"
 		},
 		"announcement": {
 			"title": "🎉 Bemutatjuk a CoolCline-t",

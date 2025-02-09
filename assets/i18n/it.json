@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "Modifica...",
 			"separator": "────",
-			"newChat": "Nuova chat"
+			"newChat": "Nuova chat",
+			"cancel": "Annulla",
+			"retry": "Riprova",
+			"startNewTask": "Inizia nuovo compito",
+			"proceedAnyways": "Procedi comunque",
+			"save": "Salva",
+			"reject": "Rifiuta",
+			"approve": "Approva",
+			"runCommand": "Esegui comando",
+			"proceedWhileRunning": "Procedi durante l'esecuzione",
+			"resumeTask": "Riprendi compito",
+			"terminate": "Termina"
 		},
 		"announcement": {
 			"title": "🎉 Presentazione di CoolCline",

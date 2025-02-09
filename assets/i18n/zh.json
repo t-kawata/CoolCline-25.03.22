@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "编辑...",
 			"separator": "────",
-			"newChat": "新建聊天"
+			"newChat": "新建聊天",
+			"cancel": "取消",
+			"retry": "重试",
+			"startNewTask": "开始新任务",
+			"proceedAnyways": "仍然继续",
+			"save": "保存",
+			"reject": "拒绝",
+			"approve": "批准",
+			"runCommand": "运行命令",
+			"proceedWhileRunning": "继续运行",
+			"resumeTask": "恢复任务",
+			"terminate": "终止"
 		},
 		"announcement": {
 			"title": "🎉 隆重推出 CoolCline",

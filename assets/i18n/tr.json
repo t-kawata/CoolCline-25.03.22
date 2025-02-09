@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "Düzenle...",
 			"separator": "────",
-			"newChat": "Yeni sohbet"
+			"newChat": "Yeni sohbet",
+			"cancel": "İptal",
+			"retry": "Yeniden Dene",
+			"startNewTask": "Yeni Görev Başlat",
+			"proceedAnyways": "Yine de Devam Et",
+			"save": "Kaydet",
+			"reject": "Reddet",
+			"approve": "Onayla",
+			"runCommand": "Komutu Çalıştır",
+			"proceedWhileRunning": "Çalışırken Devam Et",
+			"resumeTask": "Görevi Sürdür",
+			"terminate": "Sonlandır"
 		},
 		"announcement": {
 			"title": "🎉 CoolCline'ı Tanıtıyoruz",

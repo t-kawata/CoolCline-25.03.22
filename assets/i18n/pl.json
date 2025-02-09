@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "Edytuj...",
 			"separator": "────",
-			"newChat": "Nowy czat"
+			"newChat": "Nowy czat",
+			"cancel": "Anuluj",
+			"retry": "Ponów",
+			"startNewTask": "Rozpocznij nowe zadanie",
+			"proceedAnyways": "Kontynuuj mimo to",
+			"save": "Zapisz",
+			"reject": "Odrzuć",
+			"approve": "Zatwierdź",
+			"runCommand": "Wykonaj polecenie",
+			"proceedWhileRunning": "Kontynuuj podczas wykonywania",
+			"resumeTask": "Wznów zadanie",
+			"terminate": "Zakończ"
 		},
 		"announcement": {
 			"title": "🎉 Przedstawiamy CoolCline",

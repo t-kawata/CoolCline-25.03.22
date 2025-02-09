@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "編集...",
 			"separator": "────",
-			"newChat": "新規チャット"
+			"newChat": "新規チャット",
+			"cancel": "キャンセル",
+			"retry": "再試行",
+			"startNewTask": "新しいタスクを開始",
+			"proceedAnyways": "とにかく続行",
+			"save": "保存",
+			"reject": "拒否",
+			"approve": "承認",
+			"runCommand": "コマンドを実行",
+			"proceedWhileRunning": "実行中に続行",
+			"resumeTask": "タスクを再開",
+			"terminate": "終了"
 		},
 		"announcement": {
 			"title": "🎉 CoolClineの紹介",

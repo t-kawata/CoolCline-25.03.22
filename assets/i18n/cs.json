@@ -91,7 +91,18 @@
 		"actions": {
 			"edit": "Upravit...",
 			"separator": "────",
-			"newChat": "Nový chat"
+			"newChat": "Nový chat",
+			"cancel": "Zrušit",
+			"retry": "Opakovat",
+			"startNewTask": "Začít nový úkol",
+			"proceedAnyways": "Pokračovat přesto",
+			"save": "Uložit",
+			"reject": "Odmítnout",
+			"approve": "Schválit",
+			"runCommand": "Spustit příkaz",
+			"proceedWhileRunning": "Pokračovat během běhu",
+			"resumeTask": "Obnovit úkol",
+			"terminate": "Ukončit"
 		},
 		"announcement": {
 			"title": "🎉 Představujeme CoolCline",

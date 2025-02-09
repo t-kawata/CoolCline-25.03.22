@@ -110,16 +110,16 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(true)
 							setCoolClineAsk("api_req_failed")
 							setEnableButtons(true)
-							setPrimaryButtonText("Retry")
-							setSecondaryButtonText("Start New Task")
+							setPrimaryButtonText(t("chat.actions.retry"))
+							setSecondaryButtonText(t("chat.actions.startNewTask"))
 							break
 						case "mistake_limit_reached":
 							playSound("progress_loop")
 							setTextAreaDisabled(false)
 							setCoolClineAsk("mistake_limit_reached")
 							setEnableButtons(true)
-							setPrimaryButtonText("Proceed Anyways")
-							setSecondaryButtonText("Start New Task")
+							setPrimaryButtonText(t("chat.actions.proceedAnyways"))
+							setSecondaryButtonText(t("chat.actions.startNewTask"))
 							break
 						case "followup":
 							setTextAreaDisabled(isPartial)
@@ -140,12 +140,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								case "editedExistingFile":
 								case "appliedDiff":
 								case "newFileCreated":
-									setPrimaryButtonText("Save")
-									setSecondaryButtonText("Reject")
+									setPrimaryButtonText(t("chat.actions.save"))
+									setSecondaryButtonText(t("chat.actions.reject"))
 									break
 								default:
-									setPrimaryButtonText("Approve")
-									setSecondaryButtonText("Reject")
+									setPrimaryButtonText(t("chat.actions.approve"))
+									setSecondaryButtonText(t("chat.actions.reject"))
 									break
 							}
 							break
@@ -156,8 +156,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setCoolClineAsk("browser_action_launch")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Approve")
-							setSecondaryButtonText("Reject")
+							setPrimaryButtonText(t("chat.actions.approve"))
+							setSecondaryButtonText(t("chat.actions.reject"))
 							break
 						case "command":
 							if (!isAutoApproved(lastMessage)) {
@@ -166,22 +166,22 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setCoolClineAsk("command")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Run Command")
-							setSecondaryButtonText("Reject")
+							setPrimaryButtonText(t("chat.actions.runCommand"))
+							setSecondaryButtonText(t("chat.actions.reject"))
 							break
 						case "command_output":
 							setTextAreaDisabled(false)
 							setCoolClineAsk("command_output")
 							setEnableButtons(true)
-							setPrimaryButtonText("Proceed While Running")
+							setPrimaryButtonText(t("chat.actions.proceedWhileRunning"))
 							setSecondaryButtonText(undefined)
 							break
 						case "use_mcp_server":
 							setTextAreaDisabled(isPartial)
 							setCoolClineAsk("use_mcp_server")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Approve")
-							setSecondaryButtonText("Reject")
+							setPrimaryButtonText(t("chat.actions.approve"))
+							setSecondaryButtonText(t("chat.actions.reject"))
 							break
 						case "completion_result":
 							// extension waiting for feedback. but we can just present a new task button
@@ -189,22 +189,22 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setCoolClineAsk("completion_result")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Start New Task")
+							setPrimaryButtonText(t("chat.actions.startNewTask"))
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
 							setTextAreaDisabled(false)
 							setCoolClineAsk("resume_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Resume Task")
-							setSecondaryButtonText("Terminate")
+							setPrimaryButtonText(t("chat.actions.resumeTask"))
+							setSecondaryButtonText(t("chat.actions.terminate"))
 							setDidClickCancel(false) // special case where we reset the cancel button state
 							break
 						case "resume_completed_task":
 							setTextAreaDisabled(false)
 							setCoolClineAsk("resume_completed_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Start New Task")
+							setPrimaryButtonText(t("chat.actions.startNewTask"))
 							setSecondaryButtonText(undefined)
 							setDidClickCancel(false)
 							break
@@ -1132,7 +1132,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 										marginLeft: isStreaming ? 0 : "6px",
 									}}
 									onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
-									{isStreaming ? "Cancel" : secondaryButtonText}
+									{isStreaming ? t("chat.actions.cancel") : secondaryButtonText}
 								</VSCodeButton>
 							)}
 						</div>
