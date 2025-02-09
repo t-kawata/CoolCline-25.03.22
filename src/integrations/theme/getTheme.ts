@@ -141,5 +141,10 @@ export function mergeJson(
 }
 
 function getExtensionUri(): vscode.Uri {
-	return vscode.extensions.getExtension("rooveterinaryinc.coolcline")!.extensionUri
+	// ${publisher}.${name}，${publisher} 是发布者，${name} 是扩展名，注意是要用 package.json 中的 publisher 和 name，区分大小写
+	const extension = vscode.extensions.getExtension("CoolCline.coolcline")
+	if (!extension) {
+		throw new Error("Extension not found. Please ensure the extension is properly loaded.")
+	}
+	return extension.extensionUri
 }

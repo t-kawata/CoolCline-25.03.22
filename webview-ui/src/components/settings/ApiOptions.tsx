@@ -1429,13 +1429,15 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 }
 
 export function getGlamaAuthUrl(uriScheme?: string) {
-	const callbackUrl = `${uriScheme || "vscode"}://rooveterinaryinc.coolcline/glama`
+	// ${publisher}.${name}，${publisher} 是发布者，${name} 是扩展名，注意是要用 package.json 中的 publisher 和 name，区分大小写
+	const callbackUrl = `${uriScheme || "vscode"}://CoolCline.coolcline/glama`
 
 	return `https://glama.ai/oauth/authorize?callback_url=${encodeURIComponent(callbackUrl)}`
 }
 
 export function getOpenRouterAuthUrl(uriScheme?: string) {
-	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://rooveterinaryinc.coolcline/openrouter`
+	// ${publisher}.${name}，${publisher} 是发布者，${name} 是扩展名，注意是要用 package.json 中的 publisher 和 name，区分大小写
+	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://CoolCline.coolcline/openrouter`
 }
 
 export const formatPrice = (price: number) => {

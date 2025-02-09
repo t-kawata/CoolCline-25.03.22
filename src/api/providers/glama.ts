@@ -89,7 +89,8 @@ export class GlamaHandler implements ApiHandler, SingleCompletionHandler {
 						labels: [
 							{
 								key: "app",
-								value: "vscode.rooveterinaryinc.coolcline",
+								// ${publisher}.${name}，${publisher} 是发布者，${name} 是扩展名，注意是要用 package.json 中的 publisher 和 name，区分大小写
+								value: "vscode.CoolCline.coolcline",
 							},
 						],
 					}),

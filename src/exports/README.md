@@ -7,7 +7,8 @@ The CoolCline extension exposes an API that can be used by other extensions. To 
 3. Get access to the API with the following code:
 
     ```ts
-    const coolclineExtension = vscode.extensions.getExtension<CoolClineAPI>("rooveterinaryinc.coolcline")
+    // ${publisher}.${name}，${publisher} 是发布者，${name} 是扩展名，注意是要用 package.json 中的 publisher 和 name，区分大小写
+    const coolclineExtension = vscode.extensions.getExtension<CoolClineAPI>("CoolCline.coolcline")
 
     if (!coolclineExtension?.isActive) {
     	throw new Error("CoolCline extension is not activated")
@@ -44,11 +45,11 @@ The CoolCline extension exposes an API that can be used by other extensions. To 
     }
     ```
 
-    **Note:** To ensure that the `rooveterinaryinc.coolcline` extension is activated before your extension, add it to the `extensionDependencies` in your `package.json`:
+    **Note:** To ensure that the `CoolCline.coolcline` extension is activated before your extension, add it to the `extensionDependencies` in your `package.json`:
 
     ```json
     "extensionDependencies": [
-        "rooveterinaryinc.coolcline"
+        "CoolCline.coolcline"
     ]
     ```
 
