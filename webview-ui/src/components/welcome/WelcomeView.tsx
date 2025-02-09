@@ -6,16 +6,24 @@ import { vscode } from "../../utils/vscode"
 import ApiOptions from "../settings/ApiOptions"
 import { useTranslation } from "react-i18next"
 import LanguageSelector from "../common/LanguageSelector"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 
 const WelcomeView = () => {
 	const { apiConfiguration } = useExtensionState()
 	const { t } = useTranslation()
 
 	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
+	const [showErrorDialog, setShowErrorDialog] = useState(false)
 
 	const disableLetsGoButton = (apiErrorMessage !== null && apiErrorMessage !== undefined) || !apiConfiguration?.apiKey
 
 	const handleSubmit = () => {
+		const errorMsg = validateApiConfiguration(apiConfiguration)
+		if (errorMsg) {
+			setApiErrorMessage(errorMsg)
+			setShowErrorDialog(true)
+			return
+		}
 		vscode.postMessage({ type: "apiConfiguration", apiConfiguration })
 	}
 
@@ -33,7 +41,16 @@ const WelcomeView = () => {
 				bottom: 0,
 				padding: "0 20px",
 			}}>
-			<h2>{String(t("welcome.title"))}</h2>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					padding: "10px 17px 10px 20px",
+				}}>
+				<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>{String(t("welcome.title"))}</h3>
+				<VSCodeButton onClick={handleSubmit}>{String(t("welcome.letsGo"))}</VSCodeButton>
+			</div>
 			<p>
 				{String(t("welcome.description"))} {String(t("welcome.readmeLink"))}
 				{":"}
@@ -56,10 +73,21 @@ const WelcomeView = () => {
 
 			<div style={{ marginTop: "10px" }}>
 				<ApiOptions />
-				<VSCodeButton onClick={handleSubmit} disabled={disableLetsGoButton} style={{ marginTop: "3px" }}>
-					{String(t("welcome.letsGo"))}
-				</VSCodeButton>
 			</div>
+
+			<Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>{String(t("common.status.error"))}</DialogTitle>
+					</DialogHeader>
+					<div className="text-destructive">{apiErrorMessage}</div>
+					<div className="flex justify-end mt-4">
+						<VSCodeButton onClick={() => setShowErrorDialog(false)}>
+							{String(t("common.cancel"))}
+						</VSCodeButton>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }
