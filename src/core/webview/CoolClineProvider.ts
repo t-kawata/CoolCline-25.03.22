@@ -14,7 +14,7 @@ import { getTheme } from "../../integrations/theme/getTheme"
 import { getDiffStrategy } from "../diff/DiffStrategy"
 import WorkspaceTracker from "../../integrations/workspace/WorkspaceTracker"
 import { McpHub } from "../../services/mcp/McpHub"
-import { ApiConfiguration, ApiProvider, ModelInfo } from "../../shared/api"
+import { ApiConfiguration, llmProvider, ModelInfo } from "../../shared/api"
 import { findLast } from "../../shared/array"
 import { ApiConfigMeta, ExtensionMessage } from "../../shared/ExtensionMessage"
 import { HistoryItem } from "../../shared/HistoryItem"
@@ -58,7 +58,7 @@ type SecretKey =
 	| "mistralApiKey"
 	| "unboundApiKey"
 type GlobalStateKey =
-	| "apiProvider"
+	| "llmProvider"
 	| "apiModelId"
 	| "glamaModelId"
 	| "glamaModelInfo"
@@ -573,7 +573,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							}
 						})
 						// gui relies on model info to be up-to-date to provide the most accurate pricing, so we need to fetch the latest details on launch.
-						// we do this for all users since many users switch between api providers and if they were to switch back to openrouter it would be showing outdated model info if we hadn't retrieved the latest at this point
+						// we do this for all users since many users switch between llm providers and if they were to switch back to openrouter it would be showing outdated model info if we hadn't retrieved the latest at this point
 						// (see normalizeApiConfiguration > openrouter)
 						this.refreshOpenRouterModels().then(async (openRouterModels) => {
 							if (openRouterModels) {
@@ -622,7 +622,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 											listApiConfig[0].name ?? "default",
 											apiConfiguration,
 										)
-										listApiConfig[0].apiProvider = apiConfiguration.apiProvider
+										listApiConfig[0].llmProvider = apiConfiguration.llmProvider
 									}
 								}
 
@@ -1106,7 +1106,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 									const config = listApiConfigMeta?.find((c) => c.id === enhancementApiConfigId)
 									if (config?.name) {
 										const loadedConfig = await this.configManager.loadConfig(config.name)
-										if (loadedConfig.apiProvider) {
+										if (loadedConfig.llmProvider) {
 											configToUse = loadedConfig
 										}
 									}
@@ -1452,7 +1452,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		}
 
 		const {
-			apiProvider,
+			llmProvider,
 			apiModelId,
 			apiKey,
 			glamaModelId,
@@ -1492,7 +1492,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			unboundApiKey,
 			unboundModelId,
 		} = apiConfiguration
-		await this.updateGlobalState("apiProvider", apiProvider)
+		await this.updateGlobalState("llmProvider", llmProvider)
 		await this.updateGlobalState("apiModelId", apiModelId)
 		await this.storeSecret("apiKey", apiKey)
 		await this.updateGlobalState("glamaModelId", glamaModelId)
@@ -1658,12 +1658,12 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			throw error
 		}
 
-		const openrouter: ApiProvider = "openrouter"
-		await this.updateGlobalState("apiProvider", openrouter)
+		const openrouter: llmProvider = "openrouter"
+		await this.updateGlobalState("llmProvider", openrouter)
 		await this.storeSecret("openRouterApiKey", apiKey)
 		await this.postStateToWebview()
 		if (this.coolcline) {
-			this.coolcline.api = buildApiHandler({ apiProvider: openrouter, openRouterApiKey: apiKey })
+			this.coolcline.api = buildApiHandler({ llmProvider: openrouter, openRouterApiKey: apiKey })
 		}
 		// await this.postMessageToWebview({ type: "action", action: "settingsButtonClicked" }) // bad ux if user is on welcome
 	}
@@ -1690,13 +1690,13 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			throw error
 		}
 
-		const glama: ApiProvider = "glama"
-		await this.updateGlobalState("apiProvider", glama)
+		const glama: llmProvider = "glama"
+		await this.updateGlobalState("llmProvider", glama)
 		await this.storeSecret("glamaApiKey", apiKey)
 		await this.postStateToWebview()
 		if (this.coolcline) {
 			this.coolcline.api = buildApiHandler({
-				apiProvider: glama,
+				llmProvider: glama,
 				glamaApiKey: apiKey,
 			})
 		}
@@ -2133,7 +2133,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 	async getState() {
 		const [
-			storedApiProvider,
+			storedllmProvider,
 			apiModelId,
 			apiKey,
 			glamaApiKey,
@@ -2207,7 +2207,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			unboundApiKey,
 			unboundModelId,
 		] = await Promise.all([
-			this.getGlobalState("apiProvider") as Promise<ApiProvider | undefined>,
+			this.getGlobalState("llmProvider") as Promise<llmProvider | undefined>,
 			this.getGlobalState("apiModelId") as Promise<string | undefined>,
 			this.getSecret("apiKey") as Promise<string | undefined>,
 			this.getSecret("glamaApiKey") as Promise<string | undefined>,
@@ -2282,23 +2282,23 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			this.getGlobalState("unboundModelId") as Promise<string | undefined>,
 		])
 
-		let apiProvider: ApiProvider
-		if (storedApiProvider) {
-			apiProvider = storedApiProvider
+		let llmProvider: llmProvider
+		if (storedllmProvider) {
+			llmProvider = storedllmProvider
 		} else {
-			// Either new user or legacy user that doesn't have the apiProvider stored in state
-			// (If they're using OpenRouter or Bedrock, then apiProvider state will exist)
+			// Either new user or legacy user that doesn't have the llmProvider stored in state
+			// (If they're using OpenRouter or Bedrock, then llmProvider state will exist)
 			if (apiKey) {
-				apiProvider = "anthropic"
+				llmProvider = "anthropic"
 			} else {
 				// New users should default to openrouter
-				apiProvider = "openrouter"
+				llmProvider = "openrouter"
 			}
 		}
 
 		return {
 			apiConfiguration: {
-				apiProvider,
+				llmProvider,
 				apiModelId,
 				apiKey,
 				glamaApiKey,

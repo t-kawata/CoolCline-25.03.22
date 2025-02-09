@@ -17,7 +17,7 @@ suite("CoolCline Task", () => {
 
 		const api: CoolClineAPI = await extension.activate()
 		const provider = api.sidebarProvider as CoolClineProvider
-		await provider.updateGlobalState("apiProvider", "openrouter")
+		await provider.updateGlobalState("llmProvider", "openrouter")
 		await provider.updateGlobalState("openRouterModelId", "anthropic/claude-3.5-sonnet")
 		await provider.storeSecret("openRouterApiKey", process.env.OPENROUTER_API_KEY || "sk-or-v1-fake-api-key")
 

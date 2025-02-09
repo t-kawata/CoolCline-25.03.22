@@ -70,7 +70,7 @@ export class ConfigManager {
 			return Object.entries(config.apiConfigs).map(([name, apiConfig]) => ({
 				name,
 				id: apiConfig.id || "",
-				apiProvider: apiConfig.apiProvider,
+				llmProvider: apiConfig.llmProvider,
 			}))
 		} catch (error) {
 			throw new Error(`Failed to list configs: ${error}`)

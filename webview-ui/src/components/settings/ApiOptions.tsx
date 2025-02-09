@@ -133,14 +133,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 		<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
 			<div className="dropdown-container">
 				<label htmlFor="api-provider">
-					<span style={{ fontWeight: 500 }}>{t("settings.provider.apiProvider").toString()}</span>
+					<span style={{ fontWeight: 500 }}>{t("settings.provider.llmProvider").toString()}</span>
 				</label>
 				<Dropdown
 					id="api-provider"
 					value={selectedProvider}
 					onChange={(value: unknown) => {
 						handleInputChange(
-							"apiProvider",
+							"llmProvider",
 							true,
 						)({
 							target: {
@@ -1720,7 +1720,7 @@ const ModelInfoSupportsItem = ({
 )
 
 export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
-	const provider = apiConfiguration?.apiProvider || "anthropic"
+	const provider = apiConfiguration?.llmProvider || "anthropic"
 	const modelId = apiConfiguration?.apiModelId
 
 	const getProviderData = (models: Record<string, ModelInfo>, defaultId: string) => {

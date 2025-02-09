@@ -345,7 +345,7 @@ describe("CoolClineProvider", () => {
 			taskHistory: [],
 			shouldShowAnnouncement: false,
 			apiConfiguration: {
-				apiProvider: "openrouter",
+				llmProvider: "openrouter",
 			},
 			customInstructions: undefined,
 			alwaysAllowReadOnly: false,
@@ -406,7 +406,7 @@ describe("CoolClineProvider", () => {
 		const state = await provider.getState()
 
 		expect(state).toHaveProperty("apiConfiguration")
-		expect(state.apiConfiguration).toHaveProperty("apiProvider")
+		expect(state.apiConfiguration).toHaveProperty("llmProvider")
 		expect(state).toHaveProperty("customInstructions")
 		expect(state).toHaveProperty("alwaysAllowReadOnly")
 		expect(state).toHaveProperty("alwaysAllowWrite")
@@ -513,8 +513,8 @@ describe("CoolClineProvider", () => {
 		// Mock ConfigManager methods
 		provider.configManager = {
 			getModeConfigId: jest.fn().mockResolvedValue("test-id"),
-			listConfig: jest.fn().mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
-			loadConfig: jest.fn().mockResolvedValue({ apiProvider: "anthropic" }),
+			listConfig: jest.fn().mockResolvedValue([{ name: "test-config", id: "test-id", llmProvider: "anthropic" }]),
+			loadConfig: jest.fn().mockResolvedValue({ llmProvider: "anthropic" }),
 			setModeConfig: jest.fn(),
 		} as any
 
@@ -536,7 +536,7 @@ describe("CoolClineProvider", () => {
 			getModeConfigId: jest.fn().mockResolvedValue(undefined),
 			listConfig: jest
 				.fn()
-				.mockResolvedValue([{ name: "current-config", id: "current-id", apiProvider: "anthropic" }]),
+				.mockResolvedValue([{ name: "current-config", id: "current-id", llmProvider: "anthropic" }]),
 			setModeConfig: jest.fn(),
 		} as any
 
@@ -560,8 +560,8 @@ describe("CoolClineProvider", () => {
 		const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 
 		provider.configManager = {
-			loadConfig: jest.fn().mockResolvedValue({ apiProvider: "anthropic", id: "new-id" }),
-			listConfig: jest.fn().mockResolvedValue([{ name: "new-config", id: "new-id", apiProvider: "anthropic" }]),
+			loadConfig: jest.fn().mockResolvedValue({ llmProvider: "anthropic", id: "new-id" }),
+			listConfig: jest.fn().mockResolvedValue([{ name: "new-config", id: "new-id", llmProvider: "anthropic" }]),
 			setModeConfig: jest.fn(),
 			getModeConfigId: jest.fn().mockResolvedValue(undefined),
 		} as any
@@ -651,7 +651,7 @@ describe("CoolClineProvider", () => {
 		// Setup mock state
 		const modeCustomInstructions = "Code mode instructions"
 		const mockApiConfig = {
-			apiProvider: "openrouter",
+			llmProvider: "openrouter",
 			openRouterModelInfo: { supportsComputerUse: true },
 		}
 
@@ -748,14 +748,14 @@ describe("CoolClineProvider", () => {
 		const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 
 		provider.configManager = {
-			listConfig: jest.fn().mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
+			listConfig: jest.fn().mockResolvedValue([{ name: "test-config", id: "test-id", llmProvider: "anthropic" }]),
 			setModeConfig: jest.fn(),
 		} as any
 
 		// Update API configuration
 		await messageHandler({
 			type: "apiConfiguration",
-			apiConfiguration: { apiProvider: "anthropic" },
+			apiConfiguration: { llmProvider: "anthropic" },
 		})
 
 		// Should save config as default for current mode
@@ -920,7 +920,7 @@ describe("CoolClineProvider", () => {
 			// Mock getState to return mcpEnabled: true
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
-					apiProvider: "openrouter" as const,
+					llmProvider: "openrouter" as const,
 					openRouterModelInfo: {
 						supportsComputerUse: true,
 						supportsPromptCache: false,
@@ -953,7 +953,7 @@ describe("CoolClineProvider", () => {
 			// Mock getState to return mcpEnabled: false
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
-					apiProvider: "openrouter" as const,
+					llmProvider: "openrouter" as const,
 					openRouterModelInfo: {
 						supportsComputerUse: true,
 						supportsPromptCache: false,
@@ -1025,7 +1025,7 @@ describe("CoolClineProvider", () => {
 			// Mock getState to return experimentalDiffStrategy, diffEnabled and fuzzyMatchThreshold
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 					apiModelId: "test-model",
 					openRouterModelInfo: { supportsComputerUse: true },
 				},
@@ -1078,7 +1078,7 @@ describe("CoolClineProvider", () => {
 			// Mock getState to return diffEnabled: false
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 					apiModelId: "test-model",
 					openRouterModelInfo: { supportsComputerUse: true },
 				},
@@ -1127,7 +1127,7 @@ describe("CoolClineProvider", () => {
 			// Mock getState to return architect mode instructions
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 					openRouterModelInfo: { supportsComputerUse: true },
 				},
 				customModePrompts: {
@@ -1173,8 +1173,8 @@ describe("CoolClineProvider", () => {
 				getModeConfigId: jest.fn().mockResolvedValue("saved-config-id"),
 				listConfig: jest
 					.fn()
-					.mockResolvedValue([{ name: "saved-config", id: "saved-config-id", apiProvider: "anthropic" }]),
-				loadConfig: jest.fn().mockResolvedValue({ apiProvider: "anthropic" }),
+					.mockResolvedValue([{ name: "saved-config", id: "saved-config-id", llmProvider: "anthropic" }]),
+				loadConfig: jest.fn().mockResolvedValue({ llmProvider: "anthropic" }),
 				setModeConfig: jest.fn(),
 			} as any
 
@@ -1199,7 +1199,7 @@ describe("CoolClineProvider", () => {
 				getModeConfigId: jest.fn().mockResolvedValue(undefined),
 				listConfig: jest
 					.fn()
-					.mockResolvedValue([{ name: "current-config", id: "current-id", apiProvider: "anthropic" }]),
+					.mockResolvedValue([{ name: "current-config", id: "current-id", llmProvider: "anthropic" }]),
 				setModeConfig: jest.fn(),
 			} as any
 
@@ -1301,7 +1301,7 @@ describe("CoolClineProvider", () => {
 				setModeConfig: jest.fn().mockRejectedValue(new Error("Failed to update mode config")),
 				listConfig: jest
 					.fn()
-					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
+					.mockResolvedValue([{ name: "test-config", id: "test-id", llmProvider: "anthropic" }]),
 			} as any
 
 			// Mock getState to provide necessary data
@@ -1315,7 +1315,7 @@ describe("CoolClineProvider", () => {
 				type: "upsertApiConfiguration",
 				text: "test-config",
 				apiConfiguration: {
-					apiProvider: "anthropic",
+					llmProvider: "anthropic",
 					apiKey: "test-key",
 				},
 			})
@@ -1337,11 +1337,11 @@ describe("CoolClineProvider", () => {
 				saveConfig: jest.fn().mockResolvedValue(undefined),
 				listConfig: jest
 					.fn()
-					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
+					.mockResolvedValue([{ name: "test-config", id: "test-id", llmProvider: "anthropic" }]),
 			} as any
 
 			const testApiConfig = {
-				apiProvider: "anthropic" as const,
+				llmProvider: "anthropic" as const,
 				apiKey: "test-key",
 			}
 
@@ -1357,7 +1357,7 @@ describe("CoolClineProvider", () => {
 
 			// Verify state updates
 			expect(mockContext.globalState.update).toHaveBeenCalledWith("listApiConfigMeta", [
-				{ name: "test-config", id: "test-id", apiProvider: "anthropic" },
+				{ name: "test-config", id: "test-id", llmProvider: "anthropic" },
 			])
 			expect(mockContext.globalState.update).toHaveBeenCalledWith("currentApiConfigName", "test-config")
 
@@ -1381,7 +1381,7 @@ describe("CoolClineProvider", () => {
 				saveConfig: jest.fn().mockResolvedValue(undefined),
 				listConfig: jest
 					.fn()
-					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
+					.mockResolvedValue([{ name: "test-config", id: "test-id", llmProvider: "anthropic" }]),
 			} as any
 
 			// Setup mock CoolCline instance
@@ -1393,7 +1393,7 @@ describe("CoolClineProvider", () => {
 			provider.coolcline = mockCoolCline
 
 			const testApiConfig = {
-				apiProvider: "anthropic" as const,
+				llmProvider: "anthropic" as const,
 				apiKey: "test-key",
 			}
 
@@ -1412,7 +1412,7 @@ describe("CoolClineProvider", () => {
 
 			// Verify state was still updated
 			expect(mockContext.globalState.update).toHaveBeenCalledWith("listApiConfigMeta", [
-				{ name: "test-config", id: "test-id", apiProvider: "anthropic" },
+				{ name: "test-config", id: "test-id", llmProvider: "anthropic" },
 			])
 			expect(mockContext.globalState.update).toHaveBeenCalledWith("currentApiConfigName", "test-config")
 		})

@@ -578,7 +578,7 @@ export const ChatRowContent = ({
 										)}
 									</p>
 
-									{/* {apiProvider === "" && (
+									{/* {llmProvider === "" && (
 											<div
 												style={{
 													display: "flex",

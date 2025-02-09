@@ -42,7 +42,7 @@ describe("ChatTextArea", () => {
 			filePaths: [],
 			openedTabs: [],
 			apiConfiguration: {
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 			},
 		})
 	})
@@ -63,7 +63,7 @@ describe("ChatTextArea", () => {
 	describe("handleEnhancePrompt", () => {
 		it("should send message with correct configuration when clicked", () => {
 			const apiConfiguration = {
-				apiProvider: "openrouter",
+				llmProvider: "openrouter",
 				apiKey: "test-key",
 			}
 
@@ -89,7 +89,7 @@ describe("ChatTextArea", () => {
 				filePaths: [],
 				openedTabs: [],
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 				},
 			})
 
@@ -106,7 +106,7 @@ describe("ChatTextArea", () => {
 				filePaths: [],
 				openedTabs: [],
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 				},
 			})
 
@@ -129,7 +129,7 @@ describe("ChatTextArea", () => {
 				filePaths: [],
 				openedTabs: [],
 				apiConfiguration: {
-					apiProvider: "openrouter",
+					llmProvider: "openrouter",
 					newSetting: "test",
 				},
 			})

@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
 
-export type ApiProvider =
+export type llmProvider =
 	| "anthropic"
 	| "glama"
 	| "openrouter"
@@ -63,7 +63,7 @@ export interface ApiHandlerOptions {
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
-	apiProvider?: ApiProvider
+	llmProvider?: llmProvider
 	id?: string // stable unique identifier
 }
 

@@ -30,7 +30,7 @@ describe("checkExistKey", () => {
 	it("should return true when only non-key fields are undefined", () => {
 		const config: ApiConfiguration = {
 			apiKey: "test-key",
-			apiProvider: undefined,
+			llmProvider: undefined,
 			anthropicBaseUrl: undefined,
 		}
 		expect(checkExistKey(config)).toBe(true)

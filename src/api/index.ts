@@ -26,8 +26,8 @@ export interface ApiHandler {
 }
 
 export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
-	const { apiProvider, ...options } = configuration
-	switch (apiProvider) {
+	const { llmProvider, ...options } = configuration
+	switch (llmProvider) {
 		case "anthropic":
 			return new AnthropicHandler(options)
 		case "glama":

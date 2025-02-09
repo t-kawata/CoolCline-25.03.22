@@ -9,7 +9,7 @@ export async function singleCompletionHandler(apiConfiguration: ApiConfiguration
 	if (!promptText) {
 		throw new Error("No prompt text provided")
 	}
-	if (!apiConfiguration || !apiConfiguration.apiProvider) {
+	if (!apiConfiguration || !apiConfiguration.llmProvider) {
 		throw new Error("No valid API configuration provided")
 	}
 
@@ -17,7 +17,7 @@ export async function singleCompletionHandler(apiConfiguration: ApiConfiguration
 
 	// Check if handler supports single completions
 	if (!("completePrompt" in handler)) {
-		throw new Error("The selected API provider does not support prompt enhancement")
+		throw new Error("The selected LLM provider does not support prompt enhancement")
 	}
 
 	return (handler as SingleCompletionHandler).completePrompt(promptText)

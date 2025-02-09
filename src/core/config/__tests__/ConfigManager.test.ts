@@ -60,7 +60,7 @@ describe("ConfigManager", () => {
 							config: {},
 						},
 						test: {
-							apiProvider: "anthropic",
+							llmProvider: "anthropic",
 						},
 					},
 				}),
@@ -93,7 +93,7 @@ describe("ConfigManager", () => {
 						id: "default",
 					},
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						id: "test-id",
 					},
 				},
@@ -108,8 +108,8 @@ describe("ConfigManager", () => {
 
 			const configs = await configManager.listConfig()
 			expect(configs).toEqual([
-				{ name: "default", id: "default", apiProvider: undefined },
-				{ name: "test", id: "test-id", apiProvider: "anthropic" },
+				{ name: "default", id: "default", llmProvider: undefined },
+				{ name: "test", id: "test-id", llmProvider: "anthropic" },
 			])
 		})
 
@@ -156,7 +156,7 @@ describe("ConfigManager", () => {
 			)
 
 			const newConfig: ApiConfiguration = {
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 				apiKey: "test-key",
 			}
 
@@ -193,7 +193,7 @@ describe("ConfigManager", () => {
 				currentApiConfigName: "default",
 				apiConfigs: {
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						apiKey: "old-key",
 						id: "test-id",
 					},
@@ -203,7 +203,7 @@ describe("ConfigManager", () => {
 			mockSecrets.get.mockResolvedValue(JSON.stringify(existingConfig))
 
 			const updatedConfig: ApiConfiguration = {
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 				apiKey: "new-key",
 			}
 
@@ -213,7 +213,7 @@ describe("ConfigManager", () => {
 				currentApiConfigName: "default",
 				apiConfigs: {
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						apiKey: "new-key",
 						id: "test-id",
 					},
@@ -250,7 +250,7 @@ describe("ConfigManager", () => {
 						id: "default",
 					},
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						id: "test-id",
 					},
 				},
@@ -302,7 +302,7 @@ describe("ConfigManager", () => {
 				currentApiConfigName: "default",
 				apiConfigs: {
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						apiKey: "test-key",
 						id: "test-id",
 					},
@@ -314,7 +314,7 @@ describe("ConfigManager", () => {
 			const config = await configManager.loadConfig("test")
 
 			expect(config).toEqual({
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 				apiKey: "test-key",
 				id: "test-id",
 			})
@@ -323,7 +323,7 @@ describe("ConfigManager", () => {
 			const storedConfig = JSON.parse(mockSecrets.store.mock.calls[0][1])
 			expect(storedConfig.currentApiConfigName).toBe("test")
 			expect(storedConfig.apiConfigs.test).toEqual({
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 				apiKey: "test-key",
 				id: "test-id",
 			})
@@ -352,7 +352,7 @@ describe("ConfigManager", () => {
 					apiConfigs: {
 						test: {
 							config: {
-								apiProvider: "anthropic",
+								llmProvider: "anthropic",
 							},
 							id: "test-id",
 						},
@@ -376,7 +376,7 @@ describe("ConfigManager", () => {
 						id: "default",
 					},
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						id: "test-id",
 					},
 				},
@@ -391,7 +391,7 @@ describe("ConfigManager", () => {
 			expect(storedConfig.currentApiConfigName).toBe("test")
 			expect(storedConfig.apiConfigs.default.id).toBe("default")
 			expect(storedConfig.apiConfigs.test).toEqual({
-				apiProvider: "anthropic",
+				llmProvider: "anthropic",
 				id: "test-id",
 			})
 		})
@@ -414,7 +414,7 @@ describe("ConfigManager", () => {
 				JSON.stringify({
 					currentApiConfigName: "default",
 					apiConfigs: {
-						test: { apiProvider: "anthropic" },
+						test: { llmProvider: "anthropic" },
 					},
 				}),
 			)
@@ -434,7 +434,7 @@ describe("ConfigManager", () => {
 					currentApiConfigName: "test",
 					apiConfigs: {
 						test: {
-							apiProvider: "anthropic",
+							llmProvider: "anthropic",
 							id: "test-id",
 						},
 					},
@@ -457,7 +457,7 @@ describe("ConfigManager", () => {
 						id: "default",
 					},
 					test: {
-						apiProvider: "anthropic",
+						llmProvider: "anthropic",
 						id: "test-id",
 					},
 				},

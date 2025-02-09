@@ -10,7 +10,7 @@ jest.mock("../../api", () => ({
 
 describe("enhancePrompt", () => {
 	const mockApiConfig: ApiConfiguration = {
-		apiProvider: "openai",
+		llmProvider: "openai",
 		openAiApiKey: "test-key",
 		openAiBaseUrl: "https://api.openai.com/v1",
 	}
@@ -73,7 +73,7 @@ describe("enhancePrompt", () => {
 		)
 	})
 
-	it("throws error for API provider that does not support prompt enhancement", async () => {
+	it("throws error for LLM provider that does not support prompt enhancement", async () => {
 		;(buildApiHandler as jest.Mock).mockReturnValue({
 			// No completePrompt method
 			createMessage: jest.fn(),
@@ -88,13 +88,13 @@ describe("enhancePrompt", () => {
 		})
 
 		await expect(singleCompletionHandler(mockApiConfig, "Test prompt")).rejects.toThrow(
-			"The selected API provider does not support prompt enhancement",
+			"The selected LLM provider does not support prompt enhancement",
 		)
 	})
 
 	it("uses appropriate model based on provider", async () => {
 		const openRouterConfig: ApiConfiguration = {
-			apiProvider: "openrouter",
+			llmProvider: "openrouter",
 			openRouterApiKey: "test-key",
 			openRouterModelId: "test-model",
 		}

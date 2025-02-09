@@ -69,7 +69,7 @@ const WelcomeView = () => {
 
 			<LanguageSelector />
 
-			<b>{String(t("welcome.apiProviderNeeded"))}</b>
+			<b>{String(t("welcome.llmProviderNeeded"))}</b>
 
 			<div style={{ marginTop: "10px" }}>
 				<ApiOptions />

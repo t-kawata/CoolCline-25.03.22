@@ -4,7 +4,7 @@ import i18next from "i18next"
 
 export function validateApiConfiguration(apiConfiguration?: ApiConfiguration): string | undefined {
 	if (apiConfiguration) {
-		switch (apiConfiguration.apiProvider) {
+		switch (apiConfiguration.llmProvider) {
 			case "anthropic":
 				if (!apiConfiguration.apiKey) {
 					return i18next.t("common.validation.provideApiKey")
@@ -80,7 +80,7 @@ export function validateModelId(
 	openRouterModels?: Record<string, ModelInfo>,
 ): string | undefined {
 	if (apiConfiguration) {
-		switch (apiConfiguration.apiProvider) {
+		switch (apiConfiguration.llmProvider) {
 			case "glama":
 				const glamaModelId = apiConfiguration.glamaModelId || glamaDefaultModelId // in case the user hasn't changed the model id, it will be undefined by default
 				if (!glamaModelId) {

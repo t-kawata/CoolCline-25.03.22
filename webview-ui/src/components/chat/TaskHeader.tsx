@@ -102,14 +102,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 
 	const isCostAvailable = useMemo(() => {
 		return (
-			apiConfiguration?.apiProvider !== "openai" &&
-			apiConfiguration?.apiProvider !== "ollama" &&
-			apiConfiguration?.apiProvider !== "lmstudio" &&
-			apiConfiguration?.apiProvider !== "gemini"
+			apiConfiguration?.llmProvider !== "openai" &&
+			apiConfiguration?.llmProvider !== "ollama" &&
+			apiConfiguration?.llmProvider !== "lmstudio" &&
+			apiConfiguration?.llmProvider !== "gemini"
 		)
-	}, [apiConfiguration?.apiProvider])
+	}, [apiConfiguration?.llmProvider])
 
-	const shouldShowPromptCacheInfo = doesModelSupportPromptCache && apiConfiguration?.apiProvider !== "openrouter"
+	const shouldShowPromptCacheInfo = doesModelSupportPromptCache && apiConfiguration?.llmProvider !== "openrouter"
 
 	return (
 		<div style={{ padding: "10px 13px 10px 13px" }}>
@@ -329,7 +329,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 					</>
 				)}
 			</div>
-			{/* {apiProvider === "" && (
+			{/* {llmProvider === "" && (
 				<div
 					style={{
 						backgroundColor: "color-mix(in srgb, var(--vscode-badge-background) 50%, transparent)",

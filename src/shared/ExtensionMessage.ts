@@ -1,6 +1,6 @@
 // type that represents json data that is sent from extension to webview, called ExtensionMessage and has 'type' enum which can be 'plusButtonClicked' or 'settingsButtonClicked' or 'hello'
 
-import { ApiConfiguration, ApiProvider, ModelInfo } from "./api"
+import { ApiConfiguration, llmProvider, ModelInfo } from "./api"
 import { HistoryItem } from "./HistoryItem"
 import { McpServer } from "./mcp"
 import { GitCommit } from "../utils/git"
@@ -77,7 +77,7 @@ export interface ExtensionMessage {
 export interface ApiConfigMeta {
 	id: string
 	name: string
-	apiProvider?: ApiProvider
+	llmProvider?: llmProvider
 }
 
 export interface ExtensionState {

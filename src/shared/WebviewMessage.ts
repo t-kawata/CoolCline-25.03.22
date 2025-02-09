@@ -1,4 +1,4 @@
-import { ApiConfiguration, ApiProvider } from "./api"
+import { ApiConfiguration, llmProvider } from "./api"
 import { Mode, PromptComponent, ModeConfig } from "./modes"
 
 export type PromptMode = Mode | "enhance"
