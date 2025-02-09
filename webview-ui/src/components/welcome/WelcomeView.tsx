@@ -76,7 +76,7 @@ const WelcomeView = () => {
 			</div>
 
 			<Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
-				<DialogContent>
+				<DialogContent className="w-[90%] sm:w-[400px]">
 					<DialogHeader>
 						<DialogTitle>{String(t("common.status.error"))}</DialogTitle>
 					</DialogHeader>

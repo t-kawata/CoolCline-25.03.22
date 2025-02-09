@@ -10,7 +10,7 @@ import { EXPERIMENT_IDS, experimentConfigsMap } from "../../../../src/shared/exp
 import ApiConfigManager from "./ApiConfigManager"
 import { Dropdown } from "vscrui"
 import type { DropdownOption } from "vscrui"
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import LanguageSelector from "../common/LanguageSelector"
 
 type SettingsViewProps = {
@@ -69,6 +69,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
 	const [modelIdErrorMessage, setModelIdErrorMessage] = useState<string | undefined>(undefined)
 	const [commandInput, setCommandInput] = useState("")
+	const [showErrorDialog, setShowErrorDialog] = useState(false)
+	const [errorMessage, setErrorMessage] = useState<string>("")
 
 	const handleSubmit = () => {
 		const apiValidationResult = validateApiConfiguration(apiConfiguration)
@@ -76,44 +78,49 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
 		setApiErrorMessage(apiValidationResult)
 		setModelIdErrorMessage(modelIdValidationResult)
-		if (!apiValidationResult && !modelIdValidationResult) {
-			vscode.postMessage({
-				type: "apiConfiguration",
-				apiConfiguration,
-			})
-			vscode.postMessage({ type: "alwaysAllowReadOnly", bool: alwaysAllowReadOnly })
-			vscode.postMessage({ type: "alwaysAllowWrite", bool: alwaysAllowWrite })
-			vscode.postMessage({ type: "alwaysAllowExecute", bool: alwaysAllowExecute })
-			vscode.postMessage({ type: "alwaysAllowBrowser", bool: alwaysAllowBrowser })
-			vscode.postMessage({ type: "alwaysAllowMcp", bool: alwaysAllowMcp })
-			vscode.postMessage({ type: "allowedCommands", commands: allowedCommands ?? [] })
-			vscode.postMessage({ type: "soundEnabled", bool: soundEnabled })
-			vscode.postMessage({ type: "soundVolume", value: soundVolume })
-			vscode.postMessage({ type: "diffEnabled", bool: diffEnabled })
-			vscode.postMessage({ type: "browserViewportSize", text: browserViewportSize })
-			vscode.postMessage({ type: "fuzzyMatchThreshold", value: fuzzyMatchThreshold ?? 1.0 })
-			vscode.postMessage({ type: "writeDelayMs", value: writeDelayMs })
-			vscode.postMessage({ type: "screenshotQuality", value: screenshotQuality ?? 75 })
-			vscode.postMessage({ type: "terminalOutputLineLimit", value: terminalOutputLineLimit ?? 500 })
-			vscode.postMessage({ type: "mcpEnabled", bool: mcpEnabled })
-			vscode.postMessage({ type: "alwaysApproveResubmit", bool: alwaysApproveResubmit })
-			vscode.postMessage({ type: "requestDelaySeconds", value: requestDelaySeconds })
-			vscode.postMessage({ type: "rateLimitSeconds", value: rateLimitSeconds })
-			vscode.postMessage({ type: "currentApiConfigName", text: currentApiConfigName })
-			vscode.postMessage({
-				type: "upsertApiConfiguration",
-				text: currentApiConfigName,
-				apiConfiguration,
-			})
 
-			vscode.postMessage({
-				type: "updateExperimental",
-				values: experiments,
-			})
-
-			vscode.postMessage({ type: "alwaysAllowModeSwitch", bool: alwaysAllowModeSwitch })
-			onDone()
+		if (apiValidationResult || modelIdValidationResult) {
+			setErrorMessage(apiValidationResult || modelIdValidationResult || "")
+			setShowErrorDialog(true)
+			return
 		}
+
+		vscode.postMessage({
+			type: "apiConfiguration",
+			apiConfiguration,
+		})
+		vscode.postMessage({ type: "alwaysAllowReadOnly", bool: alwaysAllowReadOnly })
+		vscode.postMessage({ type: "alwaysAllowWrite", bool: alwaysAllowWrite })
+		vscode.postMessage({ type: "alwaysAllowExecute", bool: alwaysAllowExecute })
+		vscode.postMessage({ type: "alwaysAllowBrowser", bool: alwaysAllowBrowser })
+		vscode.postMessage({ type: "alwaysAllowMcp", bool: alwaysAllowMcp })
+		vscode.postMessage({ type: "allowedCommands", commands: allowedCommands ?? [] })
+		vscode.postMessage({ type: "soundEnabled", bool: soundEnabled })
+		vscode.postMessage({ type: "soundVolume", value: soundVolume })
+		vscode.postMessage({ type: "diffEnabled", bool: diffEnabled })
+		vscode.postMessage({ type: "browserViewportSize", text: browserViewportSize })
+		vscode.postMessage({ type: "fuzzyMatchThreshold", value: fuzzyMatchThreshold ?? 1.0 })
+		vscode.postMessage({ type: "writeDelayMs", value: writeDelayMs })
+		vscode.postMessage({ type: "screenshotQuality", value: screenshotQuality ?? 75 })
+		vscode.postMessage({ type: "terminalOutputLineLimit", value: terminalOutputLineLimit ?? 500 })
+		vscode.postMessage({ type: "mcpEnabled", bool: mcpEnabled })
+		vscode.postMessage({ type: "alwaysApproveResubmit", bool: alwaysApproveResubmit })
+		vscode.postMessage({ type: "requestDelaySeconds", value: requestDelaySeconds })
+		vscode.postMessage({ type: "rateLimitSeconds", value: rateLimitSeconds })
+		vscode.postMessage({ type: "currentApiConfigName", text: currentApiConfigName })
+		vscode.postMessage({
+			type: "upsertApiConfiguration",
+			text: currentApiConfigName,
+			apiConfiguration,
+		})
+
+		vscode.postMessage({
+			type: "updateExperimental",
+			values: experiments,
+		})
+
+		vscode.postMessage({ type: "alwaysAllowModeSwitch", bool: alwaysAllowModeSwitch })
+		onDone()
 	}
 
 	useEffect(() => {
@@ -811,6 +818,20 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</VSCodeButton>
 				</div>
 			</div>
+
+			<Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+				<DialogContent className="w-[90%] sm:w-[400px]">
+					<DialogHeader>
+						<DialogTitle>{String(t("common.status.error"))}</DialogTitle>
+					</DialogHeader>
+					<div className="text-destructive">{errorMessage}</div>
+					<div className="flex justify-end mt-4">
+						<VSCodeButton onClick={() => setShowErrorDialog(false)}>
+							{String(t("common.cancel"))}
+						</VSCodeButton>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }
