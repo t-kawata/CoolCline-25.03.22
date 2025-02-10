@@ -10,10 +10,10 @@
 		"create": "作成",
 		"prompt": "プロンプト",
 		"validation": {
-			"provideApiKey": "有効なAPIキーを入力するか、別のプロバイダーを選択してください。",
+			"provideApiKey": "有効な LLM Provider API Key を入力するか、API Key が設定済みの他の LLM Provider を選択してください。",
 			"provideRegion": "AWS Bedrockで使用するリージョンを選択してください。",
 			"provideProjectAndRegion": "有効なGoogle CloudプロジェクトIDとリージョンを入力してください。",
-			"provideBaseUrlAndKey": "有効なベースURL、APIキー、モデルIDを入力してください。",
+			"provideBaseUrlAndKey": "有効な Base URL、API Key、モデル ID を入力してください。",
 			"provideModelId": "有効なモデルIDを入力してください。",
 			"provideModelSelector": "有効なモデルセレクターを入力してください。",
 			"modelNotAvailable": "指定されたモデルIDは利用できません。別のモデルを選択してください。"
@@ -38,7 +38,7 @@
 		"title": "CoolClineとは？",
 		"description": "CoolClineは、高度なAI機能であなたの開発ワークフローを強化するプロアクティブなプログラミングアシスタントです。コードの効率的な作成、クエリの最適化、エラーの自動修正、コマンドラインタスクの実行、ブラウザ自動化テストの実行をサポートします。",
 		"readmeLink": "README",
-		"apiProviderNeeded": "開始するには、このエクステンションにAPIプロバイダーが必要です。",
+		"apiProviderNeeded": "この拡張機能を使用するには、少なくとも1つの LLM Provider を設定する必要があります（必須）。",
 		"letsGo": "始めましょう！"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "タスク",
 			"seeMore": "もっと見る",
 			"seeLess": "表示を減らす",
-			"tokens": "トークン",
+			"tokens": "Tokens",
 			"context": "コンテキスト",
 			"cache": "キャッシュ",
 			"apiCost": "APIコスト",
@@ -184,23 +184,23 @@
 				"tools": "サポートプロンプト設定"
 			},
 			"language": {
-				"title": "言語",
-				"description": "AIアシスタントの応答言語を設定すると、インターフェースも選択した言語に切り替わります",
+				"title": "言語設定",
+				"description": "LLM Provider の応答言語を設定します（インターフェースも選択した言語に切り替わります）",
 				"select": "言語を選択"
 			},
 			"customInstructions": {
-				"title": "一般的な動作指示",
-				"description": "これらの指示は、すべてのモードの基本的な動作ガイドラインとして適用され、以下のモード固有の指示で拡張できます",
+				"title": "通用 Prompt 指示",
+				"description": "これらの Prompt 指示はすべてのモードの基本的な動作ガイドラインとして適用され、以下の役割モード固有の指示で拡張できます",
 				"loadFrom": "指示は以下からも読み込めます",
-				"inWorkspace": "ワークスペース内"
+				"inWorkspace": "ファイルから通用 Prompt 指示を読み込む"
 			},
 			"modePrompts": {
-				"title": "プロンプト設定",
-				"description": "+ をクリックして新しいモードを作成するか、チャットでCoolClineに作成を依頼できます！",
-				"createMode": "新規モード作成",
-				"editConfig": "モード設定を編集",
-				"name": "名前",
-				"specificPrompts": "モード固有のプロンプト",
+				"title": "Prompt 設定",
+				"description": "+ をクリックして新しいモードを作成するか、チャットで CoolCline に作成を依頼できます！",
+				"createMode": "新規役割モード作成",
+				"editConfig": "役割モード設定を編集",
+				"name": "名称",
+				"specificPrompts": "役割モード固有の Prompt",
 				"slug": {
 					"title": "識別子",
 					"description": "URLとファイル名で使用される一意の識別子（小文字、数字、ハイフンのみ使用可）"
@@ -211,10 +211,10 @@
 					"createDescription": "このモードの専門知識と性格特性を定義"
 				},
 				"apiConfig": {
-					"title": "API設定",
-					"description": "このモードのAPI設定を選択",
-					"useCurrentConfig": "現在選択されているAPI設定を使用",
-					"enhancePrompts": "プロンプト拡張用に特定のAPI設定を選択できます"
+					"title": "LLM Provider 設定",
+					"description": "この役割モード用の LLM Provider 設定を選択します。例えば claude-3.5-sonnet や deepseek-r1 に対応する設定（設定ページで管理）",
+					"useCurrentConfig": "現在選択中の LLM Provider 設定を使用",
+					"enhancePrompts": "この補助機能用の特定の LLM Provider 設定を選択します。例えば claude-3.5-sonnet や deepseek-r1 に対応する設定（設定ページで管理）"
 				},
 				"tools": {
 					"title": "利用可能なツール",
@@ -363,10 +363,10 @@
 		"preview": {
 			"recentTasks": "最近のタスク",
 			"viewAll": "すべての履歴を表示",
-			"promptCopied": "プロンプトをクリップボードにコピーしました",
+			"promptCopied": "コピー完了",
 			"copyPrompt": "コピー完了",
 			"metrics": {
-				"tokens": "トークン",
+				"tokens": "Tokens",
 				"cache": "キャッシュ",
 				"apiCost": "APIコスト"
 			}
@@ -376,36 +376,36 @@
 		"title": "設定",
 		"done": "完了",
 		"provider": {
-			"title": "プロバイダー",
-			"apiProvider": "APIプロバイダー",
+			"title": "LLM Provider 設定",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "APIキー",
-				"placeholder": "APIキーを入力",
-				"storedLocally": "APIキーはコンピュータに安全に保存されます",
-				"getKey": "APIキーを取得"
+				"title": "API Key",
+				"placeholder": "LLM Provider の API Key を入力",
+				"storedLocally": "LLM Provider の API Key はローカルマシンに安全に保存されます",
+				"getKey": "LLM Provider の API Key を取得"
 			},
 			"customBaseUrl": {
-				"title": "カスタムベースURL",
+				"title": "カスタム Base URL",
 				"placeholder": "デフォルト: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "設定プロファイル",
-				"description": "プロバイダーと設定を素早く切り替えるための異なるAPI設定を保存"
+				"title": "LLM Provider クイック切り替え設定",
+				"description": "ここでは、複数の LLM Provider オプションを作成・管理できます。同じ LLM Provider の異なるモデル用に個別のオプションを作成でき、各オプションには LLM Provider の完全な設定情報が保存されます。作成後、チャット入力バーの下部でリアルタイムに設定を切り替えることができます。\n\n設定情報には以下が含まれます：\n LLM Provider、\n API Key、\n Model、\n その他の LLM Provider 関連設定。\n\nLLM Provider オプションの作成手順（手順4は2と3の順序を入れ替え可能）：\n1. + ボタンをクリックすると、現在の設定情報から自動的にオプションがコピーされ、名前は xx (copy) となります。\n2. ✏️ アイコンをクリックしてオプション名を変更。\n3. ☑️ をクリックしてオプション名を保存。\n4. 必要に応じて Model などの主要パラメータを調整（編集ボックスがフォーカスを失うと自動保存）。\n\nオプション名の命名規則：\n「プロバイダー-モデルバージョン-特徴」構造を推奨。例：\nopenrouter-deepseek-v3-free；\nopenrouter-deepseek-r1-free；\ndeepseek-v3-公式；\ndeepseek-r1-公式。"
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic APIキー",
-					"baseUrl": "ベースURL（オプション）",
-					"enterBaseUrl": "APIベースURLを入力",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "Anthropic APIキーはこちらで取得できます"
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (オプション)",
+					"enterBaseUrl": "API Base URL を入力",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"getKey": "Anthropic API Key はこちらで取得できます"
 				},
 				"openai": {
 					"name": "OpenAI 互換",
 					"title": "OpenAI 互換サービス",
-					"baseUrl": "ベース URL",
-					"enterBaseUrl": "ベース URL を入力",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Base URL を入力",
 					"useAzure": "Azure OpenAI を使用",
 					"setAzureVersion": "Azure API バージョンを設定",
 					"description": "OpenAI 互換 API サービスを使用",
@@ -503,68 +503,68 @@
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral APIキー",
-					"description": "Mistral AIモデルサービスを使用",
-					"getKey": "ここでMistral APIキーを登録して取得できます",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"placeholder": "APIキーを入力..."
+					"title": "Mistral API Key",
+					"description": "Mistral AI モデルサービスを使用",
+					"getKey": "Mistral API Key はこちらで取得できます",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"placeholder": "API Key を入力..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini APIキー",
-					"description": "GoogleのGemini AIモデルを使用",
-					"getKey": "Gemini APIキーを取得",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"placeholder": "APIキーを入力..."
+					"title": "Gemini API Key",
+					"description": "Google の Gemini AI モデルを使用",
+					"getKey": "Gemini API Key を取得",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"placeholder": "API Key を入力..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "ベースURL",
-					"enterBaseUrl": "ベースURLを入力",
-					"modelId": "モデルID",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Base URL を入力",
+					"modelId": "モデル ID",
 					"enterModelId": "例：meta-llama-3.1-8b-instruct",
-					"description": "Ollamaを使用すると、オープンソースの言語モデルをローカルで実行できます",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "Ollamaを設定",
+					"description": "Ollama を使用すると、オープンソースの言語モデルをローカルで実行できます",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"getKey": "Ollama API Key を取得",
 					"quickstartGuide": "クイックスタートガイド",
 					"localServer": "ローカルサーバー"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "ベースURL（オプション）",
-					"modelId": "モデルID",
+					"baseUrl": "Base URL (オプション)",
+					"modelId": "モデル ID",
 					"enterModelId": "例：meta-llama-3.1-8b-instruct",
-					"description": "LM Studioを使用すると、ローカルコンピュータでモデルを実行できます。使い方については、クイックスタートガイドを参照してください。また、この拡張機能と一緒に使用するには、LM Studioのローカルサーバー機能を起動する必要があります。",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"getKey": "LM Studioを設定",
+					"description": "LM Studio を使用すると、ローカルコンピュータでモデルを実行できます。使い方については、クイックスタートガイドを参照してください。また、この拡張機能と一緒に使用するには、LM Studio のローカルサーバー機能を起動する必要があります。",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"getKey": "LM Studio を設定",
 					"quickstartGuide": "クイックスタートガイド",
 					"localServer": "ローカルサーバー"
 				},
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "VS Code内蔵の言語モデルAPIを使用",
+					"description": "VS Code 内蔵の言語モデル API を使用",
 					"modelSelector": "言語モデル",
 					"selectModel": "モデルを選択...",
-					"noModels": "VS Code言語モデルAPIを使用すると、他のVS Code拡張機能（GitHub Copilotを含むがこれに限定されない）が提供するモデルを実行できます。最も簡単な始め方は、VS CodeマーケットプレースからCopilotとCopilot Chat拡張機能をインストールすることです。",
-					"experimentalNote": "注意：これは非常に実験的な統合であり、予期通りに動作しない可能性があります。問題がある場合は、CoolCline GitHubリポジトリに報告してください。",
-					"useCustomBaseUrl": "カスタムベースURLを使用"
+					"noModels": "VS Code 言語モデル API を使用すると、他の VS Code 拡張機能（GitHub Copilot を含むがこれに限定されない）が提供するモデルを実行できます。最も簡単な始め方は、VS Code マーケットプレースから Copilot と Copilot Chat 拡張機能をインストールすることです。",
+					"experimentalNote": "注意：これは非常に実験的な統合であり、予期通りに動作しない可能性があります。問題がある場合は、CoolCline GitHub リポジトリに報告してください。",
+					"useCustomBaseUrl": "カスタム Base URL を使用"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound APIキー",
-					"getKey": "Unbound APIキーを取得",
-					"useCustomBaseUrl": "カスタムベースURLを使用"
+					"title": "Unbound API Key",
+					"getKey": "Unbound API Key を取得",
+					"useCustomBaseUrl": "カスタム Base URL を使用"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek APIキー",
-					"description": "DeepSeekの高性能AIモデルサービスを使用",
-					"getKey": "ここでDeepSeek APIキーを登録して取得できます",
-					"useCustomBaseUrl": "カスタムベースURLを使用",
-					"placeholder": "APIキーを入力..."
+					"title": "DeepSeek API Key",
+					"description": "DeepSeek の高性能 AI モデルサービスを使用",
+					"getKey": "DeepSeek API Key はこちらで取得できます",
+					"useCustomBaseUrl": "カスタム Base URL を使用",
+					"placeholder": "API Key を入力..."
 				}
 			},
 			"model": {

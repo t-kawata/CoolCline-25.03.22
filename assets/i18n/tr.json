@@ -10,10 +10,10 @@
 		"create": "Oluştur",
 		"prompt": "Prompt",
 		"validation": {
-			"provideApiKey": "Geçerli bir API anahtarı sağlamalısınız veya farklı bir sağlayıcı seçmelisiniz.",
+			"provideApiKey": "Geçerli bir LLM Provider API Key sağlamalısınız veya farklı bir LLM Provider seçmelisiniz.",
 			"provideRegion": "AWS Bedrock ile kullanmak için bir bölge seçmelisiniz.",
 			"provideProjectAndRegion": "Geçerli bir Google Cloud Proje Kimliği ve Bölge sağlamalısınız.",
-			"provideBaseUrlAndKey": "Geçerli bir temel URL, API anahtarı ve model kimliği sağlamalısınız.",
+			"provideBaseUrlAndKey": "Geçerli bir Base URL, API Key ve model kimliği sağlamalısınız.",
 			"provideModelId": "Geçerli bir model kimliği sağlamalısınız.",
 			"provideModelSelector": "Geçerli bir model seçici sağlamalısınız.",
 			"modelNotAvailable": "Sağladığınız model kimliği mevcut değil. Lütfen başka bir model seçin."
@@ -38,7 +38,7 @@
 		"title": "CoolCline nedir?",
 		"description": "CoolCline, gelişmiş AI yetenekleriyle geliştirme sürecinizi iyileştiren proaktif bir programlama asistanıdır. Kodu daha verimli yazmanıza, sorguları optimize etmenize, hataları otomatik olarak düzeltmenize, komut satırı görevlerini yürütmenize ve tarayıcı otomasyon testleri yapmanıza yardımcı olur.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Başlamak için, bu uzantının bir API sağlayıcısına ihtiyacı var.",
+		"apiProviderNeeded": "Başlamak için, bu uzantının en az bir yapılandırılmış LLM Provider'a ihtiyacı var (zorunlu).",
 		"letsGo": "Hadi başlayalım!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "Görev",
 			"seeMore": "Daha fazla gör",
 			"seeLess": "Daha az gör",
-			"tokens": "Tokenler",
+			"tokens": "Tokens",
 			"context": "Bağlam",
 			"cache": "Önbellek",
 			"apiCost": "API Maliyeti",
@@ -310,11 +310,11 @@
 		"communityServers": "Topluluk tarafından oluşturulan sunucular",
 		"enable": {
 			"title": "MCP sunucularını etkinleştir",
-			"description": "Etkinleştirildiğinde, CoolCline özel işlevler için MCP sunucularıyla iletişim kurabilir. MCP kullanmıyorsanız, CoolCline'ın token kullanımını azaltmak için bu özelliği devre dışı bırakabilirsiniz."
+			"description": "Etkinleştirildiğinde, CoolCline özel işlevler için MCP sunucularıyla iletişim kurabilir. MCP kullanmıyorsanız, CoolCline'ın Tokens kullanımını azaltmak için bu özelliği devre dışı bırakabilirsiniz."
 		},
 		"serverCreation": {
 			"title": "MCP sunucusu oluşturmayı etkinleştir",
-			"description": "Etkinleştirildiğinde, CoolCline \"bir araç oluştur...\" gibi komutlarla yeni MCP sunucuları oluşturmanıza yardımcı olabilir. MCP sunucuları oluşturmanız gerekmiyorsa, CoolCline'ın token kullanımını azaltmak için bu özelliği devre dışı bırakabilirsiniz."
+			"description": "Etkinleştirildiğinde, CoolCline \"bir araç oluştur...\" gibi komutlarla yeni MCP sunucuları oluşturmanıza yardımcı olabilir. MCP sunucuları oluşturmanız gerekmiyorsa, CoolCline'ın Tokens kullanımını azaltmak için bu özelliği devre dışı bırakabilirsiniz."
 		},
 		"editSettings": "MCP ayarlarını düzenle",
 		"tools": {
@@ -357,7 +357,7 @@
 			"newest": "En yeni",
 			"oldest": "En eski",
 			"mostExpensive": "En pahalı",
-			"mostTokens": "En çok token",
+			"mostTokens": "En çok Tokens",
 			"mostRelevant": "En alakalı"
 		},
 		"preview": {
@@ -376,36 +376,36 @@
 		"title": "Ayarlar",
 		"done": "Tamam",
 		"provider": {
-			"title": "Sağlayıcı",
-			"apiProvider": "API sağlayıcı",
+			"title": "LLM Provider Ayarları",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API anahtarı",
-				"placeholder": "API anahtarınızı girin",
-				"storedLocally": "API anahtarı bilgisayarınızda güvenli bir şekilde saklanır",
-				"getKey": "API anahtarı al"
+				"title": "API Key",
+				"placeholder": "LLM Provider API Key'inizi girin",
+				"storedLocally": "LLM Provider API Key yerel makinenizde güvenli bir şekilde saklanır",
+				"getKey": "LLM Provider API Key alın"
 			},
 			"customBaseUrl": {
-				"title": "Özel temel URL",
+				"title": "Özel Base URL",
 				"placeholder": "Varsayılan: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "Yapılandırma profili",
-				"description": "Sağlayıcılar ve ayarlar arasında hızlı geçiş yapmak için farklı API yapılandırmalarını saklayın"
+				"title": "LLM Provider Hızlı Geçiş Yapılandırması",
+				"description": "Burada, birden fazla LLM Provider seçeneği oluşturabilir ve yönetebilirsiniz. Aynı LLM Provider'ın farklı modelleri için ayrı seçenekler oluşturabilirsiniz, her seçenek mevcut LLM Provider'ın tam yapılandırmasını saklar. Oluşturduktan sonra, sohbet giriş çubuğunun altında yapılandırmalar arasında gerçek zamanlı olarak geçiş yapabilirsiniz.\n\nYapılandırma şunları içerir:\n LLM Provider,\n API Key,\n Model \n ve LLM Provider ile ilgili diğer ayarlar.\n\nLLM Provider seçeneği oluşturma adımları (4. adım 2 ve 3 ile yer değiştirebilir):\n1. + düğmesine tıklayın, sistem otomatik olarak mevcut yapılandırmadan bir kopya oluşturur, xx (copy) adıyla;\n2. ✏️ simgesine tıklayarak seçenek adını düzenleyin;\n3. ☑️ tıklayarak seçenek adını kaydedin;\n4. Gerekirse Model gibi temel parametreleri ayarlayın (düzenleme alanı odağı kaybettiğinde otomatik kaydedilir).\n\nSeçenek adlandırma önerileri:\n 'sağlayıcı-model-sürüm-özellik' yapısını kullanmanız önerilir, örneğin:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-resmi;\ndeepseek-r1-resmi."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic API anahtarı",
-					"baseUrl": "Temel URL (isteğe bağlı)",
-					"enterBaseUrl": "API temel URL'sini girin",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"getKey": "Anthropic API anahtarı almak için buradan kaydolabilirsiniz."
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (isteğe bağlı)",
+					"enterBaseUrl": "API Base URL'sini girin",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"getKey": "Anthropic API Key almak için buradan kaydolabilirsiniz"
 				},
 				"openai": {
 					"name": "OpenAI Compatible",
 					"title": "OpenAI Uyumlu Hizmet",
-					"baseUrl": "Temel URL",
-					"enterBaseUrl": "Temel URL'yi girin",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Base URL'yi girin",
 					"useAzure": "Azure OpenAI kullan",
 					"setAzureVersion": "Azure API sürümünü ayarla",
 					"description": "OpenAI uyumlu API hizmeti kullan",
@@ -418,13 +418,13 @@
 							"description": "Özel OpenAI uyumlu modelinizin yeteneklerini ve fiyatlandırmasını yapılandırın",
 							"warning": "Model yetenekleri konusunda dikkatli olun, çünkü bunlar CoolCline'ın nasıl çalışacağını etkileyebilir",
 							"maxTokens": {
-								"title": "Maksimum Çıktı Token'ları",
-								"description": "Modelin bir yanıtta üretebileceği maksimum token sayısı",
+								"title": "Maksimum Çıktı Tokens",
+								"description": "Modelin bir yanıtta üretebileceği maksimum Tokens sayısı",
 								"note": "(-1 sunucuya bağlıdır)"
 							},
 							"contextWindow": {
 								"title": "Bağlam Penceresi Boyutu",
-								"description": "Modelin işleyebileceği toplam token sayısı (giriş + çıkış). Bu, CoolCline Code'un doğru çalışmasına yardımcı olur"
+								"description": "Modelin işleyebileceği toplam Tokens sayısı (giriş + çıkış). Bu, CoolCline Code'un doğru çalışmasına yardımcı olur"
 							}
 						},
 						"features": {
@@ -442,30 +442,30 @@
 						},
 						"pricing": {
 							"title": "Model Fiyatlandırması",
-							"description": "Token başına USD cinsinden token fiyatlandırmasını yapılandırın",
+							"description": "Tokens başına USD cinsinden Tokens fiyatlandırmasını yapılandırın",
 							"inputPrice": {
 								"title": "Giriş Fiyatı",
-								"description": "Giriş/prompt'taki milyon token başına maliyet. Bu, modele bağlam ve talimatları göndermenin maliyetini etkiler"
+								"description": "Giriş/prompt'taki milyon Tokens başına maliyet. Bu, modele bağlam ve talimatları göndermenin maliyetini etkiler"
 							},
 							"outputPrice": {
 								"title": "Çıkış Fiyatı",
-								"description": "Model yanıtındaki milyon token başına maliyet. Bu, oluşturulan içerik ve tamamlamaların maliyetini etkiler"
+								"description": "Model yanıtındaki milyon Tokens başına maliyet. Bu, oluşturulan içerik ve tamamlamaların maliyetini etkiler"
 							}
 						}
 					}
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "OpenAI API anahtarı",
+					"title": "OpenAI API Key",
 					"description": "Resmi OpenAI API hizmetini kullan",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"getKey": "OpenAI API anahtarı almak için buradan kaydolabilirsiniz."
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"getKey": "OpenAI API Key almak için buradan kaydolabilirsiniz."
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "Glama API anahtarı",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"getKey": "Glama API anahtarı al"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"getKey": "Glama API Key al"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -479,16 +479,16 @@
 					"selectRegion": "Bölge seç",
 					"useCrossRegion": "Bölgeler arası çıkarım kullan",
 					"description": "AWS Bedrock AI model hizmetini kullan",
-					"useCustomBaseUrl": "Özel temel URL kullan",
+					"useCustomBaseUrl": "Özel Base URL kullan",
 					"getKey": "AWS kimlik bilgilerini yapılandır"
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "OpenRouter API anahtarı",
-					"getKey": "OpenRouter API anahtarı al",
+					"title": "OpenRouter API Key",
+					"getKey": "OpenRouter API Key al",
 					"compressPrompts": "Promptları ve mesaj zincirlerini bağlam boyutuna sıkıştır",
 					"transforms": "OpenRouter dönüşümleri",
-					"useCustomBaseUrl": "Özel temel URL kullan"
+					"useCustomBaseUrl": "Özel Base URL kullan"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,46 +498,46 @@
 					"region": "Google Cloud Bölgesi",
 					"selectRegion": "Bölge seçin",
 					"description": "Google Cloud Vertex AI'yi kullanmak için, 1) bir Google Cloud hesabı oluşturmanız › Vertex AI API'sini etkinleştirmeniz › gerekli Claude modellerini etkinleştirmeniz, 2) Google Cloud CLI'yi kurmanız › varsayılan uygulama kimlik bilgilerini yapılandırmanız gerekir.",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"getKey": "Google Vertex AI API anahtarı alın"
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"getKey": "Google Vertex AI API Key alın"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral API Anahtarı",
+					"title": "Mistral API Key",
 					"description": "Mistral AI model servisini kullan",
-					"getKey": "Mistral API anahtarı almak için buradan kayıt olabilirsiniz",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"placeholder": "API anahtarını girin..."
+					"getKey": "Mistral API Key almak için buradan kayıt olabilirsiniz",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"placeholder": "API Key'i girin..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini API Anahtarı",
+					"title": "Gemini API Key",
 					"description": "Google'ın Gemini AI modelini kullan",
-					"getKey": "Gemini API anahtarı al",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"placeholder": "API anahtarını girin..."
+					"getKey": "Gemini API Key al",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"placeholder": "API Key'i girin..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "Temel URL",
-					"enterBaseUrl": "Temel URL'yi girin",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Base URL'yi girin",
 					"modelId": "Model Kimliği",
 					"enterModelId": "Örnek: meta-llama-3.1-8b-instruct",
 					"description": "Ollama, açık kaynak dil modellerini yerel olarak çalıştırmanızı sağlar",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"getKey": "Ollama'yı yapılandır",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"getKey": "Ollama API Key al",
 					"quickstartGuide": "Hızlı başlangıç kılavuzu",
 					"localServer": "Yerel sunucu"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "Temel URL (isteğe bağlı)",
+					"baseUrl": "Base URL (isteğe bağlı)",
 					"modelId": "Model ID",
 					"enterModelId": "Örnek: meta-llama-3.1-8b-instruct",
 					"description": "LM Studio, modelleri yerel bilgisayarınızda çalıştırmanıza olanak tanır. Nasıl başlayacağınıza dair talimatlar için hızlı başlangıç kılavuzuna bakın. Ayrıca bu uzantıyla kullanmak için LM Studio'nun yerel sunucu özelliğini başlatmanız gerekecek.",
-					"useCustomBaseUrl": "Özel temel URL kullan",
+					"useCustomBaseUrl": "Özel Base URL kullan",
 					"getKey": "LM Studio'yu yapılandır",
 					"quickstartGuide": "Hızlı başlangıç kılavuzu",
 					"localServer": "Yerel sunucu"
@@ -550,21 +550,21 @@
 					"selectModel": "Model seç...",
 					"noModels": "VS Code dil modeli API'si, diğer VS Code uzantıları (GitHub Copilot dahil ancak bununla sınırlı değil) tarafından sağlanan modelleri çalıştırmanıza olanak tanır. Başlamanın en kolay yolu VS Code pazarından Copilot ve Copilot Chat uzantılarını yüklemektir.",
 					"experimentalNote": "Not: Bu çok deneysel bir entegrasyondur ve beklendiği gibi çalışmayabilir. Lütfen herhangi bir sorunu CoolCline GitHub deposuna bildirin.",
-					"useCustomBaseUrl": "Özel temel URL kullan"
+					"useCustomBaseUrl": "Özel Base URL kullan"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound API Anahtarı",
-					"getKey": "Unbound API anahtarı alın",
-					"useCustomBaseUrl": "Özel temel URL kullan"
+					"title": "Unbound API Key",
+					"getKey": "Unbound API Key al",
+					"useCustomBaseUrl": "Özel Base URL kullan"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek API Anahtarı",
+					"title": "DeepSeek API Key",
 					"description": "DeepSeek'in yüksek performanslı AI model servisini kullan",
-					"getKey": "DeepSeek API anahtarı almak için buradan kayıt olabilirsiniz",
-					"useCustomBaseUrl": "Özel temel URL kullan",
-					"placeholder": "API anahtarını girin..."
+					"getKey": "DeepSeek API Key almak için buradan kayıt olabilirsiniz",
+					"useCustomBaseUrl": "Özel Base URL kullan",
+					"placeholder": "API Key'i girin..."
 				}
 			},
 			"model": {
@@ -637,7 +637,7 @@
 			},
 			"screenshot": {
 				"title": "Ekran görüntüsü kalitesi",
-				"description": "Tarayıcı ekran görüntülerinin WebP kalitesini ayarlayın. Daha yüksek değerler daha net ekran görüntüleri sağlar ancak token kullanımını artırır."
+				"description": "Tarayıcı ekran görüntülerinin WebP kalitesini ayarlayın. Daha yüksek değerler daha net ekran görüntüleri sağlar ancak Tokens kullanımını artırır."
 			}
 		},
 		"notification": {
@@ -665,7 +665,7 @@
 			},
 			"terminalOutput": {
 				"title": "Terminal çıktı sınırı",
-				"description": "Komutları çalıştırırken terminal çıktısına dahil edilecek maksimum satır sayısı. Aşıldığında, token tasarrufu için satırlar ortadan kaldırılır."
+				"description": "Komutları çalıştırırken terminal çıktısına dahil edilecek maksimum satır sayısı. Aşıldığında, Tokens tasarrufu için satırlar ortadan kaldırılır."
 			},
 			"diff": {
 				"title": "Diff düzenlemeyi etkinleştir",

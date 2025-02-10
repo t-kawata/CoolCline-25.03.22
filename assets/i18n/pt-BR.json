@@ -10,35 +10,35 @@
 		"create": "Criar",
 		"prompt": "Prompt",
 		"validation": {
-			"provideApiKey": "Você deve fornecer uma chave de API válida ou escolher outro provedor.",
+			"provideApiKey": "Você deve fornecer uma API Key válida para o LLM Provider atual ou escolher outro LLM Provider com API Key configurada.",
 			"provideRegion": "Você deve escolher uma região para usar com o AWS Bedrock.",
 			"provideProjectAndRegion": "Você deve fornecer um ID de projeto e região válidos do Google Cloud.",
-			"provideBaseUrlAndKey": "Você deve fornecer uma URL base, chave de API e ID do modelo válidos.",
+			"provideBaseUrlAndKey": "Você deve fornecer uma Base URL, API Key e ID do modelo válidos.",
 			"provideModelId": "Você deve fornecer um ID de modelo válido.",
 			"provideModelSelector": "Você deve fornecer um seletor de modelo válido.",
 			"modelNotAvailable": "O ID do modelo fornecido não está disponível. Por favor, escolha outro modelo."
 		},
 		"actions": {
-			"reset": "Reset to default",
+			"reset": "Restaurar padrões",
 			"edit": "Editar",
-			"save": "Save",
+			"save": "Salvar",
 			"cancel": "Cancelar",
 			"close": "Fechar",
 			"doneEditing": "Concluir edição"
 		},
 		"status": {
-			"loading": "Loading...",
-			"error": "Error",
-			"success": "Success"
+			"loading": "Carregando...",
+			"error": "Erro",
+			"success": "Sucesso"
 		},
-		"noDescription": "No description",
-		"unknown": "Unknown"
+		"noDescription": "Sem descrição",
+		"unknown": "Desconhecido"
 	},
 	"welcome": {
 		"title": "O que é o CoolCline?",
 		"description": "CoolCline é um assistente de programação proativo que aprimora seu fluxo de trabalho de desenvolvimento com recursos avançados de IA. Ele ajuda você a escrever código de forma mais eficiente, otimizar consultas, corrigir erros automaticamente, executar tarefas de linha de comando e realizar testes de automação de navegador.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Para começar, esta extensão precisa de um provedor de API.",
+		"llmProviderNeeded": "Para começar, esta extensão precisa de pelo menos um LLM Provider configurado (obrigatório).",
 		"letsGo": "Vamos começar!"
 	},
 	"chat": {
@@ -184,23 +184,23 @@
 				"tools": "Configurações de Ferramentas"
 			},
 			"language": {
-				"title": "Idioma",
-				"description": "Selecione o idioma preferido para a interface",
+				"title": "Configurações de Idioma",
+				"description": "Defina em qual idioma o LLM Provider deve responder (a interface da extensão também mudará para o idioma selecionado)",
 				"select": "Select Language"
 			},
 			"customInstructions": {
-				"title": "Instruções Personalizadas",
-				"description": "Adicione instruções personalizadas que serão aplicadas a todas as conversas",
+				"title": "Instruções de Prompt Gerais",
+				"description": "Estas instruções de Prompt se aplicam a todos os modos como diretrizes de comportamento base. Você também pode estendê-las usando as instruções específicas de modo de função abaixo",
 				"loadFrom": "Carregar de",
-				"inWorkspace": "no seu workspace"
+				"inWorkspace": "arquivo no seu workspace"
 			},
 			"modePrompts": {
-				"title": "Prompts de Modo",
+				"title": "Configuração de Prompts",
 				"description": "Configure prompts para diferentes modos",
-				"createMode": "Criar Novo Modo",
-				"editConfig": "Editar Configuração",
+				"createMode": "Criar Novo Modo de Função",
+				"editConfig": "Editar Configuração do Modo de Função",
 				"name": "Nome",
-				"specificPrompts": "Mode-Specific Prompts",
+				"specificPrompts": "Prompts Específicos do Modo de Função",
 				"slug": {
 					"title": "Slug",
 					"description": "Identificador único para este modo (apenas letras minúsculas, números e hífens)"
@@ -211,15 +211,15 @@
 					"createDescription": "Defina como a IA deve se comportar neste modo"
 				},
 				"apiConfig": {
-					"title": "Configuração da API",
-					"description": "Selecione a configuração da API para usar",
-					"useCurrentConfig": "Usar configuração atual",
-					"enhancePrompts": "Selecione uma configuração específica da API para aprimoramento de prompt"
+					"title": "Configuração do LLM Provider",
+					"description": "Selecione a configuração do LLM Provider para este modo de função, como opções correspondentes a claude-3.5-sonnet ou deepseek-r1 (opções mantidas na página de configurações)",
+					"useCurrentConfig": "Usar configuração atual do LLM Provider",
+					"enhancePrompts": "Selecione a configuração específica do LLM Provider para este recurso auxiliar, como opções correspondentes a claude-3.5-sonnet ou deepseek-r1 (opções mantidas na página de configurações)"
 				},
 				"tools": {
 					"title": "Ferramentas Disponíveis",
 					"cannotModify": "As configurações de ferramentas para modos integrados não podem ser modificadas",
-					"selectTools": "Select which tools this mode can use",
+					"selectTools": "Selecione quais ferramentas este modo pode usar",
 					"availableTitle": "Grupos de Ferramentas",
 					"selectDescription": "Selecione quais grupos de ferramentas devem estar disponíveis neste modo"
 				},
@@ -229,31 +229,31 @@
 					"loadFrom": "Carregar de",
 					"inWorkspace": "no seu workspace",
 					"createDescription": "Adicione instruções específicas para este modo",
-					"modeSpecific": "Mode-specific Instructions"
+					"modeSpecific": "Instruções Específicas do Modo"
 				},
 				"preview": "Visualizar Prompt do Sistema"
 			},
 			"api": {
-				"title": "API Settings",
+				"title": "Configurações da API",
 				"configProfile": {
-					"title": "Configuration Profiles",
-					"description": "Configure API profiles for quick switching between providers in the chat input bar"
+					"title": "Perfis de Configuração",
+					"description": "Configure perfis de API para alternar rapidamente entre provedores na barra de entrada do chat"
 				},
 				"model": {
-					"title": "Model",
-					"search": "Search models...",
-					"selected": "Currently selected model:"
+					"title": "Modelo",
+					"search": "Pesquisar modelos...",
+					"selected": "Modelo atualmente selecionado:"
 				},
 				"provider": {
-					"title": "Provider",
+					"title": "Provedor",
 					"openai": "OpenAI",
 					"glama": "Glama",
 					"openRouter": "OpenRouter"
 				}
 			},
 			"experimental": {
-				"title": "Experimental Features",
-				"description": "Enable or disable experimental features"
+				"title": "Recursos Experimentais",
+				"description": "Ativar ou desativar recursos experimentais"
 			}
 		},
 		"support": {
@@ -366,7 +366,7 @@
 			"promptCopied": "Prompt copiado para a área de transferência",
 			"copyPrompt": "Copiado",
 			"metrics": {
-				"tokens": "tokens",
+				"tokens": "Tokens",
 				"cache": "cache",
 				"apiCost": "custo da API"
 			}
@@ -376,36 +376,36 @@
 		"title": "Configurações",
 		"done": "Concluído",
 		"provider": {
-			"title": "Provedor",
-			"apiProvider": "Provedor de API",
+			"title": "Configurações do LLM Provider",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "Chave de API",
-				"placeholder": "Digite sua chave de API",
-				"storedLocally": "A chave de API é armazenada com segurança em sua máquina local",
-				"getKey": "Obter chave de API"
+				"title": "API Key",
+				"placeholder": "Digite sua API Key do LLM Provider",
+				"storedLocally": "A API Key do LLM Provider é armazenada com segurança em sua máquina local",
+				"getKey": "Obter API Key do LLM Provider"
 			},
 			"customBaseUrl": {
-				"title": "URL base personalizada",
+				"title": "Base URL Personalizada",
 				"placeholder": "Padrão: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "Perfil de configuração",
-				"description": "Salve diferentes configurações de API para alternar rapidamente entre provedores e configurações"
+				"title": "Configurar Opções de Troca Rápida do LLM Provider",
+				"description": "Aqui, você pode criar e gerenciar múltiplas opções de LLM Provider. Você pode criar opções separadas para diferentes Modelos do mesmo LLM Provider, cada opção salvando a configuração completa do LLM Provider atual. Após a criação, você pode alternar entre configurações em tempo real na barra de entrada do chat.\n\nAs informações de configuração incluem:\n LLM Provider,\n API Key,\n Model \n e outras configurações relacionadas ao LLM Provider.\n\nPara criar uma opção de LLM Provider, siga estes passos (passo 4 pode ser trocado com 2 e 3):\n1. Clique no botão +, o sistema automaticamente copiará uma opção baseada na configuração atual, nomeada como xx (copy);\n2. Clique no ícone ✏️ para modificar o nome da opção;\n3. Clique em ☑️ para salvar o nome da opção;\n4. Ajuste os parâmetros principais como Model conforme necessário (salva automaticamente quando o campo perde o foco).\n\nSugestões para nomes de opção:\n Recomenda-se usar a estrutura \"provedor-versão do modelo-característica\", por exemplo:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-oficial;\ndeepseek-r1-oficial."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Chave de API Anthropic",
-					"baseUrl": "URL base (opcional)",
-					"enterBaseUrl": "Digite a URL base da API",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Você pode obter uma chave de API Anthropic registrando-se aqui."
+					"title": "API Key Anthropic",
+					"baseUrl": "Base URL (opcional)",
+					"enterBaseUrl": "Digite a Base URL da API",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"getKey": "Você pode se registrar aqui para obter uma API Key Anthropic"
 				},
 				"openai": {
 					"name": "OpenAI compatível",
 					"title": "Serviço Compatível com OpenAI",
-					"baseUrl": "URL Base",
-					"enterBaseUrl": "Inserir URL Base",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Digite a Base URL",
 					"useAzure": "Usar Azure OpenAI",
 					"setAzureVersion": "Definir versão da API Azure",
 					"description": "Usar serviço de API compatível com OpenAI",
@@ -456,10 +456,10 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "Chave de API OpenAI",
+					"title": "API Key OpenAI",
 					"description": "Usar serviço oficial de API OpenAI",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Você pode obter uma chave de API OpenAI registrando-se aqui."
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"getKey": "Você pode se registrar aqui para obter uma API Key OpenAI"
 				},
 				"glama": {
 					"name": "Glama",
@@ -498,46 +498,46 @@
 					"region": "Região do Google Cloud",
 					"selectRegion": "Selecionar região",
 					"description": "Para usar o Google Cloud Vertex AI, você precisa 1) criar uma conta Google Cloud › ativar a API Vertex AI › ativar os modelos Claude necessários, 2) instalar o Google Cloud CLI › configurar as credenciais padrão do aplicativo.",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"getKey": "Obter chave API do Google Vertex AI"
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"getKey": "Obter API Key do Google Vertex AI"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Chave API Mistral",
+					"title": "API Key Mistral",
 					"description": "Use o serviço de modelos Mistral AI",
-					"getKey": "Você pode se registrar aqui para obter uma chave API Mistral",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"placeholder": "Digite a chave API..."
+					"getKey": "Você pode se registrar aqui para obter uma API Key Mistral",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"placeholder": "Digite a API Key..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Chave API Gemini",
+					"title": "API Key Gemini",
 					"description": "Use o modelo Gemini AI do Google",
-					"getKey": "Obter chave API Gemini",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"placeholder": "Digite a chave API..."
+					"getKey": "Obter API Key Gemini",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"placeholder": "Digite a API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "URL Base",
-					"enterBaseUrl": "Enter base URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Digite a Base URL",
 					"modelId": "ID do Modelo",
-					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
+					"enterModelId": "Exemplo: meta-llama-3.1-8b-instruct",
 					"description": "Ollama permite executar modelos de linguagem de código aberto localmente",
-					"useCustomBaseUrl": "Usar URL base personalizada",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
 					"getKey": "Configurar Ollama",
-					"quickstartGuide": "Quick Start Guide",
-					"localServer": "Local Server"
+					"quickstartGuide": "Guia de início rápido",
+					"localServer": "Servidor local"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "URL base (opcional)",
+					"baseUrl": "Base URL (opcional)",
 					"modelId": "ID do modelo",
 					"enterModelId": "Exemplo: meta-llama-3.1-8b-instruct",
 					"description": "O LM Studio permite executar modelos em seu computador local. Consulte o guia de início rápido para obter instruções sobre como começar. Você também precisará iniciar o recurso de servidor local do LM Studio para usá-lo com esta extensão.",
-					"useCustomBaseUrl": "Usar URL base personalizada",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
 					"getKey": "Configurar LM Studio",
 					"quickstartGuide": "Guia de início rápido",
 					"localServer": "Servidor local"
@@ -550,21 +550,21 @@
 					"selectModel": "Selecionar modelo...",
 					"noModels": "A API de modelo de linguagem do VS Code permite executar modelos fornecidos por outras extensões do VS Code (incluindo, mas não se limitando ao GitHub Copilot). A maneira mais fácil de começar é instalar as extensões Copilot e Copilot Chat do marketplace do VS Code.",
 					"experimentalNote": "Nota: Esta é uma integração muito experimental e pode não funcionar conforme o esperado. Por favor, relate quaisquer problemas ao repositório CoolCline no GitHub.",
-					"useCustomBaseUrl": "Usar URL base personalizada"
+					"useCustomBaseUrl": "Usar Base URL personalizada"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Chave API do Unbound",
-					"getKey": "Obter chave API do Unbound",
-					"useCustomBaseUrl": "Usar URL base personalizada"
+					"title": "API Key Unbound",
+					"getKey": "Obter API Key do Unbound",
+					"useCustomBaseUrl": "Usar Base URL personalizada"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "Chave API DeepSeek",
+					"title": "API Key DeepSeek",
 					"description": "Use o serviço de modelos AI de alto desempenho da DeepSeek",
-					"getKey": "Você pode se registrar aqui para obter uma chave API DeepSeek",
-					"useCustomBaseUrl": "Usar URL base personalizada",
-					"placeholder": "Digite a chave API..."
+					"getKey": "Você pode se registrar aqui para obter uma API Key DeepSeek",
+					"useCustomBaseUrl": "Usar Base URL personalizada",
+					"placeholder": "Digite a API Key..."
 				}
 			},
 			"model": {

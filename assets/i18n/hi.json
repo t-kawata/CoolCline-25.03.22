@@ -10,10 +10,10 @@
 		"create": "बनाएं",
 		"prompt": "प्रॉम्प्ट",
 		"validation": {
-			"provideApiKey": "आपको एक मान्य API कुंजी प्रदान करनी होगी या दूसरा प्रदाता चुनना होगा।",
+			"provideApiKey": "आपको वर्तमान LLM Provider के लिए एक मान्य API Key प्रदान करनी होगी या पहले से कॉन्फ़िगर किए गए API Key वाले अन्य LLM Provider का चयन करना होगा।",
 			"provideRegion": "आपको AWS Bedrock के साथ उपयोग करने के लिए एक क्षेत्र चुनना होगा।",
 			"provideProjectAndRegion": "आपको एक मान्य Google Cloud प्रोजेक्ट ID और क्षेत्र प्रदान करना होगा।",
-			"provideBaseUrlAndKey": "आपको एक मान्य बेस URL, API कुंजी और मॉडल ID प्रदान करनी होगी।",
+			"provideBaseUrlAndKey": "आपको एक मान्य Base URL, API Key और मॉडल ID प्रदान करनी होगी।",
 			"provideModelId": "आपको एक मान्य मॉडल ID प्रदान करनी होगी।",
 			"provideModelSelector": "आपको एक मान्य मॉडल चयनकर्ता प्रदान करना होगा।",
 			"modelNotAvailable": "आपके द्वारा प्रदान की गई मॉडल ID उपलब्ध नहीं है। कृपया दूसरा मॉडल चुनें।"
@@ -38,7 +38,7 @@
 		"title": "CoolCline क्या है?",
 		"description": "CoolCline एक सक्रिय प्रोग्रामिंग सहायक है जो उन्नत AI क्षमताओं के साथ आपके विकास कार्यप्रवाह को बढ़ाता है। यह आपको कोड को अधिक कुशलता से लिखने, क्वेरी को अनुकूलित करने, त्रुटियों को स्वचालित रूप से ठीक करने, कमांड लाइन कार्य चलाने और ब्राउज़र स्वचालन परीक्षण करने में मदद करता है।",
 		"readmeLink": "README",
-		"apiProviderNeeded": "शुरू करने के लिए, इस एक्सटेंशन को एक API प्रदाता की आवश्यकता है।",
+		"apiProviderNeeded": "इस एक्सटेंशन को शुरू करने के लिए कम से कम एक LLM Provider कॉन्फ़िगर करना आवश्यक है (अनिवार्य)।",
 		"letsGo": "चलिए शुरू करें!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "कार्य",
 			"seeMore": "और देखें",
 			"seeLess": "कम देखें",
-			"tokens": "टोकन",
+			"tokens": "Tokens",
 			"context": "संदर्भ",
 			"cache": "कैश",
 			"apiCost": "API लागत",
@@ -184,23 +184,23 @@
 				"tools": "सहायता प्रॉम्प्ट सेटिंग्स"
 			},
 			"language": {
-				"title": "भाषा",
-				"description": "AI सहायक की प्रतिक्रिया भाषा सेट करें, इंटरफ़ेस भी चयनित भाषा में स्विच हो जाएगा",
+				"title": "भाषा सेटिंग्स",
+				"description": "LLM Provider की प्रतिक्रिया भाषा सेट करें (इंटरफ़ेस भी चयनित भाषा में स्विच हो जाएगा)",
 				"select": "भाषा चुनें"
 			},
 			"customInstructions": {
-				"title": "सामान्य व्यवहार निर्देश",
-				"description": "ये निर्देश सभी मोड के लिए मूल व्यवहार दिशानिर्देशों के रूप में लागू होते हैं, जिन्हें नीचे मोड-विशिष्ट निर्देशों द्वारा विस्तारित किया जा सकता है",
+				"title": "सामान्य Prompt निर्देश",
+				"description": "यहां के Prompt निर्देश सभी मोड के लिए मूल व्यवहार दिशानिर्देशों के रूप में लागू होते हैं। आप नीचे दिए गए रोल मोड सेटिंग्स में विशिष्ट Prompt निर्देश जोड़कर इन्हें विस्तारित कर सकते हैं",
 				"loadFrom": "निर्देश यहां से भी लोड किए जा सकते हैं",
-				"inWorkspace": "आपके कार्यस्थान में"
+				"inWorkspace": "आपके कार्यस्थान में सामान्य Prompt निर्देश"
 			},
 			"modePrompts": {
 				"title": "प्रॉम्प्ट सेटिंग्स",
 				"description": "नया मोड बनाने के लिए + पर क्लिक करें, या बस चैट में CoolCline से आपके लिए एक बनाने के लिए कहें!",
-				"createMode": "नया मोड बनाएं",
-				"editConfig": "मोड कॉन्फ़िगरेशन संपादित करें",
+				"createMode": "नया रोल मोड बनाएं",
+				"editConfig": "रोल मोड कॉन्फ़िगरेशन संपादित करें",
 				"name": "नाम",
-				"specificPrompts": "मोड-विशिष्ट प्रॉम्प्ट",
+				"specificPrompts": "रोल मोड विशिष्ट Prompt",
 				"slug": {
 					"title": "पहचानकर्ता",
 					"description": "URL और फ़ाइल नामों में उपयोग किया जाने वाला अद्वितीय पहचानकर्ता, केवल लोअरकेस अक्षर, संख्याएं और हाइफ़न होने चाहिए"
@@ -211,10 +211,10 @@
 					"createDescription": "इस मोड के लिए विशेषज्ञता और व्यक्तित्व लक्षण परिभाषित करें"
 				},
 				"apiConfig": {
-					"title": "API कॉन्फ़िगरेशन",
-					"description": "इस मोड के लिए API कॉन्फ़िगरेशन चुनें",
-					"useCurrentConfig": "वर्तमान में चयनित API कॉन्फ़िगरेशन का उपयोग करें",
-					"enhancePrompts": "आप प्रॉम्प्ट वृद्धि के लिए विशेष रूप से एक API कॉन्फ़िगरेशन चुन सकते हैं"
+					"title": "LLM Provider कॉन्फ़िगरेशन",
+					"description": "इस रोल मोड के लिए विशिष्ट LLM Provider कॉन्फ़िगरेशन चुनें, जैसे claude-3.5-sonnet या deepseek-r1 के विकल्प (विकल्प सेटिंग्स पेज में प्रबंधित किए जाते हैं)",
+					"useCurrentConfig": "वर्तमान में चयनित LLM Provider कॉन्फ़िगरेशन का उपयोग करें",
+					"enhancePrompts": "इस सहायक सुविधा के लिए विशिष्ट LLM Provider कॉन्फ़िगरेशन चुनें, जैसे claude-3.5-sonnet या deepseek-r1 के विकल्प (विकल्प सेटिंग्स पेज में प्रबंधित किए जाते हैं)"
 				},
 				"tools": {
 					"title": "उपलब्ध टूल",
@@ -363,10 +363,10 @@
 		"preview": {
 			"recentTasks": "हाल के कार्य",
 			"viewAll": "सभी इतिहास देखें",
-			"promptCopied": "प्रॉम्प्ट क्लिपबोर्ड पर कॉपी किया गया",
+			"promptCopied": "कॉपी किया गया",
 			"copyPrompt": "कॉपी किया गया",
 			"metrics": {
-				"tokens": "टोकन",
+				"tokens": "Tokens",
 				"cache": "कैश",
 				"apiCost": "API लागत"
 			}
@@ -376,30 +376,30 @@
 		"title": "सेटिंग्स",
 		"done": "हो गया",
 		"provider": {
-			"title": "प्रदाता",
-			"apiProvider": "API प्रदाता",
+			"title": "LLM Provider सेटिंग्स",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API कुंजी",
-				"placeholder": "अपनी API कुंजी दर्ज करें",
-				"storedLocally": "API कुंजी आपके स्थानीय कंप्यूटर पर सुरक्षित रूप से संग्रहीत है",
-				"getKey": "API कुंजी प्राप्त करें"
+				"title": "API Key",
+				"placeholder": "अपना LLM Provider API Key दर्ज करें",
+				"storedLocally": "LLM Provider API Key आपके स्थानीय मशीन पर सुरक्षित रूप से संग्रहीत है",
+				"getKey": "LLM Provider API Key प्राप्त करें"
 			},
 			"customBaseUrl": {
-				"title": "कस्टम बेस URL",
+				"title": "कस्टम Base URL",
 				"placeholder": "डिफ़ॉल्ट: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "कॉन्फ़िगरेशन प्रोफ़ाइल",
-				"description": "प्रदाताओं और सेटिंग्स के बीच त्वरित स्विचिंग के लिए विभिन्न API कॉन्फ़िगरेशन सहेजें"
+				"title": "LLM Provider त्वरित स्विचिंग विकल्प कॉन्फ़िगर करें",
+				"description": "यहां, आप कई LLM Provider विकल्प बना और प्रबंधित कर सकते हैं। आप एक ही LLM Provider के विभिन्न मॉडल के लिए अलग-अलग विकल्प बना सकते हैं, प्रत्येक विकल्प वर्तमान LLM Provider की पूरी कॉन्फ़िगरेशन जानकारी सहेजता है। बनाने के बाद, आप चैट इनपुट बार के नीचे रीयल-टाइम में कॉन्फ़िगरेशन स्विच कर सकते हैं।\n\nकॉन्फ़िगरेशन जानकारी में शामिल हैं:\n LLM Provider,\n API Key,\n Model \n और LLM Provider से संबंधित अन्य कॉन्फ़िगरेशन आइटम।\n\nLLM Provider विकल्प बनाने के चरण निम्नलिखित हैं (चरण 4 को 2 और 3 के साथ क्रम बदला जा सकता है):\n1. + बटन पर क्लिक करें, सिस्टम स्वचालित रूप से वर्तमान कॉन्फ़िगरेशन जानकारी से एक विकल्प की प्रतिलिपि बनाएगा, नाम xx (copy) होगा;\n2. ✏️ आइकन पर क्लिक करके विकल्प का नाम संपादित करें;\n3. ☑️ पर क्लिक करके विकल्प का नाम सहेजें;\n4. आवश्यकतानुसार Model जैसे मुख्य पैरामीटर समायोजित करें (संपादन बॉक्स फोकस खोने पर स्वचालित रूप से सहेज जाएगा)।\n\nविकल्प नामकरण सुझाव:\n 'प्रदाता-मॉडल-संस्करण-विशेषता' संरचना का उपयोग करने की सलाह दी जाती है, उदाहरण के लिए:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-आधिकारिक;\ndeepseek-r1-आधिकारिक।"
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic API कुंजी",
-					"baseUrl": "बेस URL (वैकल्पिक)",
-					"enterBaseUrl": "API बेस URL दर्ज करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "आप यहां साइन अप करके Anthropic API कुंजी प्राप्त कर सकते हैं।"
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (वैकल्पिक)",
+					"enterBaseUrl": "API Base URL दर्ज करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"getKey": "आप यहां पंजीकरण करके Anthropic API Key प्राप्त कर सकते हैं"
 				},
 				"openai": {
 					"name": "OpenAI संगत",
@@ -456,16 +456,16 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "OpenAI API कुंजी",
+					"title": "OpenAI API Key",
 					"description": "OpenAI की आधिकारिक API सेवा का उपयोग करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "आप यहां साइन अप करके OpenAI API कुंजी प्राप्त कर सकते हैं।"
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"getKey": "आप यहां पंजीकरण करके OpenAI API Key प्राप्त कर सकते हैं"
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "Glama API कुंजी",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"getKey": "Glama API कुंजी प्राप्त करें"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"getKey": "Glama API Key प्राप्त करें"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -479,16 +479,16 @@
 					"selectRegion": "क्षेत्र चुनें",
 					"useCrossRegion": "क्रॉस-रीजन इन्फरेंस का उपयोग करें",
 					"description": "AWS Bedrock AI मॉडल सेवा का उपयोग करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
 					"getKey": "AWS क्रेडेंशियल्स कॉन्फ़िगर करें"
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "OpenRouter API कुंजी",
-					"getKey": "OpenRouter API कुंजी प्राप्त करें",
+					"title": "OpenRouter API Key",
+					"getKey": "OpenRouter API Key प्राप्त करें",
 					"compressPrompts": "प्रॉम्प्ट और संदेश श्रृंखला को संदर्भ आकार में संकुचित करें",
 					"transforms": "OpenRouter ट्रांसफॉर्म",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,34 +498,34 @@
 					"region": "Google Cloud क्षेत्र",
 					"selectRegion": "क्षेत्र चुनें",
 					"description": "Google Cloud Vertex AI का उपयोग करने के लिए, आपको 1) Google Cloud खाता बनाना होगा › Vertex AI API सक्षम करें › वांछित Claude मॉडल सक्षम करें, 2) Google Cloud CLI इंस्टॉल करें › एप्लिकेशन डिफ़ॉल्ट क्रेडेंशियल्स कॉन्फ़िगर करें।",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
 					"getKey": "Google Cloud क्रेडेंशियल्स कॉन्फ़िगर करें"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral API कुंजी",
+					"title": "Mistral API Key",
 					"description": "Mistral AI मॉडल सेवा का उपयोग करें",
-					"getKey": "आप यहां Mistral API कुंजी के लिए पंजीकरण कर सकते हैं",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"placeholder": "API कुंजी दर्ज करें..."
+					"getKey": "आप यहां Mistral API Key के लिए पंजीकरण कर सकते हैं",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"placeholder": "API Key दर्ज करें..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini API कुंजी",
+					"title": "Gemini API Key",
 					"description": "Google के Gemini AI मॉडल का उपयोग करें",
-					"getKey": "Gemini API कुंजी प्राप्त करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"placeholder": "API कुंजी दर्ज करें..."
+					"getKey": "Gemini API Key प्राप्त करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"placeholder": "API Key दर्ज करें..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "बेस URL",
-					"enterBaseUrl": "बेस URL दर्ज करें",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Base URL दर्ज करें",
 					"modelId": "मॉडल ID",
 					"enterModelId": "उदाहरण: meta-llama-3.1-8b-instruct",
 					"description": "Ollama आपको स्थानीय रूप से ओपन-सोर्स भाषा मॉडल चलाने की अनुमति देता है",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
 					"getKey": "Ollama कॉन्फ़िगर करें",
 					"quickstartGuide": "त्वरित आरंभ गाइड",
 					"localServer": "स्थानीय सर्वर"
@@ -533,13 +533,13 @@
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "बेस URL (वैकल्पिक)",
+					"baseUrl": "Base URL (वैकल्पिक)",
 					"modelId": "मॉडल ID",
 					"enterModelId": "उदाहरण: meta-llama-3.1-8b-instruct",
-					"description": "LM Studio आपको अपने स्थानीय कंप्यूटर पर मॉडल चलाने की अनुमति देता है। आरंभ करने के निर्देशों के लिए क्विक स्टार्ट गाइड देखें। इस एक्सटेंशन के साथ उपयोग करने के लिए आपको LM Studio के स्थानीय सर्वर फ़ीचर को भी शुरू करना होगा।",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
+					"description": "LM Studio आपको अपने स्थानीय कंप्यूटर पर मॉडल चलाने की अनुमति देता है। आरंभ करने के निर्देशों के लिए त्वरित आरंभ गाइड देखें। इस एक्सटेंशन के साथ उपयोग करने के लिए आपको LM Studio के स्थानीय सर्वर फ़ीचर को भी शुरू करना होगा।",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
 					"getKey": "LM Studio सेटअप करें",
-					"quickstartGuide": "क्विक स्टार्ट गाइड",
+					"quickstartGuide": "त्वरित आरंभ गाइड",
 					"localServer": "स्थानीय सर्वर"
 				},
 				"vscode": {
@@ -550,21 +550,21 @@
 					"selectModel": "मॉडल चुनें...",
 					"noModels": "VS Code भाषा मॉडल API आपको अन्य VS Code एक्सटेंशन (GitHub Copilot सहित लेकिन इस तक सीमित नहीं) द्वारा प्रदान किए गए मॉडल चलाने की अनुमति देता है। आरंभ करने का सबसे आसान तरीका VS Code मार्केटप्लेस से Copilot और Copilot Chat एक्सटेंशन इंस्टॉल करना है।",
 					"experimentalNote": "नोट: यह एक बहुत ही प्रायोगिक एकीकरण है और अपेक्षित रूप से काम नहीं कर सकता है। कृपया किसी भी समस्या की रिपोर्ट CoolCline GitHub रिपॉजिटरी को करें।",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound API कुंजी",
-					"getKey": "Unbound API कुंजी प्राप्त करें",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें"
+					"title": "Unbound API Key",
+					"getKey": "Unbound API Key प्राप्त करें",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek API कुंजी",
+					"title": "DeepSeek API Key",
 					"description": "DeepSeek की उच्च प्रदर्शन AI मॉडल सेवा का उपयोग करें",
-					"getKey": "आप यहां DeepSeek API कुंजी के लिए पंजीकरण कर सकते हैं",
-					"useCustomBaseUrl": "कस्टम बेस URL का उपयोग करें",
-					"placeholder": "API कुंजी दर्ज करें..."
+					"getKey": "आप यहां DeepSeek API Key के लिए पंजीकरण कर सकते हैं",
+					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें",
+					"placeholder": "API Key दर्ज करें..."
 				}
 			},
 			"model": {

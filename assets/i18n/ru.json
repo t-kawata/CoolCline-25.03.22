@@ -10,10 +10,10 @@
 		"create": "Создать",
 		"prompt": "Промпт",
 		"validation": {
-			"provideApiKey": "Необходимо предоставить действительный API-ключ или выбрать другого провайдера.",
+			"provideApiKey": "Необходимо предоставить действительный API Key для текущего LLM Provider или выбрать другой LLM Provider с настроенным API Key.",
 			"provideRegion": "Необходимо выбрать регион для использования с AWS Bedrock.",
 			"provideProjectAndRegion": "Необходимо предоставить действительный ID проекта и регион Google Cloud.",
-			"provideBaseUrlAndKey": "Необходимо предоставить действительный базовый URL, API-ключ и ID модели.",
+			"provideBaseUrlAndKey": "Необходимо предоставить действительный Base URL, API Key и ID модели.",
 			"provideModelId": "Необходимо предоставить действительный ID модели.",
 			"provideModelSelector": "Необходимо предоставить действительный селектор модели.",
 			"modelNotAvailable": "Предоставленный ID модели недоступен. Пожалуйста, выберите другую модель."
@@ -38,7 +38,7 @@
 		"title": "Что такое CoolCline?",
 		"description": "CoolCline - это проактивный помощник программиста, который улучшает ваш процесс разработки с помощью продвинутых возможностей ИИ. Он помогает вам более эффективно писать код, оптимизировать запросы, автоматически исправлять ошибки, выполнять задачи командной строки и проводить автоматизированное тестирование браузера.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Для начала работы этому расширению нужен провайдер API.",
+		"apiProviderNeeded": "Для начала работы этому расширению нужен хотя бы один настроенный LLM Provider (обязательно).",
 		"letsGo": "Начнем!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "Задача",
 			"seeMore": "Показать больше",
 			"seeLess": "Показать меньше",
-			"tokens": "Токены",
+			"tokens": "Tokens",
 			"context": "Контекст",
 			"cache": "Кэш",
 			"apiCost": "Стоимость API",
@@ -184,23 +184,23 @@
 				"tools": "Настройки промптов поддержки"
 			},
 			"language": {
-				"title": "Язык",
-				"description": "Установите язык ответов ИИ-ассистента, интерфейс также переключится на выбранный язык",
+				"title": "Настройки языка",
+				"description": "Установите язык ответов LLM Provider (интерфейс также переключится на выбранный язык)",
 				"select": "Выбрать язык"
 			},
 			"customInstructions": {
-				"title": "Общие инструкции поведения",
-				"description": "Эти инструкции применяются ко всем режимам как базовые руководства по поведению, которые могут быть расширены специфическими инструкциями режима ниже",
+				"title": "Общие Prompt инструкции",
+				"description": "Эти Prompt инструкции применяются ко всем режимам как базовые руководства по поведению. Вы также можете расширить их с помощью специфических Prompt инструкций для каждого режима ниже",
 				"loadFrom": "Инструкции также могут быть загружены из",
-				"inWorkspace": "в вашем рабочем пространстве"
+				"inWorkspace": "файле в вашем рабочем пространстве"
 			},
 			"modePrompts": {
 				"title": "Настройки промптов",
 				"description": "Нажмите + для создания нового режима, или просто попросите CoolCline в чате создать его для вас!",
-				"createMode": "Создать новый режим",
-				"editConfig": "Редактировать конфигурацию режимов",
+				"createMode": "Создать новый режим роли",
+				"editConfig": "Редактировать конфигурацию режима роли",
 				"name": "Имя",
-				"specificPrompts": "Специфические промпты режима",
+				"specificPrompts": "Prompt для конкретного режима роли",
 				"slug": {
 					"title": "Идентификатор",
 					"description": "Уникальный идентификатор, используемый в URL и именах файлов, должен содержать только строчные буквы, цифры и дефисы"
@@ -211,10 +211,10 @@
 					"createDescription": "Определите экспертизу и личностные характеристики для этого режима"
 				},
 				"apiConfig": {
-					"title": "Конфигурация API",
-					"description": "Выберите конфигурацию API для этого режима",
-					"useCurrentConfig": "Использовать текущую выбранную конфигурацию API",
-					"enhancePrompts": "Вы можете выбрать конфигурацию API специально для улучшения промптов"
+					"title": "Конфигурация LLM Provider",
+					"description": "Выберите конфигурацию LLM Provider для этого режима роли, например claude-3.5-sonnet или deepseek-r1 (опции настраиваются на странице настроек)",
+					"useCurrentConfig": "Использовать текущую конфигурацию LLM Provider",
+					"enhancePrompts": "Выберите конфигурацию LLM Provider для этой вспомогательной функции, например claude-3.5-sonnet или deepseek-r1 (опции настраиваются на странице настроек)"
 				},
 				"tools": {
 					"title": "Доступные инструменты",
@@ -234,10 +234,10 @@
 				"preview": "Предпросмотр системного промпта"
 			},
 			"api": {
-				"title": "Настройки API",
+				"title": "Настройки LLM Provider",
 				"configProfile": {
-					"title": "Профили конфигурации",
-					"description": "Настройте профили API для быстрого переключения между провайдерами в строке ввода чата"
+					"title": "Профили LLM Provider",
+					"description": "Настройте профили LLM Provider для быстрого переключения между провайдерами в строке ввода чата"
 				},
 				"model": {
 					"title": "Модель",
@@ -245,7 +245,7 @@
 					"selected": "Текущая выбранная модель:"
 				},
 				"provider": {
-					"title": "Провайдер",
+					"title": "LLM Provider",
 					"openai": "OpenAI",
 					"glama": "Glama",
 					"openRouter": "OpenRouter"
@@ -357,16 +357,16 @@
 			"newest": "Самые новые",
 			"oldest": "Самые старые",
 			"mostExpensive": "Самые дорогие",
-			"mostTokens": "Больше всего токенов",
+			"mostTokens": "Больше всего Tokens",
 			"mostRelevant": "Наиболее релевантные"
 		},
 		"preview": {
 			"recentTasks": "Недавние задачи",
 			"viewAll": "Просмотреть всю историю",
-			"promptCopied": "Промпт скопирован в буфер обмена",
+			"promptCopied": "Скопировано",
 			"copyPrompt": "Скопировано",
 			"metrics": {
-				"tokens": "токенов",
+				"tokens": "Tokens",
 				"cache": "Cache",
 				"apiCost": "стоимость API"
 			}
@@ -376,36 +376,36 @@
 		"title": "Настройки",
 		"done": "Готово",
 		"provider": {
-			"title": "Провайдер",
-			"apiProvider": "API провайдер",
+			"title": "Настройки LLM Provider",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API ключ",
-				"placeholder": "Введите ваш API ключ",
-				"storedLocally": "API ключ безопасно хранится на вашем локальном компьютере",
-				"getKey": "Получить API ключ"
+				"title": "API Key",
+				"placeholder": "Введите ваш LLM Provider API Key",
+				"storedLocally": "LLM Provider API Key безопасно хранится на вашем локальном компьютере",
+				"getKey": "Получить LLM Provider API Key"
 			},
 			"customBaseUrl": {
-				"title": "Пользовательский базовый URL",
+				"title": "Пользовательский Base URL",
 				"placeholder": "По умолчанию: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "Профиль конфигурации",
-				"description": "Сохраняйте различные конфигурации API для быстрого переключения между провайдерами и настройками"
+				"title": "Настройка быстрого переключения LLM Provider",
+				"description": "Здесь вы можете создавать и управлять несколькими опциями LLM Provider. Вы можете создать отдельные опции для разных моделей одного LLM Provider, каждая опция сохраняет полную конфигурацию текущего LLM Provider. После создания вы можете переключаться между конфигурациями в реальном времени через нижнюю часть окна чата.\n\nКонфигурация включает:\n LLM Provider,\n API Key,\n Model \n и другие настройки, связанные с LLM Provider.\n\nШаги для создания опции LLM Provider (шаг 4 можно поменять местами с 2 и 3):\n1. Нажмите кнопку +, система автоматически создаст копию текущей конфигурации с именем xx (copy);\n2. Нажмите значок ✏️ для изменения имени опции;\n3. Нажмите ☑️ для сохранения имени опции;\n4. При необходимости настройте основные параметры, такие как Model (изменения сохраняются автоматически при потере фокуса).\n\nРекомендации по именованию опций:\n Рекомендуется использовать структуру «провайдер-версия-модели-особенность», например:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-official;\ndeepseek-r1-official."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "API ключ Anthropic",
-					"baseUrl": "Базовый URL (опционально)",
-					"enterBaseUrl": "Введите базовый URL API",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
-					"getKey": "Вы можете получить API ключ Anthropic, зарегистрировавшись здесь."
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (опционально)",
+					"enterBaseUrl": "Введите API Base URL",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
+					"getKey": "Вы можете получить Anthropic API Key, зарегистрировавшись здесь"
 				},
 				"openai": {
 					"name": "OpenAI Compatible",
 					"title": "Сервис, совместимый с OpenAI",
-					"baseUrl": "Базовый URL",
-					"enterBaseUrl": "Введите базовый URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Введите Base URL",
 					"useAzure": "Использовать Azure OpenAI",
 					"setAzureVersion": "Установить версию API Azure",
 					"description": "Использовать API-сервис, совместимый с OpenAI",
@@ -503,29 +503,29 @@
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "API ключ Mistral",
+					"title": "Mistral API Key",
 					"description": "Использовать сервис AI моделей Mistral",
-					"getKey": "Получить API ключ Mistral",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
-					"placeholder": "Введите API ключ..."
+					"getKey": "Получить Mistral API Key",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
+					"placeholder": "Введите API Key..."
 				},
 				"gemini": {
 					"name": "Google Gemini",
-					"title": "API ключ Google Gemini",
+					"title": "Google Gemini API Key",
 					"description": "Использовать AI модели Gemini от Google",
-					"getKey": "Получить API ключ Google Gemini",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
-					"placeholder": "Введите API ключ..."
+					"getKey": "Получить Google Gemini API Key",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
+					"placeholder": "Введите API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "Базовый URL",
-					"enterBaseUrl": "Введите базовый URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Введите Base URL",
 					"modelId": "ID модели",
 					"enterModelId": "Пример: meta-llama-3.1-8b-instruct",
 					"description": "Ollama позволяет вам локально запускать языковые модели с открытым исходным кодом",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
 					"getKey": "Настроить Ollama",
 					"quickstartGuide": "Руководство по быстрому старту",
 					"localServer": "Локальный сервер"
@@ -533,11 +533,11 @@
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "Базовый URL (опционально)",
+					"baseUrl": "Base URL (опционально)",
 					"modelId": "ID модели",
 					"enterModelId": "напр. meta-llama-3.1-8b-instruct",
 					"description": "LM Studio позволяет запускать модели на вашей локальной машине. Для начала ознакомьтесь с их руководством по быстрому старту. Вам также нужно будет запустить функцию локального сервера LM Studio для использования с этим расширением. Примечание: CoolCline использует сложные промпты, которые лучше всего работают с моделями Claude. Модели с меньшими возможностями могут работать не так, как ожидается.",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
 					"getKey": "Настроить LM Studio",
 					"quickstartGuide": "Руководство по быстрому старту",
 					"localServer": "Локальный сервер"
@@ -550,21 +550,21 @@
 					"selectModel": "Выберите модель...",
 					"noModels": "Языковые модели не найдены. Убедитесь, что вы установили и включили соответствующие расширения.",
 					"experimentalNote": "Примечание: Это очень экспериментальная интеграция и может работать не так, как ожидается. Пожалуйста, сообщайте о любых проблемах в репозиторий GitHub CoolCline.",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL"
+					"useCustomBaseUrl": "Использовать пользовательский Base URL"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "API ключ Unbound",
-					"getKey": "Получить API ключ Unbound",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL"
+					"title": "Unbound API Key",
+					"getKey": "Получить Unbound API Key",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "API ключ DeepSeek",
+					"title": "DeepSeek API Key",
 					"description": "DeepSeek предоставляет высокопроизводительный сервис AI моделей",
-					"getKey": "Вы можете получить API ключ DeepSeek, зарегистрировавшись здесь",
-					"useCustomBaseUrl": "Использовать пользовательский базовый URL",
-					"placeholder": "Введите API ключ..."
+					"getKey": "Вы можете получить DeepSeek API Key, зарегистрировавшись здесь",
+					"useCustomBaseUrl": "Использовать пользовательский Base URL",
+					"placeholder": "Введите API Key..."
 				}
 			},
 			"model": {

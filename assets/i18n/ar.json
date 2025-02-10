@@ -10,10 +10,10 @@
 		"create": "إنشاء",
 		"prompt": "موجه",
 		"validation": {
-			"provideApiKey": "يجب تقديم مفتاح API صالح أو اختيار مزود آخر.",
+			"provideApiKey": "يجب تقديم API Key صالح للـ LLM Provider الحالي أو اختيار LLM Provider آخر تم تكوينه مسبقاً.",
 			"provideRegion": "يجب اختيار منطقة لاستخدامها مع AWS Bedrock.",
 			"provideProjectAndRegion": "يجب تقديم معرف مشروع Google Cloud ومنطقة صالحين.",
-			"provideBaseUrlAndKey": "يجب تقديم عنوان URL أساسي ومفتاح API ومعرف نموذج صالحين.",
+			"provideBaseUrlAndKey": "يجب تقديم Base URL وAPI Key ومعرف نموذج صالحين.",
 			"provideModelId": "يجب تقديم معرف نموذج صالح.",
 			"provideModelSelector": "يجب تقديم محدد نموذج صالح.",
 			"modelNotAvailable": "معرف النموذج الذي قدمته غير متوفر. يرجى اختيار نموذج آخر."
@@ -38,7 +38,7 @@
 		"title": "ما هو CoolCline؟",
 		"description": "CoolCline هو مساعد برمجة استباقي يعزز سير عمل التطوير الخاص بك بقدرات الذكاء الاصطناعي المتقدمة. يساعدك في كتابة التعليمات البرمجية بكفاءة أكبر، وتحسين الاستعلامات، وإصلاح الأخطاء تلقائياً، وتشغيل مهام سطر الأوامر، وإجراء اختبارات أتمتة المتصفح.",
 		"readmeLink": "اقرأني",
-		"apiProviderNeeded": "للبدء، يحتاج هذا الامتداد إلى مزود API.",
+		"apiProviderNeeded": "للبدء، يجب تكوين LLM Provider واحد على الأقل (إلزامي).",
 		"letsGo": "هيا نبدأ!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "مهمة",
 			"seeMore": "رؤية المزيد",
 			"seeLess": "رؤية أقل",
-			"tokens": "الرموز",
+			"tokens": "Tokens",
 			"context": "السياق",
 			"cache": "الذاكرة المؤقتة",
 			"apiCost": "تكلفة API",
@@ -184,23 +184,23 @@
 				"tools": "إعدادات موجه الدعم"
 			},
 			"language": {
-				"title": "اللغة",
-				"description": "قم بتعيين لغة استجابة مساعد الذكاء الاصطناعي، ستتحول الواجهة أيضاً إلى اللغة المحددة",
+				"title": "إعدادات اللغة",
+				"description": "تعيين لغة استجابة LLM Provider (ستتحول واجهة الامتداد أيضاً إلى اللغة المحددة)",
 				"select": "اختر اللغة"
 			},
 			"customInstructions": {
-				"title": "تعليمات السلوك العام",
-				"description": "تنطبق هذه التعليمات على جميع الأوضاع كإرشادات سلوك أساسية، والتي يمكن توسيعها من خلال تعليمات خاصة بالوضع أدناه",
+				"title": "تعليمات Prompt العامة",
+				"description": "تنطبق تعليمات Prompt هذه على جميع الأوضاع كإرشادات سلوك أساسية. يمكنك أيضاً توسيعها من خلال تعليمات Prompt خاصة بالوضع أدناه",
 				"loadFrom": "يمكن أيضاً تحميل التعليمات من",
-				"inWorkspace": "في مساحة العمل الخاصة بك"
+				"inWorkspace": "في مساحة العمل الخاصة بك لتحميل تعليمات Prompt العامة"
 			},
 			"modePrompts": {
 				"title": "إعدادات الموجه",
 				"description": "انقر على + لإنشاء وضع جديد، أو اطلب من CoolCline في المحادثة إنشاء واحد لك!",
-				"createMode": "إنشاء وضع جديد",
-				"editConfig": "تحرير تكوين الأوضاع",
+				"createMode": "إنشاء وضع دور جديد",
+				"editConfig": "تحرير تكوين وضع الدور",
 				"name": "الاسم",
-				"specificPrompts": "موجهات خاصة بالوضع",
+				"specificPrompts": "Prompt خاص بوضع الدور",
 				"slug": {
 					"title": "المعرف",
 					"description": "معرف فريد يستخدم في عناوين URL وأسماء الملفات، يجب أن يحتوي فقط على أحرف صغيرة وأرقام وشرطات"
@@ -211,10 +211,10 @@
 					"createDescription": "حدد الخبرة والسمات الشخصية لهذا الوضع"
 				},
 				"apiConfig": {
-					"title": "تكوين API",
-					"description": "حدد تكوين API لهذا الوضع",
-					"useCurrentConfig": "استخدام تكوين API المحدد حالياً",
-					"enhancePrompts": "يمكنك تحديد تكوين API خصيصاً لتحسين الموجهات"
+					"title": "تكوين LLM Provider",
+					"description": "اختر تكوين LLM Provider لهذا الوضع، مثل خيارات claude-3.5-sonnet أو deepseek-r1 (يتم إدارة الخيارات في صفحة الإعدادات)",
+					"useCurrentConfig": "استخدام تكوين LLM Provider الحالي",
+					"enhancePrompts": "اختر تكوين LLM Provider محدد لهذه الوظيفة المساعدة، مثل خيارات claude-3.5-sonnet أو deepseek-r1 (يتم إدارة الخيارات في صفحة الإعدادات)"
 				},
 				"tools": {
 					"title": "الأدوات المتاحة",
@@ -237,7 +237,7 @@
 				"title": "إعدادات API",
 				"configProfile": {
 					"title": "ملفات تعريف التكوين",
-					"description": "قم بتكوين ملفات تعريف API للتبديل السريع بين المزودين في شريط إدخال المحادثة"
+					"description": "قم بتكوين ملفات تعريف API للتبديل السريع بين المزودين والإعدادات"
 				},
 				"model": {
 					"title": "النموذج",
@@ -363,10 +363,10 @@
 		"preview": {
 			"recentTasks": "المهام الأخيرة",
 			"viewAll": "عرض كل السجل",
-			"promptCopied": "تم نسخ الموجه إلى الحافظة",
+			"promptCopied": "Copied",
 			"copyPrompt": "Copied",
 			"metrics": {
-				"tokens": "الرموز",
+				"tokens": "Tokens",
 				"cache": "الذاكرة المؤقتة",
 				"apiCost": "تكلفة API"
 			}
@@ -376,36 +376,36 @@
 		"title": "الإعدادات",
 		"done": "تم",
 		"provider": {
-			"title": "المزود",
-			"apiProvider": "مزود API",
+			"title": "إعدادات LLM Provider",
+			"apiProvider": "LLM Provider",
 			"apiKey": {
-				"title": "مفتاح API",
-				"placeholder": "أدخل مفتاح API الخاص بك",
-				"storedLocally": "يتم تخزين مفتاح API بشكل آمن على جهازك المحلي",
-				"getKey": "الحصول على مفتاح API"
+				"title": "API Key",
+				"placeholder": "أدخل API Key الخاص بـ LLM Provider",
+				"storedLocally": "يتم تخزين API Key الخاص بـ LLM Provider بشكل آمن على جهازك المحلي",
+				"getKey": "الحصول على API Key لـ LLM Provider"
 			},
 			"customBaseUrl": {
-				"title": "عنوان URL الأساسي المخصص",
+				"title": "Base URL مخصص",
 				"placeholder": "الافتراضي: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "ملف تعريف التكوين",
-				"description": "احفظ تكوينات API مختلفة للتبديل السريع بين المزودين والإعدادات"
+				"title": "خيارات التبديل السريع لـ LLM Provider",
+				"description": "هنا يمكنك إنشاء وإدارة خيارات LLM Provider المتعددة. يمكنك إنشاء خيارات منفصلة لنماذج مختلفة لنفس LLM Provider، حيث يحتفظ كل خيار بمعلومات التكوين الكاملة لـ LLM Provider الحالي. بعد الإنشاء، يمكنك التبديل بين التكوينات في الوقت الفعلي من شريط الإدخال في المحادثة.\n\nتتضمن معلومات التكوين:\n LLM Provider،\n API Key،\n النموذج \n وإعدادات أخرى متعلقة بـ LLM Provider.\n\nخطوات إنشاء خيار LLM Provider (يمكن تبديل الخطوتين 4 و2/3):\n1. انقر على زر +، سيتم نسخ خيار تلقائياً من معلومات التكوين الحالية، باسم xx (نسخة)؛\n2. انقر على أيقونة ✏️ لتعديل اسم الخيار؛\n3. انقر على ☑️ لحفظ اسم الخيار؛\n4. اضبط المعلمات الأساسية مثل النموذج حسب الحاجة (يتم الحفظ تلقائياً عند فقد التركيز).\n\nاقتراحات تسمية الخيارات:\n يوصى باستخدام بنية \"المزود-إصدار النموذج-الميزة\"، مثل:\nopenrouter-deepseek-v3-free؛\nopenrouter-deepseek-r1-free؛\ndeepseek-v3-رسمي؛\ndeepseek-r1-رسمي."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "مفتاح API Anthropic",
-					"baseUrl": "عنوان URL الأساسي (اختياري)",
-					"enterBaseUrl": "أدخل عنوان URL الأساسي لـ API",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "يمكنك الحصول على مفتاح API Anthropic بالتسجيل هنا."
+					"title": "API Key لـ Anthropic",
+					"baseUrl": "Base URL (اختياري)",
+					"enterBaseUrl": "أدخل Base URL للـ API",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"getKey": "يمكنك الحصول على API Key لـ Anthropic بالتسجيل هنا"
 				},
 				"openai": {
 					"name": "OpenAI متوافق",
 					"title": "خدمة متوافقة مع OpenAI",
-					"baseUrl": "عنوان URL الأساسي",
-					"enterBaseUrl": "أدخل عنوان URL الأساسي",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "أدخل Base URL",
 					"useAzure": "استخدام Azure OpenAI",
 					"setAzureVersion": "تعيين إصدار API Azure",
 					"description": "استخدام خدمة API متوافقة مع OpenAI",
@@ -456,16 +456,16 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "مفتاح API OpenAI",
-					"description": "استخدام خدمة API OpenAI الرسمية",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "يمكنك الحصول على مفتاح API OpenAI بالتسجيل هنا."
+					"title": "OpenAI API Key",
+					"description": "استخدام خدمة OpenAI الرسمية",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"getKey": "يمكنك التسجيل والحصول على OpenAI API Key هنا"
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "مفتاح API Glama",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "الحصول على مفتاح API Glama"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"getKey": "الحصول على Glama API Key"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -479,16 +479,16 @@
 					"selectRegion": "اختر المنطقة",
 					"useCrossRegion": "استخدام الاستدلال عبر المناطق",
 					"description": "استخدام خدمة نماذج AWS Bedrock AI",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
 					"getKey": "تكوين بيانات اعتماد AWS"
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "مفتاح API OpenRouter",
-					"getKey": "الحصول على مفتاح API OpenRouter",
+					"title": "OpenRouter API Key",
+					"getKey": "الحصول على OpenRouter API Key",
 					"compressPrompts": "ضغط الموجهات وسلاسل الرسائل إلى حجم السياق",
-					"transforms": "تحويلات OpenRouter",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص"
+					"transforms": "OpenRouter تحويلات",
+					"useCustomBaseUrl": "استخدام Base URL مخصص"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,46 +498,46 @@
 					"region": "منطقة Google Cloud",
 					"selectRegion": "اختر المنطقة",
 					"description": "لاستخدام Google Cloud Vertex AI، تحتاج إلى 1) إنشاء حساب Google Cloud › تمكين Vertex AI API › تمكين نماذج Claude المطلوبة، 2) تثبيت Google Cloud CLI › تكوين بيانات اعتماد التطبيق الافتراضية.",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "تكوين بيانات اعتماد Google Cloud"
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"getKey": "الحصول على Google Vertex AI API Key"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "مفتاح API لـ Mistral",
-					"description": "استخدم خدمة نماذج Mistral AI",
-					"getKey": "يمكنك التسجيل والحصول على مفتاح API لـ Mistral هنا",
-					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
-					"placeholder": "أدخل مفتاح API..."
+					"title": "Mistral API Key",
+					"description": "استخدام خدمة نماذج Mistral AI",
+					"getKey": "يمكنك التسجيل والحصول على Mistral API Key هنا",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"placeholder": "أدخل API Key..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "مفتاح API لـ Gemini",
-					"description": "استخدم نموذج Gemini AI من Google",
-					"getKey": "احصل على مفتاح API لـ Gemini",
-					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
-					"placeholder": "أدخل مفتاح API..."
+					"title": "Gemini API Key",
+					"description": "استخدام نموذج Gemini AI من Google",
+					"getKey": "الحصول على Gemini API Key",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"placeholder": "أدخل API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "عنوان URL الأساسي",
-					"enterBaseUrl": "Enter base URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "أدخل Base URL",
 					"modelId": "معرف النموذج",
-					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
-					"description": "يتيح لك Ollama تشغيل نماذج اللغة مفتوحة المصدر محلياً",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص",
-					"getKey": "تكوين Ollama",
-					"quickstartGuide": "Quick Start Guide",
-					"localServer": "Local Server"
+					"enterModelId": "مثال: meta-llama-3.1-8b-instruct",
+					"description": "Ollama يتيح لك تشغيل نماذج اللغة مفتوحة المصدر محلياً",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"getKey": "إعداد Ollama",
+					"quickstartGuide": "دليل البدء السريع",
+					"localServer": "الخادم المحلي"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "عنوان URL الأساسي (اختياري)",
+					"baseUrl": "Base URL (اختياري)",
 					"modelId": "معرف النموذج",
 					"enterModelId": "مثال: meta-llama-3.1-8b-instruct",
-					"description": "يتيح لك LM Studio تشغيل النماذج على جهازك المحلي. راجع دليل البدء السريع للحصول على إرشادات حول كيفية البدء. ستحتاج أيضًا إلى تشغيل وظيفة الخادم المحلي لـ LM Studio لاستخدامه مع هذا الامتداد.",
-					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
+					"description": "LM Studio يتيح لك تشغيل النماذج على جهازك المحلي. راجع دليل البدء السريع للحصول على إرشادات حول كيفية البدء. ستحتاج أيضاً إلى تشغيل وظيفة الخادم المحلي لـ LM Studio لاستخدامه مع هذا الامتداد.",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
 					"getKey": "إعداد LM Studio",
 					"quickstartGuide": "دليل البدء السريع",
 					"localServer": "الخادم المحلي"
@@ -545,26 +545,26 @@
 				"vscode": {
 					"name": "VS Code",
 					"title": "VS Code LM API",
-					"description": "استخدم واجهة برمجة تطبيقات نموذج اللغة المدمجة في VS Code",
+					"description": "استخدام واجهة برمجة تطبيقات نموذج اللغة المدمجة في VS Code",
 					"modelSelector": "نموذج اللغة",
-					"selectModel": "اختر نموذجًا...",
+					"selectModel": "اختر نموذجاً...",
 					"noModels": "تتيح لك واجهة برمجة تطبيقات نموذج اللغة في VS Code تشغيل النماذج المقدمة من امتدادات VS Code الأخرى (بما في ذلك GitHub Copilot على سبيل المثال لا الحصر). أسهل طريقة للبدء هي تثبيت امتدادات Copilot و Copilot Chat من متجر VS Code.",
 					"experimentalNote": "ملاحظة: هذا تكامل تجريبي للغاية وقد لا يعمل كما هو متوقع. يرجى الإبلاغ عن أي مشكلات إلى مستودع CoolCline على GitHub.",
-					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص"
+					"useCustomBaseUrl": "استخدام Base URL مخصص"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "مفتاح API Unbound",
-					"getKey": "الحصول على مفتاح API Unbound",
-					"useCustomBaseUrl": "استخدام عنوان URL أساسي مخصص"
+					"title": "Unbound API Key",
+					"getKey": "الحصول على Unbound API Key",
+					"useCustomBaseUrl": "استخدام Base URL مخصص"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "مفتاح API لـ DeepSeek",
-					"description": "استخدم خدمة نماذج AI عالية الأداء من DeepSeek",
-					"getKey": "يمكنك التسجيل والحصول على مفتاح API لـ DeepSeek هنا",
-					"useCustomBaseUrl": "استخدم عنوان URL أساسي مخصص",
-					"placeholder": "أدخل مفتاح API..."
+					"title": "DeepSeek API Key",
+					"description": "استخدام خدمة نماذج DeepSeek عالية الأداء",
+					"getKey": "يمكنك التسجيل والحصول على DeepSeek API Key هنا",
+					"useCustomBaseUrl": "استخدام Base URL مخصص",
+					"placeholder": "أدخل API Key..."
 				}
 			},
 			"model": {

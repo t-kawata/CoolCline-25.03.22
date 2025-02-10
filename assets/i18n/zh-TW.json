@@ -10,10 +10,10 @@
 		"create": "建立",
 		"prompt": "提示",
 		"validation": {
-			"provideApiKey": "請提供有效的 API 金鑰或選擇其他服務提供商。",
+			"provideApiKey": "請為當前 LLM Provider 提供有效的 API Key 或選擇已經配置好 API Key 的其他 LLM Provider。",
 			"provideRegion": "請選擇 AWS Bedrock 的區域。",
 			"provideProjectAndRegion": "請提供有效的 Google Cloud 專案 ID 和區域。",
-			"provideBaseUrlAndKey": "請提供有效的基礎 URL、API 金鑰和模型 ID。",
+			"provideBaseUrlAndKey": "請提供有效的 Base URL、API Key 和模型 ID。",
 			"provideModelId": "請提供有效的模型 ID。",
 			"provideModelSelector": "請提供有效的模型選擇器。",
 			"modelNotAvailable": "您提供的模型 ID 不可用，請選擇其他模型。"
@@ -38,7 +38,7 @@
 		"title": "CoolCline 是什麼？",
 		"description": "CoolCline 是一個主動式程式設計助手，透過先進的 AI 功能增強您的開發工作流程。它可以幫助您更高效地編寫程式碼、最佳化查詢、自動修復錯誤、執行命令列任務以及執行瀏覽器自動化測試。",
 		"readmeLink": "使用說明",
-		"apiProviderNeeded": "要開始使用，此擴充功能需要一個 API 提供者。",
+		"apiProviderNeeded": "要開始使用此擴充功能至少需要配置好一個 LLM Provider （必須）。",
 		"letsGo": "讓我們開始吧！"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "任務",
 			"seeMore": "查看更多",
 			"seeLess": "收起",
-			"tokens": "權杖數",
+			"tokens": "Tokens",
 			"context": "上下文",
 			"cache": "快取",
 			"apiCost": "API 費用",
@@ -184,23 +184,23 @@
 				"tools": "輔助功能提示設定"
 			},
 			"language": {
-				"title": "語言",
-				"description": "設定 AI 助手的回覆語言，介面也會相應切換到所選語言",
+				"title": "語言設定",
+				"description": "設定 LLM Provider 按什麼語言回覆（擴充功能的介面也會相應切換到所選語言）",
 				"select": "選擇語言"
 			},
 			"customInstructions": {
-				"title": "一般行為指令",
-				"description": "這些指令適用於所有模式，作為基礎行為準則，可以透過下方的模式特定指令進行擴展",
+				"title": "通用 Prompt 指令",
+				"description": "這裡的 Prompt 指令適用於所有模式，作為基礎行為準則。您還可以通過下方的角色模式設定特定 Prompt 指令進行擴展",
 				"loadFrom": "也可以從工作區的",
-				"inWorkspace": "檔案中載入指令"
+				"inWorkspace": "文件中載入通用 Prompt 指令"
 			},
 			"modePrompts": {
-				"title": "提示設定",
+				"title": "Prompt 配置",
 				"description": "點擊 + 建立新模式，或直接在對話中讓 CoolCline 為您建立！",
-				"createMode": "新建模式",
-				"editConfig": "編輯模式設定",
+				"createMode": "新建角色模式",
+				"editConfig": "編輯角色模式配置",
 				"name": "名稱",
-				"specificPrompts": "模式專屬提示",
+				"specificPrompts": "角色模式專屬 Prompt",
 				"slug": {
 					"title": "識別碼",
 					"description": "用於 URL 和檔案名稱的唯一識別碼，只能包含小寫字母、數字和連字號"
@@ -211,10 +211,10 @@
 					"createDescription": "定義此模式下的專業特長和個性特徵"
 				},
 				"apiConfig": {
-					"title": "API 設定",
-					"description": "為此模式選擇 API 設定",
-					"useCurrentConfig": "使用目前選擇的 API 設定",
-					"enhancePrompts": "可以選擇專門用於提示增強的 API 設定"
+					"title": "LLM Provider 配置",
+					"description": "為此角色模式選擇指定的 LLM Provider 配置，如 claude-3.5-sonnet 或 deepseek-r1 對應的選項（選項在設定頁面維護）",
+					"useCurrentConfig": "使用當前選擇的 LLM Provider 配置",
+					"enhancePrompts": "為此輔助功能選擇指定的 LLM Provider 配置，如 claude-3.5-sonnet 或 deepseek-r1 對應的選項（選項在設定頁面維護）"
 				},
 				"tools": {
 					"title": "可用工具",
@@ -361,12 +361,12 @@
 			"mostRelevant": "最相關"
 		},
 		"preview": {
-			"recentTasks": "最近的任務",
-			"viewAll": "查看所有歷史記錄",
-			"promptCopied": "提示已複製到剪貼簿",
+			"recentTasks": "最近任務",
+			"viewAll": "查看所有歷史",
+			"promptCopied": "已複製",
 			"copyPrompt": "已複製",
 			"metrics": {
-				"tokens": "權杖",
+				"tokens": "Tokens",
 				"cache": "快取",
 				"apiCost": "API 費用"
 			}
@@ -376,36 +376,36 @@
 		"title": "設定",
 		"done": "完成",
 		"provider": {
-			"title": "提供者",
-			"apiProvider": "API 提供者",
+			"title": "LLM Provider 設定",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API 金鑰",
-				"placeholder": "輸入您的 API 金鑰",
-				"storedLocally": "API 金鑰安全地儲存在您的本機上",
-				"getKey": "取得 API 金鑰"
+				"title": "API Key",
+				"placeholder": "輸入您的 LLM Provider API Key",
+				"storedLocally": "LLM Provider API Key 安全地存儲在本機上",
+				"getKey": "獲取 LLM Provider API Key"
 			},
 			"customBaseUrl": {
-				"title": "自訂基礎 URL",
-				"placeholder": "預設：{defaultUrl}"
+				"title": "自定義 Base URL",
+				"placeholder": "預設: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "設定檔",
-				"description": "儲存不同的 API 設定以快速切換提供者和設定"
+				"title": "配置 LLM Provider 快速切換選項",
+				"description": "在這裡，您可以創建和管理多個 LLM Provider 選項。您可以為同一個 LLM Provider 的不同 Model 創建單獨的選項，每個選項保存當前 LLM Provider 的完整配置信息。創建後，您可以在聊天輸入框底部實時切換配置。\n\n配置信息包含：\n LLM Provider、\n API Key、\n Model \n 以及與 LLM Provider 有關的其他配置項 。\n\n創建 LLM Provider 選項的步驟如下（步驟 4 可以與 2 和 3 順序調換）：\n1. 點擊 + 按鈕，系統會自動根據當前配置信息複製一個選項，名字為 xx (copy)；\n2. 點擊 ✏️ 圖標修改選項名稱；\n3. 點擊 ☑️ 保存選項名稱；\n4. 按需要調整 Model 等核心參數（編輯框失去焦點後會自動保存）。\n\n選項名稱的命名建議：\n 推薦採用「服務商-模型版本-特性」結構，例如：\nopenrouter-deepseek-v3-free；\nopenrouter-deepseek-r1-free；\ndeepseek-v3-官方；\ndeepseek-r1-官方。"
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic API 金鑰",
-					"baseUrl": "基礎 URL（選填）",
-					"enterBaseUrl": "輸入 API 基礎 URL",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "您可以在此註冊以取得 Anthropic API 金鑰。"
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (可選)",
+					"enterBaseUrl": "輸入 API Base URL",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"getKey": "您可以在此處註冊以獲取 Anthropic API Key"
 				},
 				"openai": {
 					"name": "OpenAI 相容",
-					"title": "OpenAI 相容服務",
-					"baseUrl": "基礎 URL",
-					"enterBaseUrl": "輸入基礎 URL",
+					"title": "OpenAI 相容介面",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "輸入 Base URL",
 					"useAzure": "使用 Azure OpenAI",
 					"setAzureVersion": "設定 Azure API 版本",
 					"description": "使用 OpenAI 相容的 API 服務",
@@ -456,16 +456,16 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "OpenAI API 金鑰",
-					"description": "使用 OpenAI 官方 API 服務",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "您可以在此註冊以取得 OpenAI API 金鑰。"
+					"title": "OpenAI API Key",
+					"description": "使用 OpenAI 官方的 API 服務",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"getKey": "您可以在此處註冊獲取 OpenAI API Key"
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "Glama API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "取得 Glama API 金鑰"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"getKey": "獲取 Glama API Key"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -484,11 +484,11 @@
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "OpenRouter API 金鑰",
-					"getKey": "取得 OpenRouter API 金鑰",
+					"title": "OpenRouter API Key",
+					"getKey": "獲取 OpenRouter API Key",
 					"compressPrompts": "壓縮提示和訊息鏈以符合上下文大小",
 					"transforms": "OpenRouter 轉換",
-					"useCustomBaseUrl": "使用自訂基礎 URL"
+					"useCustomBaseUrl": "使用自定義 Base URL"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,35 +498,35 @@
 					"region": "Google Cloud 區域",
 					"selectRegion": "選擇區域",
 					"description": "要使用 Google Cloud Vertex AI，您需要 1) 建立 Google Cloud 帳戶 › 啟用 Vertex AI API › 啟用所需的 Claude 模型，2) 安裝 Google Cloud CLI › 設定應用程式預設憑證。",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"getKey": "取得 Google Vertex AI API 金鑰"
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"getKey": "獲取 Google Vertex AI API Key"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral API 金鑰",
+					"title": "Mistral API Key",
 					"description": "使用 Mistral AI 模型服務",
-					"getKey": "您可以在此註冊以取得 Mistral API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"placeholder": "輸入 API 金鑰..."
+					"getKey": "您可以在此處註冊以獲取 Mistral API Key",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"placeholder": "輸入 API Key..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini API 金鑰",
+					"title": "Gemini API Key",
 					"description": "使用 Google 的 Gemini AI 模型",
-					"getKey": "取得 Gemini API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"placeholder": "輸入 API 金鑰..."
+					"getKey": "獲取 Gemini API Key",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"placeholder": "輸入 API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "基礎 URL",
-					"enterBaseUrl": "輸入基礎 URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "輸入 Base URL",
 					"modelId": "Model ID",
 					"enterModelId": "範例：meta-llama-3.1-8b-instruct",
-					"description": "Ollama allows you to run open-source language models locally",
-					"useCustomBaseUrl": "Use custom base URL",
-					"getKey": "Configure Ollama",
+					"description": "Ollama 允許您在本機執行開源語言模型",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"getKey": "設定 Ollama",
 					"quickstartGuide": "快速入門指南",
 					"localServer": "本機伺服器"
 				},
@@ -554,17 +554,17 @@
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound API 金鑰",
-					"getKey": "取得 Unbound API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL"
+					"title": "Unbound API Key",
+					"getKey": "獲取 Unbound API Key",
+					"useCustomBaseUrl": "使用自定義 Base URL"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek API 金鑰",
-					"description": "使用 DeepSeek 的高效能 AI 模型服務",
-					"getKey": "您可以在此註冊以取得 DeepSeek API 金鑰",
-					"useCustomBaseUrl": "使用自訂基礎 URL",
-					"placeholder": "輸入 API 金鑰..."
+					"title": "DeepSeek API Key",
+					"description": "使用 DeepSeek 的高性能 AI 模型服務",
+					"getKey": "您可以在此處註冊獲取 DeepSeek API Key",
+					"useCustomBaseUrl": "使用自定義 Base URL",
+					"placeholder": "輸入 API Key..."
 				}
 			},
 			"model": {

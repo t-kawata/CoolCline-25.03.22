@@ -10,10 +10,10 @@
 		"create": "Létrehozás",
 		"prompt": "Prompt",
 		"validation": {
-			"provideApiKey": "Érvényes API kulcsot kell megadnia, vagy válasszon másik szolgáltatót.",
+			"provideApiKey": "Érvényes API Key-t kell megadnia a jelenlegi LLM Provider számára, vagy válasszon másik LLM Provider-t amelyhez már konfigurált API Key-t.",
 			"provideRegion": "Ki kell választania egy régiót az AWS Bedrock használatához.",
 			"provideProjectAndRegion": "Érvényes Google Cloud projekt azonosítót és régiót kell megadnia.",
-			"provideBaseUrlAndKey": "Érvényes alap URL-t, API kulcsot és modell azonosítót kell megadnia.",
+			"provideBaseUrlAndKey": "Érvényes Base URL-t, API Key-t és modell azonosítót kell megadnia.",
 			"provideModelId": "Érvényes modell azonosítót kell megadnia.",
 			"provideModelSelector": "Érvényes modell választót kell megadnia.",
 			"modelNotAvailable": "A megadott modell azonosító nem érhető el. Kérjük, válasszon másik modellt."
@@ -38,7 +38,7 @@
 		"title": "Mi az a CoolCline?",
 		"description": "A CoolCline egy proaktív programozási asszisztens, amely fejlett AI képességekkel javítja a fejlesztési munkafolyamatot. Segít hatékonyabban kódolni, optimalizálni a lekérdezéseket, automatikusan javítani a hibákat, parancssori feladatokat futtatni és böngésző automatizálási teszteket végezni.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "A kezdéshez ennek a bővítménynek szüksége van egy API szolgáltatóra.",
+		"apiProviderNeeded": "A kezdéshez ennek a bővítménynek szüksége van egy LLM Provider konfigurációra (kötelező).",
 		"letsGo": "Kezdjük!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "Feladat",
 			"seeMore": "Több",
 			"seeLess": "Kevesebb",
-			"tokens": "Tokenek",
+			"tokens": "Tokens",
 			"context": "Kontextus",
 			"cache": "Gyorsítótár",
 			"apiCost": "API költség",
@@ -363,10 +363,10 @@
 		"preview": {
 			"recentTasks": "Legutóbbi feladatok",
 			"viewAll": "Összes előzmény megtekintése",
-			"promptCopied": "Prompt a vágólapra másolva",
+			"promptCopied": "Másolva",
 			"copyPrompt": "Másolva",
 			"metrics": {
-				"tokens": "Tokenek",
+				"tokens": "Tokens",
 				"cache": "Gyorsítótár",
 				"apiCost": "API költség"
 			}
@@ -376,36 +376,36 @@
 		"title": "Beállítások",
 		"done": "Kész",
 		"provider": {
-			"title": "Szolgáltató",
-			"apiProvider": "API szolgáltató",
+			"title": "LLM Provider beállítások",
+			"apiProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API kulcs",
-				"placeholder": "Adja meg API kulcsát",
-				"storedLocally": "Az API kulcs biztonságosan tárolva van a helyi gépen",
-				"getKey": "API kulcs beszerzése"
+				"title": "API Key",
+				"placeholder": "Adja meg az LLM Provider API Key-t",
+				"storedLocally": "Az LLM Provider API Key biztonságosan tárolva van a helyi gépen",
+				"getKey": "API Key beszerzése"
 			},
 			"customBaseUrl": {
-				"title": "Egyéni alap URL",
+				"title": "Egyéni Base URL",
 				"placeholder": "Alapértelmezett: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "Konfigurációs profil",
-				"description": "Különböző API beállítások tárolása a szolgáltatók és beállítások közötti gyors váltáshoz"
+				"title": "LLM Provider gyors váltás beállítások",
+				"description": "Itt létrehozhat és kezelhet több LLM Provider beállítást. Létrehozhat külön beállításokat ugyanazon LLM Provider különböző modelljeihez, minden beállítás tartalmazza az aktuális LLM Provider teljes konfigurációját. Létrehozás után válthat a konfigurációk között a chat beviteli mező alján."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic API kulcs",
-					"baseUrl": "Alap URL (opcionális)",
-					"enterBaseUrl": "Adja meg az API alap URL-t",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Itt regisztrálhat Anthropic API kulcsért."
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (opcionális)",
+					"enterBaseUrl": "Adja meg az API Base URL-t",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"getKey": "Itt regisztrálhat Anthropic API Key beszerzéséhez"
 				},
 				"openai": {
 					"name": "OpenAI kompatibilis",
 					"title": "OpenAI-kompatibilis szolgáltatás",
-					"baseUrl": "Alap URL",
-					"enterBaseUrl": "Adja meg az alap URL-t",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Adja meg a Base URL-t",
 					"useAzure": "Azure OpenAI használata",
 					"setAzureVersion": "Azure API verzió beállítása",
 					"description": "OpenAI-kompatibilis API szolgáltatás használata",
@@ -456,16 +456,16 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "OpenAI API kulcs",
-					"description": "Hivatalos OpenAI API szolgáltatás használata",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Itt regisztrálhat OpenAI API kulcsért."
+					"title": "OpenAI API Key",
+					"description": "Használja az OpenAI hivatalos API szolgáltatását",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"getKey": "Itt regisztrálhat OpenAI API Key beszerzéséhez"
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "Glama API kulcs",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Glama API kulcs beszerzése"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"getKey": "Glama API Key beszerzése"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -479,16 +479,16 @@
 					"selectRegion": "Régió kiválasztása",
 					"useCrossRegion": "Régióközi következtetés használata",
 					"description": "AWS Bedrock AI modell szolgáltatás használata",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
 					"getKey": "AWS hitelesítő adatok beállítása"
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "OpenRouter API kulcs",
-					"getKey": "OpenRouter API kulcs beszerzése",
+					"title": "OpenRouter API Key",
+					"getKey": "OpenRouter API Key beszerzése",
 					"compressPrompts": "Promptok és üzenetláncok tömörítése kontextus mérethez",
 					"transforms": "OpenRouter átalakítások",
-					"useCustomBaseUrl": "Egyéni alap URL használata"
+					"useCustomBaseUrl": "Egyéni Base URL használata"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,46 +498,46 @@
 					"region": "Google Cloud régió",
 					"selectRegion": "Régió kiválasztása",
 					"description": "A Google Cloud Vertex AI használatához 1) létre kell hoznia egy Google Cloud fiókot › aktiválnia kell a Vertex AI API-t › aktiválnia kell a szükséges Claude modelleket, 2) telepítenie kell a Google Cloud CLI-t › konfigurálnia kell az alapértelmezett alkalmazás hitelesítő adatokat.",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Google Vertex AI API kulcs beszerzése"
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"getKey": "Google Vertex AI API Key beszerzése"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral API kulcs",
+					"title": "Mistral API Key",
 					"description": "Használja a Mistral AI modell szolgáltatást",
-					"getKey": "Itt regisztrálhat a Mistral API kulcs megszerzéséhez",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"placeholder": "Írja be az API kulcsot..."
+					"getKey": "Itt regisztrálhat Mistral API Key beszerzéséhez",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"placeholder": "Adja meg az API Key-t..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini API kulcs",
-					"description": "Használja a Google Gemini AI modelljét",
-					"getKey": "Gemini API kulcs beszerzése",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"placeholder": "Írja be az API kulcsot..."
+					"title": "Gemini API Key",
+					"description": "Használja a Google Gemini AI modellt",
+					"getKey": "Gemini API Key beszerzése",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"placeholder": "Adja meg az API Key-t..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "Alap URL",
-					"enterBaseUrl": "Enter base URL",
-					"modelId": "Modell azonosító",
-					"enterModelId": "Example: meta-llama-3.1-8b-instruct",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Adja meg a Base URL-t",
+					"modelId": "Modell ID",
+					"enterModelId": "Például: meta-llama-3.1-8b-instruct",
 					"description": "Az Ollama lehetővé teszi a nyílt forráskódú nyelvi modellek helyi futtatását",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"getKey": "Ollama konfigurálása",
-					"quickstartGuide": "Quick Start Guide",
-					"localServer": "Local Server"
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"getKey": "Ollama beállítása",
+					"quickstartGuide": "Gyors kezdési útmutató",
+					"localServer": "Helyi szerver"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "Alap URL (opcionális)",
-					"modelId": "Modell azonosító",
-					"enterModelId": "Példa: meta-llama-3.1-8b-instruct",
-					"description": "Az LM Studio lehetővé teszi a modellek futtatását a helyi számítógépén. A kezdéshez tekintse meg a gyors kezdési útmutatót. A bővítménnyel való használathoz el kell indítania az LM Studio helyi szerver funkcióját is.",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
+					"baseUrl": "Base URL (opcionális)",
+					"modelId": "Modell ID",
+					"enterModelId": "Például: meta-llama-3.1-8b-instruct",
+					"description": "Az LM Studio lehetővé teszi modellek futtatását a helyi számítógépén. A kezdéshez tekintse meg a gyors kezdési útmutatót. A bővítménnyel való használathoz el kell indítania az LM Studio helyi szerver funkcióját is.",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
 					"getKey": "LM Studio beállítása",
 					"quickstartGuide": "Gyors kezdési útmutató",
 					"localServer": "Helyi szerver"
@@ -550,21 +550,21 @@
 					"selectModel": "Modell kiválasztása...",
 					"noModels": "A VS Code nyelvi modell API lehetővé teszi más VS Code bővítmények (beleértve, de nem kizárólag a GitHub Copilot) által biztosított modellek futtatását. A legegyszerűbb módja a kezdésnek a Copilot és Copilot Chat bővítmények telepítése a VS Code piactérről.",
 					"experimentalNote": "Megjegyzés: Ez egy nagyon kísérleti integráció, és lehet, hogy nem a várt módon működik. Kérjük, jelentse a problémákat a CoolCline GitHub tárolójában.",
-					"useCustomBaseUrl": "Egyéni alap URL használata"
+					"useCustomBaseUrl": "Egyéni Base URL használata"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Unbound API kulcs",
-					"getKey": "Unbound API kulcs beszerzése",
-					"useCustomBaseUrl": "Egyéni alap URL használata"
+					"title": "Unbound API Key",
+					"getKey": "Unbound API Key beszerzése",
+					"useCustomBaseUrl": "Egyéni Base URL használata"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek API kulcs",
+					"title": "DeepSeek API Key",
 					"description": "Használja a DeepSeek nagy teljesítményű AI modell szolgáltatását",
-					"getKey": "Itt regisztrálhat a DeepSeek API kulcs megszerzéséhez",
-					"useCustomBaseUrl": "Egyéni alap URL használata",
-					"placeholder": "Írja be az API kulcsot..."
+					"getKey": "Itt regisztrálhat DeepSeek API Key beszerzéséhez",
+					"useCustomBaseUrl": "Egyéni Base URL használata",
+					"placeholder": "Adja meg az API Key-t..."
 				}
 			},
 			"model": {

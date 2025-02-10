@@ -10,10 +10,10 @@
 		"create": "Vytvořit",
 		"prompt": "Prompt",
 		"validation": {
-			"provideApiKey": "Musíte zadat platný API klíč nebo zvolit jiného poskytovatele.",
+			"provideApiKey": "Musíte zadat platný API Key pro aktuální LLM Provider nebo vybrat jiný LLM Provider s nakonfigurovaným API Key.",
 			"provideRegion": "Musíte zvolit region pro použití s AWS Bedrock.",
 			"provideProjectAndRegion": "Musíte zadat platné ID projektu a region Google Cloud.",
-			"provideBaseUrlAndKey": "Musíte zadat platnou základní URL, API klíč a ID modelu.",
+			"provideBaseUrlAndKey": "Musíte zadat platnou Base URL, API Key a ID modelu.",
 			"provideModelId": "Musíte zadat platné ID modelu.",
 			"provideModelSelector": "Musíte zadat platný selektor modelu.",
 			"modelNotAvailable": "Zadané ID modelu není k dispozici. Prosím, vyberte jiný model."
@@ -38,7 +38,7 @@
 		"title": "Co je CoolCline?",
 		"description": "CoolCline je proaktivní programovací asistent, který vylepšuje váš vývojový workflow pomocí pokročilých AI schopností. Pomáhá vám efektivněji psát kód, optimalizovat dotazy, automaticky opravovat chyby, spouštět příkazy v příkazové řádce a provádět automatizované testy prohlížeče.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Pro začátek potřebuje toto rozšíření poskytovatele API.",
+		"apiProviderNeeded": "Pro začátek potřebuje toto rozšíření alespoň jeden nakonfigurovaný LLM Provider (povinné).",
 		"letsGo": "Pojďme na to!"
 	},
 	"chat": {
@@ -60,7 +60,7 @@
 			"title": "Úkol",
 			"seeMore": "Zobrazit více",
 			"seeLess": "Zobrazit méně",
-			"tokens": "Tokeny",
+			"tokens": "Tokens",
 			"context": "Kontext",
 			"cache": "Mezipaměť",
 			"apiCost": "Náklady API",
@@ -184,23 +184,23 @@
 				"tools": "Nastavení promptů podpory"
 			},
 			"language": {
-				"title": "Jazyk",
-				"description": "Nastavte jazyk odpovědí AI asistenta, rozhraní se také přepne do vybraného jazyka",
+				"title": "Nastavení jazyka",
+				"description": "Nastavte jazyk odpovědí LLM Provider (rozhraní se také přepne do vybraného jazyka)",
 				"select": "Vybrat jazyk"
 			},
 			"customInstructions": {
-				"title": "Obecné pokyny chování",
-				"description": "Tyto pokyny se vztahují na všechny režimy jako základní pokyny chování, které lze rozšířit pomocí pokynů specifických pro režim níže",
+				"title": "Obecné Prompt instrukce",
+				"description": "Tyto Prompt instrukce se vztahují na všechny režimy jako základní pokyny chování. Můžete je rozšířit pomocí pokynů specifických pro režim níže",
 				"loadFrom": "Pokyny lze také načíst z",
-				"inWorkspace": "ve vašem pracovním prostoru"
+				"inWorkspace": "souboru načíst obecné Prompt instrukce"
 			},
 			"modePrompts": {
 				"title": "Nastavení promptů",
 				"description": "Klikněte na + pro vytvoření nového režimu, nebo prostě požádejte CoolCline v chatu, aby ho pro vás vytvořil!",
-				"createMode": "Vytvořit nový režim",
-				"editConfig": "Upravit konfiguraci režimů",
+				"createMode": "Nový režim role",
+				"editConfig": "Upravit konfiguraci režimu role",
 				"name": "Název",
-				"specificPrompts": "Prompty specifické pro režim",
+				"specificPrompts": "Prompt specifický pro režim role",
 				"slug": {
 					"title": "Identifikátor",
 					"description": "Jedinečný identifikátor používaný v URL a názvech souborů, měl by obsahovat pouze malá písmena, čísla a pomlčky"
@@ -211,10 +211,10 @@
 					"createDescription": "Definujte odbornost a osobnostní rysy pro tento režim"
 				},
 				"apiConfig": {
-					"title": "Konfigurace API",
-					"description": "Vyberte konfiguraci API pro tento režim",
-					"useCurrentConfig": "Použít aktuálně vybranou konfiguraci API",
-					"enhancePrompts": "Můžete vybrat konfiguraci API specificky pro vylepšení promptů"
+					"title": "Konfigurace LLM Provider",
+					"description": "Vyberte konfiguraci LLM Provider pro tento režim role, například možnosti odpovídající claude-3.5-sonnet nebo deepseek-r1 (možnosti jsou spravovány na stránce nastavení)",
+					"useCurrentConfig": "Použít aktuálně vybranou konfiguraci LLM Provider",
+					"enhancePrompts": "Pro tuto pomocnou funkci vyberte konkrétní konfiguraci LLM Provider, například možnosti odpovídající claude-3.5-sonnet nebo deepseek-r1 (možnosti jsou spravovány na stránce nastavení)"
 				},
 				"tools": {
 					"title": "Dostupné nástroje",
@@ -376,36 +376,36 @@
 		"title": "Nastavení",
 		"done": "Hotovo",
 		"provider": {
-			"title": "Poskytovatel",
-			"apiProvider": "API poskytovatel",
+			"title": "Nastavení LLM Provider",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
-				"title": "API klíč",
-				"placeholder": "Zadejte váš API klíč",
-				"storedLocally": "API klíč je bezpečně uložen na vašem lokálním počítači",
-				"getKey": "Získat API klíč"
+				"title": "API Key",
+				"placeholder": "Zadejte váš LLM Provider API Key",
+				"storedLocally": "LLM Provider API Key je bezpečně uložen na vašem lokálním počítači",
+				"getKey": "Získat LLM Provider API Key"
 			},
 			"customBaseUrl": {
-				"title": "Vlastní základní URL",
+				"title": "Vlastní Base URL",
 				"placeholder": "Výchozí: {defaultUrl}"
 			},
 			"configProfile": {
-				"title": "Konfigurační profil",
-				"description": "Uložte různé API konfigurace pro rychlé přepínání mezi poskytovateli a nastaveními"
+				"title": "Konfigurace rychlého přepínání LLM Provider",
+				"description": "Zde můžete vytvářet a spravovat více možností LLM Provider. Pro stejný LLM Provider můžete vytvořit samostatné možnosti pro různé modely, přičemž každá možnost ukládá kompletní konfigurační informace aktuálního LLM Provider. Po vytvoření můžete konfiguraci přepínat v reálném čase ve spodní části chatovacího pole.\n\nKonfigurační informace zahrnují:\n LLM Provider,\n API Key,\n Model \n a další konfigurační položky související s LLM Provider.\n\nPostup vytvoření možnosti LLM Provider (krok 4 lze prohodit s kroky 2 a 3):\n1. Klikněte na tlačítko +, systém automaticky zkopíruje možnost z aktuální konfigurace s názvem xx (copy);\n2. Klikněte na ikonu ✏️ pro úpravu názvu možnosti;\n3. Klikněte na ☑️ pro uložení názvu možnosti;\n4. Podle potřeby upravte základní parametry jako Model (úpravy se automaticky uloží při ztrátě zaměření).\n\nDoporučení pro pojmenování možností:\n Doporučuje se struktura \"provider-model-version-feature\", například:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-official;\ndeepseek-r1-official."
 			},
 			"providers": {
 				"anthropic": {
 					"name": "Anthropic",
-					"title": "Anthropic API klíč",
-					"baseUrl": "Základní URL (volitelné)",
-					"enterBaseUrl": "Zadejte základní URL API",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Anthropic API klíč můžete získat registrací zde."
+					"title": "Anthropic API Key",
+					"baseUrl": "Base URL (volitelné)",
+					"enterBaseUrl": "Zadejte API Base URL",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"getKey": "Můžete se zde zaregistrovat pro získání Anthropic API Key"
 				},
 				"openai": {
 					"name": "OpenAI kompatibilní",
 					"title": "Služba kompatibilní s OpenAI",
-					"baseUrl": "Základní URL",
-					"enterBaseUrl": "Zadejte základní URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Zadejte Base URL",
 					"useAzure": "Použít Azure OpenAI",
 					"setAzureVersion": "Nastavit verzi Azure API",
 					"description": "Použít službu API kompatibilní s OpenAI",
@@ -456,16 +456,16 @@
 				},
 				"openaiNative": {
 					"name": "OpenAI Native",
-					"title": "OpenAI API klíč",
+					"title": "OpenAI API Key",
 					"description": "Použít oficiální API službu OpenAI",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "OpenAI API klíč můžete získat registrací zde."
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"getKey": "Můžete se zde zaregistrovat pro získání OpenAI API Key"
 				},
 				"glama": {
 					"name": "Glama",
-					"title": "Glama API klíč",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Získat Glama API klíč"
+					"title": "Glama API Key",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"getKey": "Získat Glama API Key"
 				},
 				"bedrock": {
 					"name": "AWS Bedrock",
@@ -479,16 +479,16 @@
 					"selectRegion": "Vybrat region",
 					"useCrossRegion": "Použít Cross-Region Inference",
 					"description": "Použít AWS Bedrock AI model službu",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
 					"getKey": "Konfigurovat AWS přihlašovací údaje"
 				},
 				"openRouter": {
 					"name": "OpenRouter",
-					"title": "OpenRouter API klíč",
-					"getKey": "Získat OpenRouter API klíč",
+					"title": "OpenRouter API Key",
+					"getKey": "Získat OpenRouter API Key",
 					"compressPrompts": "Komprimovat prompty a řetězec zpráv na velikost kontextu",
 					"transforms": "OpenRouter transformace",
-					"useCustomBaseUrl": "Použít vlastní základní URL"
+					"useCustomBaseUrl": "Použít vlastní Base URL"
 				},
 				"vertex": {
 					"name": "Google Vertex AI",
@@ -498,46 +498,46 @@
 					"region": "Oblast Google Cloud",
 					"selectRegion": "Vyberte oblast",
 					"description": "Pro použití Google Cloud Vertex AI musíte 1) vytvořit účet Google Cloud › aktivovat Vertex AI API › aktivovat požadované modely Claude, 2) nainstalovat Google Cloud CLI › nakonfigurovat výchozí přihlašovací údaje aplikace.",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Získat klíč API Google Vertex AI"
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"getKey": "Získat Google Vertex AI API Key"
 				},
 				"mistral": {
 					"name": "Mistral",
-					"title": "Mistral API klíč",
+					"title": "Mistral API Key",
 					"description": "Použít službu modelů Mistral AI",
-					"getKey": "Můžete se zde zaregistrovat pro získání Mistral API klíče",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"placeholder": "Zadejte API klíč..."
+					"getKey": "Můžete se zde zaregistrovat pro získání Mistral API Key",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"placeholder": "Zadejte API Key..."
 				},
 				"gemini": {
 					"name": "Gemini",
-					"title": "Gemini API klíč",
+					"title": "Gemini API Key",
 					"description": "Použít model Gemini AI od Google",
-					"getKey": "Získat Gemini API klíč",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"placeholder": "Zadejte API klíč..."
+					"getKey": "Získat Gemini API Key",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"placeholder": "Zadejte API Key..."
 				},
 				"ollama": {
 					"name": "Ollama",
 					"title": "Ollama",
-					"baseUrl": "Základní URL",
-					"enterBaseUrl": "Enter base URL",
+					"baseUrl": "Base URL",
+					"enterBaseUrl": "Zadejte Base URL",
 					"modelId": "ID modelu",
 					"enterModelId": "Příklad: meta-llama-3.1-8b-instruct",
 					"description": "Ollama umožňuje lokálně spouštět open source jazykové modely",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"getKey": "Nakonfigurovat Ollama",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"getKey": "Získat Ollama API Key",
 					"quickstartGuide": "Průvodce rychlým startem",
 					"localServer": "Lokální server"
 				},
 				"lmstudio": {
 					"name": "LM Studio",
 					"title": "LM Studio",
-					"baseUrl": "Základní URL (volitelné)",
+					"baseUrl": "Base URL (volitelné)",
 					"modelId": "ID modelu",
 					"enterModelId": "Příklad: meta-llama-3.1-8b-instruct",
 					"description": "LM Studio vám umožňuje spouštět modely na vašem lokálním počítači. Podívejte se do průvodce rychlým startem pro pokyny, jak začít. Budete také muset spustit funkci lokálního serveru LM Studio, abyste jej mohli používat s tímto rozšířením.",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
 					"getKey": "Nastavit LM Studio",
 					"quickstartGuide": "Průvodce rychlým startem",
 					"localServer": "Lokální server"
@@ -550,21 +550,21 @@
 					"selectModel": "Vybrat model...",
 					"noModels": "API jazykového modelu VS Code vám umožňuje spouštět modely poskytované jinými rozšířeními VS Code (včetně, ale ne pouze, GitHub Copilot). Nejjednodušší způsob, jak začít, je nainstalovat rozšíření Copilot a Copilot Chat z marketplace VS Code.",
 					"experimentalNote": "Poznámka: Toto je velmi experimentální integrace a nemusí fungovat podle očekávání. Prosím, nahlaste jakékoli problémy do repozitáře CoolCline na GitHubu.",
-					"useCustomBaseUrl": "Použít vlastní základní URL"
+					"useCustomBaseUrl": "Použít vlastní Base URL"
 				},
 				"unbound": {
 					"name": "Unbound",
-					"title": "Klíč API Unbound",
-					"getKey": "Získat klíč API Unbound",
-					"useCustomBaseUrl": "Použít vlastní základní URL"
+					"title": "Unbound API Key",
+					"getKey": "Získat Unbound API Key",
+					"useCustomBaseUrl": "Použít vlastní Base URL"
 				},
 				"deepseek": {
 					"name": "DeepSeek",
-					"title": "DeepSeek API klíč",
+					"title": "DeepSeek API Key",
 					"description": "Použít vysoce výkonnou službu modelů AI od DeepSeek",
-					"getKey": "Můžete se zde zaregistrovat pro získání DeepSeek API klíče",
-					"useCustomBaseUrl": "Použít vlastní základní URL",
-					"placeholder": "Zadejte API klíč..."
+					"getKey": "Můžete se zde zaregistrovat pro získání DeepSeek API Key",
+					"useCustomBaseUrl": "Použít vlastní Base URL",
+					"placeholder": "Zadejte API Key..."
 				}
 			},
 			"model": {
