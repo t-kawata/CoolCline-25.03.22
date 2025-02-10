@@ -188,7 +188,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					marginBottom: "17px",
 					paddingRight: 17,
 				}}>
-				<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>{t("settings.title").toString()}</h3>
+				<h1 style={{ fontWeight: "bold", color: "var(--vscode-foreground)", margin: 0 }}>
+					{t("settings.title").toString()}
+				</h1>
 				<VSCodeButton onClick={handleSubmit}>{t("settings.done").toString()}</VSCodeButton>
 			</div>
 
@@ -197,9 +199,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>
+					<h2 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.provider.title").toString()}
-					</h3>
+					</h2>
 					<div style={{ marginBottom: 15 }}>
 						<ApiConfigManager
 							currentApiConfigName={currentApiConfigName}
@@ -236,7 +238,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.autoApprove.title").toString()}
 					</h3>
 					<p style={{ fontSize: "12px", marginBottom: 15, color: "var(--vscode-descriptionForeground)" }}>
@@ -519,7 +521,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.browser.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
@@ -595,7 +597,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.notification.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
@@ -647,7 +649,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.advanced.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>

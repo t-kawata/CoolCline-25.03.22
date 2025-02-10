@@ -341,7 +341,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					alignItems: "center",
 					padding: "10px 17px 10px 20px",
 				}}>
-				<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>
+				<h3 style={{ color: "var(--vscode-foreground)", margin: 0, fontWeight: "600" }}>
 					{String(t("prompts.settings.modePrompts.title"))}
 				</h3>
 				<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
@@ -350,12 +350,12 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 			<div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
 				{/* 基础设置部分 */}
 				<div style={{ paddingBottom: "20px", borderBottom: "1px solid var(--vscode-input-border)" }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
 						{String(t("prompts.settings.sections.general"))}
 					</h3>
 					<LanguageSelector />
 					<div style={{ marginBottom: "20px" }}>
-						<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+						<div style={{ marginBottom: "4px" }}>
 							{String(t("prompts.settings.customInstructions.title"))}
 						</div>
 						<div
@@ -416,7 +416,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 
 				{/* 角色模式部分 */}
 				<div style={{ marginTop: "20px" }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
 						{String(t("prompts.settings.sections.modes"))}
 					</h3>
 					<div
@@ -496,7 +496,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					{mode && findModeBySlug(mode, customModes) && (
 						<div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
 							<div style={{ flex: 1 }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>Name</div>
+								<div style={{ marginBottom: "4px" }}>Name</div>
 								<div style={{ display: "flex", gap: "8px" }}>
 									<VSCodeTextField
 										value={getModeProperty(findModeBySlug(mode, customModes), "name") ?? ""}
@@ -537,9 +537,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								alignItems: "center",
 								marginBottom: "4px",
 							}}>
-							<div style={{ fontWeight: "bold" }}>
-								{String(t("prompts.settings.modePrompts.roleDefinition.title"))}
-							</div>
+							<div>{String(t("prompts.settings.modePrompts.roleDefinition.title"))}</div>
 							{!findModeBySlug(mode, customModes) && (
 								<VSCodeButton
 									appearance="icon"
@@ -596,7 +594,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					{/* Mode settings */}
 					<>
 						<div style={{ marginBottom: "12px" }}>
-							<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+							<div style={{ marginBottom: "4px" }}>
 								{String(t("prompts.settings.modePrompts.apiConfig.title"))}
 							</div>
 							<div style={{ marginBottom: "8px" }}>
@@ -636,9 +634,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 									alignItems: "center",
 									marginBottom: "4px",
 								}}>
-								<div style={{ fontWeight: "bold" }}>
-									{String(t("prompts.settings.modePrompts.tools.title"))}
-								</div>
+								<div>{String(t("prompts.settings.modePrompts.tools.title"))}</div>
 								{findModeBySlug(mode, customModes) && (
 									<VSCodeButton
 										appearance="icon"
@@ -751,9 +747,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								alignItems: "center",
 								marginBottom: "4px",
 							}}>
-							<div style={{ fontWeight: "bold" }}>
-								{String(t("prompts.settings.modePrompts.customInstructions.title"))}
-							</div>
+							<div>{String(t("prompts.settings.modePrompts.customInstructions.title"))}</div>
 							{!findModeBySlug(mode, customModes) && (
 								<VSCodeButton
 									appearance="icon"
@@ -884,7 +878,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						paddingBottom: "60px",
 						borderBottom: "1px solid var(--vscode-input-border)",
 					}}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0" }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
 						{String(t("prompts.settings.sections.tools"))}
 					</h3>
 					<div
@@ -939,7 +933,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								alignItems: "center",
 								marginBottom: "4px",
 							}}>
-							<div style={{ fontWeight: "bold" }}>{String(t("common.prompt"))}</div>
+							<div>{String(t("common.prompt"))}</div>
 							<VSCodeButton
 								appearance="icon"
 								onClick={() => handleSupportReset(activeSupportTab)}
@@ -974,7 +968,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										}}></div>
 									<div style={{ marginBottom: "12px" }}>
 										<div style={{ marginBottom: "8px" }}>
-											<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+											<div style={{ marginBottom: "4px" }}>
 												{String(t("prompts.settings.modePrompts.apiConfig.title"))}
 											</div>
 											<div
@@ -1082,7 +1076,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								{String(t("prompts.settings.modePrompts.createMode"))}
 							</h2>
 							<div style={{ marginBottom: "16px" }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+								<div style={{ marginBottom: "4px" }}>
 									{String(t("prompts.settings.modePrompts.name"))}
 								</div>
 								<VSCodeTextField
@@ -1097,7 +1091,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								/>
 							</div>
 							<div style={{ marginBottom: "16px" }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+								<div style={{ marginBottom: "4px" }}>
 									{String(t("prompts.settings.modePrompts.slug.title"))}
 								</div>
 								<VSCodeTextField
@@ -1120,7 +1114,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								</div>
 							</div>
 							<div style={{ marginBottom: "16px" }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+								<div style={{ marginBottom: "4px" }}>
 									{String(t("prompts.settings.modePrompts.roleDefinition.title"))}
 								</div>
 								<div
@@ -1145,7 +1139,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								/>
 							</div>
 							<div style={{ marginBottom: "16px" }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+								<div style={{ marginBottom: "4px" }}>
 									{String(t("prompts.settings.modePrompts.tools.availableTitle"))}
 								</div>
 								<div
@@ -1184,7 +1178,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								</div>
 							</div>
 							<div style={{ marginBottom: "16px" }}>
-								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
+								<div style={{ marginBottom: "4px" }}>
 									{String(t("prompts.settings.modePrompts.customInstructions.title"))}
 								</div>
 								<div
