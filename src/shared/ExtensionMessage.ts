@@ -120,6 +120,7 @@ export interface ExtensionState {
 	autoApprovalEnabled?: boolean
 	customModes: ModeConfig[]
 	toolRequirements?: Record<string, boolean> // Map of tool names to their requirements (e.g. {"apply_diff": true} if diffEnabled)
+	checkpointsEnabled: boolean
 }
 
 export interface CoolClineMessage {
@@ -168,6 +169,8 @@ export type CoolClineSay =
 	| "mcp_server_response"
 	| "new_task_started"
 	| "new_task"
+	| "api_req_deleted"
+	| "checkpoint_saved"
 
 export interface CoolClineSayTool {
 	tool:

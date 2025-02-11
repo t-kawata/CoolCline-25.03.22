@@ -1,5 +1,5 @@
 import React from "react"
-import { render, waitFor } from "@testing-library/react"
+import { render, waitFor, screen } from "@testing-library/react"
 import ChatView from "../ChatView"
 import { ExtensionStateContextProvider } from "../../../context/ExtensionStateContext"
 import { vscode } from "../../../utils/vscode"
@@ -1091,6 +1091,92 @@ describe("ChatView - Sound Playing Tests", () => {
 			expect(vscode.postMessage).toHaveBeenCalledWith({
 				type: "playSound",
 				audioType: "progress_loop",
+			})
+		})
+	})
+})
+
+describe("ChatView", () => {
+	describe("shouldShowMessage", () => {
+		const renderWithProvider = (component: React.ReactElement) => {
+			return render(<ExtensionStateContextProvider>{component}</ExtensionStateContextProvider>)
+		}
+
+		it("should hide api_req_finished by default", () => {
+			const message: CoolClineMessage = {
+				type: "say",
+				say: "api_req_finished",
+				ts: Date.now(),
+			}
+
+			renderWithProvider(
+				<ChatView
+					isHidden={false}
+					showAnnouncement={false}
+					hideAnnouncement={() => {}}
+					showHistoryView={() => {}}
+				/>,
+			)
+
+			// 初始化状态
+			mockPostMessage({
+				coolclineMessages: [message],
+			})
+		})
+
+		it("should show api_req_finished when configured", () => {
+			const message: CoolClineMessage = {
+				type: "say",
+				say: "api_req_finished",
+				ts: Date.now(),
+			}
+
+			renderWithProvider(
+				<ChatView
+					isHidden={false}
+					showAnnouncement={false}
+					hideAnnouncement={() => {}}
+					showHistoryView={() => {}}
+				/>,
+			)
+
+			// 初始化状态
+			mockPostMessage({
+				coolclineMessages: [message],
+			})
+		})
+
+		it("should only show retry_delayed message if it is the last message", () => {
+			const message: CoolClineMessage = {
+				type: "say",
+				say: "api_req_retry_delayed",
+				ts: Date.now(),
+			}
+
+			renderWithProvider(
+				<ChatView
+					isHidden={false}
+					showAnnouncement={false}
+					hideAnnouncement={() => {}}
+					showHistoryView={() => {}}
+				/>,
+			)
+
+			// 初始化状态，当是最后一条消息时
+			mockPostMessage({
+				coolclineMessages: [message],
+			})
+
+			// 当不是最后一条消息时
+			mockPostMessage({
+				coolclineMessages: [
+					message,
+					{
+						type: "say",
+						say: "text",
+						ts: Date.now() + 1000,
+					},
+				],
 			})
 		})
 	})

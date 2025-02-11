@@ -353,19 +353,31 @@ describe("CoolClineProvider", () => {
 			alwaysAllowExecute: false,
 			alwaysAllowBrowser: false,
 			alwaysAllowMcp: false,
-			uriScheme: "vscode",
+			alwaysAllowModeSwitch: false,
 			soundEnabled: false,
-			diffEnabled: false,
-			writeDelayMs: 1000,
+			diffEnabled: true,
+			soundVolume: 0.5,
 			browserViewportSize: "900x600",
+			screenshotQuality: 75,
 			fuzzyMatchThreshold: 1.0,
+			writeDelayMs: 1000,
+			terminalOutputLineLimit: 500,
 			mcpEnabled: true,
-			enableMcpServerCreation: false,
-			requestDelaySeconds: 5,
+			enableMcpServerCreation: true,
+			alwaysApproveResubmit: false,
+			requestDelaySeconds: 10,
 			rateLimitSeconds: 0,
-			mode: defaultModeSlug,
+			currentApiConfigName: "default",
+			listApiConfigMeta: [],
+			mode: "default",
+			customModePrompts: {},
+			customSupportPrompts: {},
+			enhancementApiConfigId: undefined,
+			autoApprovalEnabled: false,
 			customModes: [],
 			experiments: experimentDefault,
+			checkpointsEnabled: false,
+			uriScheme: "vscode",
 		}
 
 		const message: ExtensionMessage = {
@@ -679,11 +691,12 @@ describe("CoolClineProvider", () => {
 			mockApiConfig,
 			modeCustomInstructions,
 			true,
-			1.0,
+			undefined,
+			1,
 			"Test task",
 			undefined,
 			undefined,
-			experimentDefault,
+			{ experimentalDiffStrategy: false, insert_content: false, search_and_replace: false },
 		)
 	})
 	test("handles mode-specific custom instructions updates", async () => {
@@ -1204,7 +1217,7 @@ describe("CoolClineProvider", () => {
 			} as any
 
 			// Mock current config name
-			mockContext.globalState.get = jest.fn((key: string) => {
+			;(mockContext.globalState.get as jest.Mock).mockImplementation((key: string) => {
 				if (key === "currentApiConfigName") return "current-config"
 				return undefined
 			})

@@ -119,6 +119,7 @@ type GlobalStateKey =
 	| "autoApprovalEnabled"
 	| "customModes" // Array of custom modes
 	| "unboundModelId"
+	| "checkpointsEnabled"
 
 export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
@@ -381,6 +382,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			apiConfiguration,
 			customModePrompts,
 			diffEnabled,
+			checkpointsEnabled,
 			fuzzyMatchThreshold,
 			mode,
 			customInstructions: globalInstructions,
@@ -395,6 +397,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			apiConfiguration,
 			effectiveInstructions,
 			diffEnabled,
+			checkpointsEnabled,
 			fuzzyMatchThreshold,
 			task,
 			images,
@@ -409,6 +412,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			apiConfiguration,
 			customModePrompts,
 			diffEnabled,
+			checkpointsEnabled,
 			fuzzyMatchThreshold,
 			mode,
 			customInstructions: globalInstructions,
@@ -423,6 +427,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			apiConfiguration,
 			effectiveInstructions,
 			diffEnabled,
+			checkpointsEnabled,
 			fuzzyMatchThreshold,
 			undefined,
 			undefined,
@@ -776,24 +781,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 						openMention(message.text)
 						break
 					case "cancelTask":
-						if (this.coolcline) {
-							const { historyItem } = await this.getTaskWithId(this.coolcline.taskId)
-							this.coolcline.abortTask()
-							await pWaitFor(() => this.coolcline === undefined || this.coolcline.didFinishAborting, {
-								timeout: 3_000,
-							}).catch((error) => {
-								this.outputChannel.appendLine(
-									`Failed to abort task ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
-								)
-							})
-							if (this.coolcline) {
-								// 'abandoned' will prevent this coolcline instance from affecting future coolcline instance gui. this may happen if its hanging on a streaming request
-								this.coolcline.abandoned = true
-							}
-							await this.initCoolClineWithHistoryItem(historyItem) // clears task again, so we need to abortTask manually above
-							// await this.postStateToWebview() // new CoolCline instance will post state when it's ready. having this here sent an empty messages array to webview leading to virtuoso having to reload the entire list
-						}
-
+						await this.cancelTask()
 						break
 					case "allowedCommands":
 						await this.context.globalState.update("allowedCommands", message.commands)
@@ -1484,8 +1472,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			azureApiVersion,
 			openAiStreamingEnabled,
 			openRouterModelId,
-			openRouterBaseUrl,
 			openRouterModelInfo,
+			openRouterBaseUrl,
 			openRouterUseMiddleOutTransform,
 			vsCodeLmModelSelector,
 			mistralApiKey,
@@ -2033,6 +2021,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			enhancementApiConfigId,
 			autoApprovalEnabled,
 			experiments,
+			checkpointsEnabled,
 		} = await this.getState()
 
 		const allowedCommands = vscode.workspace.getConfiguration("coolcline").get<string[]>("allowedCommands") || []
@@ -2077,6 +2066,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes: await this.customModesManager.getCustomModes(),
 			experiments: experiments ?? experimentDefault,
+			checkpointsEnabled: checkpointsEnabled ?? false,
 		}
 	}
 
@@ -2206,6 +2196,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			experiments,
 			unboundApiKey,
 			unboundModelId,
+			checkpointsEnabled,
 		] = await Promise.all([
 			this.getGlobalState("llmProvider") as Promise<llmProvider | undefined>,
 			this.getGlobalState("apiModelId") as Promise<string | undefined>,
@@ -2280,6 +2271,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			this.getGlobalState("experiments") as Promise<Record<ExperimentId, boolean> | undefined>,
 			this.getSecret("unboundApiKey") as Promise<string | undefined>,
 			this.getGlobalState("unboundModelId") as Promise<string | undefined>,
+			this.getGlobalState("checkpointsEnabled") as Promise<boolean | undefined>,
 		])
 
 		let llmProvider: llmProvider
@@ -2400,6 +2392,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			experiments: experiments ?? experimentDefault,
 			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes,
+			checkpointsEnabled: checkpointsEnabled ?? false,
 		}
 	}
 
@@ -2511,5 +2504,54 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 	get messages() {
 		return this.coolcline?.coolclineMessages || []
+	}
+
+	// logging
+	public log(message: string) {
+		this.outputChannel.appendLine(message)
+	}
+
+	public async cancelTask() {
+		if (this.coolcline) {
+			try {
+				const { historyItem } = await this.getTaskWithId(this.coolcline.taskId)
+				this.coolcline.abortTask()
+
+				// 添加日志记录任务取消开始
+				this.outputChannel.appendLine(`[cancelTask] Cancelling task ${this.coolcline.taskId}`)
+
+				await pWaitFor(
+					() =>
+						this.coolcline === undefined ||
+						this.coolcline.isStreaming === false ||
+						this.coolcline.didFinishAbortingStream ||
+						this.coolcline.isWaitingForFirstChunk,
+					{
+						timeout: 3_000,
+					},
+				).catch((error) => {
+					// 使用 outputChannel 记录详细错误
+					this.outputChannel.appendLine(
+						`[cancelTask] Failed to abort task: ${error instanceof Error ? error.message : String(error)}`,
+					)
+				})
+
+				if (this.coolcline) {
+					this.coolcline.abandoned = true
+					// 添加日志记录任务标记为已放弃
+					this.outputChannel.appendLine(`[cancelTask] Task ${this.coolcline.taskId} marked as abandoned`)
+				}
+
+				await this.initCoolClineWithHistoryItem(historyItem)
+				// 添加日志记录任务取消完成
+				this.outputChannel.appendLine(`[cancelTask] Task ${historyItem.id} cancelled successfully`)
+			} catch (error) {
+				// 使用 outputChannel 记录错误
+				this.outputChannel.appendLine(
+					`[cancelTask] Error cancelling task: ${error instanceof Error ? error.message : String(error)}`,
+				)
+				throw error // 重新抛出错误以便上层处理
+			}
+		}
 	}
 }

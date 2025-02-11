@@ -1,5 +1,5 @@
 import { VSCodeButton, VSCodeCheckbox, VSCodeLink, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect, useState, useCallback } from "react"
 import { useTranslation } from "react-i18next"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { validateApiConfiguration, validateModelId } from "../../utils/validate"
@@ -65,6 +65,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 		setExperimentEnabled,
 		alwaysAllowModeSwitch,
 		setAlwaysAllowModeSwitch,
+		checkpointsEnabled,
+		setCheckpointsEnabled,
 	} = useExtensionState()
 	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
 	const [modelIdErrorMessage, setModelIdErrorMessage] = useState<string | undefined>(undefined)
@@ -120,6 +122,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 		})
 
 		vscode.postMessage({ type: "alwaysAllowModeSwitch", bool: alwaysAllowModeSwitch })
+		vscode.postMessage({ type: "checkpointsEnabled", bool: checkpointsEnabled })
 		onDone()
 	}
 
@@ -166,6 +169,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 		accentColor: "var(--vscode-button-background)",
 		height: "2px",
 	}
+
+	const handleSave = useCallback(() => {
+		// ... existing code ...
+		vscode.postMessage({ type: "checkpointsEnabled", bool: checkpointsEnabled })
+		// ... existing code ...
+	}, [, /* ... existing dependencies ... */ checkpointsEnabled])
 
 	return (
 		<div
@@ -777,6 +786,30 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 									}
 								/>
 							))}
+					</div>
+				</div>
+
+				<div style={{ marginBottom: 40 }}>
+					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+						{t("settings.advanced.checkpoints.title").toString()}
+					</h3>
+					<div style={{ marginBottom: 15 }}>
+						<VSCodeCheckbox
+							checked={checkpointsEnabled}
+							onChange={(e: any) => {
+								setCheckpointsEnabled(e.target.checked)
+							}}>
+							<span style={{ fontWeight: "500" }}>启用检查点</span>
+						</VSCodeCheckbox>
+						<p
+							style={{
+								fontSize: "12px",
+								marginTop: "5px",
+								color: "var(--vscode-descriptionForeground)",
+							}}>
+							启用后，CoolCline
+							将在每次工具执行后保存工作区检查点（如果工作区中的文件被修改、添加或删除）。
+						</p>
 					</div>
 				</div>
 

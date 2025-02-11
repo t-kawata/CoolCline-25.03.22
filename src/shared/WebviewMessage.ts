@@ -1,5 +1,6 @@
 import { ApiConfiguration, llmProvider } from "./api"
 import { Mode, PromptComponent, ModeConfig } from "./modes"
+import { z } from "zod"
 
 export type PromptMode = Mode | "enhance"
 
@@ -83,6 +84,9 @@ export interface WebviewMessage {
 		| "deleteCustomMode"
 		| "setopenAiCustomModelInfo"
 		| "openCustomModesSettings"
+		| "checkpointsEnabled"
+		| "checkpointDiff"
+		| "checkpointRestore"
 	text?: string
 	disabled?: boolean
 	askResponse?: CoolClineAskResponse
@@ -104,6 +108,25 @@ export interface WebviewMessage {
 	slug?: string
 	modeConfig?: ModeConfig
 	timeout?: number
+	payload?: WebViewMessagePayload
 }
 
 export type CoolClineAskResponse = "yesButtonClicked" | "noButtonClicked" | "messageResponse"
+
+export const checkoutDiffPayloadSchema = z.object({
+	ts: z.number(),
+	commitHash: z.string(),
+	mode: z.enum(["full", "checkpoint"]),
+})
+
+export type CheckpointDiffPayload = z.infer<typeof checkoutDiffPayloadSchema>
+
+export const checkoutRestorePayloadSchema = z.object({
+	ts: z.number(),
+	commitHash: z.string(),
+	mode: z.enum(["preview", "restore"]),
+})
+
+export type CheckpointRestorePayload = z.infer<typeof checkoutRestorePayloadSchema>
+
+export type WebViewMessagePayload = CheckpointDiffPayload | CheckpointRestorePayload

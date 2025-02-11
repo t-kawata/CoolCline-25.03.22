@@ -62,6 +62,7 @@ import { McpHub } from "../services/mcp/McpHub"
 import crypto from "crypto"
 import { insertGroups } from "./diff/insert-groups"
 import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiments"
+import { CheckpointService } from "../services/checkpoints/CheckpointService"
 
 const cwd =
 	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? path.join(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
@@ -70,6 +71,13 @@ type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlo
 type UserContent = Array<
 	Anthropic.TextBlockParam | Anthropic.ImageBlockParam | Anthropic.ToolUseBlockParam | Anthropic.ToolResultBlockParam
 >
+
+export const DIFF_VIEW_URI_SCHEME = "coolcline-diff"
+
+export interface ToolCall {
+	name: string
+	parameters: Record<string, any>
+}
 
 export class CoolCline {
 	readonly taskId: string
@@ -81,7 +89,12 @@ export class CoolCline {
 	customInstructions?: string
 	diffStrategy?: DiffStrategy
 	diffEnabled: boolean = false
+	checkpointsEnabled: boolean = false
+	private checkpointService?: CheckpointService
 	fuzzyMatchThreshold: number = 1.0
+	isStreaming: boolean = false
+	didFinishAbortingStream: boolean = false
+	isWaitingForFirstChunk: boolean = true
 
 	apiConversationHistory: (Anthropic.MessageParam & { ts?: number })[] = []
 	coolclineMessages: CoolClineMessage[] = []
@@ -93,7 +106,6 @@ export class CoolCline {
 	private consecutiveMistakeCountForApplyDiff: Map<string, number> = new Map()
 	private providerRef: WeakRef<CoolClineProvider>
 	private abort: boolean = false
-	didFinishAborting = false
 	abandoned = false
 	private diffViewProvider: DiffViewProvider
 	private lastApiRequestTime?: number
@@ -114,6 +126,7 @@ export class CoolCline {
 		apiConfiguration: ApiConfiguration,
 		customInstructions?: string,
 		enableDiff?: boolean,
+		enableCheckpoints?: boolean,
 		fuzzyMatchThreshold?: number,
 		task?: string | undefined,
 		images?: string[] | undefined,
@@ -131,6 +144,7 @@ export class CoolCline {
 		this.browserSession = new BrowserSession(provider.context)
 		this.customInstructions = customInstructions
 		this.diffEnabled = enableDiff ?? false
+		this.checkpointsEnabled = enableCheckpoints ?? false
 		this.fuzzyMatchThreshold = fuzzyMatchThreshold ?? 1.0
 		this.providerRef = new WeakRef(provider)
 		this.diffViewProvider = new DiffViewProvider(cwd)
@@ -478,26 +492,48 @@ export class CoolCline {
 		this.coolclineMessages = await this.getSavedCoolClineMessages()
 
 		// need to make sure that the api conversation history can be resumed by the api, even if it goes out of sync with coolcline messages
-
 		let existingApiConversationHistory: Anthropic.Messages.MessageParam[] =
 			await this.getSavedApiConversationHistory()
 
-		// Now present the coolcline messages to the user and ask if they want to resume
+		// 如果没有现有的 API 对话历史，则创建一个初始对话
+		if (existingApiConversationHistory.length === 0) {
+			const lastCoolClineMessage = this.coolclineMessages
+				.slice()
+				.reverse()
+				.find((m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task"))
 
+			if (lastCoolClineMessage?.text) {
+				existingApiConversationHistory = [
+					{
+						role: "user",
+						content: [
+							{
+								type: "text",
+								text: lastCoolClineMessage.text,
+							},
+						],
+					},
+				]
+			} else {
+				existingApiConversationHistory = [
+					{
+						role: "user",
+						content: [
+							{
+								type: "text",
+								text: "Task was interrupted and no previous conversation history found.",
+							},
+						],
+					},
+				]
+			}
+		}
+
+		// Now present the coolcline messages to the user and ask if they want to resume
 		const lastCoolClineMessage = this.coolclineMessages
 			.slice()
 			.reverse()
-			.find((m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task")) // could be multiple resume tasks
-		// const lastCoolClineMessage = this.coolclineMessages[lastCoolClineMessageIndex]
-		// could be a completion result with a command
-		// const secondLastCoolClineMessage = this.coolclineMessages
-		// 	.slice()
-		// 	.reverse()
-		// 	.find(
-		// 		(m, index) =>
-		// 			index !== lastCoolClineMessageIndex && !(m.ask === "resume_task" || m.ask === "resume_completed_task")
-		// 	)
-		// (lastCoolClineMessage?.ask === "command" && secondLastCoolClineMessage?.ask === "completion_result")
+			.find((m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task"))
 
 		let askType: CoolClineAsk
 		if (lastCoolClineMessage?.ask === "completion_result") {
@@ -707,10 +743,10 @@ export class CoolCline {
 	}
 
 	abortTask() {
-		this.abort = true // will stop any autonomously running promises
-		this.terminalManager.disposeAll()
-		this.urlContentFetcher.closeBrowser()
+		this.abort = true
 		this.browserSession.closeBrowser()
+		this.terminalManager.disposeAll()
+		this.didFinishAbortingStream = true
 	}
 
 	// Tools
@@ -2809,7 +2845,7 @@ export class CoolCline {
 				await this.saveCoolClineMessages()
 
 				// signals to provider that it can retrieve the saved messages from disk, as abortTask can not be awaited on in nature
-				this.didFinishAborting = true
+				this.didFinishAbortingStream = true
 			}
 
 			// reset streaming state
@@ -3194,6 +3230,169 @@ export class CoolCline {
 		}
 
 		return `<environment_details>\n${details.trim()}\n</environment_details>`
+	}
+
+	// Checkpoints
+
+	private async getCheckpointService() {
+		if (!this.checkpointService) {
+			this.checkpointService = await CheckpointService.create({
+				taskId: this.taskId,
+				baseDir: vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? "",
+			})
+		}
+
+		return this.checkpointService
+	}
+
+	public async checkpointDiff({
+		ts,
+		commitHash,
+		mode,
+	}: {
+		ts: number
+		commitHash: string
+		mode: "full" | "checkpoint"
+	}) {
+		if (!this.checkpointsEnabled) {
+			return
+		}
+
+		let previousCommitHash = undefined
+
+		if (mode === "checkpoint") {
+			const previousCheckpoint = this.coolclineMessages
+				.filter(({ say }) => say === "checkpoint_saved")
+				.sort((a, b) => b.ts - a.ts)
+				.find((message) => message.ts < ts)
+
+			previousCommitHash = previousCheckpoint?.text
+		}
+
+		try {
+			const service = await this.getCheckpointService()
+			const changes = await service.getDiff({ from: previousCommitHash, to: commitHash })
+
+			if (!changes?.length) {
+				vscode.window.showInformationMessage("No changes found.")
+				return
+			}
+
+			await vscode.commands.executeCommand(
+				"vscode.changes",
+				mode === "full" ? "Changes since task started" : "Changes since previous checkpoint",
+				changes.map((change) => [
+					vscode.Uri.file(change.paths.absolute),
+					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.paths.relative}`).with({
+						query: Buffer.from(change.content.before ?? "").toString("base64"),
+					}),
+					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.paths.relative}`).with({
+						query: Buffer.from(change.content.after ?? "").toString("base64"),
+					}),
+				]),
+			)
+		} catch (err) {
+			this.providerRef
+				.deref()
+				?.log(
+					`[checkpointDiff] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
+				)
+
+			this.checkpointsEnabled = false
+		}
+	}
+
+	public async checkpointSave() {
+		if (!this.checkpointsEnabled) {
+			return
+		}
+
+		try {
+			const service = await this.getCheckpointService()
+			const commit = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
+
+			if (commit?.commit) {
+				await this.say("checkpoint_saved", commit.commit)
+			}
+		} catch (err) {
+			this.providerRef
+				.deref()
+				?.log(
+					`[checkpointSave] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
+				)
+
+			this.checkpointsEnabled = false
+		}
+	}
+
+	public async checkpointRestore({
+		ts,
+		commitHash,
+		mode,
+	}: {
+		ts: number
+		commitHash: string
+		mode: "preview" | "restore"
+	}) {
+		if (!this.checkpointsEnabled) {
+			return
+		}
+
+		const index = this.coolclineMessages.findIndex((m) => m.ts === ts)
+
+		if (index === -1) {
+			return
+		}
+
+		try {
+			const service = await this.getCheckpointService()
+			await service.restoreCheckpoint(commitHash)
+
+			if (mode === "restore") {
+				await this.overwriteApiConversationHistory(
+					this.apiConversationHistory.filter((m) => !m.ts || m.ts < ts),
+				)
+
+				const deletedMessages = this.coolclineMessages.slice(index + 1)
+
+				const { totalTokensIn, totalTokensOut, totalCacheWrites, totalCacheReads, totalCost } = getApiMetrics(
+					combineApiRequests(combineCommandSequences(deletedMessages)),
+				)
+
+				await this.overwriteCoolClineMessages(this.coolclineMessages.slice(0, index + 1))
+
+				await this.say(
+					"api_req_deleted",
+					JSON.stringify({
+						tokensIn: totalTokensIn,
+						tokensOut: totalTokensOut,
+						cacheWrites: totalCacheWrites,
+						cacheReads: totalCacheReads,
+						cost: totalCost,
+					} satisfies CoolClineApiReqInfo),
+				)
+			}
+
+			this.providerRef.deref()?.cancelTask()
+		} catch (err) {
+			this.providerRef
+				.deref()
+				?.log(
+					`[restoreCheckpoint] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
+				)
+
+			this.checkpointsEnabled = false
+		}
+	}
+
+	private async handleToolCall(toolCall: ToolCall) {
+		// ... existing code ...
+
+		if (this.checkpointsEnabled) {
+			await this.checkpointSave()
+		}
+
+		// ... existing code ...
 	}
 }
 

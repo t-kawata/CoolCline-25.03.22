@@ -22,6 +22,7 @@ import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 import { useTranslation } from "react-i18next"
 import { useCopyToClipboard } from "../../utils/clipboard"
+import { CheckpointSaved } from "./checkpoints/CheckpointSaved"
 
 interface ChatRowProps {
 	message: CoolClineMessage
@@ -115,7 +116,8 @@ export const ChatRowContent = ({
 	const successColor = "var(--vscode-charts-green)"
 	const cancelledColor = "var(--vscode-descriptionForeground)"
 
-	const [icon, title] = useMemo(() => {
+	type IconTitleTuple = [JSX.Element | null, JSX.Element | null]
+	const iconAndTitle = useMemo<IconTitleTuple>(() => {
 		switch (type) {
 			case "error":
 				return [
@@ -172,7 +174,7 @@ export const ChatRowContent = ({
 					</span>,
 				]
 			case "api_req_retry_delayed":
-				return []
+				return [null, null]
 			case "api_req_started":
 				const getIconSpan = (iconName: string, color: string) => (
 					<div
@@ -239,10 +241,13 @@ export const ChatRowContent = ({
 						{String(t("chat.messages.question"))}
 					</span>,
 				]
+			case "checkpoint_saved":
+				return [null, null]
 			default:
 				return [null, null]
 		}
-	}, [type, isCommandExecuting, message, isMcpServerResponding, apiReqCancelReason, cost, apiRequestFailedMessage])
+	}, [type, isCommandExecuting, message, isMcpServerResponding, apiReqCancelReason, cost, apiRequestFailedMessage, t])
+	const [icon, title] = iconAndTitle
 
 	const headerStyle: React.CSSProperties = {
 		display: "flex",

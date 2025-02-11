@@ -39,6 +39,22 @@ interface ChatViewProps {
 
 export const MAX_IMAGES_PER_MESSAGE = 20 // Anthropic limits to 20 images
 
+// 添加消息显示配置接口
+interface MessageDisplayConfig {
+	showApiReqFinished?: boolean
+	showApiReqRetried?: boolean
+	showApiReqDeleted?: boolean
+	showRetryDelayed?: boolean
+}
+
+// 添加默认配置
+const defaultMessageDisplayConfig: MessageDisplayConfig = {
+	showApiReqFinished: false,
+	showApiReqRetried: false,
+	showApiReqDeleted: false,
+	showRetryDelayed: true,
+}
+
 const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryView }: ChatViewProps) => {
 	const {
 		version,
@@ -974,6 +990,27 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		writeDelayMs,
 		isWriteToolAction,
 	])
+
+	const shouldShowMessage = useCallback(
+		(message: CoolClineMessage, config: MessageDisplayConfig = defaultMessageDisplayConfig) => {
+			switch (message.say) {
+				case "api_req_finished":
+					return config.showApiReqFinished ?? defaultMessageDisplayConfig.showApiReqFinished
+				case "api_req_retried":
+					return config.showApiReqRetried ?? defaultMessageDisplayConfig.showApiReqRetried
+				case "api_req_deleted":
+					return config.showApiReqDeleted ?? defaultMessageDisplayConfig.showApiReqDeleted
+				case "api_req_retry_delayed":
+					if (!(config.showRetryDelayed ?? defaultMessageDisplayConfig.showRetryDelayed)) {
+						return false
+					}
+					return message === messages[messages.length - 1]
+				default:
+					return true
+			}
+		},
+		[messages],
+	)
 
 	return (
 		<div
