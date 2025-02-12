@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git Snapshot Management",
 				"enable": "Enable checkpoints",
-				"description": "When enabled, CoolCline will automatically create Git snapshots after AI performs file modifications (e.g., writing files, applying diffs, inserting content). Supports code state preservation, restoration, and diff comparison.",
+				"description": "When enabled, CoolCline will automatically create Git snapshots after AI performs file modification operations (such as: writing files, applying diffs, inserting content, etc.). Supports saving, restoring, and comparing code states.",
 				"features": {
-					"save": "Auto-save code snapshots",
-					"diff": "Snapshot diff comparison",
-					"restore": "Code state rollback",
-					"integration": "Seamless Git integration"
+					"save": "Automatically save code snapshots",
+					"diff": "Support snapshot comparison",
+					"restore": "Support code state rollback",
+					"integration": "Seamless integration with Git version control"
 				}
 			}
 		},

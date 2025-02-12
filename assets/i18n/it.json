@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Gestione snapshot Git",
 				"enable": "Abilita checkpoint",
-				"description": "Quando abilitato, CoolCline creerà automaticamente snapshot Git dopo che l'IA esegue modifiche ai file (es. scrittura file, applicazione diff, inserimento contenuti). Supporta la conservazione dello stato del codice, il ripristino e il confronto delle differenze.",
+				"description": "Quando abilitato, CoolCline creerà automaticamente snapshot Git dopo che l'IA esegue operazioni di modifica dei file (come: scrittura di file, applicazione di differenze, inserimento di contenuti, ecc.). Supporta il salvataggio, il ripristino e il confronto degli stati del codice.",
 				"features": {
 					"save": "Salvataggio automatico degli snapshot del codice",
-					"diff": "Confronto delle differenze tra snapshot",
-					"restore": "Ripristino dello stato del codice",
-					"integration": "Integrazione perfetta con Git"
+					"diff": "Supporto per il confronto degli snapshot",
+					"restore": "Supporto per il ripristino dello stato del codice",
+					"integration": "Integrazione perfetta con il controllo versione Git"
 				}
 			}
 		},

@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git Anlık Görüntü Yönetimi",
 				"enable": "Kontrol noktalarını etkinleştir",
-				"description": "Etkinleştirildiğinde, CoolCline, AI dosya değişiklikleri yaptıktan sonra (örn. dosya yazma, farkları uygulama, içerik ekleme) otomatik olarak Git anlık görüntüleri oluşturacaktır. Kod durumunun korunmasını, geri yüklenmesini ve fark karşılaştırmasını destekler.",
+				"description": "Etkinleştirildiğinde, CoolCline AI'nin dosya değiştirme işlemlerini (dosya yazma, fark uygulama, içerik ekleme vb.) gerçekleştirdikten sonra otomatik olarak Git anlık görüntüleri oluşturacaktır. Kod durumlarını kaydetmeyi, geri yüklemeyi ve karşılaştırmayı destekler.",
 				"features": {
 					"save": "Kod anlık görüntülerini otomatik kaydet",
-					"diff": "Anlık görüntüler arası fark karşılaştırması",
-					"restore": "Kod durumunu geri alma",
-					"integration": "Git ile sorunsuz entegrasyon"
+					"diff": "Anlık görüntü karşılaştırma desteği",
+					"restore": "Kod durumu geri yükleme desteği",
+					"integration": "Git sürüm kontrolü ile kusursuz entegrasyon"
 				}
 			}
 		},

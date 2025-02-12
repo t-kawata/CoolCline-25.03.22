@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git 快照管理",
 				"enable": "啟用檢查點",
-				"description": "啟用後，CoolCline 將在 AI 執行檔案修改操作後自動創建 Git 快照（例如：寫入檔案、應用差異、插入內容等操作）。支援程式碼狀態的保存、恢復和差異對比。",
+				"description": "啟用後，CoolCline 將在 AI 執行檔案修改操作（如：寫入檔案、套用差異、插入內容等）後自動建立 Git 快照。支援程式碼狀態的儲存、還原和比較。",
 				"features": {
-					"save": "自動保存程式碼快照",
-					"diff": "支援快照間差異對比",
-					"restore": "支援程式碼狀態回滾",
-					"integration": "與 Git 版本控制無縫集成"
+					"save": "自動儲存程式碼快照",
+					"diff": "支援快照比較",
+					"restore": "支援程式碼狀態還原",
+					"integration": "與 Git 版本控制無縫整合"
 				}
 			}
 		},

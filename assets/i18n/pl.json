@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Zarządzanie migawkami Git",
 				"enable": "Włącz punkty kontrolne",
-				"description": "Po włączeniu, CoolCline automatycznie utworzy migawki Git po modyfikacjach plików przez AI (np. zapisywanie plików, stosowanie różnic, wstawianie treści). Obsługuje zachowanie stanu kodu, przywracanie i porównywanie różnic.",
+				"description": "Po włączeniu, CoolCline będzie automatycznie tworzyć migawki Git po wykonaniu przez AI operacji modyfikacji plików (takich jak: zapisywanie plików, stosowanie różnic, wstawianie treści itp.). Obsługuje zapisywanie, przywracanie i porównywanie stanów kodu.",
 				"features": {
 					"save": "Automatyczne zapisywanie migawek kodu",
-					"diff": "Porównywanie różnic między migawkami",
-					"restore": "Przywracanie stanu kodu",
-					"integration": "Bezproblemowa integracja z Git"
+					"diff": "Obsługa porównywania migawek",
+					"restore": "Obsługa przywracania stanu kodu",
+					"integration": "Bezproblemowa integracja z kontrolą wersji Git"
 				}
 			}
 		},

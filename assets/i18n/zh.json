@@ -678,7 +678,7 @@
 			"checkpoints": {
 				"title": "Git 快照管理",
 				"enable": "启用检查点",
-				"description": "启用后，CoolCline 将在 AI 执行文件修改操作后自动创建 Git 快照（例如：写入文件、应用差异、插入内容等操作）。支持代码状态的保存、恢复和差异对比。",
+				"description": "启用后，CoolCline 将在 AI 执行文件修改操作（如：写入文件、应用差异、插入内容等操作）后自动创建 Git 快照。支持代码状态的保存、恢复和差异对比。",
 				"features": {
 					"save": "自动保存代码快照",
 					"diff": "支持快照间差异对比",

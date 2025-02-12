@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git pillanatkép kezelés",
 				"enable": "Ellenőrzőpontok engedélyezése",
-				"description": "Ha engedélyezve van, a CoolCline automatikusan Git pillanatképeket készít, miután az AI fájlmódosításokat végez (pl. fájlok írása, különbségek alkalmazása, tartalom beszúrása). Támogatja a kód állapotának megőrzését, visszaállítását és különbségek összehasonlítását.",
+				"description": "Ha engedélyezve van, a CoolCline automatikusan Git pillanatképeket készít, miután az AI fájlmódosításokat végez (pl. fájlok írása, különbségek alkalmazása, tartalom beszúrása). Támogatja a kód állapotának megőrzését, visszaállítását és összehasonlítását.",
 				"features": {
 					"save": "Kód pillanatképek automatikus mentése",
-					"diff": "Pillanatképek közötti különbségek összehasonlítása",
-					"restore": "Kód állapot visszaállítása",
-					"integration": "Zökkenőmentes Git integráció"
+					"diff": "Pillanatképek összehasonlításának támogatása",
+					"restore": "Kód állapot visszaállításának támogatása",
+					"integration": "Zökkenőmentes integráció a Git verziókezeléssel"
 				}
 			}
 		},

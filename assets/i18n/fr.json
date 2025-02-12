@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Gestion des instantanés Git",
 				"enable": "Activer les points de contrôle",
-				"description": "Lorsqu'activé, CoolCline créera automatiquement des instantanés Git après les modifications de fichiers par l'IA (par ex. écriture de fichiers, application de diffs, insertion de contenu). Prend en charge la préservation, la restauration et la comparaison des états du code.",
+				"description": "Lorsqu'il est activé, CoolCline créera automatiquement des instantanés Git après que l'IA effectue des opérations de modification de fichiers (comme : écriture de fichiers, application de différences, insertion de contenu, etc.). Prend en charge la sauvegarde, la restauration et la comparaison des états du code.",
 				"features": {
-					"save": "Sauvegarde automatique des instantanés de code",
-					"diff": "Comparaison des différences entre instantanés",
-					"restore": "Retour à l'état précédent du code",
-					"integration": "Intégration transparente avec Git"
+					"save": "Sauvegarder automatiquement les instantanés de code",
+					"diff": "Support pour la comparaison des instantanés",
+					"restore": "Support pour la restauration de l'état du code",
+					"integration": "Intégration transparente avec le contrôle de version Git"
 				}
 			}
 		},

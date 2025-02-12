@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git 스냅샷 관리",
 				"enable": "체크포인트 활성화",
-				"description": "활성화되면 CoolCline은 AI가 파일 수정(예: 파일 쓰기, 차이점 적용, 콘텐츠 삽입 등)을 수행한 후 자동으로 Git 스냅샷을 생성합니다. 코드 상태 보존, 복원 및 차이점 비교를 지원합니다.",
+				"description": "활성화되면 CoolCline은 AI가 파일 수정 작업(파일 쓰기, 차이점 적용, 콘텐츠 삽입 등)을 수행한 후 자동으로 Git 스냅샷을 생성합니다. 코드 상태 저장, 복원 및 비교를 지원합니다.",
 				"features": {
 					"save": "코드 스냅샷 자동 저장",
-					"diff": "스냅샷 간 차이점 비교",
-					"restore": "코드 상태 롤백",
-					"integration": "Git과의 원활한 통합"
+					"diff": "스냅샷 비교 지원",
+					"restore": "코드 상태 복원 지원",
+					"integration": "Git 버전 관리와의 원활한 통합"
 				}
 			}
 		},

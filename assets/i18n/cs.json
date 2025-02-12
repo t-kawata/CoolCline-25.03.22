@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Správa Git snímků",
 				"enable": "Povolit kontrolní body",
-				"description": "Když je povoleno, CoolCline automaticky vytvoří Git snímky po provedení úprav souborů umělou inteligencí (např. zápis souborů, aplikace rozdílů, vkládání obsahu). Podporuje zachování stavu kódu, obnovení a porovnání rozdílů.",
+				"description": "Když je povoleno, CoolCline automaticky vytvoří Git snímky po provedení úprav souborů AI (jako: zápis souborů, aplikace rozdílů, vkládání obsahu atd.). Podporuje ukládání, obnovení a porovnání stavů kódu.",
 				"features": {
 					"save": "Automatické ukládání snímků kódu",
-					"diff": "Porovnání rozdílů mezi snímky",
-					"restore": "Obnovení stavu kódu",
-					"integration": "Bezproblémová integrace s Git"
+					"diff": "Podpora pro porovnání snímků",
+					"restore": "Podpora pro obnovení stavu kódu",
+					"integration": "Bezproblémová integrace se správou verzí Git"
 				}
 			}
 		},

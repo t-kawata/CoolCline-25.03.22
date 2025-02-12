@@ -678,12 +678,12 @@
 			"checkpoints": {
 				"title": "Git-Snapshot-Verwaltung",
 				"enable": "Checkpoints aktivieren",
-				"description": "Wenn aktiviert, erstellt CoolCline automatisch Git-Snapshots nach KI-Dateiänderungen (z.B. Dateien schreiben, Diffs anwenden, Inhalte einfügen). Unterstützt Codezustandsspeicherung, Wiederherstellung und Diff-Vergleich.",
+				"description": "Wenn aktiviert, erstellt CoolCline automatisch Git-Snapshots, nachdem die KI Dateiänderungsoperationen durchführt (wie: Dateien schreiben, Unterschiede anwenden, Inhalte einfügen usw.). Unterstützt das Speichern, Wiederherstellen und Vergleichen von Code-Zuständen.",
 				"features": {
-					"save": "Automatische Code-Snapshot-Speicherung",
-					"diff": "Snapshot-Diff-Vergleich",
-					"restore": "Code-Zustand-Rollback",
-					"integration": "Nahtlose Git-Integration"
+					"save": "Automatisches Speichern von Code-Snapshots",
+					"diff": "Unterstützung für Snapshot-Vergleiche",
+					"restore": "Unterstützung für Code-Zustand-Wiederherstellung",
+					"integration": "Nahtlose Integration mit Git-Versionskontrolle"
 				}
 			}
 		},
