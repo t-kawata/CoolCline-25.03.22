@@ -55,13 +55,13 @@ const WelcomeView = () => {
 				{String(t("welcome.description"))} {String(t("welcome.readmeLink"))}
 				{":"}
 				<VSCodeLink
-					href="https://github.com/coolcline/coolcline/blob/main/README_en.md"
+					href="https://github.com/coolcline/coolcline/blob/main/README.md"
 					style={{ display: "inline" }}>
 					en
 				</VSCodeLink>
 				{"|"}
 				<VSCodeLink
-					href="https://gitee.com/coolcline/coolcline/blob/main/README.md"
+					href="https://gitee.com/coolcline/coolcline/blob/main/README_zh.md"
 					style={{ display: "inline" }}>
 					简体中文
 				</VSCodeLink>

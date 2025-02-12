@@ -1,6 +1,6 @@
 # Contributing to CoolCline
 
-> README: [English](README_en.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README.md)
+> README: [English](README.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README_zh.md)
 >
 > CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md)
 >

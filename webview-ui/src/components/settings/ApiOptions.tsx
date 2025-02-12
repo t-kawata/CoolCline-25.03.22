@@ -1480,13 +1480,13 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						Ollama allows you to run models locally on your computer. For instructions on how to get
 						started, see their
 						<VSCodeLink
-							href="https://github.com/coolcline/coolcline/blob/main/README_en.md"
+							href="https://github.com/coolcline/coolcline/blob/main/README.md"
 							style={{ display: "inline" }}>
 							en
 						</VSCodeLink>
 						{"|"}
 						<VSCodeLink
-							href="https://gitee.com/coolcline/coolcline/blob/main/README.md"
+							href="https://gitee.com/coolcline/coolcline/blob/main/README_zh.md"
 							style={{ display: "inline" }}>
 							简体中文
 						</VSCodeLink>
