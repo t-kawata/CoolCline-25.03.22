@@ -41,6 +41,7 @@ import OpenRouterModelPicker, {
 import OpenAiModelPicker from "./OpenAiModelPicker"
 import GlamaModelPicker from "./GlamaModelPicker"
 import { useTranslation } from "react-i18next"
+import { TemperatureControl } from "./TemperatureControl"
 
 interface ApiOptionsProps {
 	apiErrorMessage?: string
@@ -692,6 +693,18 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							placeholder={`Default: ${azureOpenAiDefaultApiVersion}`}
 						/>
 					)}
+
+					<div style={{ marginTop: "10px" }}>
+						<TemperatureControl
+							value={apiConfiguration?.modelTemperature}
+							onChange={(value) => {
+								handleInputChange("modelTemperature")({
+									target: { value },
+								})
+							}}
+							maxValue={2}
+						/>
+					</div>
 
 					<div
 						style={{
@@ -1557,6 +1570,18 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						/>
 					</>
 				)}
+
+			<div style={{ marginTop: "10px" }}>
+				<TemperatureControl
+					value={apiConfiguration?.modelTemperature}
+					onChange={(value) => {
+						handleInputChange("modelTemperature")({
+							target: { value },
+						})
+					}}
+					maxValue={2}
+				/>
+			</div>
 
 			{modelIdErrorMessage && (
 				<p

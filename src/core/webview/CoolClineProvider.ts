@@ -120,6 +120,7 @@ type GlobalStateKey =
 	| "customModes" // Array of custom modes
 	| "unboundModelId"
 	| "checkpointsEnabled"
+	| "modelTemperature"
 
 export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
@@ -1479,6 +1480,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			mistralApiKey,
 			unboundApiKey,
 			unboundModelId,
+			modelTemperature,
 		} = apiConfiguration
 		await this.updateGlobalState("llmProvider", llmProvider)
 		await this.updateGlobalState("apiModelId", apiModelId)
@@ -1519,6 +1521,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await this.storeSecret("mistralApiKey", mistralApiKey)
 		await this.storeSecret("unboundApiKey", unboundApiKey)
 		await this.updateGlobalState("unboundModelId", unboundModelId)
+		await this.updateGlobalState("modelTemperature", modelTemperature)
 		if (this.coolcline) {
 			this.coolcline.api = buildApiHandler(apiConfiguration)
 		}
@@ -2197,6 +2200,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			unboundApiKey,
 			unboundModelId,
 			checkpointsEnabled,
+			modelTemperature,
 		] = await Promise.all([
 			this.getGlobalState("llmProvider") as Promise<llmProvider | undefined>,
 			this.getGlobalState("apiModelId") as Promise<string | undefined>,
@@ -2272,6 +2276,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("unboundApiKey") as Promise<string | undefined>,
 			this.getGlobalState("unboundModelId") as Promise<string | undefined>,
 			this.getGlobalState("checkpointsEnabled") as Promise<boolean | undefined>,
+			this.getGlobalState("modelTemperature") as Promise<number | undefined>,
 		])
 
 		let llmProvider: llmProvider
@@ -2329,6 +2334,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 				vsCodeLmModelSelector,
 				unboundApiKey,
 				unboundModelId,
+				modelTemperature,
 			},
 			lastShownAnnouncementId,
 			customInstructions,

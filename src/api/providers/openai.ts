@@ -57,7 +57,7 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 			}
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
 				model: modelId,
-				temperature: 0,
+				temperature: this.options.modelTemperature ?? 0,
 				messages: deepseekReasoner
 					? convertToR1Format([{ role: "user", content: systemPrompt }, ...messages])
 					: [systemMessage, ...convertToOpenAiMessages(messages)],
@@ -131,12 +131,12 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 
 	async completePrompt(prompt: string): Promise<string> {
 		try {
-			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
+			const response = await this.client.chat.completions.create({
 				model: this.getModel().id,
 				messages: [{ role: "user", content: prompt }],
-			}
-
-			const response = await this.client.chat.completions.create(requestOptions)
+				temperature: this.options.modelTemperature ?? 0,
+				stream: false,
+			})
 			return response.choices[0]?.message.content || ""
 		} catch (error) {
 			if (error instanceof Error) {

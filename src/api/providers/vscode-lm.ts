@@ -527,7 +527,9 @@ export class VsCodeLmHandler implements ApiHandler, SingleCompletionHandler {
 			const client = await this.getClient()
 			const response = await client.sendRequest(
 				[vscode.LanguageModelChatMessage.User(prompt)],
-				{},
+				{
+					justification: `CoolCline would like to use '${client.name}' from '${client.vendor}', Click 'Allow' to proceed.`,
+				},
 				new vscode.CancellationTokenSource().token,
 			)
 			let result = ""
