@@ -706,6 +706,47 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						</p>
 					</div>
 
+					<div style={{ marginBottom: 40 }}>
+						<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 5px 0", fontWeight: "600" }}>
+							{t("settings.advanced.checkpoints.title")}
+						</h3>
+						<div style={{ marginBottom: 15 }}>
+							<VSCodeCheckbox
+								checked={checkpointsEnabled}
+								onChange={(e: any) => {
+									setCheckpointsEnabled(e.target.checked)
+								}}>
+								<span style={{ fontWeight: "500" }}>{t("settings.advanced.checkpoints.enable")}</span>
+							</VSCodeCheckbox>
+							<p
+								style={{
+									fontSize: "12px",
+									marginTop: "5px",
+									color: "var(--vscode-descriptionForeground)",
+								}}>
+								{t("settings.advanced.checkpoints.description")}
+							</p>
+							{checkpointsEnabled && (
+								<ul
+									style={{
+										fontSize: "12px",
+										marginTop: "10px",
+										color: "var(--vscode-descriptionForeground)",
+										paddingLeft: "20px",
+										listStyleType: "disc",
+									}}>
+									{Object.keys(
+										t("settings.advanced.checkpoints.features", { returnObjects: true }),
+									).map((key) => (
+										<li key={key} style={{ marginBottom: "4px" }}>
+											{t(`settings.advanced.checkpoints.features.${key}`)}
+										</li>
+									))}
+								</ul>
+							)}
+						</div>
+					</div>
+
 					<div style={{ marginBottom: 15 }}>
 						<VSCodeCheckbox
 							checked={diffEnabled}
@@ -729,44 +770,53 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
 						{diffEnabled && (
 							<div style={{ marginTop: 10 }}>
-								<ExperimentalFeature
-									key={EXPERIMENT_IDS.DIFF_STRATEGY}
-									{...experimentConfigsMap.DIFF_STRATEGY}
-									enabled={experiments[EXPERIMENT_IDS.DIFF_STRATEGY] ?? false}
-									onChange={(enabled) => setExperimentEnabled(EXPERIMENT_IDS.DIFF_STRATEGY, enabled)}
-								/>
-								<div
-									style={{ display: "flex", flexDirection: "column", gap: "5px", marginTop: "15px" }}>
-									<span style={{ fontWeight: "500" }}>
-										{t("settings.advanced.diff.matchPrecision.title").toString()}
-									</span>
-									<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-										<input
-											type="range"
-											min="0.8"
-											max="1"
-											step="0.005"
-											value={fuzzyMatchThreshold ?? 1.0}
-											onChange={(e) => {
-												setFuzzyMatchThreshold(parseFloat(e.target.value))
-											}}
-											style={{
-												...sliderStyle,
-											}}
-										/>
-										<span style={{ ...sliderLabelStyle }}>
-											{Math.round((fuzzyMatchThreshold || 1) * 100)}%
+								<div style={{ marginTop: 10 }}>
+									<div
+										style={{
+											display: "flex",
+											flexDirection: "column",
+											gap: "5px",
+											marginTop: "15px",
+										}}>
+										<span style={{ fontWeight: "500" }}>
+											{t("settings.advanced.diff.matchPrecision.title").toString()}
 										</span>
+										<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+											<input
+												type="range"
+												min="0.8"
+												max="1"
+												step="0.005"
+												value={fuzzyMatchThreshold ?? 1.0}
+												onChange={(e) => {
+													setFuzzyMatchThreshold(parseFloat(e.target.value))
+												}}
+												style={{
+													...sliderStyle,
+												}}
+											/>
+											<span style={{ ...sliderLabelStyle }}>
+												{Math.round((fuzzyMatchThreshold || 1) * 100)}%
+											</span>
+										</div>
 									</div>
+									<p
+										style={{
+											fontSize: "12px",
+											marginTop: "5px",
+											color: "var(--vscode-descriptionForeground)",
+										}}>
+										{t("settings.advanced.diff.matchPrecision.description").toString()}
+									</p>
+									<ExperimentalFeature
+										key={EXPERIMENT_IDS.DIFF_STRATEGY}
+										{...experimentConfigsMap.DIFF_STRATEGY}
+										enabled={experiments[EXPERIMENT_IDS.DIFF_STRATEGY] ?? false}
+										onChange={(enabled) =>
+											setExperimentEnabled(EXPERIMENT_IDS.DIFF_STRATEGY, enabled)
+										}
+									/>
 								</div>
-								<p
-									style={{
-										fontSize: "12px",
-										marginTop: "5px",
-										color: "var(--vscode-descriptionForeground)",
-									}}>
-									{t("settings.advanced.diff.matchPrecision.description").toString()}
-								</p>
 							</div>
 						)}
 						{Object.entries(experimentConfigsMap)
@@ -786,47 +836,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 									}
 								/>
 							))}
-					</div>
-				</div>
-
-				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
-						{t("settings.advanced.checkpoints.title")}
-					</h3>
-					<div style={{ marginBottom: 15 }}>
-						<VSCodeCheckbox
-							checked={checkpointsEnabled}
-							onChange={(e: any) => {
-								setCheckpointsEnabled(e.target.checked)
-							}}>
-							<span style={{ fontWeight: "500" }}>{t("settings.advanced.checkpoints.enable")}</span>
-						</VSCodeCheckbox>
-						<p
-							style={{
-								fontSize: "12px",
-								marginTop: "5px",
-								color: "var(--vscode-descriptionForeground)",
-							}}>
-							{t("settings.advanced.checkpoints.description")}
-						</p>
-						{checkpointsEnabled && (
-							<ul
-								style={{
-									fontSize: "12px",
-									marginTop: "10px",
-									color: "var(--vscode-descriptionForeground)",
-									paddingLeft: "20px",
-									listStyleType: "disc",
-								}}>
-								{Object.keys(t("settings.advanced.checkpoints.features", { returnObjects: true })).map(
-									(key) => (
-										<li key={key} style={{ marginBottom: "4px" }}>
-											{t(`settings.advanced.checkpoints.features.${key}`)}
-										</li>
-									),
-								)}
-							</ul>
-						)}
 					</div>
 				</div>
 
