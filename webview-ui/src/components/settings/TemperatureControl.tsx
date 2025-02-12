@@ -1,5 +1,6 @@
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface TemperatureControlProps {
 	value: number | undefined
@@ -8,6 +9,7 @@ interface TemperatureControlProps {
 }
 
 export const TemperatureControl = ({ value, onChange, maxValue = 1 }: TemperatureControlProps) => {
+	const { t } = useTranslation()
 	const [isCustomTemperature, setIsCustomTemperature] = useState(value !== undefined)
 
 	// Sync internal state with prop changes when switching profiles
@@ -35,11 +37,11 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 						onChange(value) // Use the value from apiConfiguration, if set
 					}
 				}}>
-				<span style={{ fontWeight: "500" }}>使用自定义温度</span>
+				<span style={{ fontWeight: "500" }}>{t("settings.provider.temperature.title")}</span>
 			</VSCodeCheckbox>
 
 			<p style={{ fontSize: "12px", marginTop: "5px", color: "var(--vscode-descriptionForeground)" }}>
-				控制模型响应的随机性。较高的值使输出更随机，较低的值使其更确定。
+				{t("settings.provider.temperature.description")}
 			</p>
 
 			{isCustomTemperature && (
