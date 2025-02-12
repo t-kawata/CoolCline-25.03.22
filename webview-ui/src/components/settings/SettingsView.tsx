@@ -205,6 +205,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
 			<LanguageSelector />
 
+			<hr style={{ 
+				border: 'none',
+				height: '1px',
+				backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+				opacity: '0.4',
+				margin: '0 0 40px 0',
+				width: '100%'
+			}} />
+
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				<div style={{ marginBottom: 40 }}>
@@ -245,6 +254,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						<ApiOptions apiErrorMessage={apiErrorMessage} modelIdErrorMessage={modelIdErrorMessage} />
 					</div>
 				</div>
+
+				<hr style={{ 
+					border: 'none',
+					height: '1px',
+					backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+					opacity: '0.4',
+					margin: '0 0 40px 0',
+					width: '100%'
+				}} />
 
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
@@ -529,6 +547,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 				</div>
 
+				<hr style={{ 
+					border: 'none',
+					height: '1px',
+					backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+					opacity: '0.4',
+					margin: '0 0 40px 0',
+					width: '100%'
+				}} />
+
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.browser.title").toString()}
@@ -605,6 +632,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 				</div>
 
+				<hr style={{ 
+					border: 'none',
+					height: '1px',
+					backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+					opacity: '0.4',
+					margin: '0 0 40px 0',
+					width: '100%'
+				}} />
+
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.notification.title").toString()}
@@ -656,6 +692,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						</div>
 					)}
 				</div>
+
+				<hr style={{ 
+					border: 'none',
+					height: '1px',
+					backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+					opacity: '0.4',
+					margin: '0 0 40px 0',
+					width: '100%'
+				}} />
 
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
@@ -788,6 +833,15 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 							))}
 					</div>
 				</div>
+
+				<hr style={{ 
+					border: 'none',
+					height: '1px',
+					backgroundColor: 'var(--vscode-settings-modifiedItemIndicator)',
+					opacity: '0.4',
+					margin: '0 0 40px 0',
+					width: '100%'
+				}} />
 
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
