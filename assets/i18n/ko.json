@@ -38,7 +38,7 @@
 		"title": "CoolCline이란?",
 		"description": "CoolCline은 고급 AI 기능으로 개발 워크플로우를 향상시키는 능동적인 프로그래밍 어시스턴트입니다. 코드를 더 효율적으로 작성하고, 쿼리를 최적화하며, 오류를 자동으로 수정하고, 명령줄 작업을 실행하며, 브라우저 자동화 테스트를 수행하는 데 도움을 줍니다.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "이 확장 프로그램을 시작하려면 최소한 하나의 LLM Provider를 구성해야 합니다(필수).",
+		"llmProviderNeeded": "시작하려면 이 확장 프로그램에 최소 하나의 구성된 LLM 제공자가 필요합니다 (필수).",
 		"letsGo": "시작해볼까요!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "LLM Provider 빠른 전환 옵션",
-				"description": "여기에서 여러 LLM Provider 옵션을 생성하고 관리할 수 있습니다. 동일한 LLM Provider의 다른 모델에 대해 별도의 옵션을 만들 수 있으며, 각 옵션은 현재 LLM Provider의 전체 구성 정보를 저장합니다. 생성 후 채팅 입력창 하단에서 실시간으로 구성을 전환할 수 있습니다.\n\n구성 정보 포함:\n LLM Provider,\n API Key,\n Model \n 및 LLM Provider 관련 기타 구성 항목.\n\nLLM Provider 옵션 생성 단계(4단계는 2, 3단계와 순서 변경 가능):\n1. + 버튼을 클릭하면 현재 구성 정보를 기반으로 자동으로 xx (copy) 이름의 옵션이 생성됩니다.\n2. ✏️ 아이콘을 클릭하여 옵션 이름을 수정합니다.\n3. ☑️를 클릭하여 옵션 이름을 저장합니다.\n4. 필요에 따라 Model 등 핵심 매개변수를 조정합니다(편집창이 포커스를 잃으면 자동 저장).\n\n옵션 이름 명명 제안:\n '제공자-모델버전-특성' 구조를 권장합니다. 예:\nopenrouter-deepseek-v3-free\nopenrouter-deepseek-r1-free\ndeepseek-v3-공식\ndeepseek-r1-공식"
+				"description": "여기에서 여러 LLM Provider 옵션을 생성하고 관리할 수 있습니다. 동일한 LLM Provider의 다른 모델에 대해 별도의 옵션을 만들 수 있으며, 각 옵션은 현재 LLM Provider의 전체 구성 정보를 저장합니다. 생성 후 채팅 입력창 하단에서 실시간으로 구성을 전환할 수 있습니다. 구성 정보 포함: LLM Provider, API Key, Model 및 LLM Provider 관련 기타 구성 항목. LLM Provider 옵션 생성 단계(4단계는 2, 3단계와 순서 변경 가능): 1. + 버튼을 클릭하면 현재 구성 정보를 기반으로 자동으로 xx (copy) 이름의 옵션이 생성됩니다. 2. ✏️ 아이콘을 클릭하여 옵션 이름을 수정합니다. 3. ☑️를 클릭하여 옵션 이름을 저장합니다. 4. 필요에 따라 Model 등 핵심 매개변수를 조정합니다(편집창이 포커스를 잃으면 자동 저장). 옵션 이름 명명 제안: '제공자-모델버전-특성' 구조를 권장합니다. 예: openrouter-deepseek-v3-free openrouter-deepseek-r1-free deepseek-v3-공식 deepseek-r1-공식"
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "일치 정확도",
 					"description": "이 슬라이더는 diff 적용 시 코드 조각이 얼마나 정확하게 일치해야 하는지 제어합니다. 낮은 값은 더 유연한 일치를 허용하지만 잘못된 대체 위험이 증가합니다. 100% 미만의 값은 주의해서 사용하세요."
+				}
+			},
+			"checkpoints": {
+				"title": "Git 스냅샷 관리",
+				"enable": "체크포인트 활성화",
+				"description": "활성화되면 CoolCline은 AI가 파일 수정(예: 파일 쓰기, 차이점 적용, 콘텐츠 삽입 등)을 수행한 후 자동으로 Git 스냅샷을 생성합니다. 코드 상태 보존, 복원 및 차이점 비교를 지원합니다.",
+				"features": {
+					"save": "코드 스냅샷 자동 저장",
+					"diff": "스냅샷 간 차이점 비교",
+					"restore": "코드 상태 롤백",
+					"integration": "Git과의 원활한 통합"
 				}
 			}
 		},

@@ -38,7 +38,7 @@
 		"title": "CoolCline 是什麼？",
 		"description": "CoolCline 是一個主動式程式設計助手，透過先進的 AI 功能增強您的開發工作流程。它可以幫助您更高效地編寫程式碼、最佳化查詢、自動修復錯誤、執行命令列任務以及執行瀏覽器自動化測試。",
 		"readmeLink": "使用說明",
-		"apiProviderNeeded": "要開始使用此擴充功能至少需要配置好一個 LLM Provider （必須）。",
+		"llmProviderNeeded": "要開始使用，此擴充功能需要至少一個已配置的 LLM 提供者（必需）。",
 		"letsGo": "讓我們開始吧！"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "配置 LLM Provider 快速切換選項",
-				"description": "在這裡，您可以創建和管理多個 LLM Provider 選項。您可以為同一個 LLM Provider 的不同 Model 創建單獨的選項，每個選項保存當前 LLM Provider 的完整配置信息。創建後，您可以在聊天輸入框底部實時切換配置。\n\n配置信息包含：\n LLM Provider、\n API Key、\n Model \n 以及與 LLM Provider 有關的其他配置項 。\n\n創建 LLM Provider 選項的步驟如下（步驟 4 可以與 2 和 3 順序調換）：\n1. 點擊 + 按鈕，系統會自動根據當前配置信息複製一個選項，名字為 xx (copy)；\n2. 點擊 ✏️ 圖標修改選項名稱；\n3. 點擊 ☑️ 保存選項名稱；\n4. 按需要調整 Model 等核心參數（編輯框失去焦點後會自動保存）。\n\n選項名稱的命名建議：\n 推薦採用「服務商-模型版本-特性」結構，例如：\nopenrouter-deepseek-v3-free；\nopenrouter-deepseek-r1-free；\ndeepseek-v3-官方；\ndeepseek-r1-官方。"
+				"description": "在這裡，您可以創建和管理多個 LLM Provider 選項。您可以為同一個 LLM Provider 的不同 Model 創建單獨的選項，每個選項保存當前 LLM Provider 的完整配置信息。創建後，您可以在聊天輸入框底部實時切換配置。 配置信息包含： LLM Provider、 API Key、 Model 以及與 LLM Provider 有關的其他配置項 。 創建 LLM Provider 選項的步驟如下（步驟 4 可以與 2 和 3 順序調換）： 1. 點擊 + 按鈕，系統會自動根據當前配置信息複製一個選項，名字為 xx (copy)； 2. 點擊 ✏️ 圖標修改選項名稱； 3. 點擊 ☑️ 保存選項名稱； 4. 按需要調整 Model 等核心參數（編輯框失去焦點後會自動保存）。 選項名稱的命名建議： 推薦採用「服務商-模型版本-特性」結構，例如： openrouter-deepseek-v3-free； openrouter-deepseek-r1-free； deepseek-v3-官方； deepseek-r1-官方。"
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "匹配精確度",
 					"description": "此滑桿控制在應用差異時程式碼片段應該多精確地匹配。較低的值允許更靈活的匹配，但會增加錯誤替換的風險。請謹慎使用低於 100% 的值。"
+				}
+			},
+			"checkpoints": {
+				"title": "Git 快照管理",
+				"enable": "啟用檢查點",
+				"description": "啟用後，CoolCline 將在 AI 執行檔案修改操作後自動創建 Git 快照（例如：寫入檔案、應用差異、插入內容等操作）。支援程式碼狀態的保存、恢復和差異對比。",
+				"features": {
+					"save": "自動保存程式碼快照",
+					"diff": "支援快照間差異對比",
+					"restore": "支援程式碼狀態回滾",
+					"integration": "與 Git 版本控制無縫集成"
 				}
 			}
 		},

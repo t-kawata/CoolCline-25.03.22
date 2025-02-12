@@ -38,7 +38,7 @@
 		"title": "CoolCline nedir?",
 		"description": "CoolCline, gelişmiş AI yetenekleriyle geliştirme sürecinizi iyileştiren proaktif bir programlama asistanıdır. Kodu daha verimli yazmanıza, sorguları optimize etmenize, hataları otomatik olarak düzeltmenize, komut satırı görevlerini yürütmenize ve tarayıcı otomasyon testleri yapmanıza yardımcı olur.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Başlamak için, bu uzantının en az bir yapılandırılmış LLM Provider'a ihtiyacı var (zorunlu).",
+		"llmProviderNeeded": "Başlamak için, bu uzantı en az bir yapılandırılmış LLM Sağlayıcısı gerektirir (zorunlu).",
 		"letsGo": "Hadi başlayalım!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "LLM Provider Hızlı Geçiş Yapılandırması",
-				"description": "Burada, birden fazla LLM Provider seçeneği oluşturabilir ve yönetebilirsiniz. Aynı LLM Provider'ın farklı modelleri için ayrı seçenekler oluşturabilirsiniz, her seçenek mevcut LLM Provider'ın tam yapılandırmasını saklar. Oluşturduktan sonra, sohbet giriş çubuğunun altında yapılandırmalar arasında gerçek zamanlı olarak geçiş yapabilirsiniz.\n\nYapılandırma şunları içerir:\n LLM Provider,\n API Key,\n Model \n ve LLM Provider ile ilgili diğer ayarlar.\n\nLLM Provider seçeneği oluşturma adımları (4. adım 2 ve 3 ile yer değiştirebilir):\n1. + düğmesine tıklayın, sistem otomatik olarak mevcut yapılandırmadan bir kopya oluşturur, xx (copy) adıyla;\n2. ✏️ simgesine tıklayarak seçenek adını düzenleyin;\n3. ☑️ tıklayarak seçenek adını kaydedin;\n4. Gerekirse Model gibi temel parametreleri ayarlayın (düzenleme alanı odağı kaybettiğinde otomatik kaydedilir).\n\nSeçenek adlandırma önerileri:\n 'sağlayıcı-model-sürüm-özellik' yapısını kullanmanız önerilir, örneğin:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-resmi;\ndeepseek-r1-resmi."
+				"description": "Burada, birden fazla LLM Provider seçeneği oluşturabilir ve yönetebilirsiniz. Aynı LLM Provider'ın farklı modelleri için ayrı seçenekler oluşturabilirsiniz, her seçenek mevcut LLM Provider'ın tam yapılandırmasını saklar. Oluşturduktan sonra, sohbet giriş çubuğunun altında yapılandırmalar arasında gerçek zamanlı olarak geçiş yapabilirsiniz. Yapılandırma şunları içerir: LLM Provider, API Key, Model ve LLM Provider ile ilgili diğer ayarlar. LLM Provider seçeneği oluşturma adımları (4. adım 2 ve 3 ile yer değiştirebilir): 1. + düğmesine tıklayın, sistem otomatik olarak mevcut yapılandırmadan bir kopya oluşturur, xx (copy) adıyla; 2. ✏️ simgesine tıklayarak seçenek adını düzenleyin; 3. ☑️ tıklayarak seçenek adını kaydedin; 4. Gerekirse Model gibi temel parametreleri ayarlayın (düzenleme alanı odağı kaybettiğinde otomatik kaydedilir). Seçenek adlandırma önerileri: 'sağlayıcı-model-sürüm-özellik' yapısını kullanmanız önerilir, örneğin: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-resmi; deepseek-r1-resmi."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Eşleşme hassasiyeti",
 					"description": "Bu kaydırıcı, diff uygulanırken kod parçalarının ne kadar hassas eşleşmesi gerektiğini kontrol eder. Daha düşük değerler daha esnek eşleşmelere izin verir ancak yanlış değiştirme riskini artırır. %100'ün altındaki değerleri dikkatli kullanın."
+				}
+			},
+			"checkpoints": {
+				"title": "Git Anlık Görüntü Yönetimi",
+				"enable": "Kontrol noktalarını etkinleştir",
+				"description": "Etkinleştirildiğinde, CoolCline, AI dosya değişiklikleri yaptıktan sonra (örn. dosya yazma, farkları uygulama, içerik ekleme) otomatik olarak Git anlık görüntüleri oluşturacaktır. Kod durumunun korunmasını, geri yüklenmesini ve fark karşılaştırmasını destekler.",
+				"features": {
+					"save": "Kod anlık görüntülerini otomatik kaydet",
+					"diff": "Anlık görüntüler arası fark karşılaştırması",
+					"restore": "Kod durumunu geri alma",
+					"integration": "Git ile sorunsuz entegrasyon"
 				}
 			}
 		},

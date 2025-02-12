@@ -38,7 +38,7 @@
 		"title": "Was ist CoolCline?",
 		"description": "CoolCline ist ein proaktiver Programmierassistent, der Ihren Entwicklungsworkflow durch fortschrittliche KI-Fähigkeiten verbessert. Er hilft Ihnen, Code effizienter zu schreiben, Abfragen zu optimieren, Fehler automatisch zu beheben, Befehlszeilenaufgaben auszuführen und Browser-Automatisierungstests durchzuführen.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Um diese Erweiterung zu nutzen, muss mindestens ein LLM Provider konfiguriert werden (erforderlich).",
+		"llmProviderNeeded": "Um zu beginnen, benötigt diese Erweiterung mindestens einen konfigurierten LLM-Provider (erforderlich).",
 		"letsGo": "Los geht's!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "LLM Provider Schnellwechsel-Optionen",
-				"description": "Hier können Sie mehrere LLM Provider Optionen erstellen und verwalten. Sie können separate Optionen für verschiedene Modelle desselben LLM Providers erstellen, wobei jede Option die vollständige Konfiguration des aktuellen LLM Providers speichert. Nach der Erstellung können Sie die Konfiguration in der Chat-Eingabeleiste in Echtzeit wechseln.\n\nDie Konfiguration enthält:\n LLM Provider,\n API Key,\n Model \n und andere provider-spezifische Einstellungen.\n\nSchritte zum Erstellen einer LLM Provider Option (Schritt 4 kann mit 2 und 3 vertauscht werden):\n1. Klicken Sie auf +, das System erstellt automatisch eine Option basierend auf der aktuellen Konfiguration mit dem Namen xx (copy);\n2. Klicken Sie auf ✏️ um den Optionsnamen zu ändern;\n3. Klicken Sie auf ☑️ um den Optionsnamen zu speichern;\n4. Passen Sie bei Bedarf Kernparameter wie Model an (wird automatisch gespeichert, wenn das Bearbeitungsfeld den Fokus verliert).\n\nEmpfohlene Namenskonvention für Optionen:\n Verwenden Sie die Struktur \"Provider-Modellversion-Merkmal\", zum Beispiel:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-offiziell;\ndeepseek-r1-offiziell."
+				"description": "Hier können Sie mehrere LLM Provider Optionen erstellen und verwalten. Sie können separate Optionen für verschiedene Modelle desselben LLM Providers erstellen, wobei jede Option die vollständige Konfiguration des aktuellen LLM Providers speichert. Nach der Erstellung können Sie die Konfiguration in der Chat-Eingabeleiste in Echtzeit wechseln. Die Konfiguration enthält: LLM Provider, API Key, Model und andere provider-spezifische Einstellungen. Schritte zum Erstellen einer LLM Provider Option (Schritt 4 kann mit 2 und 3 vertauscht werden): 1. Klicken Sie auf +, das System erstellt automatisch eine Option basierend auf der aktuellen Konfiguration mit dem Namen xx (copy); 2. Klicken Sie auf ✏️ um den Optionsnamen zu ändern; 3. Klicken Sie auf ☑️ um den Optionsnamen zu speichern; 4. Passen Sie bei Bedarf Kernparameter wie Model an (wird automatisch gespeichert, wenn das Bearbeitungsfeld den Fokus verliert). Empfohlene Namenskonvention für Optionen: Verwenden Sie die Struktur \"Provider-Modellversion-Merkmal\", zum Beispiel: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-offiziell; deepseek-r1-offiziell."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Übereinstimmungsgenauigkeit",
 					"description": "Dieser Schieberegler steuert, wie genau Codestücke beim Anwenden von Diffs übereinstimmen müssen. Niedrigere Werte erlauben flexiblere Übereinstimmungen, erhöhen aber das Risiko falscher Ersetzungen. Verwenden Sie Werte unter 100% mit Vorsicht."
+				}
+			},
+			"checkpoints": {
+				"title": "Git-Snapshot-Verwaltung",
+				"enable": "Checkpoints aktivieren",
+				"description": "Wenn aktiviert, erstellt CoolCline automatisch Git-Snapshots nach KI-Dateiänderungen (z.B. Dateien schreiben, Diffs anwenden, Inhalte einfügen). Unterstützt Codezustandsspeicherung, Wiederherstellung und Diff-Vergleich.",
+				"features": {
+					"save": "Automatische Code-Snapshot-Speicherung",
+					"diff": "Snapshot-Diff-Vergleich",
+					"restore": "Code-Zustand-Rollback",
+					"integration": "Nahtlose Git-Integration"
 				}
 			}
 		},

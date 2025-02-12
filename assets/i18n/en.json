@@ -674,6 +674,17 @@
 					"title": "Match precision",
 					"description": "This slider controls how precisely code sections must match when applying diffs. Lower values allow more flexible matching but increase the risk of incorrect replacements. Use values below 100% with extreme caution."
 				}
+			},
+			"checkpoints": {
+				"title": "Git Snapshot Management",
+				"enable": "Enable checkpoints",
+				"description": "When enabled, CoolCline will automatically create Git snapshots after AI performs file modifications (e.g., writing files, applying diffs, inserting content). Supports code state preservation, restoration, and diff comparison.",
+				"features": {
+					"save": "Auto-save code snapshots",
+					"diff": "Snapshot diff comparison",
+					"restore": "Code state rollback",
+					"integration": "Seamless Git integration"
+				}
 			}
 		},
 		"experiments": {

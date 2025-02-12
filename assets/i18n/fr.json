@@ -38,7 +38,7 @@
 		"title": "Qu'est-ce que CoolCline ?",
 		"description": "CoolCline est un assistant de programmation proactif qui améliore votre flux de travail de développement grâce à des capacités d'IA avancées. Il vous aide à écrire du code plus efficacement, à optimiser les requêtes, à corriger automatiquement les erreurs, à exécuter des tâches en ligne de commande et à effectuer des tests d'automatisation de navigateur.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Pour commencer, cette extension nécessite au moins un LLM Provider configuré (obligatoire).",
+		"llmProviderNeeded": "Pour commencer, cette extension nécessite au moins un fournisseur LLM configuré (requis).",
 		"letsGo": "Commençons !"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "Options de changement rapide de LLM Provider",
-				"description": "Ici, vous pouvez créer et gérer plusieurs options de LLM Provider. Vous pouvez créer des options séparées pour différents modèles du même LLM Provider, chaque option conservant la configuration complète du LLM Provider actuel. Une fois créées, vous pouvez basculer entre les configurations en temps réel dans la barre de saisie du chat.\n\nLa configuration inclut :\n LLM Provider,\n API Key,\n Model \n et autres paramètres spécifiques au LLM Provider.\n\nÉtapes pour créer une option LLM Provider (l'étape 4 peut être intervertie avec 2 et 3) :\n1. Cliquez sur le bouton +, le système copiera automatiquement une option basée sur la configuration actuelle, nommée xx (copy);\n2. Cliquez sur l'icône ✏️ pour modifier le nom de l'option;\n3. Cliquez sur ☑️ pour sauvegarder le nom de l'option;\n4. Ajustez les paramètres principaux comme le Model selon vos besoins (sauvegarde automatique lorsque le champ perd le focus).\n\nSuggestions de nommage des options :\n Structure recommandée 'provider-version-modèle-caractéristique', par exemple :\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-officiel;\ndeepseek-r1-officiel."
+				"description": "Ici, vous pouvez créer et gérer plusieurs options de LLM Provider. Vous pouvez créer des options séparées pour différents modèles du même LLM Provider, chaque option conservant la configuration complète du LLM Provider actuel. Une fois créées, vous pouvez basculer entre les configurations en temps réel dans la barre de saisie du chat. La configuration inclut : LLM Provider, API Key, Model et autres paramètres spécifiques au LLM Provider. Étapes pour créer une option LLM Provider (l'étape 4 peut être intervertie avec 2 et 3) : 1. Cliquez sur le bouton +, le système copiera automatiquement une option basée sur la configuration actuelle, nommée xx (copy); 2. Cliquez sur l'icône ✏️ pour modifier le nom de l'option; 3. Cliquez sur ☑️ pour sauvegarder le nom de l'option; 4. Ajustez les paramètres principaux comme le Model selon vos besoins (sauvegarde automatique lorsque le champ perd le focus). Suggestions de nommage des options : Structure recommandée 'provider-version-modèle-caractéristique', par exemple : openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-officiel; deepseek-r1-officiel."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Précision de correspondance",
 					"description": "Ce curseur contrôle la précision avec laquelle les morceaux de code doivent correspondre lors de l'application des diffs. Des valeurs plus basses permettent des correspondances plus souples mais augmentent le risque de remplacements incorrects. Utilisez les valeurs inférieures à 100% avec précaution."
+				}
+			},
+			"checkpoints": {
+				"title": "Gestion des instantanés Git",
+				"enable": "Activer les points de contrôle",
+				"description": "Lorsqu'activé, CoolCline créera automatiquement des instantanés Git après les modifications de fichiers par l'IA (par ex. écriture de fichiers, application de diffs, insertion de contenu). Prend en charge la préservation, la restauration et la comparaison des états du code.",
+				"features": {
+					"save": "Sauvegarde automatique des instantanés de code",
+					"diff": "Comparaison des différences entre instantanés",
+					"restore": "Retour à l'état précédent du code",
+					"integration": "Intégration transparente avec Git"
 				}
 			}
 		},

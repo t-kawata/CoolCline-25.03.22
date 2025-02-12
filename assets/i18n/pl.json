@@ -38,7 +38,7 @@
 		"title": "Co to jest CoolCline?",
 		"description": "CoolCline to proaktywny asystent programowania, który ulepsza Twój proces rozwoju dzięki zaawansowanym możliwościom AI. Pomaga Ci efektywniej pisać kod, optymalizować zapytania, automatycznie naprawiać błędy, wykonywać zadania wiersza poleceń i przeprowadzać testy automatyzacji przeglądarki.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Aby rozpocząć korzystanie z tego rozszerzenia, musisz skonfigurować co najmniej jednego dostawcę LLM (wymagane).",
+		"llmProviderNeeded": "Aby rozpocząć, to rozszerzenie wymaga co najmniej jednego skonfigurowanego dostawcy LLM (wymagane).",
 		"letsGo": "Zaczynajmy!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "Konfiguracja opcji szybkiego przełączania dostawcy LLM",
-				"description": "Tutaj możesz tworzyć i zarządzać wieloma opcjami dostawcy LLM. Możesz utworzyć osobne opcje dla różnych modeli tego samego dostawcy LLM, każda opcja zachowuje pełną konfigurację bieżącego dostawcy LLM. Po utworzeniu możesz przełączać konfiguracje w czasie rzeczywistym w dolnej części okna czatu.\n\nKonfiguracja zawiera:\n Dostawcę LLM,\n Klucz API,\n Model \n oraz inne ustawienia związane z dostawcą LLM.\n\nKroki tworzenia opcji dostawcy LLM (krok 4 można zamienić kolejnością z 2 i 3):\n1. Kliknij przycisk +, system automatycznie skopiuje opcję na podstawie bieżącej konfiguracji, nazwa będzie xx (copy);\n2. Kliknij ikonę ✏️, aby zmienić nazwę opcji;\n3. Kliknij ☑️, aby zapisać nazwę opcji;\n4. Dostosuj podstawowe parametry, takie jak Model, według potrzeb (edycje są automatycznie zapisywane po utracie fokusu).\n\nSugerowana konwencja nazewnictwa opcji:\n Zalecana struktura \"dostawca-wersja-modelu-cecha\", na przykład:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-official;\ndeepseek-r1-official."
+				"description": "Tutaj możesz tworzyć i zarządzać wieloma opcjami dostawcy LLM. Możesz utworzyć osobne opcje dla różnych modeli tego samego dostawcy LLM, każda opcja zachowuje pełną konfigurację bieżącego dostawcy LLM. Po utworzeniu możesz przełączać konfiguracje w czasie rzeczywistym w dolnej części okna czatu. Konfiguracja zawiera: Dostawcę LLM, Klucz API, Model oraz inne ustawienia związane z dostawcą LLM. Kroki tworzenia opcji dostawcy LLM (krok 4 można zamienić kolejnością z 2 i 3): 1. Kliknij przycisk +, system automatycznie skopiuje opcję na podstawie bieżącej konfiguracji, nazwa będzie xx (copy); 2. Kliknij ikonę ✏️, aby zmienić nazwę opcji; 3. Kliknij ☑️, aby zapisać nazwę opcji; 4. Dostosuj podstawowe parametry, takie jak Model, według potrzeb (edycje są automatycznie zapisywane po utracie fokusu). Sugerowana konwencja nazewnictwa opcji: Zalecana struktura \"dostawca-wersja-modelu-cecha\", na przykład: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Precyzja dopasowania",
 					"description": "Ten suwak kontroluje, jak dokładnie fragmenty kodu muszą się dopasować podczas stosowania diff. Niższe wartości pozwalają na bardziej elastyczne dopasowania, ale zwiększają ryzyko błędnych zamian. Używaj wartości poniżej 100% z ostrożnością."
+				}
+			},
+			"checkpoints": {
+				"title": "Zarządzanie migawkami Git",
+				"enable": "Włącz punkty kontrolne",
+				"description": "Po włączeniu, CoolCline automatycznie utworzy migawki Git po modyfikacjach plików przez AI (np. zapisywanie plików, stosowanie różnic, wstawianie treści). Obsługuje zachowanie stanu kodu, przywracanie i porównywanie różnic.",
+				"features": {
+					"save": "Automatyczne zapisywanie migawek kodu",
+					"diff": "Porównywanie różnic między migawkami",
+					"restore": "Przywracanie stanu kodu",
+					"integration": "Bezproblemowa integracja z Git"
 				}
 			}
 		},

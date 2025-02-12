@@ -38,7 +38,7 @@
 		"title": "Cos'è CoolCline?",
 		"description": "CoolCline è un assistente di programmazione proattivo che migliora il tuo flusso di lavoro di sviluppo con capacità AI avanzate. Ti aiuta a scrivere codice in modo più efficiente, ottimizzare le query, correggere automaticamente gli errori, eseguire attività da riga di comando e eseguire test di automazione del browser.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Per iniziare, questa estensione necessita di almeno un LLM Provider configurato (obbligatorio).",
+		"llmProviderNeeded": "Per iniziare, questa estensione richiede almeno un Provider LLM configurato (obbligatorio).",
 		"letsGo": "Iniziamo!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "Configurazione opzioni rapide LLM Provider",
-				"description": "Qui puoi creare e gestire più opzioni LLM Provider. Puoi creare opzioni separate per diversi modelli dello stesso LLM Provider, ogni opzione salva la configurazione completa del LLM Provider corrente. Dopo la creazione, puoi passare tra le configurazioni in tempo reale dalla barra di input della chat.\n\nLa configurazione include:\n LLM Provider,\n API Key,\n Model \n e altre impostazioni specifiche del LLM Provider.\n\nPassaggi per creare un'opzione LLM Provider (il passo 4 può essere scambiato con 2 e 3):\n1. Clicca il pulsante +, il sistema copierà automaticamente un'opzione dalla configurazione corrente, nominata xx (copy);\n2. Clicca l'icona ✏️ per modificare il nome dell'opzione;\n3. Clicca ☑️ per salvare il nome dell'opzione;\n4. Regola i parametri principali come Model secondo necessità (le modifiche vengono salvate automaticamente quando l'editor perde il focus).\n\nSuggerimenti per i nomi delle opzioni:\n Si consiglia una struttura \"provider-versione-modello-caratteristica\", ad esempio:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-ufficiale;\ndeepseek-r1-ufficiale."
+				"description": "Qui puoi creare e gestire più opzioni LLM Provider. Puoi creare opzioni separate per diversi modelli dello stesso LLM Provider, ogni opzione salva la configurazione completa del LLM Provider corrente. Dopo la creazione, puoi passare tra le configurazioni in tempo reale dalla barra di input della chat. La configurazione include: LLM Provider, API Key, Model e altre impostazioni specifiche del LLM Provider. Passaggi per creare un'opzione LLM Provider (il passo 4 può essere scambiato con 2 e 3): 1. Clicca il pulsante +, il sistema copierà automaticamente un'opzione dalla configurazione corrente, nominata xx (copy); 2. Clicca l'icona ✏️ per modificare il nome dell'opzione; 3. Clicca ☑️ per salvare il nome dell'opzione; 4. Regola i parametri principali come Model secondo necessità (le modifiche vengono salvate automaticamente quando l'editor perde il focus). Suggerimenti per i nomi delle opzioni: Si consiglia una struttura \"provider-versione-modello-caratteristica\", ad esempio: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-ufficiale; deepseek-r1-ufficiale."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Precisione corrispondenza",
 					"description": "Questo cursore controlla quanto precisamente i frammenti di codice devono corrispondere quando si applicano i diff. Valori più bassi permettono corrispondenze più flessibili ma aumentano il rischio di sostituzioni errate. Usa valori inferiori al 100% con cautela."
+				}
+			},
+			"checkpoints": {
+				"title": "Gestione snapshot Git",
+				"enable": "Abilita checkpoint",
+				"description": "Quando abilitato, CoolCline creerà automaticamente snapshot Git dopo che l'IA esegue modifiche ai file (es. scrittura file, applicazione diff, inserimento contenuti). Supporta la conservazione dello stato del codice, il ripristino e il confronto delle differenze.",
+				"features": {
+					"save": "Salvataggio automatico degli snapshot del codice",
+					"diff": "Confronto delle differenze tra snapshot",
+					"restore": "Ripristino dello stato del codice",
+					"integration": "Integrazione perfetta con Git"
 				}
 			}
 		},

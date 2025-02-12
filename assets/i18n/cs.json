@@ -38,7 +38,7 @@
 		"title": "Co je CoolCline?",
 		"description": "CoolCline je proaktivní programovací asistent, který vylepšuje váš vývojový workflow pomocí pokročilých AI schopností. Pomáhá vám efektivněji psát kód, optimalizovat dotazy, automaticky opravovat chyby, spouštět příkazy v příkazové řádce a provádět automatizované testy prohlížeče.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "Pro začátek potřebuje toto rozšíření alespoň jeden nakonfigurovaný LLM Provider (povinné).",
+		"llmProviderNeeded": "Pro začátek toto rozšíření vyžaduje alespoň jednoho nakonfigurovaného LLM poskytovatele (povinné).",
 		"letsGo": "Pojďme na to!"
 	},
 	"chat": {
@@ -390,7 +390,7 @@
 			},
 			"configProfile": {
 				"title": "Konfigurace rychlého přepínání LLM Provider",
-				"description": "Zde můžete vytvářet a spravovat více možností LLM Provider. Pro stejný LLM Provider můžete vytvořit samostatné možnosti pro různé modely, přičemž každá možnost ukládá kompletní konfigurační informace aktuálního LLM Provider. Po vytvoření můžete konfiguraci přepínat v reálném čase ve spodní části chatovacího pole.\n\nKonfigurační informace zahrnují:\n LLM Provider,\n API Key,\n Model \n a další konfigurační položky související s LLM Provider.\n\nPostup vytvoření možnosti LLM Provider (krok 4 lze prohodit s kroky 2 a 3):\n1. Klikněte na tlačítko +, systém automaticky zkopíruje možnost z aktuální konfigurace s názvem xx (copy);\n2. Klikněte na ikonu ✏️ pro úpravu názvu možnosti;\n3. Klikněte na ☑️ pro uložení názvu možnosti;\n4. Podle potřeby upravte základní parametry jako Model (úpravy se automaticky uloží při ztrátě zaměření).\n\nDoporučení pro pojmenování možností:\n Doporučuje se struktura \"provider-model-version-feature\", například:\nopenrouter-deepseek-v3-free;\nopenrouter-deepseek-r1-free;\ndeepseek-v3-official;\ndeepseek-r1-official."
+				"description": "Zde můžete vytvářet a spravovat více možností LLM Provider. Pro stejný LLM Provider můžete vytvořit samostatné možnosti pro různé modely, přičemž každá možnost ukládá kompletní konfigurační informace aktuálního LLM Provider. Po vytvoření můžete konfiguraci přepínat v reálném čase ve spodní části chatovacího pole. Konfigurační informace zahrnují: LLM Provider, API Key, Model a další konfigurační položky související s LLM Provider. Postup vytvoření možnosti LLM Provider (krok 4 lze prohodit s kroky 2 a 3): 1. Klikněte na tlačítko +, systém automaticky zkopíruje možnost z aktuální konfigurace s názvem xx (copy); 2. Klikněte na ikonu ✏️ pro úpravu názvu možnosti; 3. Klikněte na ☑️ pro uložení názvu možnosti; 4. Podle potřeby upravte základní parametry jako Model (úpravy se automaticky uloží při ztrátě zaměření). Doporučení pro pojmenování možností: Doporučuje se struktura \"provider-model-version-feature\", například: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official."
 			},
 			"providers": {
 				"anthropic": {
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Přesnost shody",
 					"description": "Tento posuvník ovládá jak přesně musí sekce kódu odpovídat při aplikování diffů. Nižší hodnoty umožňují flexibilnější shodu, ale zvyšují riziko nesprávných náhrad. Používejte hodnoty pod 100% s extrémní opatrností."
+				}
+			},
+			"checkpoints": {
+				"title": "Správa Git snímků",
+				"enable": "Povolit kontrolní body",
+				"description": "Když je povoleno, CoolCline automaticky vytvoří Git snímky po provedení úprav souborů umělou inteligencí (např. zápis souborů, aplikace rozdílů, vkládání obsahu). Podporuje zachování stavu kódu, obnovení a porovnání rozdílů.",
+				"features": {
+					"save": "Automatické ukládání snímků kódu",
+					"diff": "Porovnání rozdílů mezi snímky",
+					"restore": "Obnovení stavu kódu",
+					"integration": "Bezproblémová integrace s Git"
 				}
 			}
 		},

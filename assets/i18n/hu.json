@@ -38,7 +38,7 @@
 		"title": "Mi az a CoolCline?",
 		"description": "A CoolCline egy proaktív programozási asszisztens, amely fejlett AI képességekkel javítja a fejlesztési munkafolyamatot. Segít hatékonyabban kódolni, optimalizálni a lekérdezéseket, automatikusan javítani a hibákat, parancssori feladatokat futtatni és böngésző automatizálási teszteket végezni.",
 		"readmeLink": "README",
-		"apiProviderNeeded": "A kezdéshez ennek a bővítménynek szüksége van egy LLM Provider konfigurációra (kötelező).",
+		"llmProviderNeeded": "A kezdéshez ennek a bővítménynek legalább egy konfigurált LLM szolgáltatóra van szüksége (kötelező).",
 		"letsGo": "Kezdjük!"
 	},
 	"chat": {
@@ -377,7 +377,7 @@
 		"done": "Kész",
 		"provider": {
 			"title": "LLM Provider beállítások",
-			"apiProvider": "LLM Provider",
+			"llmProvider": "LLM Provider",
 			"apiKey": {
 				"title": "API Key",
 				"placeholder": "Adja meg az LLM Provider API Key-t",
@@ -673,6 +673,17 @@
 				"matchPrecision": {
 					"title": "Egyezési pontosság",
 					"description": "Ez a csúszka szabályozza, hogy mennyire pontosan kell egyeznie a kódrészleteknek a diff alkalmazásakor. Az alacsonyabb értékek rugalmasabb egyezést tesznek lehetővé, de növelik a hibás helyettesítések kockázatát. Óvatosan használja a 100% alatti értékeket."
+				}
+			},
+			"checkpoints": {
+				"title": "Git pillanatkép kezelés",
+				"enable": "Ellenőrzőpontok engedélyezése",
+				"description": "Ha engedélyezve van, a CoolCline automatikusan Git pillanatképeket készít, miután az AI fájlmódosításokat végez (pl. fájlok írása, különbségek alkalmazása, tartalom beszúrása). Támogatja a kód állapotának megőrzését, visszaállítását és különbségek összehasonlítását.",
+				"features": {
+					"save": "Kód pillanatképek automatikus mentése",
+					"diff": "Pillanatképek közötti különbségek összehasonlítása",
+					"restore": "Kód állapot visszaállítása",
+					"integration": "Zökkenőmentes Git integráció"
 				}
 			}
 		},

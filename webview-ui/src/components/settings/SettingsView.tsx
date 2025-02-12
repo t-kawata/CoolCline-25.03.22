@@ -791,7 +791,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
-						{t("settings.advanced.checkpoints.title").toString()}
+						{t("settings.advanced.checkpoints.title")}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
 						<VSCodeCheckbox
@@ -799,7 +799,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 							onChange={(e: any) => {
 								setCheckpointsEnabled(e.target.checked)
 							}}>
-							<span style={{ fontWeight: "500" }}>启用检查点</span>
+							<span style={{ fontWeight: "500" }}>{t("settings.advanced.checkpoints.enable")}</span>
 						</VSCodeCheckbox>
 						<p
 							style={{
@@ -807,9 +807,26 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								marginTop: "5px",
 								color: "var(--vscode-descriptionForeground)",
 							}}>
-							启用后，CoolCline
-							将在每次工具执行后保存工作区检查点（如果工作区中的文件被修改、添加或删除）。
+							{t("settings.advanced.checkpoints.description")}
 						</p>
+						{checkpointsEnabled && (
+							<ul
+								style={{
+									fontSize: "12px",
+									marginTop: "10px",
+									color: "var(--vscode-descriptionForeground)",
+									paddingLeft: "20px",
+									listStyleType: "disc",
+								}}>
+								{Object.keys(t("settings.advanced.checkpoints.features", { returnObjects: true })).map(
+									(key) => (
+										<li key={key} style={{ marginBottom: "4px" }}>
+											{t(`settings.advanced.checkpoints.features.${key}`)}
+										</li>
+									),
+								)}
+							</ul>
+						)}
 					</div>
 				</div>
 
