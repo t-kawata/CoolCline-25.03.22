@@ -206,6 +206,13 @@ const ServerRow = ({ server, alwaysAllowMcp }: { server: McpServer; alwaysAllowM
 				<div
 					style={{ display: "flex", alignItems: "center", marginRight: "8px" }}
 					onClick={(e) => e.stopPropagation()}>
+					<VSCodeButton
+						appearance="icon"
+						onClick={handleRestart}
+						disabled={server.status === "connecting"}
+						style={{ marginRight: "8px" }}>
+						<span className="codicon codicon-refresh" style={{ fontSize: "14px" }}></span>
+					</VSCodeButton>
 					<div
 						role="switch"
 						aria-checked={!server.disabled}
@@ -391,16 +398,6 @@ const ServerRow = ({ server, alwaysAllowMcp }: { server: McpServer; alwaysAllowM
 								{String(t("mcp.timeout.description"))}
 							</span>
 						</div>
-
-						<VSCodeButton
-							appearance="secondary"
-							onClick={handleRestart}
-							disabled={server.status === "connecting"}
-							style={{ width: "calc(100% - 14px)", margin: "0 7px 3px 7px" }}>
-							{server.status === "connecting"
-								? String(t("mcp.server.restarting"))
-								: String(t("mcp.server.restart"))}
-						</VSCodeButton>
 					</div>
 				)
 			)}
