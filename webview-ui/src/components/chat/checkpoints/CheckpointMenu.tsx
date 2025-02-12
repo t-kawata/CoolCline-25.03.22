@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
-import { DropdownMenuItemProps } from "@radix-ui/react-dropdown-menu"
+import { DropdownMenuItemProps, DropdownMenuPortal } from "@radix-ui/react-dropdown-menu"
 
 import { vscode } from "../../../utils/vscode"
 
@@ -53,12 +53,14 @@ export const CheckpointMenu = ({ ts, commitHash }: CheckpointMenuProps) => {
 					<DotsHorizontalIcon />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent container={portalContainer} align="end">
-				<CheckpointMenuItem label="Checkpoint Diff" icon="diff-single" onClick={onCheckpointDiff} />
-				<CheckpointMenuItem label="Task Diff" icon="diff-multiple" onClick={onTaskDiff} />
-				<CheckpointMenuItem label="Preview" icon="open-preview" onClick={onPreview} />
-				<CheckpointMenuItem label="Restore" icon="history" onClick={onRestore} />
-			</DropdownMenuContent>
+			<DropdownMenuPortal container={portalContainer}>
+				<DropdownMenuContent align="end">
+					<CheckpointMenuItem label="Checkpoint Diff" icon="diff-single" onClick={onCheckpointDiff} />
+					<CheckpointMenuItem label="Task Diff" icon="diff-multiple" onClick={onTaskDiff} />
+					<CheckpointMenuItem label="Preview" icon="open-preview" onClick={onPreview} />
+					<CheckpointMenuItem label="Restore" icon="history" onClick={onRestore} />
+				</DropdownMenuContent>
+			</DropdownMenuPortal>
 		</DropdownMenu>
 	)
 }
