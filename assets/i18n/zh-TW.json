@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "注意：CoolCline 使用複雜的提示，最適合與 Claude 模型配合使用。能力較弱的模型可能無法如預期運作。"
+			},
+			"temperature": {
+				"title": "使用自定義溫度",
+				"description": "控制模型回應的隨機性。較高的值使輸出更隨機，較低的值使其更確定。"
 			}
 		},
 		"autoApprove": {

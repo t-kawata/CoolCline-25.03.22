@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "Megjegyzés: A CoolCline összetett promptokat használ, és a Claude modellekkel működik a legjobban. A korlátozott képességű modellek lehet, hogy nem a várt módon működnek."
+			},
+			"temperature": {
+				"title": "Egyéni hőmérséklet használata",
+				"description": "Szabályozza a modell válaszainak véletlenszerűségét. A magasabb értékek véletlenszerűbbé teszik a kimenetet, míg az alacsonyabb értékek determinisztikusabbá teszik."
 			}
 		},
 		"autoApprove": {

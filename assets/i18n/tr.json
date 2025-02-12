@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "Not: CoolCline karmaşık promptlar kullanır ve Claude modelleriyle en iyi şekilde çalışır. Sınırlı yeteneklere sahip modeller beklendiği gibi çalışmayabilir."
+			},
+			"temperature": {
+				"title": "Özel sıcaklık kullan",
+				"description": "Modelin yanıtlarının rastgeleliğini kontrol eder. Daha yüksek değerler çıktıyı daha rastgele yaparken, daha düşük değerler daha deterministik yapar."
 			}
 		},
 		"autoApprove": {

@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "Hinweis: CoolCline verwendet komplexe Prompts und funktioniert am besten mit Claude-Modellen. Modelle mit eingeschränkten Fähigkeiten funktionieren möglicherweise nicht wie erwartet."
+			},
+			"temperature": {
+				"title": "Benutzerdefinierte Temperatur verwenden",
+				"description": "Steuert die Zufälligkeit der Modellantworten. Höhere Werte machen die Ausgabe zufälliger, niedrigere Werte machen sie deterministischer."
 			}
 		},
 		"autoApprove": {

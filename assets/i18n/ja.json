@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "注意：CoolClineは複雑なプロンプトを使用し、Claudeモデルと最も相性が良いです。機能が制限されたモデルは予期通りに動作しない可能性があります。"
+			},
+			"temperature": {
+				"title": "Use Custom Temperature",
+				"description": "Controls the randomness of the model's responses. Higher values make the output more random, while lower values make it more deterministic."
 			}
 		},
 		"autoApprove": {

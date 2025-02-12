@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "Note: CoolCline uses complex prompts and works best with Claude models. Less capable models may not work as expected."
+			},
+			"temperature": {
+				"title": "Use Custom Temperature",
+				"description": "Controls the randomness of the model's responses. Higher values make the output more random, while lower values make it more deterministic."
 			}
 		},
 		"autoApprove": {

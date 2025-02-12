@@ -575,6 +575,10 @@
 			},
 			"common": {
 				"modelCapabilityNote": "नोट: CoolCline जटिल प्रॉम्प्ट का उपयोग करता है और Claude मॉडल के साथ सबसे अच्छा काम करता है। कम क्षमता वाले मॉडल अपेक्षित रूप से काम नहीं कर सकते हैं।"
+			},
+			"temperature": {
+				"title": "Use Custom Temperature",
+				"description": "Controls the randomness of the model's responses. Higher values make the output more random, while lower values make it more deterministic."
 			}
 		},
 		"autoApprove": {
