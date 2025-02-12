@@ -43,14 +43,14 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 			</p>
 
 			{isCustomTemperature && (
-				<div>
-					<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+				<div style={{ marginTop: "15px" }}>
+					<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 						<input
 							type="range"
 							min="0"
 							max={maxValue}
 							step="0.05"
-							value={value}
+							value={value ?? 0.0}
 							onChange={(e) => {
 								const newValue = parseFloat(e.target.value)
 								onChange(isNaN(newValue) ? undefined : newValue)
@@ -61,7 +61,7 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 								height: "2px",
 							}}
 						/>
-						<span style={{ minWidth: "45px", textAlign: "left" }}>{value?.toFixed(2)}</span>
+						<span style={{ minWidth: "45px", textAlign: "left" }}>{value?.toFixed(2) ?? "0.00"}</span>
 					</div>
 				</div>
 			)}
