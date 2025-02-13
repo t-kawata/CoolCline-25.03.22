@@ -120,15 +120,7 @@ export class TerminalManager {
 			terminalInfo.busy = false
 		})
 
-		// if shell integration is not available, remove terminal so it does not get reused as it may be running a long-running process
-		process.once("no_shell_integration", () => {
-			console.log(`no_shell_integration received for terminal ${terminalInfo.id}`)
-			// Remove the terminal so we can't reuse it (in case it's running a long-running process)
-			TerminalRegistry.removeTerminal(terminalInfo.id)
-			this.terminalIds.delete(terminalInfo.id)
-			this.processes.delete(terminalInfo.id)
-		})
-
+		// 移除原有的 no_shell_integration 处理逻辑，因为我们现在有更可靠的后备方案
 		const promise = new Promise<void>((resolve, reject) => {
 			process.once("continue", () => {
 				resolve()
@@ -139,22 +131,12 @@ export class TerminalManager {
 			})
 		})
 
-		// if shell integration is already active, run the command immediately
 		const terminal = terminalInfo.terminal as ExtendedTerminal
 		if (terminal.shellIntegration) {
-			process.waitForShellIntegration = false
 			process.run(terminal, command)
 		} else {
-			// docs recommend waiting 3s for shell integration to activate
-			pWaitFor(() => (terminalInfo.terminal as ExtendedTerminal).shellIntegration !== undefined, {
-				timeout: 4000,
-			}).finally(() => {
-				const existingProcess = this.processes.get(terminalInfo.id)
-				if (existingProcess && existingProcess.waitForShellIntegration) {
-					existingProcess.waitForShellIntegration = false
-					existingProcess.run(terminal, command)
-				}
-			})
+			// 直接运行命令，使用后备方案获取输出
+			process.run(terminal, command)
 		}
 
 		return mergePromise(process, promise)
@@ -215,6 +197,46 @@ export class TerminalManager {
 		return process ? process.isHot : false
 	}
 
+	async getTerminalContents(commands = -1): Promise<string> {
+		// 保存原始剪贴板内容
+		const originalContent = await vscode.env.clipboard.readText()
+
+		try {
+			// 清除当前选择
+			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
+
+			// 根据 commands 参数选择不同的选择策略
+			if (commands < 0) {
+				await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
+			} else {
+				await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
+			}
+
+			// 复制选中内容
+			await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
+
+			// 获取复制的内容
+			const content = await vscode.env.clipboard.readText()
+
+			// 清除选择
+			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
+
+			// 恢复原始剪贴板内容
+			await vscode.env.clipboard.writeText(originalContent)
+
+			// 如果内容未变，说明可能没有复制成功
+			if (content === originalContent) {
+				return ""
+			}
+
+			return content
+		} catch (error) {
+			// 确保恢复剪贴板内容
+			await vscode.env.clipboard.writeText(originalContent)
+			throw error
+		}
+	}
+
 	disposeAll() {
 		// for (const info of this.terminals) {
 		// 	//info.terminal.dispose() // dont want to dispose terminals when task is aborted
@@ -223,49 +245,5 @@ export class TerminalManager {
 		this.processes.clear()
 		this.disposables.forEach((disposable) => disposable.dispose())
 		this.disposables = []
-	}
-
-	/**
-	 * Gets the terminal contents based on the number of commands to include
-	 * @param commands Number of previous commands to include (-1 for all)
-	 * @returns The selected terminal contents
-	 */
-	public async getTerminalContents(commands = -1): Promise<string> {
-		// Save current clipboard content
-		const tempCopyBuffer = await vscode.env.clipboard.readText()
-
-		try {
-			// Select terminal content
-			if (commands < 0) {
-				await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
-			} else {
-				for (let i = 0; i < commands; i++) {
-					await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
-				}
-			}
-
-			// Copy selection and clear it
-			await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
-
-			// 等待一段时间以确保剪贴板内容已更新
-			await new Promise((resolve) => setTimeout(resolve, 100))
-
-			const content = await vscode.env.clipboard.readText()
-			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
-
-			// Restore original clipboard content
-			await vscode.env.clipboard.writeText(tempCopyBuffer)
-
-			// Return empty string if no content was copied
-			if (content === tempCopyBuffer) {
-				return ""
-			}
-
-			return content
-		} catch (error) {
-			// Restore original clipboard content on error
-			await vscode.env.clipboard.writeText(tempCopyBuffer)
-			throw error
-		}
 	}
 }

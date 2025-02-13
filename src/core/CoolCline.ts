@@ -774,7 +774,7 @@ export class CoolCline {
 		}
 
 		let lines: string[] = []
-		process.on("line", (line) => {
+		process.on("line", (line: string) => {
 			lines.push(line)
 			if (!didContinue) {
 				sendCommandOutput(line)
@@ -1119,7 +1119,9 @@ export class CoolCline {
 						case "attempt_completion":
 							return `[${block.name}]`
 						case "switch_mode":
-							return `[${block.name} to '${block.params.mode_slug}'${block.params.reason ? ` because: ${block.params.reason}` : ""}]`
+							return `[${block.name} to '${block.params.mode_slug}'${
+								block.params.reason ? ` because: ${block.params.reason}` : ""
+							}]`
 						case "new_task": {
 							const mode = block.params.mode ?? defaultModeSlug
 							const message = block.params.message ?? "(no message)"
