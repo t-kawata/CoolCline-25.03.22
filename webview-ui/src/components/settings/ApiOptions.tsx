@@ -575,6 +575,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									value: "asia-southeast1",
 									label: "Asia Southeast (Singapore)",
 								},
+								{
+									value: "us-east5",
+									label: "US East (South Carolina)",
+								},
+								{
+									value: "europe-west1",
+									label: "Europe West (Belgium)",
+								},
 							]}
 						/>
 					</div>
