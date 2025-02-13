@@ -1,10 +1,6 @@
 # 贡献指南
 
-> README: [English](README_en.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README.md)
->
-> CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md)
->
-> CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
+> README: [English](README.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README_zh.md) CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md) CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 [CoolCline](https://gitee.com/coolcline/coolcline.git) 是一个融合了 [Cline](https://github.com/cline/cline.git)、[Roo Cline](https://github.com/RooVetGit/Roo-Code.git) 和 [Bao Cline](https://github.com/jnorthrup/Bao-Cline.git) 最佳特性的主动式编程助手。它能与你的**命令行界面**和**编辑器**无缝协作，带来最强大的 AI 开发体验。感谢所有 `CoolClines` 项目的贡献者！
 

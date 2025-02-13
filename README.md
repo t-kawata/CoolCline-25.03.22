@@ -1,153 +1,255 @@
 # CoolCline
 
-> README: [English](README_en.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README.md)
+> README: [English](README.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README_zh.md) CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md) CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
+
+---
+
+[CoolCline](https://gitee.com/coolcline/coolcline.git) is a proactive programming assistant that offers the following modes:
+
+- `Agent` Mode: An autonomous AI programming agent with comprehensive capabilities in code understanding, generation, and project management (automatic code reading/editing, command execution, context understanding, task analysis/decomposition, and tool usage, note: this mode is not affected by the checkboxes in the auto-approval area)
+- `Code` Mode: Helps you write, refactor, fix code and run commands (write code, execute commands)
+- `Architect` Mode: Suitable for high-level technical design and system architecture discussions (this mode cannot write code or execute commands)
+- `Ask` Mode: Suitable for codebase-related questions and concept exploration (this mode cannot write code or execute commands)
+
+---
+
+## Getting Started
+
+### Install VSCode Extension
+
+- Search for `CoolCline` in the VSCode extension marketplace and install
+
+### Configure Language
+
+- If you're installing `CoolCline` for the first time or clicked the `Reset` button at the bottom of the `Settings`⚙️ page, you'll see the `Welcome` page where you can set the `Language` (default is English, supports Chinese, Russian, and other major languages)
+- If you've already configured an LLM Provider, you will not see the `Welcome` page, to further configure language, you can access the `Settings`⚙️ page from the extension's top-right corner
+
+### Configure LLM Provider
+
+You need to configure at least one LLM Provider before using CoolCline (Required)
+
+- If you're installing `CoolCline` for the first time or clicked the `Reset` button at the bottom of the `Settings`⚙️ page, you'll see the `Welcome` page where you can configure `LLM Provider`
+- Based on your chosen LLM Provider, fill in the API Key, Model, and other parameters (some LLM Providers have quick links below the API Key input field to apply for an API Key)
+- If you've already configured an LLM Provider, you will not see the `Welcome` page, but you can access the `Settings`⚙️ page from the extension's top-right corner to further configure it or other options
+- The same configurations are synchronized and shared across different pages
+
+---
+
+## Main Features
+
+> I'll mark three levels of using CoolCline: `Basic`, `Advanced`, and `Expert`. These should be interpreted as suggested focus areas rather than strict or rigid standards.
+
+### Role Mode Management
+
+Different role modes adapt to your workflow needs:
+
+#### Built-in Modes (Basic):
+
+- Select different role modes at the bottom of the chat input box
+- Autonomous Agent (`Agent` mode): A proactive AI programming agent with the following capabilities:
+
+    1. Context Analysis Capabilities:
+        - Uses codebase search for broad understanding
+        - Automatically uses file reading for detailed inspection
+        - Uses definition name lists to understand code structure
+        - Uses file lists to explore project organization
+        - Uses codebase-wide search to quickly locate relevant code
+    2. Task Management Capabilities:
+        - Automatically breaks down complex tasks into steps
+        - Uses new task tools to manage major subtasks
+        - Tracks progress and dependencies
+        - Uses task completion tools to verify task status
+    3. Code Operation Capabilities:
+        - Uses search and replace for systematic code changes
+        - Automatically uses file editing for precise modifications
+        - Uses diff application for complex changes
+        - Uses content insertion tools for code block management
+        - Validates changes and checks for errors
+        - **Git Snapshot Feature**:
+            - Uses `save_checkpoint` to save code state snapshots, automatically recording important modification points
+            - Uses `restore_checkpoint` to roll back to previous snapshots when needed
+            - Uses `get_checkpoint_diff` to view specific changes between snapshots
+            - Snapshot feature is independent for each task, not affecting your main Git repository
+            - All snapshot operations are performed on hidden branches, keeping the main branch clean
+            - You can start by sending one or more of the following messages:
+                - "Create a git snapshot before starting this task"
+                - "Save current changes as a git snapshot with description 'completed basic functionality'"
+                - "Show me the changes between the last two git snapshots"
+                - "This change is problematic, roll back to the previous git snapshot"
+                - "Compare the differences between the initial git snapshot and current state"
+    4. Research and Integration Capabilities:
+
+        - Automatically uses browser operations to research solutions and best practices (requires model support for Computer Use)
+        - Automatically uses commands (requires manual configuration of allowed commands in `Settings`⚙️ page)
+        - Automatically uses MCP tools to access external resources and data (requires manual configuration of MCP servers in the `MCP Servers` page)
+
+    5. Communication and Validation Capabilities: - Provides clear explanations for each operation - Uses follow-up questions for clarification - Records important changes - Uses appropriate tests to validate results
+       Note: `Agent` mode is not affected by the checkboxes in the auto-approval area
+
+- Code Assistant (`Code` mode): For writing, refactoring, fixing code, and running commands
+- Software Architect (`Architect` mode): For high-level technical design and system architecture (cannot write code or execute commands)
+- Technical Assistant (`Ask` mode): For codebase queries and concept discussions (cannot write code or execute commands)
+
+#### Custom Modes (Expert):
+
+- Access the `Prompts` page from CoolCline's top-right corner to create custom role modes
+- Custom chat modes appear below the `Ask` mode
+- Custom roles are saved locally and persist between CoolCline sessions
+
+---
+
+### Quick LLM Provider Switching (Advanced)
+
+- Switch LLM Providers at the bottom of the chat input box
+- Open the `Settings`⚙️ page, look for the dropdown option defaulted to `default` in the top area
+- Here, you can create and manage multiple LLM Provider options. You can even create separate options for different Models of the same LLM Provider, each option saving complete configuration information. After creation, you can switch configurations in real-time at the bottom of the chat input box. Configuration information includes: LLM Provider, API Key, Model, and other provider-specific settings. Steps to create LLM Provider options (step 4 can be swapped with 2 and 3): 1. Click the + button to automatically copy an option based on current settings, named xx (copy); 2. Click the ✏️ icon to modify the option name; 3. Click ☑️ to save the option name; 4. Adjust core parameters like Model as needed (saves automatically when the edit box loses focus). Suggested option naming convention: Recommended to use "Provider-ModelVersion-Feature" structure, for example: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official.
+
+---
+
+### Optimize Your Request Questions (Basic)
+
+When you've entered a request question in the input box, you can click the ✨ button at the bottom of the input box to help optimize your input.
+
+---
+
+### Context Mentions (Basic)
+
+> Associate the most relevant context to save your token budget
+
+Type `@` in the input box when you need to explicitly provide context:
+
+- `@Problems` – Provide workspace errors/warnings for CoolCline to fix
+- `@Paste URL to fetch contents` – Fetch documentation from URL and convert to Markdown, no need to manually type `@`, just paste the link
+- `@Add Folder` – Provide folders to CoolCline, after typing `@`, you can directly enter the folder name for fuzzy search and quick selection
+- `@Add File` – Provide files to CoolCline, after typing `@`, you can directly enter the file name for fuzzy search and quick selection
+- `@Git Commits` – Provide Git commits or diff lists for CoolCline to analyze code history
+- `Add Terminal Content to Context` - No `@` needed, select content in terminal interface, right-click, and click `CoolCline:Add Terminal Content to Context`
+
+---
+
+### Auto Approval (Advanced)
+
+To use CoolCline assistance in a controlled manner (preventing uncontrolled actions), the application provides three approval options:
+
+- Manual Approval: Review and approve each step to maintain full control, click allow or cancel in application prompts for saves, command execution, etc.
+- Auto Approval: Grant CoolCline the ability to run tasks without interruption (recommended in Agent mode for full autonomy)
+- Auto Approval Settings: Check or uncheck options you want to control above the chat input box or in settings page
+- For allowing automatic command approval: You need to go to the `Settings` page, in the `Command Line` area, add commands you want to auto-approve, like `npm install`, `npm run`, `npm test`, etc.
+- Hybrid: Auto-approve specific operations (like file writes) but require confirmation for higher-risk tasks (strongly recommended to `not` configure git add, git commit, etc., these should be done manually).
+
+Regardless of your preference, you always have final control over CoolCline's operations.
+
+---
+
+### Mode Best Practices (Advanced)
+
+#### Effective Use of Agent Mode
+
+- Use LLM Provider and Model with good capabilities
+- Start with clear high-level task descriptions
+- Use `@` to provide clearer, more accurate context from codebase, files, URLs, Git commits, etc.
+- Utilize Git snapshot feature to manage important changes:
+  You can start by sending one or more of these messages:
+    - "Create a git snapshot before starting this task"
+    - "Save current changes as a git snapshot with description 'completed basic functionality'"
+    - "Show me the changes between the last two git snapshots"
+    - "This change is problematic, roll back to the previous git snapshot"
+    - "Compare the differences between the initial git snapshot and current state"
+- Configure allowed commands in the `Settings` page and MCP servers in the `MCP Servers` page, Agent will automatically use these commands and MCP servers
+- It's recommended to `not` set `git add`, `git commit` commands in the command settings interface, you should control these manually
+- Consider switching to specialized modes (Code/Architect/Ask) for specific subtasks when needed
+
+#### Using Other Modes
+
+- Code Mode: Best for direct coding tasks and implementation
+- Architect Mode: Suitable for planning and design discussions
+- Ask Mode: Perfect for learning and exploring concepts
+
+---
+
+## Other Features
+
+### Browser Automation (Expert)
+
+#### Browser Features
+
+CoolCline can also open `browser` sessions to:
+
+- Launch local or remote web applications
+- Click, type, scroll, and take screenshots
+- Collect console logs to debug runtime or UI/UX issues
+
+Perfect for `end-to-end testing` or visually verifying changes without constant copy-pasting.
+
+#### Enable Browser Automation
+
+- Check `Approve Browser Operations` in the `Auto Approval` area (requires LLM Provider support for Computer Use)
+- In the `Settings` page, you can set other options in the `Browser Settings` area
+
+---
+
+### Use MCP to Add Tools (Expert)
+
+- MCP Official Documentation: https://modelcontextprotocol.io/introduction
+
+Extend CoolCline through the `Model Context Protocol (MCP)` with commands like:
+
+- "Add a tool to manage AWS EC2 resources."
+- "Add a tool to query company Jira."
+- "Add a tool to pull latest PagerDuty events."
+
+CoolCline can autonomously build and configure new tools (with your approval) to immediately expand its capabilities.
+
+---
+
+## Notification Settings (Basic)
+
+- In the `Settings` page, you can enable sound effects and volume, so you'll get audio notifications when tasks complete (allowing you to multitask while CoolCline works)
+
+---
+
+### Advanced Settings (Expert)
+
+- In the `Settings` page, you can configure other options
+
+---
+
+## Installation
+
+Two installation methods, choose one:
+
+- Search for `CoolCline` in the editor's extension panel to install directly
+- Or get the `.vsix` file from [Marketplace](https://marketplace.visualstudio.com/items?itemName=CoolCline.coolcline) / [Open-VSX](https://open-vsx.org/extension/CoolCline/coolcline) and `drag and drop` it into the editor
+
+> **Tips**:
 >
-> CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md)
->
-> CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
+> - For better experience, move the extension to the right side of the screen: Right-click on the CoolCline extension icon -> Move to -> Secondary Sidebar
+> - If you close the `Secondary Sidebar` and don't know how to reopen it, click the `Toggle Secondary Sidebar` button in the top-right corner of VSCode, or use the keyboard shortcut ctrl + shift + L.
 
 ---
 
-[CoolCline](https://gitee.com/coolcline/coolcline.git) 是一个融合了 [Cline](https://github.com/cline/cline.git)、[Roo Code](https://github.com/RooVetGit/Roo-Code.git) 和 [Bao Cline](https://github.com/jnorthrup/Bao-Cline.git) 最佳特性的主动式编程助手（感谢所有`Clines`项目的贡献者！）。它能与你的命令行界面和编辑器无缝协作，带来最强大的 AI 开发体验。
+## Local Setup and Development
+
+Refer to the instructions in the CONTRIBUTING file: [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 ---
 
-## 主要功能
+## Contributing
 
-### 优化您的问题
-
-点击聊天输入框底部的 ✨ 按钮，它将帮您优化您的输入。
-
-### 快速切换 LLM Provider
-
-- 在聊天输入框底部可以切换 LLM Provider。
-- 您可以打开`设置`页面，在顶部区域可以看到设置的地方，通过设置您将得到您要的下拉列表，支持新增，改名，删除（此功能不会删除 LLM Provider 的配置）。新增前请先在下方配置好您的 LLM Provider，因为配置的下拉列表将记住当前您配置的 LLM Provider，比如选好 Provider，apikey，model 等，取的别名建议与 Provider 和 Model 关联，这样就方便您识别。
-
-### 自动批准
-
-CoolCline 以 **自然语言** 交流并提出操作建议——文件编辑、终端命令、浏览器测试等。您可以选择它的行为方式：
-
-- **手动批准**：审查并批准每一步，以保持完全控制。
-- **自主/自动批准**：授予 CoolCline 无中断运行任务的能力，加快日常工作流程（设置方式：在聊天输入框上方或设置页面勾选或去掉勾选`Auto-Approve`下面相关的选项）。
-- **混合**：自动批准特定操作（例如文件写入），但需要确认风险较高的任务（如部署代码）。
-
-无论您的偏好如何，您始终对 CoolCline 的操作拥有最终决定权。
-
----
-
-### 配置 LLM Provider
-
-使用 CoolCline 前您需要在扩展右上角的`设置`页面配置 LLM Provider（必须）：
-
-- 支持的一些模型：OpenRouter、Anthropic、Glama、OpenAI、OpenAI Compatible、Google Gemini、AWS Bedrock、Azure、GCP Vertex 或本地模型（LM Studio/Ollama）或任何 **兼容 OpenAI** sdk 的模型（OpenAI Compatible）。
-- 推荐：目前性价比最好的是 [DeepSeek](https://platform.deepseek.com/usage) 的 DeepSeek v3（deepseek-chat）或 DeepSeek R1（deepseek-reasoner），他们家有新的模型，会立即在 api 上上线，所以您会发现模型上不会带版本号。
-- **使用跟踪**：CoolCline 会帮您监控每个会话的令牌和成本使用情况。
-
----
-
-### 聊天模式
-
-您现在可以在聊天输入框底部选择不同的聊天模式，以更好地适应您的工作流程。以下是可用的模式：
-
-内置：
-
-- **Code**：（现有行为）默认模式，CoolCline 帮助您编写代码和执行任务。
-- **Architect**：“你是 CoolCline，一名软件架构专家……” 适合思考高层次的技术设计和系统架构（此模式不能编写代码或运行命令）。
-- **Ask**：“你是 CoolCline，一名知识渊博的技术助理……” 适合询问代码库相关问题或深入探讨概念（此模式不能编写代码或运行命令）。
-- 管理：在 CoolCline 扩展右上角的`Prompts`页面可以管理它们。
-
----
-
-### 文件和编辑器操作
-
-CoolCline 可以：
-
-- **创建和编辑** 项目中的文件（显示差异）。
-- **自动响应** linting 或编译时错误（缺少导入、语法错误等）。
-- **通过编辑器的时间线跟踪更改**，以便您可以审查或需要时恢复。
-
----
-
-### 命令行集成
-
-在 CoolCline 的设置页面，您可以预设允许自动执行的命令，比如`npm install`、`npm run`、`npm test`等。当 LLM 需要执行这些命令时 CoolCline 就不用等你批准。
-
----
-
-### 浏览器自动化
-
-CoolCline 还可以打开 **浏览器** 会话以：
-
-- 启动本地或远程 Web 应用。
-- 点击、输入、滚动和截屏。
-- 收集控制台日志以调试运行时或 UI/UX 问题。
-
-非常适合 **端到端测试** 或在不需要不断复制粘贴的情况下视觉验证更改。
-
----
-
-### 使用 MCP 添加工具
-
-- MCP 官方文档: https://modelcontextprotocol.io/introduction
-
-通过 **模型上下文协议 (MCP)** 扩展 CoolCline，如：
-
-- “添加一个管理 AWS EC2 资源的工具。”
-- “添加一个查询公司 Jira 的工具。”
-- “添加一个拉取最新 PagerDuty 事件的工具。”
-
-CoolCline 可以自主构建和配置新工具（需要您的批准），以立即扩展其功能。
-
----
-
-### 上下文提及
-
-需要明确提供上下文时，在输入框输入`@`符号：
-
-> 关联最相关的上下文，能节约您的令牌预算。
-
-- **@Problems** – 提供工作区错误/警告供 CoolCline 修复。
-- **@Paste URL to fetch contents** – 从 URL 获取文档，将其转换为 Markdown。
-- **@Add Folder** – 提供文件夹给 CoolCline。
-- **@Add File** – 提供文件给 CoolCline。
-- **@Git Commits** – 提供 Git 提交或差异列表供 CoolCline 分析代码历史。
-
----
-
-## 安装
-
-两个安装方式，任选一种：
-
-- 在编辑器的扩展面板中搜索`CoolCline` 以直接安装。
-- 或从 [Marketplace](https://marketplace.visualstudio.com/items?itemName=CoolCline.coolcline) / [Open-VSX](https://open-vsx.org/extension/CoolCline/coolcline) 获取 `.vsix` 文件并 `拖放` 到编辑器中。
-
-> **提示**：
->
-> - 可以将扩展移动到屏幕右侧体验更佳：在 CoolCline 扩展图标上点鼠标右键 -> 移动到 -> 辅助侧边栏。
-> - 关闭`辅助侧边栏`可能会让你不知道怎么打开，可以点击 vscode 右上角的 `切换辅助侧边栏`按钮，又会打开，或者用键盘快捷键 ctrl + shift + L 组合键。
-
----
-
-## 本地设置和开发
-
-参考 CONTRIBUTING 文件中的说明 : [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
-
----
-
-## 贡献
-
-我们欢迎社区贡献！以下是参与方式：
+We welcome community contributions! Here's how to participate:
 CONTRIBUTING: [English](./CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
----
-
-## 免责声明
-
-**请注意**，CoolCline 不对提供的任何代码、模型或其他工具，任何相关的第三方工具或任何结果输出做出任何陈述或保证。您承担使用任何此类工具或输出的 **所有风险**；此类工具按 **“原样”** 和 **“可用”** 基础提供。此类风险可能包括但不限于知识产权侵权、网络漏洞或攻击、偏见、不准确、错误、缺陷、病毒、停机、财产损失或损害和/或人身伤害。您对使用任何此类工具或输出（包括但不限于其合法性、适当性和结果）负全部责任。
+> [CoolCline](https://gitee.com/coolcline/coolcline.git) draws inspiration from the excellent features of the `Clines` open source community (thanks to all `Clines` project contributors!).
 
 ---
 
-## 许可证
+## Disclaimer
+
+**Please note** that CoolCline makes no representations or warranties of any kind concerning any code, models, or other tools provided, any related third-party tools, or any output results. You assume **all risk** of using any such tools or output; such tools are provided on an **"as is"** and **"as available"** basis. Such risks may include but are not limited to intellectual property infringement, network vulnerabilities or attacks, bias, inaccuracies, errors, defects, viruses, downtime, property loss or damage, and/or personal injury. You are solely responsible for your use of any such tools or output, including but not limited to their legality, appropriateness, and results.
+
+---
+
+## License
 
 [Apache 2.0 CoolCline](./LICENSE)
 

@@ -1,10 +1,6 @@
 # Contributing to CoolCline
 
-> README: [English](README_en.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README.md)
->
-> CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md)
->
-> CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
+> README: [English](README.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/README_zh.md) CHANGELOG: [English](CHANGELOG.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CHANGELOG_zh.md) CONTRIBUTING: [English](CONTRIBUTING.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/CONTRIBUTING_zh.md)
 
 [`CoolCline`](https://github.com/coolcline/coolcline.git) is an agentic coding assistant that combines the best features of [Cline](https://github.com/cline/cline.git), [Roo Cline](https://github.com/RooVetGit/Roo-Code.git) and [Bao Cline](https://github.com/jnorthrup/Bao-Cline.git). Working seamlessly with your **Command Line Interface** and **Editor**, it brings you the most powerful AI development experience. Thanks to all their `CoolClines` contributors!
 
