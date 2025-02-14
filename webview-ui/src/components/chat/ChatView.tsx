@@ -1053,13 +1053,13 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							{String(t("chat.welcome.description"))} {String(t("chat.welcome.readMore"))}
 							{":"}
 							<VSCodeLink
-								href="https://github.com/coolcline/coolcline/blob/main/README.md"
+								href="https://github.com/coolcline/coolcline/blob/main/docs/user-docs/en/index.md"
 								style={{ display: "inline" }}>
 								en
 							</VSCodeLink>
 							{"|"}
 							<VSCodeLink
-								href="https://gitee.com/coolcline/coolcline/blob/main/README_zh.md"
+								href="https://gitee.com/coolcline/coolcline/blob/main/docs/user-docs/zh/index.md"
 								style={{ display: "inline" }}>
 								简体中文
 							</VSCodeLink>
