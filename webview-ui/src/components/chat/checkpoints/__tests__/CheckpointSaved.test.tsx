@@ -7,7 +7,7 @@ jest.mock("../CheckpointMenu", () => ({
 }))
 
 describe("CheckpointSaved", () => {
-	const defaultProps = {
+	const defaultProps: Parameters<typeof CheckpointSaved>[0] = {
 		ts: 1234567890,
 		commitHash: "abc123",
 	}
