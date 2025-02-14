@@ -2,6 +2,7 @@ import { render, screen, fireEvent, within } from "@testing-library/react"
 import { CheckpointMenu } from "../CheckpointMenu"
 import { vscode } from "../../../../utils/vscode"
 
+// Mock vscode module
 jest.mock("../../../../utils/vscode", () => ({
 	vscode: {
 		postMessage: jest.fn(),
@@ -94,5 +95,53 @@ describe("CheckpointMenu", () => {
 			type: "checkpointRestore",
 			payload: { ts: props.ts, commitHash: props.commitHash, mode: "restore" },
 		})
+	})
+
+	const defaultProps = {
+		ts: 1234567890,
+		commitHash: "abc123",
+		currentCheckpointHash: "def456",
+	}
+
+	beforeEach(() => {
+		jest.clearAllMocks()
+	})
+
+	it("should always show history button", () => {
+		render(<CheckpointMenu {...defaultProps} />)
+		expect(screen.getByText("", { selector: "span.codicon-history" })).toBeInTheDocument()
+	})
+
+	it('should show "Restore Files" option only when not current checkpoint', () => {
+		const { rerender } = render(<CheckpointMenu {...defaultProps} currentCheckpointHash="xyz789" />)
+
+		// Open popover
+		fireEvent.click(screen.getByText("", { selector: "span.codicon-history" }))
+		expect(screen.getByText("Restore Files")).toBeInTheDocument()
+
+		// Test with current checkpoint
+		rerender(<CheckpointMenu {...defaultProps} currentCheckpointHash="abc123" />)
+		expect(screen.queryByText("Restore Files")).not.toBeInTheDocument()
+	})
+
+	it('should always show "Restore Files & Task" option', () => {
+		render(<CheckpointMenu {...defaultProps} />)
+		fireEvent.click(screen.getByText("", { selector: "span.codicon-history" }))
+		expect(screen.getByText("Restore Files & Task")).toBeInTheDocument()
+	})
+
+	it("should handle confirmation flow correctly", () => {
+		render(<CheckpointMenu {...defaultProps} />)
+		fireEvent.click(screen.getByText("", { selector: "span.codicon-history" }))
+
+		// Click Restore Files & Task
+		fireEvent.click(screen.getByText("Restore Files & Task"))
+		expect(screen.getByText("Confirm")).toBeInTheDocument()
+		expect(screen.getByText("Cancel")).toBeInTheDocument()
+		expect(screen.getByText("This action cannot be undone.")).toBeInTheDocument()
+
+		// Click Cancel
+		fireEvent.click(screen.getByText("Cancel"))
+		expect(screen.queryByText("Confirm")).not.toBeInTheDocument()
 	})
 })
