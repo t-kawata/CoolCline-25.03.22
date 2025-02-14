@@ -100,9 +100,21 @@ Different role modes adapt to your workflow needs:
 
 ### Quick LLM Provider Switching (Advanced)
 
-- Switch LLM Providers at the bottom of the chat input box
-- Open the `Settings`⚙️ page, look for the dropdown option defaulted to `default` in the top area
-- Here, you can create and manage multiple LLM Provider options. You can even create separate options for different Models of the same LLM Provider, each option saving complete configuration information. After creation, you can switch configurations in real-time at the bottom of the chat input box. Configuration information includes: LLM Provider, API Key, Model, and other provider-specific settings. Steps to create LLM Provider options (step 4 can be swapped with 2 and 3): 1. Click the + button to automatically copy an option based on current settings, named xx (copy); 2. Click the ✏️ icon to modify the option name; 3. Click ☑️ to save the option name; 4. Adjust core parameters like Model as needed (saves automatically when the edit box loses focus). Suggested option naming convention: Recommended to use "Provider-ModelVersion-Feature" structure, for example: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official.
+The switch button is located at the bottom center of the input box.
+
+> Dropdown list options are maintained on the `Settings` page.
+
+- You can open the `Settings`⚙️ page, and in the top area, you will see the settings location, which has a `default` option. By setting this, you will get the dropdown list you want.
+- Here, you can create and manage multiple LLM Provider options.
+    - You can even create separate options for different models of the same LLM Provider, each option saving the complete configuration information of the current LLM Provider.
+    - After creation, you can switch configurations in real-time at the bottom of the chat input box.
+    - Configuration information includes: LLM Provider, API Key, Model, and other configuration items related to the LLM Provider.
+    - The steps to create an LLM Provider option are as follows (steps 4 can be interchanged with 2 and 3):
+        1.  Click the + button, the system will automatically `copy` an option based on the current configuration information, named xx (copy);
+        2.  Click the ✏️ icon to modify the option name;
+        3.  Click the ☑️ to save the option name;
+        4.  Adjust core parameters such as Model as needed (the edit box will automatically save when it loses focus).
+    - Naming suggestions for option names: It is recommended to use the structure "Provider-ModelVersion-Feature", for example: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official.
 
 ---
 

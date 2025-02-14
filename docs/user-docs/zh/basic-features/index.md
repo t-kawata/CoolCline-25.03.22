@@ -32,14 +32,14 @@ CoolCline 的主界面包含以下几个主要部分：
 在输入框输入 `@` 符号可以快速引用各种上下文：
 
 - `@Problems` - 提供工作区错误/警告
-- `@Add File` - 引用特定文件
+- `Past URL to fetch contents` - 直接在输入框粘贴链接即可
 - `@Add Folder` - 引用整个文件夹
+- `@Add File` - 引用特定文件
 - `@Git Commits` - 引用 Git 历史
-- URL 链接 - 直接在输入框粘贴链接即可
 
 ### 角色模式切换
 
-在输入框底部左侧切换
+切换按钮在输入框底部左侧位置
 
 - `Agent` 模式：一个具有代码理解、生成和项目管理全面能力的自主 AI 编程代理（自动阅读、编辑代码，自动执行命令，自动上下文理解，自动任务理解及分解，自动工具使用，注意：此模式不受自动批准的勾选或取消勾选的限制）
 - `Code` 模式：帮助你编写、重构、修复代码和运行命令（编写代码，执行命令）
@@ -48,10 +48,21 @@ CoolCline 的主界面包含以下几个主要部分：
 
 ### LLM Provider 切换
 
-在输入框底部中间切换，列表维护在`Settings`页面
+切换按钮在输入框底部中间位置
 
-- 您可以打开`Settings`⚙️页面，在顶部区域可以看到设置的地方，就是下拉选项默认为`default`那个地方，通过设置您将得到您要的下拉列表
-- 在这里，您可以创建和管理多个 LLM Provider 选项。您甚至可以为同一个 LLM Provider 的不同 Model 创建单独的选项，每个选项保存当前 LLM Provider 的完整配置信息。创建后，您可以在聊天输入框底部实时切换配置。 配置信息包含： LLM Provider、 API Key、 Model 以及与 LLM Provider 有关的其他配置项。 创建 LLM Provider 选项的步骤如下（步骤 4 可以与 2 和 3 顺序调换）： 1. 点击 + 按钮，系统会自动根据当前配置信息复制一个选项，名字为 xx (copy)； 2. 点击 ✏️ 图标修改选项名称； 3. 点击 ☑️ 保存选项名称； 4. 按需要调整 Model 等核心参数（编辑框失去焦点后会自动保存）。 选项名称的命名建议： 推荐采用「服务商-模型版本-特性」结构，例如： openrouter-deepseek-v3-free； openrouter-deepseek-r1-free； deepseek-v3-官方； deepseek-r1-官方。
+> 下拉列表选项维护在`Settings`页面
+
+- 您可以打开`Settings`⚙️页面，在顶部区域可以看到设置的地方，就是有个`default`选项那个地方，通过设置您将得到您要的下拉列表
+- 在这里，您可以创建和管理多个 LLM Provider 选项
+    - 您甚至可以为同一个 LLM Provider 的不同 Model 创建单独的选项，每个选项保存当前 LLM Provider 的完整配置信息。
+    - 创建后，您可以在聊天输入框底部实时切换配置
+    - 配置信息包含： LLM Provider、 API Key、 Model 以及与 LLM Provider 有关的其他配置项
+    - 创建 LLM Provider 选项的步骤如下（步骤 4 可以与 2 和 3 顺序调换）：
+        1.  点击 + 按钮，系统会自动根据当前配置信息`复制`一个选项，名字为 xx (copy)；
+        2.  点击 ✏️ 图标修改选项名称；
+        3.  点击 ☑️ 保存选项名称；
+        4.  按需要调整 Model 等核心参数（编辑框失去焦点后会自动保存）。
+    - 选项名称的命名建议： 推荐采用「服务商-模型版本-特性」结构，例如： openrouter-deepseek-v3-free； openrouter-deepseek-r1-free； deepseek-v3-官方； deepseek-r1-官方。
 
 ### 终端内容集成
 

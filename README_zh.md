@@ -103,9 +103,21 @@
 
 ### 快速切换 LLM Provider（进阶）
 
-- 在聊天输入框底部可以切换 LLM Provider。
-- 您可以打开`Settings`⚙️页面，在顶部区域可以看到设置的地方，就是下拉选项默认为`default`那个地方，通过设置您将得到您要的下拉列表
-- 在这里，您可以创建和管理多个 LLM Provider 选项。您甚至可以为同一个 LLM Provider 的不同 Model 创建单独的选项，每个选项保存当前 LLM Provider 的完整配置信息。创建后，您可以在聊天输入框底部实时切换配置。 配置信息包含： LLM Provider、 API Key、 Model 以及与 LLM Provider 有关的其他配置项。 创建 LLM Provider 选项的步骤如下（步骤 4 可以与 2 和 3 顺序调换）： 1. 点击 + 按钮，系统会自动根据当前配置信息复制一个选项，名字为 xx (copy)； 2. 点击 ✏️ 图标修改选项名称； 3. 点击 ☑️ 保存选项名称； 4. 按需要调整 Model 等核心参数（编辑框失去焦点后会自动保存）。 选项名称的命名建议： 推荐采用「服务商-模型版本-特性」结构，例如： openrouter-deepseek-v3-free； openrouter-deepseek-r1-free； deepseek-v3-官方； deepseek-r1-官方。
+切换按钮在输入框底部中间位置
+
+下拉列表选项在`Settings`页面管理：
+
+- 您可以打开`Settings`⚙️页面，在顶部区域可以看到设置的地方，就是有个`default`选项那个地方，通过设置您将得到您要的下拉列表
+- 在这里，您可以创建和管理多个 LLM Provider 选项
+    - 您甚至可以为同一个 LLM Provider 的不同 Model 创建单独的选项，每个选项保存当前 LLM Provider 的完整配置信息。
+    - 创建后，您可以在聊天输入框底部实时切换配置
+    - 配置信息包含： LLM Provider、 API Key、 Model 以及与 LLM Provider 有关的其他配置项
+    - 创建 LLM Provider 选项的步骤如下（步骤 4 可以与 2 和 3 顺序调换）：
+        1.  点击 + 按钮，系统会自动根据当前配置信息`复制`一个选项，名字为 xx (copy)；
+        2.  点击 ✏️ 图标修改选项名称；
+        3.  点击 ☑️ 保存选项名称；
+        4.  按需要调整 Model 等核心参数（编辑框失去焦点后会自动保存）。
+    - 选项名称的命名建议： 推荐采用「服务商-模型版本-特性」结构，例如： openrouter-deepseek-v3-free； openrouter-deepseek-r1-free； deepseek-v3-官方； deepseek-r1-官方。
 
 ---
 
