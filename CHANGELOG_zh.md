@@ -4,6 +4,6 @@
 >
 > 详细文档: [English](docs/user-docs/en/index.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/docs/user-docs/zh/index.md)
 
-## [4.2.3]
+## [4.2.4]
 
 > ########### CoolCline ⬆️ ###########
