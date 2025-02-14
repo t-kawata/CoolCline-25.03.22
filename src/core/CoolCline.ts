@@ -3314,6 +3314,10 @@ export class CoolCline {
 			const commit = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
 
 			if (commit?.commit) {
+				await this.providerRef
+					.deref()
+					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: service.currentCheckpoint })
+
 				await this.say("checkpoint_saved", commit.commit)
 			}
 		} catch (err) {
@@ -3349,6 +3353,10 @@ export class CoolCline {
 		try {
 			const service = await this.getCheckpointService()
 			await service.restoreCheckpoint(commitHash)
+
+			await this.providerRef
+				.deref()
+				?.postMessageToWebview({ type: "currentCheckpointUpdated", text: service.currentCheckpoint })
 
 			if (mode === "restore") {
 				await this.overwriteApiConversationHistory(

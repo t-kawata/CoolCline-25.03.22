@@ -77,6 +77,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setCustomModes: (value: ModeConfig[]) => void
 	checkpointsEnabled: boolean
 	setCheckpointsEnabled: (value: boolean) => void
+	currentCheckpoint?: string
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -128,6 +129,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 
 	const [openAiModels, setOpenAiModels] = useState<string[]>([])
 	const [mcpServers, setMcpServers] = useState<McpServer[]>([])
+	const [currentCheckpoint, setCurrentCheckpoint] = useState<string>()
 
 	const setListApiConfigMeta = useCallback(
 		(value: ApiConfigMeta[]) => setState((prevState) => ({ ...prevState, listApiConfigMeta: value })),
@@ -264,6 +266,10 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					setListApiConfigMeta(message.listApiConfig ?? [])
 					break
 				}
+				case "currentCheckpointUpdated": {
+					setCurrentCheckpoint(message.text)
+					break
+				}
 			}
 		},
 		[setListApiConfigMeta],
@@ -347,6 +353,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setCustomModes: (value) => setState((prevState) => ({ ...prevState, customModes: value })),
 		checkpointsEnabled: state.checkpointsEnabled,
 		setCheckpointsEnabled: (value) => setState((prevState) => ({ ...prevState, checkpointsEnabled: value })),
+		currentCheckpoint,
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

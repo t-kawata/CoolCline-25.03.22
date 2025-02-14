@@ -286,11 +286,64 @@ describe("CheckpointService", () => {
 		})
 	})
 
+	describe("currentCheckpoint", () => {
+		it("tracks the current checkpoint correctly during save and restore", async () => {
+			// Initial state should have no current checkpoint
+			expect(service.currentCheckpoint).toBeUndefined()
+
+			// Save first checkpoint
+			await fs.writeFile(testFile, "First change")
+			const commit1 = await service.saveCheckpoint("First checkpoint")
+			expect(commit1?.commit).toBeTruthy()
+			expect(service.currentCheckpoint).toBe(commit1?.commit)
+
+			// Save second checkpoint
+			await fs.writeFile(testFile, "Second change")
+			const commit2 = await service.saveCheckpoint("Second checkpoint")
+			expect(commit2?.commit).toBeTruthy()
+			expect(service.currentCheckpoint).toBe(commit2?.commit)
+
+			// Restore to first checkpoint
+			await service.restoreCheckpoint(commit1!.commit)
+			expect(service.currentCheckpoint).toBe(commit1?.commit)
+			expect(await fs.readFile(testFile, "utf-8")).toBe("First change")
+
+			// Restore to second checkpoint
+			await service.restoreCheckpoint(commit2!.commit)
+			expect(service.currentCheckpoint).toBe(commit2?.commit)
+			expect(await fs.readFile(testFile, "utf-8")).toBe("Second change")
+
+			// Restore to base commit
+			await service.restoreCheckpoint(service.baseCommitHash)
+			expect(service.currentCheckpoint).toBe(service.baseCommitHash)
+			expect(await fs.readFile(testFile, "utf-8")).toBe("Hello, world!")
+		})
+
+		it("does not update current checkpoint when save fails", async () => {
+			// Save initial checkpoint to track
+			await fs.writeFile(testFile, "Initial change")
+			const commit1 = await service.saveCheckpoint("Initial checkpoint")
+			expect(commit1?.commit).toBeTruthy()
+			expect(service.currentCheckpoint).toBe(commit1?.commit)
+
+			// Mock git commit to simulate failure
+			jest.spyOn(git, "commit").mockRejectedValue(new Error("Simulated commit failure"))
+
+			// Attempt to save new checkpoint
+			await fs.writeFile(testFile, "Failed change")
+			await expect(service.saveCheckpoint("Failed checkpoint")).rejects.toThrow("Simulated commit failure")
+
+			// Current checkpoint should remain unchanged
+			expect(service.currentCheckpoint).toBe(commit1?.commit)
+		})
+	})
+
 	describe("create", () => {
 		it("initializes a git repository if one does not already exist", async () => {
 			const baseDir = path.join(os.tmpdir(), `checkpoint-service-test2-${Date.now()}`)
 			await fs.mkdir(baseDir)
 			const newTestFile = path.join(baseDir, "test.txt")
+			await fs.writeFile(newTestFile, "Hello, world!")
 
 			const newGit = simpleGit(baseDir)
 			const initSpy = jest.spyOn(newGit, "init")
@@ -300,7 +353,6 @@ describe("CheckpointService", () => {
 			expect(initSpy).toHaveBeenCalled()
 
 			// Save a checkpoint: Hello, world!
-			await fs.writeFile(newTestFile, "Hello, world!")
 			const commit1 = await newService.saveCheckpoint("Hello, world!")
 			expect(commit1?.commit).toBeTruthy()
 			expect(await fs.readFile(newTestFile, "utf-8")).toBe("Hello, world!")

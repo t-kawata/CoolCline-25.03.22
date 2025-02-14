@@ -60,6 +60,16 @@ export type CheckpointServiceOptions = {
  */
 
 export class CheckpointService {
+	private _currentCheckpoint?: string
+
+	public get currentCheckpoint() {
+		return this._currentCheckpoint
+	}
+
+	private set currentCheckpoint(value: string | undefined) {
+		this._currentCheckpoint = value
+	}
+
 	constructor(
 		public readonly taskId: string,
 		private readonly git: SimpleGit,
@@ -211,6 +221,9 @@ export class CheckpointService {
 				"--no-verify": null,
 			})
 
+			// Only update currentCheckpoint after successful commit
+			this.currentCheckpoint = commit.commit
+
 			await this.git.checkout(this.mainBranch)
 
 			if (pendingChanges) {
@@ -237,6 +250,7 @@ export class CheckpointService {
 		await this.ensureBranch(this.mainBranch)
 		await this.git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
 		await this.git.raw(["restore", "--source", commitHash, "--worktree", "--", "."])
+		this.currentCheckpoint = commitHash
 	}
 
 	public static async create({ taskId, git, baseDir, log = console.log }: CheckpointServiceOptions) {
@@ -291,7 +305,7 @@ export class CheckpointService {
 			// the checkpoint (i.e. the `git restore` command doesn't work
 			// for empty commits).
 			await fs.writeFile(path.join(baseDir, ".gitkeep"), "")
-			await git.add(".")
+			await git.add(".gitkeep")
 			const commit = await git.commit("Initial commit")
 
 			if (!commit.commit) {
