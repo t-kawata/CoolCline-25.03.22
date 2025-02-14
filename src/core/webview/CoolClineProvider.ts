@@ -129,6 +129,7 @@ export const GlobalFileNames = {
 	glamaModels: "glama_models.json",
 	openRouterModels: "openrouter_models.json",
 	mcpSettings: "coolcline_mcp_settings.json",
+	unboundModels: "unbound_models.json",
 }
 
 export class CoolClineProvider implements vscode.WebviewViewProvider {
@@ -1712,14 +1713,26 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		// await this.postMessageToWebview({ type: "action", action: "settingsButtonClicked" }) // bad ux if user is on welcome
 	}
 
-	async readGlamaModels(): Promise<Record<string, ModelInfo> | undefined> {
-		const glamaModelsFilePath = path.join(await this.ensureCacheDirectoryExists(), GlobalFileNames.glamaModels)
-		const fileExists = await fileExistsAtPath(glamaModelsFilePath)
+	private async readModelsFromCache(filename: string): Promise<Record<string, ModelInfo> | undefined> {
+		const filePath = path.join(await this.ensureCacheDirectoryExists(), filename)
+		const fileExists = await fileExistsAtPath(filePath)
 		if (fileExists) {
-			const fileContents = await fs.readFile(glamaModelsFilePath, "utf8")
+			const fileContents = await fs.readFile(filePath, "utf8")
 			return JSON.parse(fileContents)
 		}
 		return undefined
+	}
+
+	async readGlamaModels(): Promise<Record<string, ModelInfo> | undefined> {
+		return this.readModelsFromCache(GlobalFileNames.glamaModels)
+	}
+
+	async readOpenRouterModels(): Promise<Record<string, ModelInfo> | undefined> {
+		return this.readModelsFromCache(GlobalFileNames.openRouterModels)
+	}
+
+	async readUnboundModels(): Promise<Record<string, ModelInfo> | undefined> {
+		return this.readModelsFromCache(GlobalFileNames.unboundModels)
 	}
 
 	async refreshGlamaModels() {
@@ -1794,19 +1807,6 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 		await this.postMessageToWebview({ type: "glamaModels", glamaModels: models })
 		return models
-	}
-
-	async readOpenRouterModels(): Promise<Record<string, ModelInfo> | undefined> {
-		const openRouterModelsFilePath = path.join(
-			await this.ensureCacheDirectoryExists(),
-			GlobalFileNames.openRouterModels,
-		)
-		const fileExists = await fileExistsAtPath(openRouterModelsFilePath)
-		if (fileExists) {
-			const fileContents = await fs.readFile(openRouterModelsFilePath, "utf8")
-			return JSON.parse(fileContents)
-		}
-		return undefined
 	}
 
 	async refreshOpenRouterModels() {
