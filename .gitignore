@@ -26,3 +26,6 @@ docs/_site/
 re/
 .merge-skip
 .eslintrc.local.json
+
+# Logs
+logs/
