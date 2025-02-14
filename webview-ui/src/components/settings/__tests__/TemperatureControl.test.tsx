@@ -1,6 +1,13 @@
 import { render, screen, fireEvent } from "@testing-library/react"
 import { TemperatureControl } from "../TemperatureControl"
 
+// Mock react-i18next
+jest.mock("react-i18next", () => ({
+	useTranslation: () => ({
+		t: (key: string) => key,
+	}),
+}))
+
 describe("TemperatureControl", () => {
 	it("renders with default temperature disabled", () => {
 		const onChange = jest.fn()
