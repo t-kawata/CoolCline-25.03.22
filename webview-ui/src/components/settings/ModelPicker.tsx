@@ -13,10 +13,14 @@ import { ModelInfo } from "../../../../src/shared/api"
 
 interface ModelPickerProps {
 	defaultModelId: string
-	modelsKey: "openAiModels" | "openRouterModels" | "glamaModels"
-	configKey: "openAiModelId" | "openRouterModelId" | "glamaModelId"
-	infoKey: "openAiModelInfo" | "openRouterModelInfo" | "glamaModelInfo"
-	refreshMessageType: "refreshOpenAiModels" | "refreshOpenRouterModels" | "refreshGlamaModels"
+	modelsKey: "openAiModels" | "openRouterModels" | "glamaModels" | "unboundModels"
+	configKey: "openAiModelId" | "openRouterModelId" | "glamaModelId" | "unboundModelId"
+	infoKey: "openAiModelInfo" | "openRouterModelInfo" | "glamaModelInfo" | "unboundModelInfo"
+	refreshMessageType:
+		| "refreshOpenAiModels"
+		| "refreshOpenRouterModels"
+		| "refreshGlamaModels"
+		| "refreshUnboundModels"
 	serviceName: string
 	serviceUrl: string
 	recommendedModel: string

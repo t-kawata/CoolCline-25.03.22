@@ -43,6 +43,7 @@ export interface ExtensionMessage {
 		| "updateCustomMode"
 		| "deleteCustomMode"
 		| "currentCheckpointUpdated"
+		| "unboundModels"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -73,6 +74,7 @@ export interface ExtensionMessage {
 	mode?: Mode
 	customMode?: ModeConfig
 	slug?: string
+	unboundModels?: Record<string, ModelInfo>
 }
 
 export interface ApiConfigMeta {

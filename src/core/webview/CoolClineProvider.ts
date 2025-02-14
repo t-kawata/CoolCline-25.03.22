@@ -119,6 +119,7 @@ type GlobalStateKey =
 	| "autoApprovalEnabled"
 	| "customModes" // Array of custom modes
 	| "unboundModelId"
+	| "unboundModelInfo"
 	| "checkpointsEnabled"
 	| "modelTemperature"
 
@@ -613,6 +614,20 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							}
 						})
 
+						this.refreshUnboundModels().then(async (unboundModels) => {
+							if (unboundModels) {
+								// update model info in state
+								const { apiConfiguration } = await this.getState()
+								if (apiConfiguration.unboundModelId) {
+									await this.updateGlobalState(
+										"unboundModelInfo",
+										unboundModels[apiConfiguration.unboundModelId],
+									)
+									await this.postStateToWebview()
+								}
+							}
+						})
+
 						this.configManager
 							.listConfig()
 							.then(async (listApiConfig) => {
@@ -771,6 +786,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							)
 							this.postMessageToWebview({ type: "openAiModels", openAiModels })
 						}
+						break
+					case "refreshUnboundModels":
+						await this.refreshUnboundModels()
 						break
 					case "openImage":
 						openImage(message.text!)
@@ -1900,6 +1918,42 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		}
 
 		await this.postMessageToWebview({ type: "openRouterModels", openRouterModels: models })
+		return models
+	}
+
+	async refreshUnboundModels() {
+		const models: Record<string, ModelInfo> = {}
+		try {
+			const response = await axios.get("https://api.getunbound.ai/models")
+			if (response.data) {
+				const rawModels = response.data
+				for (const rawModel of rawModels) {
+					const modelInfo: ModelInfo = {
+						maxTokens: rawModel.maxTokensOutput,
+						contextWindow: rawModel.maxTokensInput,
+						supportsImages: rawModel.capabilities?.includes("input:image"),
+						supportsComputerUse: rawModel.capabilities?.includes("computer_use"),
+						supportsPromptCache: rawModel.capabilities?.includes("caching"),
+						inputPrice: parseFloat(rawModel.pricePerToken?.input) * 1_000_000,
+						outputPrice: parseFloat(rawModel.pricePerToken?.output) * 1_000_000,
+						description: rawModel.description,
+						cacheWritesPrice: parseFloat(rawModel.pricePerToken?.cacheWrite) * 1_000_000,
+						cacheReadsPrice: parseFloat(rawModel.pricePerToken?.cacheRead) * 1_000_000,
+					}
+
+					models[rawModel.id] = modelInfo
+				}
+			} else {
+				this.outputChannel.appendLine("Invalid response from Unbound API")
+			}
+			this.outputChannel.appendLine(`Unbound models fetched: ${JSON.stringify(models, null, 2)}`)
+		} catch (error) {
+			this.outputChannel.appendLine(
+				`Error fetching Unbound models: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+			)
+		}
+
+		await this.postMessageToWebview({ type: "unboundModels", unboundModels: models })
 		return models
 	}
 

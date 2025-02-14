@@ -8,6 +8,8 @@ import {
 	glamaDefaultModelInfo,
 	openRouterDefaultModelId,
 	openRouterDefaultModelInfo,
+	unboundDefaultModelId,
+	unboundModels,
 } from "../../../src/shared/api"
 import { vscode } from "../utils/vscode"
 import { convertTextMateToHljs } from "../utils/textMateToHljs"
@@ -26,6 +28,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	glamaModels: Record<string, ModelInfo>
 	openRouterModels: Record<string, ModelInfo>
 	openAiModels: string[]
+	unboundModels: Record<string, ModelInfo>
 	mcpServers: McpServer[]
 	filePaths: string[]
 	openedTabs: Array<{ label: string; isActive: boolean; path?: string }>
@@ -130,6 +133,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 	const [openAiModels, setOpenAiModels] = useState<string[]>([])
 	const [mcpServers, setMcpServers] = useState<McpServer[]>([])
 	const [currentCheckpoint, setCurrentCheckpoint] = useState<string>()
+	const [unboundModels, setUnboundModels] = useState<Record<string, ModelInfo>>({})
 
 	const setListApiConfigMeta = useCallback(
 		(value: ApiConfigMeta[]) => setState((prevState) => ({ ...prevState, listApiConfigMeta: value })),
@@ -270,6 +274,11 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					setCurrentCheckpoint(message.text)
 					break
 				}
+				case "unboundModels": {
+					const updatedModels = message.unboundModels ?? {}
+					setUnboundModels(updatedModels)
+					break
+				}
 			}
 		},
 		[setListApiConfigMeta],
@@ -289,6 +298,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		glamaModels,
 		openRouterModels,
 		openAiModels,
+		unboundModels,
 		mcpServers,
 		filePaths,
 		openedTabs,
