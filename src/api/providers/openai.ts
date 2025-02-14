@@ -11,6 +11,7 @@ import { convertToOpenAiMessages } from "../transform/openai-format"
 import { convertToR1Format } from "../transform/r1-format"
 import { ApiStream } from "../transform/stream"
 import { DEEP_SEEK_DEFAULT_TEMPERATURE, OPENAI_DEFAULT_TEMPERATURE } from "./constants"
+import { convertToSimpleMessages } from "../transform/simple-format"
 
 export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 	protected options: ApiHandlerOptions
@@ -46,23 +47,32 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 
 	async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
 		const modelInfo = this.getModel().info
+		const modelUrl = this.options.openAiBaseUrl ?? ""
 		const modelId = this.options.openAiModelId ?? ""
 
 		const deepseekReasoner = modelId.includes("deepseek-reasoner")
+		const ark = modelUrl.includes(".volces.com")
 
 		if (this.options.openAiStreamingEnabled ?? true) {
 			const systemMessage: OpenAI.Chat.ChatCompletionSystemMessageParam = {
 				role: "system",
 				content: systemPrompt,
 			}
+
+			let convertedMessages
+			if (deepseekReasoner) {
+				convertedMessages = convertToR1Format([{ role: "user", content: systemPrompt }, ...messages])
+			} else if (ark) {
+				// 如果方舟 ark 模型，则将消息转换为简单格式
+				convertedMessages = [systemMessage, ...convertToSimpleMessages(messages)]
+			} else {
+				convertedMessages = [systemMessage, ...convertToOpenAiMessages(messages)]
+			}
+
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
 				model: modelId,
-				temperature:
-					this.options.modelTemperature ??
-					(deepseekReasoner ? DEEP_SEEK_DEFAULT_TEMPERATURE : OPENAI_DEFAULT_TEMPERATURE),
-				messages: deepseekReasoner
-					? convertToR1Format([{ role: "user", content: systemPrompt }, ...messages])
-					: [systemMessage, ...convertToOpenAiMessages(messages)],
+				temperature: this.options.modelTemperature ?? OPENAI_DEFAULT_TEMPERATURE,
+				messages: convertedMessages,
 				stream: true as const,
 				stream_options: { include_usage: true },
 			}
