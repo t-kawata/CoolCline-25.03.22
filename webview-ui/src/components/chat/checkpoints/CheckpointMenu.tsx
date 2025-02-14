@@ -38,7 +38,7 @@ export const CheckpointMenu = ({ ts, commitHash }: CheckpointMenuProps) => {
 
 	return (
 		<div className="flex flex-row gap-1">
-			<Button variant="ghost" size="icon" onClick={onCheckpointDiff}>
+			<Button variant="ghost" size="icon" onClick={onCheckpointDiff} aria-label="diff">
 				<span className="codicon codicon-diff-single" />
 			</Button>
 			<Popover
@@ -48,7 +48,7 @@ export const CheckpointMenu = ({ ts, commitHash }: CheckpointMenuProps) => {
 					setIsConfirming(false)
 				}}>
 				<PopoverTrigger asChild>
-					<Button variant="ghost" size="icon">
+					<Button variant="ghost" size="icon" aria-label="history">
 						<span className="codicon codicon-history" />
 					</Button>
 				</PopoverTrigger>
