@@ -1,6 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk"
 import OpenAI, { AzureOpenAI } from "openai"
-
 import {
 	ApiHandlerOptions,
 	azureOpenAiDefaultApiVersion,
@@ -11,6 +10,7 @@ import { ApiHandler, SingleCompletionHandler } from "../index"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { convertToR1Format } from "../transform/r1-format"
 import { ApiStream } from "../transform/stream"
+import { DEEP_SEEK_DEFAULT_TEMPERATURE, OPENAI_DEFAULT_TEMPERATURE } from "./constants"
 
 export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 	protected options: ApiHandlerOptions
@@ -57,7 +57,9 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 			}
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
 				model: modelId,
-				temperature: this.options.modelTemperature ?? 0,
+				temperature:
+					this.options.modelTemperature ??
+					(deepseekReasoner ? DEEP_SEEK_DEFAULT_TEMPERATURE : OPENAI_DEFAULT_TEMPERATURE),
 				messages: deepseekReasoner
 					? convertToR1Format([{ role: "user", content: systemPrompt }, ...messages])
 					: [systemMessage, ...convertToOpenAiMessages(messages)],

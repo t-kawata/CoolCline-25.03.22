@@ -4,6 +4,7 @@ import { ApiHandler, SingleCompletionHandler } from "../"
 import { ApiHandlerOptions, ModelInfo, UnboundModelId, unboundDefaultModelId, unboundModels } from "../../shared/api"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream, ApiStreamUsageChunk } from "../transform/stream"
+import { UNBOUND_DEFAULT_TEMPERATURE } from "./constants"
 
 interface UnboundUsage extends OpenAI.CompletionUsage {
 	cache_creation_input_tokens?: number
@@ -80,7 +81,7 @@ export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
 				{
 					model: this.getModel().id.split("/")[1],
 					max_tokens: maxTokens,
-					temperature: this.options.modelTemperature ?? 0,
+					temperature: this.options.modelTemperature ?? UNBOUND_DEFAULT_TEMPERATURE,
 					messages: openAiMessages,
 					stream: true,
 				},
@@ -147,7 +148,7 @@ export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
 				model: this.getModel().id.split("/")[1],
 				messages: [{ role: "user", content: prompt }],
-				temperature: this.options.modelTemperature ?? 0,
+				temperature: this.options.modelTemperature ?? UNBOUND_DEFAULT_TEMPERATURE,
 			}
 
 			if (this.getModel().id.startsWith("anthropic/")) {

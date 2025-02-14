@@ -6,6 +6,7 @@ import { ApiHandlerOptions, ModelInfo, openRouterDefaultModelId, openRouterDefau
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStreamChunk, ApiStreamUsageChunk } from "../transform/stream"
 import delay from "delay"
+import { DEEP_SEEK_DEFAULT_TEMPERATURE, OPENROUTER_DEFAULT_TEMPERATURE } from "./constants"
 
 // Add custom interface for OpenRouter params
 type OpenRouterChatCompletionParams = OpenAI.Chat.ChatCompletionCreateParams & {
@@ -114,7 +115,7 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 				break
 		}
 
-		let temperature = this.options.modelTemperature ?? 0
+		let temperature = this.options.modelTemperature ?? OPENROUTER_DEFAULT_TEMPERATURE
 		let topP: number | undefined = undefined
 
 		// Handle models based on deepseek-r1
@@ -124,7 +125,7 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 		) {
 			// Recommended temperature for DeepSeek reasoning models if no custom temperature is set
 			if (this.options.modelTemperature === undefined) {
-				temperature = 0.6
+				temperature = DEEP_SEEK_DEFAULT_TEMPERATURE
 			}
 			// DeepSeek highly recommends using user instead of system
 			// role
@@ -225,7 +226,7 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 			const response = await this.client.chat.completions.create({
 				model: this.getModel().id,
 				messages: [{ role: "user", content: prompt }],
-				temperature: 0,
+				temperature: this.options.modelTemperature ?? OPENROUTER_DEFAULT_TEMPERATURE,
 				stream: false,
 			})
 

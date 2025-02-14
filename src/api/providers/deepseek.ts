@@ -1,6 +1,7 @@
 import { OpenAiHandler } from "./openai"
 import { ApiHandlerOptions, ModelInfo } from "../../shared/api"
 import { deepSeekModels, deepSeekDefaultModelId } from "../../shared/api"
+import { DEEP_SEEK_DEFAULT_TEMPERATURE } from "./constants"
 
 export class DeepSeekHandler extends OpenAiHandler {
 	constructor(options: ApiHandlerOptions) {
@@ -11,6 +12,7 @@ export class DeepSeekHandler extends OpenAiHandler {
 			openAiBaseUrl: options.deepSeekBaseUrl ?? "https://api.deepseek.com/v1",
 			openAiStreamingEnabled: true,
 			includeMaxTokens: true,
+			modelTemperature: options.modelTemperature ?? DEEP_SEEK_DEFAULT_TEMPERATURE,
 		})
 	}
 

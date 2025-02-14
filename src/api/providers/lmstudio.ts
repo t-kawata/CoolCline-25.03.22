@@ -4,6 +4,7 @@ import { ApiHandler, SingleCompletionHandler } from "../"
 import { ApiHandlerOptions, ModelInfo, openAiModelInfoSaneDefaults } from "../../shared/api"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream } from "../transform/stream"
+import { LMSTUDIO_DEFAULT_TEMPERATURE } from "./constants"
 
 export class LmStudioHandler implements ApiHandler, SingleCompletionHandler {
 	private options: ApiHandlerOptions
@@ -27,7 +28,7 @@ export class LmStudioHandler implements ApiHandler, SingleCompletionHandler {
 			const stream = await this.client.chat.completions.create({
 				model: this.getModel().id,
 				messages: openAiMessages,
-				temperature: this.options.modelTemperature ?? 0,
+				temperature: this.options.modelTemperature ?? LMSTUDIO_DEFAULT_TEMPERATURE,
 				stream: true,
 			})
 			for await (const chunk of stream) {
@@ -59,7 +60,7 @@ export class LmStudioHandler implements ApiHandler, SingleCompletionHandler {
 			const response = await this.client.chat.completions.create({
 				model: this.getModel().id,
 				messages: [{ role: "user", content: prompt }],
-				temperature: this.options.modelTemperature ?? 0,
+				temperature: this.options.modelTemperature ?? LMSTUDIO_DEFAULT_TEMPERATURE,
 				stream: false,
 			})
 			return response.choices[0]?.message.content || ""

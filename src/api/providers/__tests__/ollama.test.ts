@@ -2,6 +2,7 @@ import { OllamaHandler } from "../ollama"
 import { ApiHandlerOptions } from "../../../shared/api"
 import OpenAI from "openai"
 import { Anthropic } from "@anthropic-ai/sdk"
+import { DEEP_SEEK_DEFAULT_TEMPERATURE, OLLAMA_DEFAULT_TEMPERATURE } from "../constants"
 
 // Mock OpenAI client
 const mockCreate = jest.fn()
@@ -134,10 +135,9 @@ describe("OllamaHandler", () => {
 				for await (const chunk of stream) {
 					chunks.push(chunk)
 				}
-
 				expect(mockCreate).toHaveBeenCalledWith(
 					expect.objectContaining({
-						temperature: 0,
+						temperature: expected ? DEEP_SEEK_DEFAULT_TEMPERATURE : OLLAMA_DEFAULT_TEMPERATURE,
 					}),
 				)
 			})
@@ -171,7 +171,7 @@ describe("OllamaHandler", () => {
 			expect(textChunks[0].text).toBe("Test response")
 			expect(mockCreate).toHaveBeenCalledWith(
 				expect.objectContaining({
-					temperature: 0,
+					temperature: OLLAMA_DEFAULT_TEMPERATURE,
 				}),
 			)
 		})
@@ -193,7 +193,7 @@ describe("OllamaHandler", () => {
 			expect(textChunks[0].text).toBe("Test response")
 			expect(mockCreate).toHaveBeenCalledWith(
 				expect.objectContaining({
-					temperature: 0,
+					temperature: DEEP_SEEK_DEFAULT_TEMPERATURE,
 				}),
 			)
 		})
@@ -218,7 +218,7 @@ describe("OllamaHandler", () => {
 			expect(mockCreate).toHaveBeenCalledWith({
 				model: mockOptions.ollamaModelId,
 				messages: [{ role: "user", content: "Test prompt" }],
-				temperature: 0,
+				temperature: OLLAMA_DEFAULT_TEMPERATURE,
 				top_p: undefined,
 				stream: false,
 			})
@@ -234,22 +234,20 @@ describe("OllamaHandler", () => {
 					},
 				},
 			}
-
 			// @ts-ignore - 为了测试目的忽略类型检查
 			const r1Handler = new OllamaHandler({
 				ollamaBaseUrl: "http://localhost:11434",
-				ollamaModelId: "deepseek-reasoner",
+				ollamaModelId: "deepseek-r1", // 改用真正的 R1 模型进行测试
 			})
 			// @ts-ignore - 为了测试目的覆盖私有属性
 			r1Handler.client = mockClient
-
 			const result = await r1Handler.completePrompt("Test prompt")
 			expect(result).toBe("Test response")
 			expect(mockClient.chat.completions.create).toHaveBeenCalledWith({
-				model: "deepseek-reasoner",
+				model: "deepseek-r1",
 				messages: expect.any(Array),
 				stream: false,
-				temperature: 0,
+				temperature: DEEP_SEEK_DEFAULT_TEMPERATURE,
 			})
 		})
 

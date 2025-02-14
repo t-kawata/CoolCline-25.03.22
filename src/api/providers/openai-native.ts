@@ -10,6 +10,7 @@ import {
 } from "../../shared/api"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream } from "../transform/stream"
+import { OPENAI_NATIVE_DEFAULT_TEMPERATURE } from "./constants"
 
 export class OpenAiNativeHandler implements ApiHandler, SingleCompletionHandler {
 	private options: ApiHandlerOptions
@@ -88,7 +89,7 @@ export class OpenAiNativeHandler implements ApiHandler, SingleCompletionHandler 
 	): ApiStream {
 		const stream = await this.client.chat.completions.create({
 			model: modelId,
-			temperature: this.options.modelTemperature ?? 0,
+			temperature: this.options.modelTemperature ?? OPENAI_NATIVE_DEFAULT_TEMPERATURE,
 			messages: [{ role: "system", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
 			stream: true,
 			stream_options: { include_usage: true },
@@ -189,7 +190,7 @@ export class OpenAiNativeHandler implements ApiHandler, SingleCompletionHandler 
 		return {
 			model: modelId,
 			messages: [{ role: "user", content: prompt }],
-			temperature: this.options.modelTemperature ?? 0,
+			temperature: this.options.modelTemperature ?? OPENAI_NATIVE_DEFAULT_TEMPERATURE,
 		}
 	}
 }

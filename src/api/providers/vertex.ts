@@ -3,6 +3,7 @@ import { AnthropicVertex } from "@anthropic-ai/vertex-sdk"
 import { ApiHandler, SingleCompletionHandler } from "../"
 import { ApiHandlerOptions, ModelInfo, vertexDefaultModelId, VertexModelId, vertexModels } from "../../shared/api"
 import { ApiStream } from "../transform/stream"
+import { VERTEX_DEFAULT_TEMPERATURE } from "./constants"
 
 // https://docs.anthropic.com/en/api/claude-on-vertex-ai
 export class VertexHandler implements ApiHandler, SingleCompletionHandler {
@@ -22,7 +23,7 @@ export class VertexHandler implements ApiHandler, SingleCompletionHandler {
 		const stream = await this.client.messages.create({
 			model: this.getModel().id,
 			max_tokens: this.getModel().info.maxTokens || 8192,
-			temperature: this.options.modelTemperature ?? 0,
+			temperature: this.options.modelTemperature ?? VERTEX_DEFAULT_TEMPERATURE,
 			system: systemPrompt,
 			messages,
 			stream: true,
@@ -89,7 +90,7 @@ export class VertexHandler implements ApiHandler, SingleCompletionHandler {
 			const response = await this.client.messages.create({
 				model: this.getModel().id,
 				max_tokens: this.getModel().info.maxTokens || 8192,
-				temperature: this.options.modelTemperature ?? 0,
+				temperature: this.options.modelTemperature ?? VERTEX_DEFAULT_TEMPERATURE,
 				messages: [{ role: "user", content: prompt }],
 				stream: false,
 			})

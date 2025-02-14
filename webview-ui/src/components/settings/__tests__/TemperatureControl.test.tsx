@@ -8,6 +8,12 @@ jest.mock("react-i18next", () => ({
 	}),
 }))
 
+const TEST_TEMPERATURE = 0.7
+const UPDATED_TEMPERATURE = 0.8
+const HIGH_TEMPERATURE = 1.5
+const MAX_TEMPERATURE = 2
+const LOW_TEMPERATURE = 0.5
+
 describe("TemperatureControl", () => {
 	it("renders with default temperature disabled", () => {
 		const onChange = jest.fn()
@@ -20,19 +26,19 @@ describe("TemperatureControl", () => {
 
 	it("renders with custom temperature enabled", () => {
 		const onChange = jest.fn()
-		render(<TemperatureControl value={0.7} onChange={onChange} />)
+		render(<TemperatureControl value={TEST_TEMPERATURE} onChange={onChange} />)
 
 		const checkbox = screen.getByRole("checkbox")
 		expect(checkbox).toBeChecked()
 
 		const slider = screen.getByRole("slider")
 		expect(slider).toBeInTheDocument()
-		expect(slider).toHaveValue("0.7")
+		expect(slider).toHaveValue(String(TEST_TEMPERATURE))
 	})
 
 	it("updates when checkbox is toggled", () => {
 		const onChange = jest.fn()
-		render(<TemperatureControl value={0.7} onChange={onChange} />)
+		render(<TemperatureControl value={TEST_TEMPERATURE} onChange={onChange} />)
 
 		const checkbox = screen.getByRole("checkbox")
 
@@ -42,30 +48,30 @@ describe("TemperatureControl", () => {
 
 		// Check - should restore previous temperature
 		fireEvent.click(checkbox)
-		expect(onChange).toHaveBeenCalledWith(0.7)
+		expect(onChange).toHaveBeenCalledWith(TEST_TEMPERATURE)
 	})
 
 	it("updates temperature when slider changes", () => {
 		const onChange = jest.fn()
-		render(<TemperatureControl value={0.7} onChange={onChange} />)
+		render(<TemperatureControl value={TEST_TEMPERATURE} onChange={onChange} />)
 
 		const slider = screen.getByRole("slider")
-		fireEvent.change(slider, { target: { value: "0.8" } })
+		fireEvent.change(slider, { target: { value: String(UPDATED_TEMPERATURE) } })
 
-		expect(onChange).toHaveBeenCalledWith(0.8)
+		expect(onChange).toHaveBeenCalledWith(UPDATED_TEMPERATURE)
 	})
 
 	it("respects maxValue prop", () => {
 		const onChange = jest.fn()
-		render(<TemperatureControl value={1.5} onChange={onChange} maxValue={2} />)
+		render(<TemperatureControl value={HIGH_TEMPERATURE} onChange={onChange} maxValue={MAX_TEMPERATURE} />)
 
 		const slider = screen.getByRole("slider")
-		expect(slider).toHaveAttribute("max", "2")
+		expect(slider).toHaveAttribute("max", String(MAX_TEMPERATURE))
 	})
 
 	it("syncs checkbox state when value prop changes", () => {
 		const onChange = jest.fn()
-		const { rerender } = render(<TemperatureControl value={0.7} onChange={onChange} />)
+		const { rerender } = render(<TemperatureControl value={TEST_TEMPERATURE} onChange={onChange} />)
 
 		// Initially checked
 		const checkbox = screen.getByRole("checkbox")
@@ -76,7 +82,7 @@ describe("TemperatureControl", () => {
 		expect(checkbox).not.toBeChecked()
 
 		// Update back to a value
-		rerender(<TemperatureControl value={0.5} onChange={onChange} />)
+		rerender(<TemperatureControl value={LOW_TEMPERATURE} onChange={onChange} />)
 		expect(checkbox).toBeChecked()
 	})
 })

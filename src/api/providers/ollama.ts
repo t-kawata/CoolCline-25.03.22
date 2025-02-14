@@ -5,6 +5,7 @@ import { ApiHandlerOptions, ModelInfo, openAiModelInfoSaneDefaults } from "../..
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { convertToR1Format } from "../transform/r1-format"
 import { ApiStream } from "../transform/stream"
+import { DEEP_SEEK_DEFAULT_TEMPERATURE, OLLAMA_DEFAULT_TEMPERATURE } from "./constants"
 
 export class OllamaHandler implements ApiHandler, SingleCompletionHandler {
 	private options: ApiHandlerOptions
@@ -58,11 +59,16 @@ export class OllamaHandler implements ApiHandler, SingleCompletionHandler {
 	}
 
 	private isR1Model(modelId: string): boolean {
-		const normalizedModelId = this.normalizeModelId(modelId)
-		const normalizedKeywords = OllamaHandler.R1_MODEL_KEYWORDS.map((k) => this.normalizeModelId(k))
+		// 1. Convert to lowercase for case-insensitive comparison
+		const id = modelId.toLowerCase()
+		// 2. Match R1 pattern with better consideration for variants
+		const r1Pattern = /(?:^|[-_\s])deepseek[-_]?r1(?:[-_\s]|$)/
+		// 3. Also match the pattern without separators
+		const r1PatternNoSep = /(?:^|[-_\s])deepseekr1(?:[-_\s]|$)/
+		// 4. Exclude known non-R1 patterns
+		const nonR1Pattern = /(?:deepseek[-_]?r1[0-9]+|deepseek[-_]?r1[a-z]|deepseek[-_]?reasoner)/
 
-		// 采用宽松的匹配规则：只要包含任一关键字即可
-		return normalizedKeywords.some((keyword) => normalizedModelId.includes(keyword))
+		return !nonR1Pattern.test(id) && (r1Pattern.test(id) || r1PatternNoSep.test(id))
 	}
 
 	async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
@@ -78,7 +84,9 @@ export class OllamaHandler implements ApiHandler, SingleCompletionHandler {
 			const stream = await this.client.chat.completions.create({
 				model: modelId,
 				messages: openAiMessages,
-				temperature: this.options.modelTemperature ?? 0,
+				temperature:
+					this.options.modelTemperature ??
+					(useR1Format ? DEEP_SEEK_DEFAULT_TEMPERATURE : OLLAMA_DEFAULT_TEMPERATURE),
 				stream: true,
 			})
 			for await (const chunk of stream) {
@@ -107,18 +115,18 @@ export class OllamaHandler implements ApiHandler, SingleCompletionHandler {
 	}
 
 	async completePrompt(prompt: string): Promise<string> {
+		const modelId = this.getModel().id
+		const useR1Format = this.isR1Model(modelId)
+
 		try {
-			const modelId = this.getModel().id
-			const useR1Format = this.isR1Model(modelId)
-
-			const messages: OpenAI.Chat.ChatCompletionMessageParam[] = useR1Format
-				? convertToR1Format([{ role: "user", content: prompt }])
-				: [{ role: "user", content: prompt }]
-
 			const response = await this.client.chat.completions.create({
 				model: modelId,
-				messages,
-				temperature: this.options.modelTemperature ?? 0,
+				messages: useR1Format
+					? convertToR1Format([{ role: "user", content: prompt }])
+					: [{ role: "user", content: prompt }],
+				temperature:
+					this.options.modelTemperature ??
+					(useR1Format ? DEEP_SEEK_DEFAULT_TEMPERATURE : OLLAMA_DEFAULT_TEMPERATURE),
 				stream: false,
 			})
 			return response.choices[0]?.message.content || ""
