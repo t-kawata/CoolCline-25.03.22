@@ -23,9 +23,12 @@ This guide will help you make the most of all CoolCline features.
     - First Use
 2. [Basic Features](./basic-features/index.md)
     - Interface Layout
-    - Basic Conversation
-    - Prompt Optimization
-    - Context Mentions
+    - Basic Dialogue
+    - Context Mentioning
+    - Role Mode Switching
+    - LLM Provider Switching
+    - Enhanced Input
+    - Command Line Terminal
 
 ## Getting Help
 

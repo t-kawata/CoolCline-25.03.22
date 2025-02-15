@@ -120,9 +120,9 @@ The switch button is located at the bottom center of the input box.
 
 ---
 
-### Optimize Your Request Questions (Basic)
+### Enhance Your Input (Basic)
 
-When you've entered a request question in the input box, you can click the ✨ button at the bottom of the input box to help optimize your input.
+After entering a question in the input box, you can click the ✨ button at the bottom, which will enhance your question content. You can set the LLM Provider used for `Prompt Enhancement` in the `Auxiliary Function Prompt Configuration` section on the `Prompts` page.
 
 ---
 

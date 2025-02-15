@@ -26,8 +26,11 @@ has_children: true
 2. [基础功能](./basic-features/index.md)
     - 界面布局
     - 基本对话
-    - 优化提示
     - 上下文提及
+    - 角色模式切换
+    - LLM Provider 切换
+    - 增强提示
+    - 命令行终端
 
 ## 获取帮助
 

@@ -15,14 +15,14 @@ CoolCline's main interface consists of several key components:
 - Top right corner: Page navigation buttons
 - Above input box: Auto-approve settings (more settings available in the Settings page)
 - Input box: Use `@` to add context, `/` to switch role modes, `Enter` to send message, `Shift+Enter` for new line
-- Below input box: Role mode switch, LLM Provider switch, prompt optimization button, image selection button, send button
+- Below input box: Role mode switch, LLM Provider switch, Enhance Prompt button, image selection button, send button
 
 ## Basic Usage
 
 ### Basic Conversation
 
 1. Type your question or request in the input box
-2. Click the ✨ button below the input box to optimize your input (optional)
+2. Click the ✨ button below the input box to enhance your input (optional)
 3. Press Enter or click the send button below the input box
 4. Wait for the AI assistant's response
 5. Continue the conversation or confirm actions as needed
@@ -63,6 +63,10 @@ Switch button located at the bottom center of the input box
         3. Click ☑️ to save the option name
         4. Adjust core parameters like Model as needed (saves automatically when focus is lost)
     - Naming suggestions for options: Recommended structure "Provider-ModelVersion-Feature", e.g.: openrouter-deepseek-v3-free; openrouter-deepseek-r1-free; deepseek-v3-official; deepseek-r1-official
+
+### Enhance Prompt
+
+After typing your question in the input box, you can click the ✨ button at the bottom, which will enhance your question content. You can set the LLM Provider used for `Support Prompt Settings` in the `Prompt Enhancement` section of the `Prompts` page.
 
 ### Terminal Content Integration
 
