@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Egyéni Base URL",
-				"placeholder": "Alapértelmezett: {defaultUrl}"
+				"placeholder": "Alapértelmezett: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "LLM Provider gyors váltás beállítások",
@@ -548,7 +548,7 @@
 					"description": "Használja a VS Code beépített nyelvi modell API-ját",
 					"modelSelector": "Nyelvi modell",
 					"selectModel": "Modell kiválasztása...",
-					"noModels": "A VS Code nyelvi modell API lehetővé teszi más VS Code bővítmények (beleértve, de nem kizárólag a GitHub Copilot) által biztosított modellek futtatását. A legegyszerűbb módja a kezdésnek a Copilot és Copilot Chat bővítmények telepítése a VS Code piactérről.",
+					"noModels": "Nem sikerült lekérni a VS Code LM API által támogatott modelleket! Először keresse meg a GitHub Copilot vagy GitHub Copilot Chat bővítményt a VS Code bővítmény piactéren, telepítse és jelentkezzen be. Ezután a CoolCline hozzáférhet a modelljeikhez. Nincs szükség API kulcs vagy baseURL konfigurációra, mivel ez a VS Code beépített nyelvi modelljét használja.",
 					"experimentalNote": "Megjegyzés: Ez egy nagyon kísérleti integráció, és lehet, hogy nem a várt módon működik. Kérjük, jelentse a problémákat a CoolCline GitHub tárolójában.",
 					"useCustomBaseUrl": "Egyéni Base URL használata"
 				},

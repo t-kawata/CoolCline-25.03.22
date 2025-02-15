@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Base URL personnalisé",
-				"placeholder": "Par défaut : {defaultUrl}"
+				"placeholder": "Par défaut : {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "Options de changement rapide de LLM Provider",
@@ -548,7 +548,7 @@
 					"description": "Utiliser l'API de modèle de langage intégrée à VS Code",
 					"modelSelector": "Modèle de langage",
 					"selectModel": "Sélectionner un modèle...",
-					"noModels": "L'API de modèle de langage VS Code vous permet d'exécuter des modèles fournis par d'autres extensions VS Code (y compris, mais sans s'y limiter, GitHub Copilot). La façon la plus simple de commencer est d'installer les extensions Copilot et Copilot Chat depuis le marketplace VS Code.",
+					"noModels": "Échec de l'obtention des modèles pris en charge par l'API LM de VS Code ! Vous devez d'abord rechercher GitHub Copilot ou GitHub Copilot Chat dans le marketplace des extensions VS Code, les installer et vous connecter. Ensuite, CoolCline pourra accéder à leurs modèles. Aucune configuration de clé API ou de baseURL n'est nécessaire car cela utilise le modèle de langage intégré de VS Code.",
 					"experimentalNote": "Note : Il s'agit d'une intégration très expérimentale qui peut ne pas fonctionner comme prévu. Veuillez signaler tout problème sur le dépôt GitHub de CoolCline.",
 					"useCustomBaseUrl": "Utiliser un Base URL personnalisé"
 				},

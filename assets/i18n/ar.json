@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Base URL مخصص",
-				"placeholder": "الافتراضي: {defaultUrl}"
+				"placeholder": "الافتراضي: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "خيارات التبديل السريع لـ LLM Provider",
@@ -548,7 +548,7 @@
 					"description": "استخدام واجهة برمجة تطبيقات نموذج اللغة المدمجة في VS Code",
 					"modelSelector": "نموذج اللغة",
 					"selectModel": "اختر نموذجاً...",
-					"noModels": "تتيح لك واجهة برمجة تطبيقات نموذج اللغة في VS Code تشغيل النماذج المقدمة من امتدادات VS Code الأخرى (بما في ذلك GitHub Copilot على سبيل المثال لا الحصر). أسهل طريقة للبدء هي تثبيت امتدادات Copilot و Copilot Chat من متجر VS Code.",
+					"noModels": "فشل في الحصول على النماذج المدعومة من واجهة برمجة تطبيقات VS Code LM! تحتاج أولاً إلى البحث عن GitHub Copilot أو GitHub Copilot Chat من سوق إضافات VS Code، وتثبيتهما وتسجيل الدخول. بعد ذلك، سيتمكن CoolCline من الوصول إلى نماذجهم. لا يلزم تكوين مفتاح API أو baseURL لأن هذا يستخدم نموذج اللغة المدمج في VS Code.",
 					"experimentalNote": "ملاحظة: هذا تكامل تجريبي للغاية وقد لا يعمل كما هو متوقع. يرجى الإبلاغ عن أي مشكلات إلى مستودع CoolCline على GitHub.",
 					"useCustomBaseUrl": "استخدام Base URL مخصص"
 				},

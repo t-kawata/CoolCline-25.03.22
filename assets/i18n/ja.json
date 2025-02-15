@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "カスタム Base URL",
-				"placeholder": "デフォルト: {defaultUrl}"
+				"placeholder": "デフォルト: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "LLM Provider クイック切り替え設定",
@@ -548,7 +548,7 @@
 					"description": "VS Code 内蔵の言語モデル API を使用",
 					"modelSelector": "言語モデル",
 					"selectModel": "モデルを選択...",
-					"noModels": "VS Code 言語モデル API を使用すると、他の VS Code 拡張機能（GitHub Copilot を含むがこれに限定されない）が提供するモデルを実行できます。最も簡単な始め方は、VS Code マーケットプレースから Copilot と Copilot Chat 拡張機能をインストールすることです。",
+					"noModels": "VS Code LM APIがサポートするモデルの取得に失敗しました！VS Code拡張機能マーケットプレイスからGitHub CopilotまたはGitHub Copilot Chatを検索し、インストールしてログインする必要があります。その後、CoolClineはそれらのモデルにアクセスできるようになります。VS Code組み込みの言語モデルを使用するため、APIキーやbaseURLの設定は不要です。",
 					"experimentalNote": "注意：これは非常に実験的な統合であり、予期通りに動作しない可能性があります。問題がある場合は、CoolCline GitHub リポジトリに報告してください。",
 					"useCustomBaseUrl": "カスタム Base URL を使用"
 				},

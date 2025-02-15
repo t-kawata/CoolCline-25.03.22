@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Özel Base URL",
-				"placeholder": "Varsayılan: {defaultUrl}"
+				"placeholder": "Varsayılan: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "LLM Provider Hızlı Geçiş Yapılandırması",
@@ -548,7 +548,7 @@
 					"description": "VS Code'un yerleşik dil modeli API'sini kullan",
 					"modelSelector": "Dil modeli",
 					"selectModel": "Model seç...",
-					"noModels": "VS Code dil modeli API'si, diğer VS Code uzantıları (GitHub Copilot dahil ancak bununla sınırlı değil) tarafından sağlanan modelleri çalıştırmanıza olanak tanır. Başlamanın en kolay yolu VS Code pazarından Copilot ve Copilot Chat uzantılarını yüklemektir.",
+					"noModels": "VS Code LM API tarafından desteklenen modeller alınamadı! Önce VS Code Uzantı Mağazası'ndan GitHub Copilot veya GitHub Copilot Chat'i aramanız, yüklemeniz ve oturum açmanız gerekiyor. Ardından CoolCline onların modellerine erişebilecek. VS Code'un yerleşik dil modelini kullandığı için API anahtarı veya baseURL yapılandırması gerekmez.",
 					"experimentalNote": "Not: Bu çok deneysel bir entegrasyondur ve beklendiği gibi çalışmayabilir. Lütfen herhangi bir sorunu CoolCline GitHub deposuna bildirin.",
 					"useCustomBaseUrl": "Özel Base URL kullan"
 				},

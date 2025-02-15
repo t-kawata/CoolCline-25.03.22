@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Niestandardowy Base URL",
-				"placeholder": "Domyślnie: {defaultUrl}"
+				"placeholder": "Domyślnie: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "Konfiguracja opcji szybkiego przełączania dostawcy LLM",
@@ -548,7 +548,7 @@
 					"description": "Użyj wbudowanego API modelu językowego VS Code",
 					"modelSelector": "Model językowy",
 					"selectModel": "Wybierz model...",
-					"noModels": "API modelu językowego VS Code pozwala uruchamiać modele dostarczane przez inne rozszerzenia VS Code (w tym, ale nie tylko, GitHub Copilot). Najłatwiejszym sposobem na rozpoczęcie jest zainstalowanie rozszerzeń Copilot i Copilot Chat z marketplace VS Code.",
+					"noModels": "Nie udało się pobrać modeli obsługiwanych przez API LM VS Code! Musisz najpierw wyszukać GitHub Copilot lub GitHub Copilot Chat w marketplace rozszerzeń VS Code, zainstalować je i zalogować się. Następnie CoolCline będzie mógł uzyskać dostęp do ich modeli. Nie jest wymagana konfiguracja klucza API ani baseURL, ponieważ wykorzystuje to wbudowany model językowy VS Code.",
 					"experimentalNote": "Uwaga: To jest bardzo eksperymentalna integracja i może nie działać zgodnie z oczekiwaniami. Prosimy o zgłaszanie wszelkich problemów do repozytorium CoolCline na GitHub.",
 					"useCustomBaseUrl": "Użyj niestandardowego URL bazowego"
 				},

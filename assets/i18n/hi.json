@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "कस्टम Base URL",
-				"placeholder": "डिफ़ॉल्ट: {defaultUrl}"
+				"placeholder": "डिफ़ॉल्ट: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "LLM Provider त्वरित स्विचिंग विकल्प कॉन्फ़िगर करें",
@@ -548,7 +548,7 @@
 					"description": "VS Code में बिल्ट-इन भाषा मॉडल API का उपयोग करें",
 					"modelSelector": "भाषा मॉडल",
 					"selectModel": "मॉडल चुनें...",
-					"noModels": "VS Code भाषा मॉडल API आपको अन्य VS Code एक्सटेंशन (GitHub Copilot सहित लेकिन इस तक सीमित नहीं) द्वारा प्रदान किए गए मॉडल चलाने की अनुमति देता है। आरंभ करने का सबसे आसान तरीका VS Code मार्केटप्लेस से Copilot और Copilot Chat एक्सटेंशन इंस्टॉल करना है।",
+					"noModels": "VS Code LM API द्वारा समर्थित मॉडल प्राप्त करने में विफल! आपको पहले VS Code एक्सटेंशन मार्केटप्लेस से GitHub Copilot या GitHub Copilot Chat खोजना होगा, इंस्टॉल करना होगा और लॉगिन करना होगा। फिर CoolCline उनके मॉडल तक पहुंच सकेगा। API कुंजी या baseURL कॉन्फ़िगरेशन की आवश्यकता नहीं है क्योंकि यह VS Code का अंतर्निहित भाषा मॉडल उपयोग करता है।",
 					"experimentalNote": "नोट: यह एक बहुत ही प्रायोगिक एकीकरण है और अपेक्षित रूप से काम नहीं कर सकता है। कृपया किसी भी समस्या की रिपोर्ट CoolCline GitHub रिपॉजिटरी को करें।",
 					"useCustomBaseUrl": "कस्टम Base URL का उपयोग करें"
 				},

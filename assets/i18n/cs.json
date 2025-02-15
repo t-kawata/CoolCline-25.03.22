@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "Vlastní Base URL",
-				"placeholder": "Výchozí: {defaultUrl}"
+				"placeholder": "Výchozí: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "Konfigurace rychlého přepínání LLM Provider",
@@ -548,7 +548,7 @@
 					"description": "Použít vestavěné API jazykového modelu VS Code",
 					"modelSelector": "Jazykový model",
 					"selectModel": "Vybrat model...",
-					"noModels": "API jazykového modelu VS Code vám umožňuje spouštět modely poskytované jinými rozšířeními VS Code (včetně, ale ne pouze, GitHub Copilot). Nejjednodušší způsob, jak začít, je nainstalovat rozšíření Copilot a Copilot Chat z marketplace VS Code.",
+					"noModels": "Nepodařilo se získat modely podporované VS Code LM API! Nejprve musíte vyhledat GitHub Copilot nebo GitHub Copilot Chat v marketplace rozšíření VS Code, nainstalovat je a přihlásit se. Poté bude CoolCline moci přistupovat k jejich modelům. Není potřeba konfigurace API klíče ani baseURL, protože se používá vestavěný jazykový model VS Code.",
 					"experimentalNote": "Poznámka: Toto je velmi experimentální integrace a nemusí fungovat podle očekávání. Prosím, nahlaste jakékoli problémy do repozitáře CoolCline na GitHubu.",
 					"useCustomBaseUrl": "Použít vlastní Base URL"
 				},

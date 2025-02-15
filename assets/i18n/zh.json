@@ -386,7 +386,7 @@
 			},
 			"customBaseUrl": {
 				"title": "自定义 Base URL",
-				"placeholder": "默认: {defaultUrl}"
+				"placeholder": "默认: {{defaultUrl}}"
 			},
 			"configProfile": {
 				"title": "配置 LLM Provider 快速切换选项",
@@ -548,7 +548,7 @@
 					"description": "使用 VS Code 内置的语言模型 API",
 					"modelSelector": "语言模型",
 					"selectModel": "选择模型...",
-					"noModels": "VS Code 语言模型 API 可以使用其他 VS Code 扩展（如 GitHub Copilot 等）提供的模型。最简单的开始方式是从 VS Code 市场安装 Copilot 和 Copilot Chat 扩展。",
+					"noModels": "获取 VS Code LM API 支持的模型失败！您需要先从 VS Code 扩展市场搜索 GitHub Copilot 或 GitHub Copilot Chat，安装并登录。然后 CoolCline 就可以获取到它们的模型。无需配置 API Key、baseURL，因为这里使用的是 VSCode 内置的语言模型。",
 					"experimentalNote": "注意：这是一个非常实验性的集成，可能无法按预期工作。请将任何问题报告给 CoolCline GitHub 仓库。",
 					"useCustomBaseUrl": "使用自定义 Base URL"
 				},
