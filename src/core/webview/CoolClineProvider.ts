@@ -2342,8 +2342,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			if (apiKey) {
 				llmProvider = "anthropic"
 			} else {
-				// New users should default to openrouter
-				llmProvider = "openrouter"
+				// New users should default to vscode-lm
+				llmProvider = "vscode-lm"
 			}
 		}
 

@@ -158,6 +158,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					}}
 					options={[
 						{
+							value: "vscode-lm",
+							label: t("settings.provider.providers.vscode.name").toString(),
+						},
+						{
 							value: "openrouter",
 							label: t("settings.provider.providers.openRouter.name").toString(),
 						},
@@ -192,10 +196,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{
 							value: "glama",
 							label: t("settings.provider.providers.glama.name").toString(),
-						},
-						{
-							value: "vscode-lm",
-							label: t("settings.provider.providers.vscode.name").toString(),
 						},
 						{
 							value: "mistral",
@@ -1451,7 +1451,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								color: "var(--vscode-errorForeground)",
 								fontWeight: 500,
 							}}>
-							{t("settings.provider.providers.vscode.experimentalNote").toString()}
+							{t("settings.provider.providers.vscode.experimentalNote").toString()} README:{" "}
+							<VSCodeLink href="https://github.com/coolcline/coolcline/blob/main/docs/user-docs/en/configuration/provides.md">
+								en
+							</VSCodeLink>
+							{" | "}
+							<VSCodeLink href="https://gitee.com/coolcline/coolcline/blob/main/docs/user-docs/zh/configuration/provides.md">
+								简体中文
+							</VSCodeLink>
 						</p>
 					</div>
 				</div>
