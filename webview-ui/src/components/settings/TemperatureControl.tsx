@@ -23,8 +23,8 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 			style={{
 				marginTop: 10,
 				marginBottom: 15,
-				paddingLeft: 10,
-				borderLeft: "2px solid var(--vscode-button-background)",
+				paddingLeft: 0,
+				// borderLeft: "2px solid var(--vscode-button-background)", // 类似引用效果
 			}}>
 			<VSCodeCheckbox
 				checked={isCustomTemperature}
@@ -37,7 +37,7 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 						onChange(value) // Use the value from apiConfiguration, if set
 					}
 				}}>
-				<span style={{ fontWeight: "500" }}>{t("settings.provider.temperature.title")}</span>
+				<span>{t("settings.provider.temperature.title")}</span>
 			</VSCodeCheckbox>
 
 			<p style={{ fontSize: "12px", marginTop: "5px", color: "var(--vscode-descriptionForeground)" }}>
@@ -63,7 +63,14 @@ export const TemperatureControl = ({ value, onChange, maxValue = 1 }: Temperatur
 								height: "2px",
 							}}
 						/>
-						<span style={{ minWidth: "45px", textAlign: "left" }}>{value?.toFixed(2) ?? "0.00"}</span>
+						<span
+							style={{
+								minWidth: "45px",
+								textAlign: "left",
+								color: "var(--vscode-descriptionForeground)",
+							}}>
+							{value?.toFixed(2) ?? "0.00"}
+						</span>
 					</div>
 				</div>
 			)}

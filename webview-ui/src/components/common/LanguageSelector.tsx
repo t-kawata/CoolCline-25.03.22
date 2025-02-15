@@ -10,7 +10,7 @@ const LanguageSelector = () => {
 
 	return (
 		<div style={{ marginBottom: "20px" }}>
-			<div style={{ marginBottom: "4px", fontWeight: "600" }}>{String(t("prompts.settings.language.title"))}</div>
+			<div style={{ marginBottom: "4px" }}>{String(t("prompts.settings.language.title"))}</div>
 			<select
 				value={preferredLanguage}
 				onChange={(e) => {

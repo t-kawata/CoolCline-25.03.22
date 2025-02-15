@@ -197,18 +197,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					marginBottom: "17px",
 					paddingRight: 17,
 				}}>
-				<h1 style={{ fontWeight: "bold", color: "var(--vscode-foreground)", margin: 0 }}>
-					{t("settings.title").toString()}
-				</h1>
+				<h1 style={{ fontWeight: "800", fontSize: 15, margin: 0 }}>{t("settings.title").toString()}</h1>
 				<VSCodeButton onClick={handleSubmit}>{t("settings.done").toString()}</VSCodeButton>
 			</div>
 
-			<LanguageSelector />
+			<div style={{ fontWeight: "500" }}>
+				<LanguageSelector />
+			</div>
 
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				<div style={{ marginBottom: 40 }}>
-					<h2 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+					<h2 style={{ margin: "0 0 15px 0", fontWeight: "500" }}>
 						{t("settings.provider.title").toString()}
 					</h2>
 					<div style={{ marginBottom: 15 }}>
@@ -247,7 +247,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 15px 0", fontWeight: "500" }}>
 						{t("settings.autoApprove.title").toString()}
 					</h3>
 					<p style={{ fontSize: "12px", marginBottom: 15, color: "var(--vscode-descriptionForeground)" }}>
@@ -445,9 +445,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 									paddingLeft: 10,
 									borderLeft: "2px solid var(--vscode-button-background)",
 								}}>
-								<span style={{ fontWeight: "500" }}>
-									{t("settings.autoApprove.execute.commands.title").toString()}
-								</span>
+								<span>{t("settings.autoApprove.execute.commands.title").toString()}</span>
 								<p
 									style={{
 										fontSize: "12px",
@@ -489,7 +487,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 												display: "flex",
 												alignItems: "center",
 												gap: "5px",
-												backgroundColor: "var(--vscode-button-secondaryBackground)",
+												backgroundColor: "var(--vscode-button-background)",
+												color: "var(--vscode-button-foreground)",
 												padding: "2px 6px",
 												borderRadius: "4px",
 												border: "1px solid var(--vscode-button-secondaryBorder)",
@@ -530,11 +529,11 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.browser.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
-						<label style={{ fontWeight: "500", display: "block", marginBottom: 5 }}>
+						<label style={{ display: "block", marginBottom: 5 }}>
 							{t("settings.browser.viewport.title").toString()}
 						</label>
 						<div className="dropdown-container">
@@ -576,9 +575,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
 					<div style={{ marginBottom: 15 }}>
 						<div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-							<span style={{ fontWeight: "500" }}>
-								{t("settings.browser.screenshot.title").toString()}
-							</span>
+							<span>{t("settings.browser.screenshot.title").toString()}</span>
 							<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
 								<input
 									type="range"
@@ -606,7 +603,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.notification.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
@@ -658,14 +655,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				</div>
 
 				<div style={{ marginBottom: 40 }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 15px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.advanced.title").toString()}
 					</h3>
 					<div style={{ marginBottom: 15 }}>
 						<div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-							<span style={{ fontWeight: "500" }}>
-								{t("settings.advanced.rateLimit.title").toString()}
-							</span>
+							<span>{t("settings.advanced.rateLimit.title").toString()}</span>
 							<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
 								<input
 									type="range"
@@ -685,9 +680,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 					<div style={{ marginBottom: 15 }}>
 						<div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-							<span style={{ fontWeight: "500" }}>
-								{t("settings.advanced.terminalOutput.title").toString()}
-							</span>
+							<span>{t("settings.advanced.terminalOutput.title").toString()}</span>
 							<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
 								<input
 									type="range"
@@ -778,9 +771,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 											gap: "5px",
 											marginTop: "15px",
 										}}>
-										<span style={{ fontWeight: "500" }}>
-											{t("settings.advanced.diff.matchPrecision.title").toString()}
-										</span>
+										<span>{t("settings.advanced.diff.matchPrecision.title").toString()}</span>
 										<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
 											<input
 												type="range"

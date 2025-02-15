@@ -341,7 +341,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					alignItems: "center",
 					padding: "10px 17px 10px 20px",
 				}}>
-				<h3 style={{ color: "var(--vscode-foreground)", margin: 0, fontWeight: "600" }}>
+				<h3 style={{ margin: 0, fontWeight: "800", fontSize: 15 }}>
 					{String(t("prompts.settings.modePrompts.title"))}
 				</h3>
 				<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
@@ -350,7 +350,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 			<div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
 				{/* 基础设置部分 */}
 				<div style={{ paddingBottom: "20px", borderBottom: "1px solid var(--vscode-input-border)" }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
 						{String(t("prompts.settings.sections.general"))}
 					</h3>
 					<LanguageSelector />
@@ -416,7 +416,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 
 				{/* 角色模式部分 */}
 				<div style={{ marginTop: "20px" }}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
 						{String(t("prompts.settings.sections.modes"))}
 					</h3>
 					<div
@@ -713,7 +713,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								<div
 									style={{
 										fontSize: "13px",
-										color: "var(--vscode-foreground)",
+
 										marginBottom: "8px",
 										lineHeight: "1.4",
 									}}>
@@ -878,7 +878,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						paddingBottom: "60px",
 						borderBottom: "1px solid var(--vscode-input-border)",
 					}}>
-					<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 20px 0", fontWeight: "600" }}>
+					<h3 style={{ margin: "0 0 20px 0", fontWeight: "600" }}>
 						{String(t("prompts.settings.sections.tools"))}
 					</h3>
 					<div
@@ -961,7 +961,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								<div>
 									<div
 										style={{
-											color: "var(--vscode-foreground)",
 											fontSize: "13px",
 											marginBottom: "20px",
 											marginTop: "5px",

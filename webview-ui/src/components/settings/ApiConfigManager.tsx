@@ -90,8 +90,9 @@ const ApiConfigManager = ({
 					display: "flex",
 					flexDirection: "column",
 					gap: "2px",
+					color: "var(--vscode-foreground)",
 				}}>
-				<label htmlFor="config-profile">
+				<label htmlFor="config-profile" style={{ fontWeight: 500 }}>
 					<span>{String(t("settings.provider.configProfile.title"))}</span>
 				</label>
 
@@ -159,7 +160,7 @@ const ApiConfigManager = ({
 									onSelectConfig((value as DropdownOption).value)
 								}}
 								style={{
-									minWidth: 130,
+									width: "100%",
 									zIndex: 1002,
 								}}
 								role="combobox"

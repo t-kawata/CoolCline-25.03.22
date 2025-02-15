@@ -57,6 +57,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
 	const [openRouterBaseUrlSelected, setOpenRouterBaseUrlSelected] = useState(!!apiConfiguration?.openRouterBaseUrl)
+	const [lmStudioBaseUrlSelected, setLmStudioBaseUrlSelected] = useState(!!apiConfiguration?.lmStudioBaseUrl)
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
@@ -134,7 +135,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 		<div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
 			<div className="dropdown-container">
 				<label htmlFor="api-provider">
-					<span style={{ fontWeight: 500 }}>{t("settings.provider.llmProvider").toString()}</span>
+					<span style={{ fontWeight: 600 }}>{t("settings.provider.llmProvider").toString()}</span>
 				</label>
 				<Dropdown
 					id="api-provider"
@@ -150,7 +151,8 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						})
 					}}
 					style={{
-						minWidth: 130,
+						minWidth: 180,
+						width: "100%",
 						position: "relative",
 						zIndex: OPENROUTER_MODEL_PICKER_Z_INDEX + 1,
 					}}
@@ -217,19 +219,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 
 			{selectedProvider === "anthropic" && (
 				<div>
-					<VSCodeTextField
-						value={apiConfiguration?.apiKey || ""}
-						style={{ width: "100%" }}
-						type="password"
-						onInput={handleInputChange("apiKey")}
-						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.anthropic.title").toString()}
-						</span>
-					</VSCodeTextField>
-
 					<Checkbox
 						checked={anthropicBaseUrlSelected}
+						style={{ width: "100%", marginTop: 8, color: "var(--vscode-descriptionForeground)" }}
 						onChange={(checked: boolean) => {
 							setAnthropicBaseUrlSelected(checked)
 							if (!checked) {
@@ -255,6 +247,25 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						/>
 					)}
 
+					<VSCodeTextField
+						value={apiConfiguration?.apiKey || ""}
+						style={{ marginTop: 8, width: "100%" }}
+						type="password"
+						onInput={handleInputChange("apiKey")}
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span style={{ fontWeight: 500 }}>
+							{t("settings.provider.providers.anthropic.title").toString()}
+						</span>
+					</VSCodeTextField>
+
+					{!apiConfiguration?.apiKey && (
+						<VSCodeButtonLink
+							href="https://console.anthropic.com/settings/keys"
+							style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.anthropic.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -262,16 +273,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							color: "var(--vscode-descriptionForeground)",
 						}}>
 						{t("settings.provider.apiKey.storedLocally").toString()}
-						{!apiConfiguration?.apiKey && (
-							<VSCodeLink
-								href="https://console.anthropic.com/settings/keys"
-								style={{
-									display: "inline",
-									fontSize: "inherit",
-								}}>
-								{t("settings.provider.providers.anthropic.getKey").toString()}
-							</VSCodeLink>
-						)}
 					</p>
 				</div>
 			)}
@@ -280,7 +281,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.glamaApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 8 }}
 						type="password"
 						onInput={handleInputChange("glamaApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
@@ -290,10 +291,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					</VSCodeTextField>
 
 					{!apiConfiguration?.glamaApiKey && (
-						<VSCodeButtonLink
-							href={getGlamaAuthUrl(uriScheme)}
-							style={{ margin: "5px 0 0 0" }}
-							appearance="secondary">
+						<VSCodeButtonLink href={getGlamaAuthUrl(uriScheme)} style={{ margin: "5px 0 0 0" }}>
 							{t("settings.provider.providers.glama.getKey").toString()}
 						</VSCodeButtonLink>
 					)}
@@ -313,14 +311,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiNativeApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 8 }}
 						type="password"
 						onInput={handleInputChange("openAiNativeApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.openaiNative.title").toString()}
-						</span>
+						<span>{t("settings.provider.providers.openaiNative.title").toString()}</span>
 					</VSCodeTextField>
+
+					{!apiConfiguration?.openAiNativeApiKey && (
+						<VSCodeButtonLink href={getopenAiNativeAuthUrl(uriScheme)} style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.openaiNative.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -336,7 +339,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.mistralApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 8 }}
 						type="password"
 						onInput={handleInputChange("mistralApiKey")}
 						placeholder={t("settings.provider.providers.mistral.placeholder").toString()}>
@@ -344,6 +347,13 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							{t("settings.provider.providers.mistral.title").toString()}
 						</span>
 					</VSCodeTextField>
+
+					{!apiConfiguration?.mistralApiKey && (
+						<VSCodeButtonLink href="https://console.mistral.ai/codestral/" style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.mistral.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -351,44 +361,15 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							color: "var(--vscode-descriptionForeground)",
 						}}>
 						{t("settings.provider.apiKey.storedLocally").toString()}
-						{!apiConfiguration?.mistralApiKey && (
-							<VSCodeLink
-								href="https://console.mistral.ai/codestral/"
-								style={{
-									display: "inline",
-									fontSize: "inherit",
-								}}>
-								{t("settings.provider.providers.mistral.getKey").toString()}
-							</VSCodeLink>
-						)}
 					</p>
 				</div>
 			)}
 
 			{selectedProvider === "openrouter" && (
 				<div>
-					<VSCodeTextField
-						value={apiConfiguration?.openRouterApiKey || ""}
-						style={{ width: "100%" }}
-						type="password"
-						onInput={handleInputChange("openRouterApiKey")}
-						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.openRouter.title").toString()}
-						</span>
-					</VSCodeTextField>
-
-					{!apiConfiguration?.openRouterApiKey && (
-						<VSCodeButtonLink
-							href={getOpenRouterAuthUrl(uriScheme)}
-							style={{ margin: "5px 0 0 0" }}
-							appearance="secondary">
-							{t("settings.provider.providers.openRouter.getKey").toString()}
-						</VSCodeButtonLink>
-					)}
-
 					<Checkbox
 						checked={openRouterBaseUrlSelected}
+						style={{ width: "100%", marginTop: 5, color: "var(--vscode-descriptionForeground)" }}
 						onChange={(checked: boolean) => {
 							setOpenRouterBaseUrlSelected(checked)
 							if (!checked) {
@@ -414,6 +395,21 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						/>
 					)}
 
+					<VSCodeTextField
+						value={apiConfiguration?.openRouterApiKey || ""}
+						style={{ width: "100%", marginTop: 8 }}
+						type="password"
+						onInput={handleInputChange("openRouterApiKey")}
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span>{t("settings.provider.providers.openRouter.title").toString()}</span>
+					</VSCodeTextField>
+
+					{!apiConfiguration?.openRouterApiKey && (
+						<VSCodeButtonLink href={getOpenRouterAuthUrl(uriScheme)} style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.openRouter.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -424,15 +420,16 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					</p>
 					<Checkbox
 						checked={apiConfiguration?.openRouterUseMiddleOutTransform || false}
+						style={{ width: "100%", marginTop: 8, color: "var(--vscode-descriptionForeground)" }}
 						onChange={(checked: boolean) => {
 							handleInputChange("openRouterUseMiddleOutTransform")({
 								target: { value: checked },
 							})
 						}}>
-						{t("settings.provider.providers.openRouter.compressPrompts").toString()}{" "}
-						<a href="https://openrouter.ai/docs/transforms">
+						{t("settings.provider.providers.openRouter.compressPrompts").toString()} <br />
+						<VSCodeLink href="https://openrouter.ai/docs/transforms">
 							{t("settings.provider.providers.openRouter.transforms").toString()}
-						</a>
+						</VSCodeLink>
 					</Checkbox>
 					<br />
 				</div>
@@ -442,13 +439,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.awsAccessKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 8 }}
 						type="text"
 						onInput={handleInputChange("awsAccessKey")}
 						placeholder={t("settings.provider.providers.bedrock.accessKey").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.bedrock.title").toString()}
-						</span>
+						<span>{t("settings.provider.providers.bedrock.title").toString()}</span>
 					</VSCodeTextField>
 
 					<VSCodeTextField
@@ -467,11 +462,18 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						placeholder={t("settings.provider.providers.bedrock.sessionToken").toString()}
 					/>
 
-					<div className="dropdown-container" style={{ marginTop: 3 }}>
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: "5px",
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						{t("settings.provider.apiKey.storedLocally").toString()}
+					</p>
+
+					<div className="dropdown-container" style={{ marginTop: 8 }}>
 						<label htmlFor="bedrock-region">
-							<span style={{ fontWeight: 500 }}>
-								{t("settings.provider.providers.bedrock.region").toString()}
-							</span>
+							<span>{t("settings.provider.providers.bedrock.region").toString()}</span>
 						</label>
 						<Dropdown
 							id="bedrock-region"
@@ -483,7 +485,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									},
 								})
 							}}
-							style={{ minWidth: 130 }}
+							style={{ minWidth: 180, width: "100%" }}
 							options={[
 								{
 									value: "us-east-1",
@@ -507,6 +509,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 
 					<Checkbox
 						checked={apiConfiguration?.awsUseCrossRegionInference}
+						style={{
+							width: "100%",
+							marginTop: 8,
+							fontWeight: 300,
+							color: "var(--vscode-descriptionForeground)",
+						}}
 						onChange={(checked: boolean) => {
 							handleInputChange("awsUseCrossRegionInference")({
 								target: {
@@ -516,15 +524,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						}}>
 						{t("settings.provider.providers.bedrock.useCrossRegion").toString()}
 					</Checkbox>
-
-					<p
-						style={{
-							fontSize: "12px",
-							marginTop: "5px",
-							color: "var(--vscode-descriptionForeground)",
-						}}>
-						{t("settings.provider.apiKey.storedLocally").toString()}
-					</p>
 				</div>
 			)}
 
@@ -536,14 +535,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						type="text"
 						onInput={handleInputChange("vertexProjectId")}
 						placeholder={t("settings.provider.providers.vertex.enterProjectId").toString()}>
-						<span style={{ fontWeight: 500 }}>
+						<span style={{ marginTop: 8 }}>
 							{t("settings.provider.providers.vertex.projectId").toString()}
 						</span>
 					</VSCodeTextField>
 
-					<div className="dropdown-container" style={{ marginTop: 3 }}>
+					<div className="dropdown-container" style={{ marginTop: 5 }}>
 						<label htmlFor="vertex-region">
-							<span style={{ fontWeight: 500 }}>
+							<span style={{ marginTop: 8 }}>
 								{t("settings.provider.providers.vertex.region").toString()}
 							</span>
 						</label>
@@ -557,7 +556,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 									},
 								})
 							}}
-							style={{ minWidth: 130 }}
+							style={{ minWidth: 180, width: "100%" }}
 							options={[
 								{
 									value: "us-central1",
@@ -602,14 +601,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.geminiApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 3 }}
 						type="password"
 						onInput={handleInputChange("geminiApiKey")}
 						placeholder={t("settings.provider.providers.gemini.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.gemini.title").toString()}
-						</span>
+						<span>{t("settings.provider.providers.gemini.title").toString()}</span>
 					</VSCodeTextField>
+
+					{!apiConfiguration?.geminiApiKey && (
+						<VSCodeButtonLink href="https://ai.google.dev/" style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.gemini.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -617,16 +621,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							color: "var(--vscode-descriptionForeground)",
 						}}>
 						{t("settings.provider.apiKey.storedLocally").toString()}.
-						{!apiConfiguration?.geminiApiKey && (
-							<VSCodeLink
-								href="https://ai.google.dev/"
-								style={{
-									display: "inline",
-									fontSize: "inherit",
-								}}>
-								{t("settings.provider.providers.gemini.getKey").toString()}.
-							</VSCodeLink>
-						)}
 					</p>
 				</div>
 			)}
@@ -640,28 +634,25 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					}}>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiBaseUrl || ""}
-						style={{ width: "100%", marginTop: 3 }}
+						style={{ width: "100%", marginTop: 5 }}
 						type="text"
 						onInput={handleInputChange("openAiBaseUrl")}
 						placeholder={t("settings.provider.providers.openai.enterBaseUrl").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.openai.baseUrl").toString()}
-						</span>
+						<span>{t("settings.provider.providers.openai.baseUrl").toString()}</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 5 }}
 						type="password"
 						onInput={handleInputChange("openAiApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.openai.title").toString()}
-						</span>
+						<span>{t("settings.provider.providers.openai.title").toString()}</span>
 					</VSCodeTextField>
 					<OpenAiModelPicker />
 					<div style={{ display: "flex", alignItems: "center" }}>
 						<Checkbox
 							checked={apiConfiguration?.openAiStreamingEnabled ?? true}
+							style={{ width: "100%", marginTop: 8, color: "var(--vscode-descriptionForeground)" }}
 							onChange={(checked: boolean) => {
 								handleInputChange("openAiStreamingEnabled")({
 									target: { value: checked },
@@ -672,6 +663,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					</div>
 					<Checkbox
 						checked={apiConfiguration?.openAiUseAzure ?? false}
+						style={{ width: "100%", marginTop: 8, color: "var(--vscode-descriptionForeground)" }}
 						onChange={(checked: boolean) => {
 							handleInputChange("openAiUseAzure")({
 								target: { value: checked },
@@ -681,6 +673,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					</Checkbox>
 					<Checkbox
 						checked={azureApiVersionSelected}
+						style={{ width: "100%", marginTop: 8, color: "var(--vscode-descriptionForeground)" }}
 						onChange={(checked: boolean) => {
 							setAzureApiVersionSelected(checked)
 							if (!checked) {
@@ -776,7 +769,16 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 										flexDirection: "column",
 										gap: 12,
 									}}>
-									<div className="token-config-field">
+									<div
+										className="token-config-field"
+										style={{
+											backgroundColor: "var(--vscode-editor-background)",
+											padding: "12px",
+											borderRadius: "4px",
+											marginTop: "8px",
+											border: "1px solid var(--vscode-input-border)",
+											transition: "background-color 0.2s ease",
+										}}>
 										<VSCodeTextField
 											value={
 												apiConfiguration?.openAiCustomModelInfo?.maxTokens?.toString() ||
@@ -843,7 +845,16 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 										</div>
 									</div>
 
-									<div className="token-config-field">
+									<div
+										className="token-config-field"
+										style={{
+											backgroundColor: "var(--vscode-editor-background)",
+											padding: "12px",
+											borderRadius: "4px",
+											marginTop: "8px",
+											border: "1px solid var(--vscode-input-border)",
+											transition: "background-color 0.2s ease",
+										}}>
 										<VSCodeTextField
 											value={
 												apiConfiguration?.openAiCustomModelInfo?.contextWindow?.toString() ||
@@ -951,6 +962,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 															apiConfiguration?.openAiCustomModelInfo?.supportsImages ??
 															openAiModelInfoSaneDefaults.supportsImages
 														}
+														style={{
+															width: "100%",
+															marginTop: 8,
+															color: "var(--vscode-descriptionForeground)",
+														}}
 														onChange={(checked: boolean) => {
 															handleInputChange("openAiCustomModelInfo")({
 																target: {
@@ -962,10 +978,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span
-															style={{
-																fontWeight: 500,
-															}}>
+														<span>
 															{t(
 																"settings.provider.providers.openai.modelConfig.features.imageSupport.title",
 															).toString()}
@@ -1014,6 +1027,11 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 															apiConfiguration?.openAiCustomModelInfo
 																?.supportsComputerUse ?? false
 														}
+														style={{
+															width: "100%",
+															marginTop: 8,
+															color: "var(--vscode-descriptionForeground)",
+														}}
 														onChange={(checked: boolean) => {
 															handleInputChange("openAiCustomModelInfo")({
 																target: {
@@ -1025,10 +1043,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 																},
 															})
 														}}>
-														<span
-															style={{
-																fontWeight: 500,
-															}}>
+														<span>
 															{t(
 																"settings.provider.providers.openai.modelConfig.features.computerUse.title",
 															).toString()}
@@ -1263,16 +1278,33 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 
 			{selectedProvider === "lmstudio" && (
 				<div>
-					<VSCodeTextField
-						value={apiConfiguration?.lmStudioBaseUrl || ""}
-						style={{ width: "100%" }}
-						type="url"
-						onInput={handleInputChange("lmStudioBaseUrl")}
-						placeholder={t("settings.provider.providers.lmstudio.enterBaseUrl").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.lmstudio.baseUrl").toString()}
-						</span>
-					</VSCodeTextField>
+					<Checkbox
+						checked={lmStudioBaseUrlSelected}
+						style={{ width: "100%", marginTop: 5, color: "var(--vscode-descriptionForeground)" }}
+						onChange={(checked: boolean) => {
+							setLmStudioBaseUrlSelected(checked)
+							if (!checked) {
+								handleInputChange("lmStudioBaseUrl")({
+									target: {
+										value: "",
+									},
+								})
+							}
+						}}>
+						{t("settings.provider.providers.lmstudio.useCustomBaseUrl").toString()}
+					</Checkbox>
+
+					{lmStudioBaseUrlSelected && (
+						<VSCodeTextField
+							value={apiConfiguration?.lmStudioBaseUrl || ""}
+							style={{ width: "100%", marginTop: 3 }}
+							type="url"
+							onInput={handleInputChange("lmStudioBaseUrl")}
+							placeholder={t("settings.provider.customBaseUrl.placeholder", {
+								defaultUrl: "http://localhost:1234/v1",
+							}).toString()}></VSCodeTextField>
+					)}
+
 					<VSCodeTextField
 						value={apiConfiguration?.lmStudioModelId || ""}
 						style={{ width: "100%" }}
@@ -1314,18 +1346,18 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
 						}}>
-						LM Studio allows you to run models locally on your computer. For instructions on how to get
-						started, see their
+						{t("settings.provider.providers.lmstudio.description").toString()}
+						<br />
 						<VSCodeLink href="https://lmstudio.ai/docs" style={{ display: "inline", fontSize: "inherit" }}>
 							{t("settings.provider.providers.lmstudio.quickstartGuide").toString()}
 						</VSCodeLink>
-						You will also need to start LM Studio's{" "}
+						<br />
 						<VSCodeLink
 							href="https://lmstudio.ai/docs/basics/server"
 							style={{ display: "inline", fontSize: "inherit" }}>
 							{t("settings.provider.providers.lmstudio.localServer").toString()}
-						</VSCodeLink>{" "}
-						feature to use it with this extension.{" "}
+						</VSCodeLink>
+						<br />
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
 							({t("settings.provider.common.modelCapabilityNote").toString()})
 						</span>
@@ -1337,14 +1369,19 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.deepSeekApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 5 }}
 						type="password"
 						onInput={handleInputChange("deepSeekApiKey")}
 						placeholder={t("settings.provider.providers.deepseek.placeholder").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.deepseek.title").toString()}
-						</span>
+						<span>{t("settings.provider.providers.deepseek.title").toString()}</span>
 					</VSCodeTextField>
+
+					{!apiConfiguration?.deepSeekApiKey && (
+						<VSCodeButtonLink href="https://platform.deepseek.com/" style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.deepseek.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -1352,16 +1389,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							color: "var(--vscode-descriptionForeground)",
 						}}>
 						{t("settings.provider.apiKey.storedLocally").toString()}.
-						{!apiConfiguration?.deepSeekApiKey && (
-							<VSCodeLink
-								href="https://platform.deepseek.com/"
-								style={{
-									display: "inline",
-									fontSize: "inherit",
-								}}>
-								{t("settings.provider.providers.deepseek.getKey").toString()}
-							</VSCodeLink>
-						)}
 					</p>
 				</div>
 			)}
@@ -1370,9 +1397,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<div className="dropdown-container">
 						<label htmlFor="vscode-lm-model">
-							<span style={{ fontWeight: 500 }}>
-								{t("settings.provider.providers.vscode.modelSelector").toString()}
-							</span>
+							<span>{t("settings.provider.providers.vscode.modelSelector").toString()}</span>
 						</label>
 						{vsCodeLmModels.length > 0 ? (
 							<Dropdown
@@ -1413,7 +1438,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 								style={{
 									fontSize: "12px",
 									marginTop: "5px",
-									color: "var(--vscode-descriptionForeground)",
+									color: "var(--vscode-errorForeground)",
 								}}>
 								{t("settings.provider.providers.vscode.noModels").toString()}
 							</p>
@@ -1436,22 +1461,18 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.ollamaBaseUrl || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 5 }}
 						type="url"
 						onInput={handleInputChange("ollamaBaseUrl")}
 						placeholder={t("settings.provider.providers.ollama.enterBaseUrl").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.ollama.baseUrl").toString()}
-						</span>
+						<span>{t("settings.provider.providers.ollama.baseUrl").toString()}</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.ollamaModelId || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 5 }}
 						onInput={handleInputChange("ollamaModelId")}
 						placeholder={t("settings.provider.providers.ollama.enterModelId").toString()}>
-						<span style={{ fontWeight: 500 }}>
-							{t("settings.provider.providers.ollama.modelId").toString()}
-						</span>
+						<span>{t("settings.provider.providers.ollama.modelId").toString()}</span>
 					</VSCodeTextField>
 					{ollamaModels.length > 0 && (
 						<VSCodeRadioGroup
@@ -1498,6 +1519,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							style={{ display: "inline" }}>
 							简体中文
 						</VSCodeLink>
+						<br />
 						<span style={{ color: "var(--vscode-errorForeground)" }}>
 							({t("settings.provider.common.modelCapabilityNote").toString()})
 						</span>
@@ -1509,17 +1531,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				<div>
 					<VSCodeTextField
 						value={apiConfiguration?.unboundApiKey || ""}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: 5 }}
 						type="password"
 						onChange={handleInputChange("unboundApiKey")}
 						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>Unbound API Key</span>
+						<span>Unbound API Key</span>
 					</VSCodeTextField>
 					{!apiConfiguration?.unboundApiKey && (
-						<VSCodeButtonLink
-							href="https://gateway.getunbound.ai"
-							style={{ margin: "5px 0 0 0" }}
-							appearance="secondary">
+						<VSCodeButtonLink href="https://gateway.getunbound.ai" style={{ margin: "5px 0 0 0" }}>
 							Get Unbound API Key
 						</VSCodeButtonLink>
 					)}
@@ -1537,7 +1556,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 			{apiErrorMessage && (
 				<p
 					style={{
-						margin: "-4px 0 4px 0",
+						margin: "0px 0 4px 0",
 						fontSize: 12,
 						color: "var(--vscode-errorForeground)",
 					}}>
@@ -1558,7 +1577,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					<>
 						<div className="dropdown-container">
 							<label htmlFor="model-id">
-								<span style={{ fontWeight: 500 }}>Model</span>
+								<span>Model</span>
 							</label>
 							{selectedProvider === "anthropic" && createDropdown(anthropicModels)}
 							{selectedProvider === "bedrock" && createDropdown(bedrockModels)}
@@ -1610,6 +1629,10 @@ export function getGlamaAuthUrl(uriScheme?: string) {
 	const callbackUrl = `${uriScheme || "vscode"}://CoolCline.coolcline/glama`
 
 	return `https://glama.ai/oauth/authorize?callback_url=${encodeURIComponent(callbackUrl)}`
+}
+
+export function getopenAiNativeAuthUrl(uriScheme?: string) {
+	return `https://openai.com/api/auth/callback?callback_url=${uriScheme || "vscode"}://CoolCline.coolcline/openai-native`
 }
 
 export function getOpenRouterAuthUrl(uriScheme?: string) {

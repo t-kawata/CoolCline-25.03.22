@@ -215,7 +215,7 @@ export const ModelPicker: React.FC<ModelPickerProps> = ({
 			</style>
 			<div style={{ marginTop: 3 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-					<span style={{ fontWeight: 500 }}>{t("settings.provider.model.title").toString()}</span>
+					<span style={{ fontWeight: 500 }}>Model</span>
 					<VSCodeButton appearance="icon" onClick={handleRefreshModels} style={{ padding: 5, margin: 0 }}>
 						<span className="codicon codicon-refresh" />
 					</VSCodeButton>

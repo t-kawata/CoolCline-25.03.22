@@ -165,7 +165,7 @@ const GlamaModelPicker: React.FC = () => {
 			</style>
 			<div style={{ marginTop: 3 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-					<span style={{ fontWeight: 500 }}>{t("settings.provider.model.title").toString()}</span>
+					<span>Model</span>
 					<VSCodeButton appearance="icon" onClick={handleRefreshModels} style={{ padding: 5, margin: 0 }}>
 						<span className="codicon codicon-refresh" />
 					</VSCodeButton>

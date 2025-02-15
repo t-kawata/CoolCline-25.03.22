@@ -48,7 +48,7 @@ const McpView = ({ onDone }: McpViewProps) => {
 					alignItems: "center",
 					padding: "10px 17px 10px 20px",
 				}}>
-				<h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>{String(t("mcp.title"))}</h3>
+				<h3 style={{ fontWeight: "800", fontSize: 15, margin: 0 }}>{String(t("mcp.title"))}</h3>
 				<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
 			</div>
 
