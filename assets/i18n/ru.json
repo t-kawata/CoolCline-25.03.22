@@ -86,9 +86,16 @@
 			"modeBecause": "режим, потому что:",
 			"mode": "режим",
 			"response": "Ответ",
-			"copyAsMarkdown": "Копировать как Markdown"
+			"copyAsMarkdown": "Копировать как Markdown",
+			"warning": "Предупреждение",
+			"taskIsRunningNote": "В настоящее время выполняется задача. Вы можете:",
+			"taskIsRunningSelect1": "1. Дождаться завершения текущей задачи",
+			"taskIsRunningSelect2": "2. Отменить текущую задачу"
 		},
 		"actions": {
+			"send": "Отправить",
+			"cancelTask": "Отменить задачу",
+			"await": "Ожидать",
 			"edit": "Редактировать...",
 			"separator": "────",
 			"newChat": "Новый чат",

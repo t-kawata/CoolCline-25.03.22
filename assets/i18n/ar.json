@@ -86,13 +86,19 @@
 			"modeBecause": "الوضع لأن:",
 			"mode": "وضع",
 			"response": "استجابة",
-			"copyAsMarkdown": "نسخ كمارك داون"
+			"copyAsMarkdown": "نسخ كمارك داون",
+			"warning": "تحذير",
+			"taskIsRunningNote": "هناك مهمة قيد التنفيذ حالياً. يمكنك:",
+			"taskIsRunningSelect1": "1. انتظار اكتمال المهمة الحالية",
+			"taskIsRunningSelect2": "2. إلغاء المهمة الحالية"
 		},
 		"actions": {
+			"send": "إرسال",
+			"cancelTask": "إلغاء المهمة",
+			"await": "انتظار",
 			"edit": "تحرير...",
 			"separator": "────",
 			"newChat": "محادثة جديدة",
-			"cancel": "إلغاء",
 			"retry": "إعادة المحاولة",
 			"startNewTask": "بدء مهمة جديدة",
 			"proceedAnyways": "المتابعة على أي حال",

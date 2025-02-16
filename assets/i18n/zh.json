@@ -86,9 +86,16 @@
 			"modeBecause": "模式，原因：",
 			"mode": "模式",
 			"response": "响应",
-			"copyAsMarkdown": "复制为 Markdown"
+			"copyAsMarkdown": "复制为 Markdown",
+			"warning": "警告",
+			"taskIsRunningNote": "当前有任务正在处理中。您可以：",
+			"taskIsRunningSelect1": "1. 等待当前任务完成",
+			"taskIsRunningSelect2": "2. 取消当前任务"
 		},
 		"actions": {
+			"send": "发送",
+			"cancelTask": "取消任务",
+			"await": "等待",
 			"edit": "编辑...",
 			"separator": "────",
 			"newChat": "新建聊天",

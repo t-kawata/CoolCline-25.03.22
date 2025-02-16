@@ -86,9 +86,16 @@
 			"modeBecause": "režimu protože:",
 			"mode": "režim",
 			"response": "Odpověď",
-			"copyAsMarkdown": "Kopírovat jako Markdown"
+			"copyAsMarkdown": "Kopírovat jako Markdown",
+			"warning": "Varování",
+			"taskIsRunningNote": "Aktuálně běží úloha. Můžete:",
+			"taskIsRunningSelect1": "1. Počkat na dokončení aktuální úlohy",
+			"taskIsRunningSelect2": "2. Zrušit aktuální úlohu"
 		},
 		"actions": {
+			"send": "Odeslat",
+			"cancelTask": "Zrušit úlohu",
+			"await": "Čekat",
 			"edit": "Upravit...",
 			"separator": "────",
 			"newChat": "Nový chat",

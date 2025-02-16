@@ -86,9 +86,16 @@
 			"modeBecause": "मोड क्योंकि:",
 			"mode": "मोड",
 			"response": "प्रतिक्रिया",
-			"copyAsMarkdown": "मार्कडाउन के रूप में कॉपी करें"
+			"copyAsMarkdown": "मार्कडाउन के रूप में कॉपी करें",
+			"warning": "Warning",
+			"taskIsRunningNote": "एक टास्क अभी चल रहा है। आप यह कर सकते हैं:",
+			"taskIsRunningSelect1": "1. वर्तमान टास्क के पूरा होने का इंतज़ार करें",
+			"taskIsRunningSelect2": "2. वर्तमान टास्क को रोक दें"
 		},
 		"actions": {
+			"send": "भेजें",
+			"cancelTask": "टास्क रोकें",
+			"await": "इंतज़ार करें",
 			"edit": "संपादित करें...",
 			"separator": "────",
 			"newChat": "नई चैट",

@@ -86,9 +86,16 @@
 			"modeBecause": "modo porque:",
 			"mode": "modo",
 			"response": "Respuesta",
-			"copyAsMarkdown": "Copiar como Markdown"
+			"copyAsMarkdown": "Copiar como Markdown",
+			"warning": "Advertencia",
+			"taskIsRunningNote": "Una tarea está en ejecución. Puedes:",
+			"taskIsRunningSelect1": "1. Esperar a que la tarea actual se complete",
+			"taskIsRunningSelect2": "2. Cancelar la tarea actual"
 		},
 		"actions": {
+			"send": "Enviar",
+			"cancelTask": "Cancelar tarea",
+			"await": "Esperar",
 			"edit": "Editar...",
 			"separator": "────",
 			"newChat": "Nuevo chat",

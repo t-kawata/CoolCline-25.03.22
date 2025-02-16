@@ -86,9 +86,16 @@
 			"modeBecause": "módra, mert:",
 			"mode": "mód",
 			"response": "Válasz",
-			"copyAsMarkdown": "Másolás Markdown formátumban"
+			"copyAsMarkdown": "Másolás Markdown formátumban",
+			"warning": "Figyelmeztetés",
+			"taskIsRunningNote": "Jelenleg egy feladat fut. A következőket teheti:",
+			"taskIsRunningSelect1": "1. Várja meg az aktuális feladat befejezését",
+			"taskIsRunningSelect2": "2. Megszakítja az aktuális feladatot"
 		},
 		"actions": {
+			"send": "Küldés",
+			"cancelTask": "Feladat megszakítása",
+			"await": "Várakozás",
 			"edit": "Szerkesztés...",
 			"separator": "────",
 			"newChat": "Új beszélgetés",

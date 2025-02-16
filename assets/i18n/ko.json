@@ -86,13 +86,19 @@
 			"modeBecause": "모드 이유:",
 			"mode": "모드",
 			"response": "응답",
-			"copyAsMarkdown": "마크다운으로 복사"
+			"copyAsMarkdown": "마크다운으로 복사",
+			"warning": "경고",
+			"taskIsRunningNote": "현재 작업이 실행 중입니다. 다음과 같은 옵션이 있습니다:",
+			"taskIsRunningSelect1": "1. 현재 작업이 완료될 때까지 대기",
+			"taskIsRunningSelect2": "2. 현재 작업 취소"
 		},
 		"actions": {
+			"send": "보내기",
+			"cancelTask": "작업 취소",
+			"await": "대기",
 			"edit": "편집...",
 			"separator": "────",
 			"newChat": "새 채팅",
-			"cancel": "취소",
 			"retry": "재시도",
 			"startNewTask": "새 작업 시작",
 			"proceedAnyways": "계속 진행",
@@ -431,8 +437,7 @@
 							"title": "모델 기능",
 							"imageSupport": {
 								"title": "이미지 지원",
-								"description": "모델이 입력의 이미지를 처리하고 이해할 수 있는 경우 활성화. 이미지 기반 지원 및 시각적 코드 이해에 필요",
-								"note": "모델이 이미지를 분석하고 이해하여 시각적 코드 지원에 필수적"
+								"description": "모델이 입력의 이미지를 처리하고 이해할 수 있는 경우 활성화. 이미지 기반 지원 및 시각적 코드 이해에 필수적"
 							},
 							"computerUse": {
 								"title": "컴퓨터 사용",

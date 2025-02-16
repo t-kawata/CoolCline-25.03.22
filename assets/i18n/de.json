@@ -86,9 +86,16 @@
 			"modeBecause": "Modus, weil:",
 			"mode": "Modus",
 			"response": "Antwort",
-			"copyAsMarkdown": "Als Markdown kopieren"
+			"copyAsMarkdown": "Als Markdown kopieren",
+			"warning": "Warnung",
+			"taskIsRunningNote": "Eine Aufgabe wird derzeit ausgeführt. Sie können:",
+			"taskIsRunningSelect1": "1. Warten Sie, bis die aktuelle Aufgabe abgeschlossen ist",
+			"taskIsRunningSelect2": "2. Die aktuelle Aufgabe abbrechen"
 		},
 		"actions": {
+			"send": "Senden",
+			"cancelTask": "Aufgabe abbrechen",
+			"await": "Warten",
 			"edit": "Bearbeiten...",
 			"separator": "────",
 			"newChat": "Neuer Chat",

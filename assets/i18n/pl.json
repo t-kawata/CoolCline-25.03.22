@@ -86,9 +86,16 @@
 			"modeBecause": "tryb, ponieważ:",
 			"mode": "tryb",
 			"response": "Odpowiedź",
-			"copyAsMarkdown": "Kopiuj jako Markdown"
+			"copyAsMarkdown": "Kopiuj jako Markdown",
+			"warning": "Ostrzeżenie",
+			"taskIsRunningNote": "Zadanie jest obecnie uruchomione. Możesz:",
+			"taskIsRunningSelect1": "1. Poczekać na zakończenie bieżącego zadania",
+			"taskIsRunningSelect2": "2. Anulować bieżące zadanie"
 		},
 		"actions": {
+			"send": "Wyślij",
+			"cancelTask": "Anuluj zadanie",
+			"await": "Czekaj",
 			"edit": "Edytuj...",
 			"separator": "────",
 			"newChat": "Nowy czat",

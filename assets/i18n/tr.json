@@ -86,9 +86,16 @@
 			"modeBecause": "mod, çünkü:",
 			"mode": "mod",
 			"response": "Yanıt",
-			"copyAsMarkdown": "Markdown olarak kopyala"
+			"copyAsMarkdown": "Markdown olarak kopyala",
+			"warning": "Uyarı",
+			"taskIsRunningNote": "Şu anda bir görev çalışıyor. Şunları yapabilirsiniz:",
+			"taskIsRunningSelect1": "1. Mevcut görevin tamamlanmasını bekleyin",
+			"taskIsRunningSelect2": "2. Mevcut görevi iptal edin"
 		},
 		"actions": {
+			"send": "Gönder",
+			"cancelTask": "Görevi İptal Et",
+			"await": "Bekle",
 			"edit": "Düzenle...",
 			"separator": "────",
 			"newChat": "Yeni sohbet",

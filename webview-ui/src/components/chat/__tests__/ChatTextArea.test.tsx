@@ -101,7 +101,7 @@ describe("ChatTextArea", () => {
 			expect(mockPostMessage).not.toHaveBeenCalled()
 		})
 
-		it("should show loading state while enhancing", () => {
+		it("should show sync state while enhancing", () => {
 			;(useExtensionState as jest.Mock).mockReturnValue({
 				filePaths: [],
 				openedTabs: [],
@@ -115,8 +115,8 @@ describe("ChatTextArea", () => {
 			const enhanceButton = screen.getByRole("button", { name: /enhance prompt/i })
 			fireEvent.click(enhanceButton)
 
-			const loadingSpinner = screen.getByText("", { selector: ".codicon-loading" })
-			expect(loadingSpinner).toBeInTheDocument()
+			const syncSpinner = screen.getByText("", { selector: ".codicon-sync" })
+			expect(syncSpinner).toBeInTheDocument()
 		})
 	})
 

@@ -86,9 +86,16 @@
 			"modeBecause": "モードの理由：",
 			"mode": "モード",
 			"response": "応答",
-			"copyAsMarkdown": "Markdownとしてコピー"
+			"copyAsMarkdown": "Markdownとしてコピー",
+			"warning": "警告",
+			"taskIsRunningNote": "タスクが実行中です。以下の選択肢があります：",
+			"taskIsRunningSelect1": "1. 現在のタスクが完了するまで待機",
+			"taskIsRunningSelect2": "2. 現在のタスクをキャンセル"
 		},
 		"actions": {
+			"send": "送信",
+			"cancelTask": "タスクをキャンセル",
+			"await": "待機",
 			"edit": "編集...",
 			"separator": "────",
 			"newChat": "新規チャット",

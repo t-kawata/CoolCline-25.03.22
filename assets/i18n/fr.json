@@ -86,9 +86,16 @@
 			"modeBecause": "mode car :",
 			"mode": "mode",
 			"response": "Réponse",
-			"copyAsMarkdown": "Copier en Markdown"
+			"copyAsMarkdown": "Copier en Markdown",
+			"warning": "Avertissement",
+			"taskIsRunningNote": "Une tâche est en cours d'exécution. Vous pouvez :",
+			"taskIsRunningSelect1": "1. Attendre que la tâche en cours se termine",
+			"taskIsRunningSelect2": "2. Annuler la tâche en cours"
 		},
 		"actions": {
+			"send": "Envoyer",
+			"cancelTask": "Annuler la tâche",
+			"await": "Attendre",
 			"edit": "Modifier...",
 			"separator": "────",
 			"newChat": "Nouvelle conversation",

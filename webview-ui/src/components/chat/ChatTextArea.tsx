@@ -879,7 +879,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						<div style={{ display: "flex", alignItems: "center" }}>
 							{isEnhancingPrompt ? (
 								<span
-									className="codicon codicon-loading codicon-modifier-spin"
+									className="codicon codicon-sync codicon-modifier-spin"
 									style={{
 										color: "var(--vscode-input-foreground)",
 										opacity: 0.5,
@@ -908,12 +908,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							style={{ fontSize: 16.5 }}
 						/>
 						<span
-							className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon ${
+							title={textAreaDisabled ? "取消任务" : "发送消息"}
+							className={`input-icon-button codicon ${
 								textAreaDisabled ? "codicon-sync codicon-modifier-spin" : "codicon-send"
 							}`}
 							onClick={() => {
 								if (textAreaDisabled) {
-									setIsTaskInProgressDialogOpen(true)
+									// setIsTaskInProgressDialogOpen(true) // 如果是在发送中，点击就取消任务，不用弹窗对话框
+									vscode.postMessage({ type: "cancelTask" })
 									vscode.postMessage({
 										type: "playSound",
 										audioType: "celebration",
@@ -929,12 +931,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				<Dialog open={isTaskInProgressDialogOpen} onOpenChange={setIsTaskInProgressDialogOpen}>
 					<DialogContent className="w-[90%] sm:w-[400px]">
 						<DialogHeader>
-							<DialogTitle>{String(t("common.status.error"))}</DialogTitle>
+							<DialogTitle>{String(t("chat.messages.warning"))}</DialogTitle>
 							<DialogDescription className="text-destructive">
-								当前有任务正在处理。您可以：
+								{String(t("chat.messages.taskIsRunningNote"))}
 								<ol>
-									<li>1. 等待当前任务完成</li>
-									<li>2. 取消当前任务</li>
+									<li>{String(t("chat.messages.taskIsRunningSelect1"))}</li>
+									<li>{String(t("chat.messages.taskIsRunningSelect2"))}</li>
 								</ol>
 							</DialogDescription>
 						</DialogHeader>
@@ -942,7 +944,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							<VSCodeButton
 								className="w-full sm:w-auto"
 								onClick={() => setIsTaskInProgressDialogOpen(false)}>
-								等待
+								{String(t("chat.actions.await"))}
 							</VSCodeButton>
 							<VSCodeButton
 								className="w-full sm:w-auto"
@@ -954,7 +956,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										audioType: "notification",
 									})
 								}}>
-								取消任务
+								{String(t("chat.actions.cancelTask"))}
 							</VSCodeButton>
 						</DialogFooter>
 					</DialogContent>

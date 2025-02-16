@@ -86,9 +86,16 @@
 			"modeBecause": "modalità perché:",
 			"mode": "modalità",
 			"response": "Risposta",
-			"copyAsMarkdown": "Copia come Markdown"
+			"copyAsMarkdown": "Copia come Markdown",
+			"warning": "Avviso",
+			"taskIsRunningNote": "Un'attività è attualmente in esecuzione. Puoi:",
+			"taskIsRunningSelect1": "1. Attendere il completamento dell'attività corrente",
+			"taskIsRunningSelect2": "2. Annullare l'attività corrente"
 		},
 		"actions": {
+			"send": "Invia",
+			"cancelTask": "Annulla attività",
+			"await": "Attendi",
 			"edit": "Modifica...",
 			"separator": "────",
 			"newChat": "Nuova chat",
