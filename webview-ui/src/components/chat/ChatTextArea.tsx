@@ -17,6 +17,8 @@ import { WebviewMessage } from "../../../../src/shared/WebviewMessage"
 import { Mode, getAllModes } from "../../../../src/shared/modes"
 import { CaretIcon } from "../common/CaretIcon"
 import { useTranslation } from "react-i18next"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog"
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -106,6 +108,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 		const contextMenuContainerRef = useRef<HTMLDivElement>(null)
 		const [isEnhancingPrompt, setIsEnhancingPrompt] = useState(false)
 		const [isFocused, setIsFocused] = useState(false)
+		const [isTaskInProgressDialogOpen, setIsTaskInProgressDialogOpen] = useState(false)
 
 		// Fetch git commits when Git is selected or when typing a hash
 		useEffect(() => {
@@ -304,8 +307,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 				const isComposing = event.nativeEvent?.isComposing ?? false
 				if (event.key === "Enter" && !event.shiftKey && !isComposing) {
-					event.preventDefault()
-					onSend()
+					if (textAreaDisabled) {
+						vscode.postMessage({
+							type: "playSound",
+							audioType: "celebration",
+						})
+						event.preventDefault()
+						setIsTaskInProgressDialogOpen(true)
+					} else {
+						event.preventDefault()
+						onSend()
+					}
 				}
 
 				if (event.key === "Backspace" && !isComposing) {
@@ -356,6 +368,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				setInputValue,
 				justDeletedSpaceAfterMention,
 				queryItems,
+				textAreaDisabled,
 			],
 		)
 
@@ -523,11 +536,11 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 		const selectStyle = {
 			fontSize: "11px",
-			cursor: textAreaDisabled ? "not-allowed" : "pointer",
+			cursor: "pointer",
 			backgroundColor: "transparent",
 			border: "none",
 			color: "var(--vscode-foreground)",
-			opacity: textAreaDisabled ? 0.5 : 0.8,
+			opacity: 0.8,
 			outline: "none",
 			paddingLeft: "20px",
 			paddingRight: "6px",
@@ -547,14 +560,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			top: "50%",
 			transform: "translateY(-45%)",
 			pointerEvents: "none" as const,
-			opacity: textAreaDisabled ? 0.5 : 0.8,
+			opacity: 0.8,
 		}
 
 		return (
 			<div
 				className="chat-text-area"
 				style={{
-					opacity: textAreaDisabled ? 0.5 : 1,
+					opacity: 1,
 					position: "relative",
 					display: "flex",
 					flexDirection: "column",
@@ -681,7 +694,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							textAreaRef.current = el
 						}}
 						value={inputValue}
-						disabled={textAreaDisabled}
+						disabled={false}
 						onChange={(e) => {
 							handleInputChange(e)
 							updateHighlights()
@@ -720,7 +733,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							padding: "2px",
 							paddingRight: "8px",
 							marginBottom: thumbnailsHeight > 0 ? `${thumbnailsHeight + 16}px` : 0,
-							cursor: textAreaDisabled ? "not-allowed" : undefined,
+							cursor: "text",
 							flex: "0 1 auto",
 							zIndex: 2,
 							scrollbarWidth: "none",
@@ -760,7 +773,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						<div style={{ position: "relative", display: "inline-block" }}>
 							<select
 								value={mode}
-								disabled={textAreaDisabled}
+								disabled={false}
 								onChange={(e) => {
 									const value = e.target.value
 									if (value === "prompts-action") {
@@ -777,6 +790,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									...selectStyle,
 									minWidth: "70px",
 									flex: "0 0 auto",
+									opacity: 1,
 								}}>
 								{getAllModes(customModes).map((mode) => (
 									<option key={mode.slug} value={mode.slug} style={{ ...optionStyle }}>
@@ -811,7 +825,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							}}>
 							<select
 								value={currentApiConfigName || ""}
-								disabled={textAreaDisabled}
+								disabled={false}
 								onChange={(e) => {
 									const value = e.target.value
 									if (value === "settings-action") {
@@ -894,12 +908,57 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							style={{ fontSize: 16.5 }}
 						/>
 						<span
-							className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon codicon-send`}
-							onClick={() => !textAreaDisabled && onSend()}
+							className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon ${
+								textAreaDisabled ? "codicon-sync codicon-modifier-spin" : "codicon-send"
+							}`}
+							onClick={() => {
+								if (textAreaDisabled) {
+									setIsTaskInProgressDialogOpen(true)
+									vscode.postMessage({
+										type: "playSound",
+										audioType: "celebration",
+									})
+								} else {
+									onSend()
+								}
+							}}
 							style={{ fontSize: 15 }}
 						/>
 					</div>
 				</div>
+				<Dialog open={isTaskInProgressDialogOpen} onOpenChange={setIsTaskInProgressDialogOpen}>
+					<DialogContent className="w-[90%] sm:w-[400px]">
+						<DialogHeader>
+							<DialogTitle>{String(t("common.status.error"))}</DialogTitle>
+							<DialogDescription className="text-destructive">
+								当前有任务正在处理。您可以：
+								<ol>
+									<li>1. 等待当前任务完成</li>
+									<li>2. 取消当前任务</li>
+								</ol>
+							</DialogDescription>
+						</DialogHeader>
+						<DialogFooter className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full">
+							<VSCodeButton
+								className="w-full sm:w-auto"
+								onClick={() => setIsTaskInProgressDialogOpen(false)}>
+								等待
+							</VSCodeButton>
+							<VSCodeButton
+								className="w-full sm:w-auto"
+								onClick={() => {
+									setIsTaskInProgressDialogOpen(false)
+									vscode.postMessage({ type: "cancelTask" })
+									vscode.postMessage({
+										type: "playSound",
+										audioType: "notification",
+									})
+								}}>
+								取消任务
+							</VSCodeButton>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 		)
 	},
