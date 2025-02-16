@@ -555,8 +555,8 @@
 					"description": "VS Code 内蔵の言語モデル API を使用",
 					"modelSelector": "言語モデル",
 					"selectModel": "モデルを選択...",
-					"noModels": "VS Code LM APIがサポートするモデルの取得に失敗しました！VS Code拡張機能マーケットプレイスからGitHub CopilotまたはGitHub Copilot Chatを検索し、インストールしてログインする必要があります。その後、CoolClineはそれらのモデルにアクセスできるようになります。VS Code組み込みの言語モデルを使用するため、APIキーやbaseURLの設定は不要です。",
-					"experimentalNote": "注意：これは非常に実験的な統合であり、予期通りに動作しない可能性があります。問題がある場合は、CoolCline GitHub リポジトリに報告してください。",
+					"noModels": "VS Code LM APIがサポートするモデルの取得に失敗しました！注意：このメッセージが表示された場合、操作が完了していないことを意味します。指示に従って操作を完了してください。CoolClineがモデルにアクセスできるようになる前に、VS Code拡張機能マーケットプレイスでGitHub Copilotを検索、インストール、ログインする必要があります。ログインしたアカウントがこれらを管理するため、APIキーの設定は必要ありません。",
+					"experimentalNote": "注意：この機能は不安定な可能性があります。異常が発生した場合は、CoolClineにissueを提出してフィードバックしてください。",
 					"useCustomBaseUrl": "カスタム Base URL を使用"
 				},
 				"unbound": {

@@ -555,8 +555,8 @@
 					"description": "Použít vestavěné API jazykového modelu VS Code",
 					"modelSelector": "Jazykový model",
 					"selectModel": "Vybrat model...",
-					"noModels": "Nepodařilo se získat modely podporované VS Code LM API! Nejprve musíte vyhledat GitHub Copilot nebo GitHub Copilot Chat v marketplace rozšíření VS Code, nainstalovat je a přihlásit se. Poté bude CoolCline moci přistupovat k jejich modelům. Není potřeba konfigurace API klíče ani baseURL, protože se používá vestavěný jazykový model VS Code.",
-					"experimentalNote": "Poznámka: Toto je velmi experimentální integrace a nemusí fungovat podle očekávání. Prosím, nahlaste jakékoli problémy do repozitáře CoolCline na GitHubu.",
+					"noModels": "Nepodařilo se získat modely podporované VS Code LM API! Poznámka: Pokud se zobrazí tato zpráva, znamená to, že operace nebyla dokončena. Postupujte podle pokynů k dokončení operace. Nejprve musíte vyhledat, nainstalovat a přihlásit se do GitHub Copilot v marketplace rozšíření VS Code, než bude mít CoolCline přístup k jejich modelům. Konfigurace API klíče není nutná, protože to spravuje přihlášený účet.",
+					"experimentalNote": "Poznámka: Tato funkce může být nestabilní. Pokud se vyskytnou anomálie, odešlete prosím issue do CoolCline pro zpětnou vazbu.",
 					"useCustomBaseUrl": "Použít vlastní Base URL"
 				},
 				"unbound": {

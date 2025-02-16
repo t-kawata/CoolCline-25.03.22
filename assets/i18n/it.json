@@ -555,8 +555,8 @@
 					"description": "Usa l'API del modello linguistico integrato di VS Code",
 					"modelSelector": "Modello linguistico",
 					"selectModel": "Seleziona modello...",
-					"noModels": "Impossibile ottenere i modelli supportati dall'API LM di VS Code! È necessario prima cercare GitHub Copilot o GitHub Copilot Chat dal marketplace delle estensioni di VS Code, installarli ed effettuare l'accesso. Successivamente, CoolCline potrà accedere ai loro modelli. Non è necessaria alcuna configurazione di chiave API o baseURL poiché utilizza il modello di linguaggio integrato di VS Code.",
-					"experimentalNote": "Nota: Questa è un'integrazione molto sperimentale e potrebbe non funzionare come previsto. Per favore, segnala eventuali problemi al repository GitHub di CoolCline.",
+					"noModels": "Impossibile ottenere i modelli supportati da VS Code LM API! Nota: Se viene visualizzato questo messaggio, significa che un'operazione non è stata completata. Segui le istruzioni per completare l'operazione. Devi prima cercare, installare e accedere a GitHub Copilot nel marketplace delle estensioni di VS Code prima che CoolCline possa accedere ai loro modelli. Non è necessaria la configurazione della chiave API poiché l'account connesso gestisce questo.",
+					"experimentalNote": "Nota: Questa funzionalità potrebbe essere instabile. Se si verificano anomalie, invia un issue a CoolCline per feedback.",
 					"useCustomBaseUrl": "Usa Base URL personalizzato"
 				},
 				"unbound": {

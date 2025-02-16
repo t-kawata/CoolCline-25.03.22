@@ -1448,10 +1448,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							style={{
 								fontSize: "12px",
 								marginTop: "5px",
-								color: "var(--vscode-errorForeground)",
+								color: "var(--vscode-descriptionForeground)",
 								fontWeight: 500,
 							}}>
-							{t("settings.provider.providers.vscode.experimentalNote").toString()} README:{" "}
+							{t("chat.task.seeMore").toString()} :{" "}
 							<VSCodeLink href="https://github.com/coolcline/coolcline/blob/main/docs/user-docs/en/configuration/provides.md">
 								en
 							</VSCodeLink>
@@ -1459,6 +1459,9 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							<VSCodeLink href="https://gitee.com/coolcline/coolcline/blob/main/docs/user-docs/zh/configuration/provides.md">
 								简体中文
 							</VSCodeLink>
+							<br />
+							<br />
+							{t("settings.provider.providers.vscode.experimentalNote").toString()}
 						</p>
 					</div>
 				</div>

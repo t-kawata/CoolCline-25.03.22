@@ -555,8 +555,8 @@
 					"description": "使用 VS Code 内置的语言模型 API",
 					"modelSelector": "语言模型",
 					"selectModel": "选择模型...",
-					"noModels": "获取 VS Code LM API 支持的模型失败！您需要先从 VS Code 扩展市场搜索 GitHub Copilot 或 GitHub Copilot Chat，安装并登录。然后 CoolCline 就可以获取到它们的模型。无需配置 API Key、baseURL，因为这里使用的是 VSCode 内置的语言模型。",
-					"experimentalNote": "注意：这是一个非常实验性的集成，可能无法按预期工作。请将任何问题报告给 CoolCline GitHub 仓库。",
+					"noModels": "获取 VS Code LM API 支持的模型失败！注意：如果显示这个提示信息，说明有操作没有完成，请按提示完成操作，您需要先在 VS Code 扩展市场搜索、安装、登录 GitHub Copilot，然后 CoolCline 才可以获取到它们的模型。无需配置 API Key，因为登录的账号管理这些。",
+					"experimentalNote": "注意：这个功能可能不稳定，如果出现异常，请去 CoolCline 提交 issue 反馈。",
 					"useCustomBaseUrl": "使用自定义 Base URL"
 				},
 				"unbound": {

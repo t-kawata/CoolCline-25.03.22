@@ -553,8 +553,8 @@
 					"description": "VS Code 내장 언어 모델 API 사용",
 					"modelSelector": "언어 모델",
 					"selectModel": "모델 선택...",
-					"noModels": "VS Code LM API가 지원하는 모델을 가져오지 못했습니다! VS Code 확장 마켓플레이스에서 GitHub Copilot 또는 GitHub Copilot Chat을 먼저 검색하여 설치하고 로그인해야 합니다. 그러면 CoolCline이 해당 모델에 액세스할 수 있습니다. VS Code의 내장 언어 모델을 사용하므로 API 키나 baseURL 구성이 필요하지 않습니다.",
-					"experimentalNote": "참고: 이것은 매우 실험적인 통합이며 예상대로 작동하지 않을 수 있습니다. 문제가 있으면 CoolCline GitHub 저장소에 보고해 주세요.",
+					"noModels": "VS Code LM API가 지원하는 모델을 가져오지 못했습니다! 참고: 이 메시지가 표시되면 작업이 완료되지 않았음을 의미합니다. 안내에 따라 작업을 완료하세요. CoolCline이 모델에 액세스하기 전에 VS Code 확장 마켓플레이스에서 GitHub Copilot을 검색, 설치하고 로그인해야 합니다. 로그인된 계정이 이를 관리하므로 API 키 구성이 필요하지 않습니다.",
+					"experimentalNote": "참고: 이 기능은 불안정할 수 있습니다. 이상이 발생하면 CoolCline에 이슈를 제출하여 피드백을 주세요.",
 					"useCustomBaseUrl": "사용자 정의 Base URL 사용"
 				},
 				"unbound": {

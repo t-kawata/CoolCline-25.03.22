@@ -555,8 +555,8 @@
 					"description": "Használja a VS Code beépített nyelvi modell API-ját",
 					"modelSelector": "Nyelvi modell",
 					"selectModel": "Modell kiválasztása...",
-					"noModels": "Nem sikerült lekérni a VS Code LM API által támogatott modelleket! Először keresse meg a GitHub Copilot vagy GitHub Copilot Chat bővítményt a VS Code bővítmény piactéren, telepítse és jelentkezzen be. Ezután a CoolCline hozzáférhet a modelljeikhez. Nincs szükség API kulcs vagy baseURL konfigurációra, mivel ez a VS Code beépített nyelvi modelljét használja.",
-					"experimentalNote": "Megjegyzés: Ez egy nagyon kísérleti integráció, és lehet, hogy nem a várt módon működik. Kérjük, jelentse a problémákat a CoolCline GitHub tárolójában.",
+					"noModels": "Nem sikerült lekérni a VS Code LM API által támogatott modelleket! Megjegyzés: Ha ez az üzenet megjelenik, az azt jelenti, hogy egy művelet nem fejeződött be. Kérjük, kövesse az utasításokat a művelet befejezéséhez. Először meg kell keresnie, telepítenie és bejelentkeznie a GitHub Copilot-ba a VS Code bővítmény piactéren, mielőtt a CoolCline hozzáférhetne a modelljeikhez. API kulcs konfigurálása nem szükséges, mivel a bejelentkezett fiók kezeli ezt.",
+					"experimentalNote": "Megjegyzés: Ez a funkció instabil lehet. Ha rendellenességek lépnek fel, kérjük, küldjön egy issue-t a CoolCline-nak visszajelzésként.",
 					"useCustomBaseUrl": "Egyéni Base URL használata"
 				},
 				"unbound": {

@@ -555,8 +555,8 @@
 					"description": "VS Code'un yerleşik dil modeli API'sini kullan",
 					"modelSelector": "Dil modeli",
 					"selectModel": "Model seç...",
-					"noModels": "VS Code LM API tarafından desteklenen modeller alınamadı! Önce VS Code Uzantı Mağazası'ndan GitHub Copilot veya GitHub Copilot Chat'i aramanız, yüklemeniz ve oturum açmanız gerekiyor. Ardından CoolCline onların modellerine erişebilecek. VS Code'un yerleşik dil modelini kullandığı için API anahtarı veya baseURL yapılandırması gerekmez.",
-					"experimentalNote": "Not: Bu çok deneysel bir entegrasyondur ve beklendiği gibi çalışmayabilir. Lütfen herhangi bir sorunu CoolCline GitHub deposuna bildirin.",
+					"noModels": "VS Code LM API tarafından desteklenen modeller alınamadı! Not: Bu mesaj görüntüleniyorsa, bir işlemin tamamlanmadığı anlamına gelir. Lütfen işlemi tamamlamak için talimatları izleyin. CoolCline'ın modellerine erişebilmesi için önce VS Code uzantı mağazasında GitHub Copilot'u aramanız, yüklemeniz ve oturum açmanız gerekir. Oturum açmış hesap bunu yönettiği için API anahtarı yapılandırması gerekmez.",
+					"experimentalNote": "Not: Bu özellik kararsız olabilir. Herhangi bir anormallik oluşursa, lütfen geri bildirim için CoolCline'a bir sorun gönderin.",
 					"useCustomBaseUrl": "Özel Base URL kullan"
 				},
 				"unbound": {
