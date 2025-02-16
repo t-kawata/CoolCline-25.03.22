@@ -96,6 +96,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({})
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
 	const disableAutoScrollRef = useRef(false)
+	const userScrolledRef = useRef(false)
 	const [showScrollToBottom, setShowScrollToBottom] = useState(false)
 	const [isAtBottom, setIsAtBottom] = useState(false)
 
@@ -349,6 +350,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				// setPrimaryButtonText(undefined)
 				// setSecondaryButtonText(undefined)
 				disableAutoScrollRef.current = false
+				userScrolledRef.current = false
 			}
 		},
 		[messages.length, coolclineAsk],
@@ -415,6 +417,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			setCoolClineAsk(undefined)
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
+			userScrolledRef.current = false
 		},
 		[coolclineAsk, startNewTask],
 	)
@@ -462,6 +465,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			setCoolClineAsk(undefined)
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
+			userScrolledRef.current = false
 		},
 		[coolclineAsk, startNewTask, isStreaming],
 	)
@@ -881,25 +885,26 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		[scrollToBottomSmooth, scrollToBottomAuto],
 	)
 
-	useEffect(() => {
-		if (!disableAutoScrollRef.current) {
-			setTimeout(() => {
-				scrollToBottomSmooth()
-			}, 50)
-			// return () => clearTimeout(timer) // dont cleanup since if visibleMessages.length changes it cancels.
-		}
-	}, [groupedMessages.length, scrollToBottomSmooth])
-
 	const handleWheel = useCallback((event: Event) => {
 		const wheelEvent = event as WheelEvent
 		if (wheelEvent.deltaY && wheelEvent.deltaY < 0) {
 			if (scrollContainerRef.current?.contains(wheelEvent.target as Node)) {
-				// user scrolled up
+				// 用户滚动时禁用自动滚动
 				disableAutoScrollRef.current = true
+				userScrolledRef.current = true
 			}
 		}
 	}, [])
+
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
+
+	useEffect(() => {
+		if (!userScrolledRef.current) {
+			setTimeout(() => {
+				scrollToBottomSmooth()
+			}, 50)
+		}
+	}, [groupedMessages.length, scrollToBottomSmooth])
 
 	const placeholderText = useMemo(() => {
 		const baseText = task ? String(t("chat.input.typeMessage")) : String(t("chat.input.typeTask"))
@@ -1012,6 +1017,17 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		[messages],
 	)
 
+	const atBottomStateChange = useCallback((isAtBottom: boolean) => {
+		setIsAtBottom(isAtBottom)
+		if (isAtBottom) {
+			// 如果到达底部，重置滚动状态
+			disableAutoScrollRef.current = false
+			userScrolledRef.current = false
+		}
+		// 只有在用户手动滚动且不在底部时显示滚动按钮
+		setShowScrollToBottom(userScrolledRef.current && !isAtBottom)
+	}, [])
+
 	return (
 		<div
 			style={{
@@ -1115,13 +1131,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							}} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
 							data={groupedMessages} // messages is the raw format returned by extension, modifiedMessages is the manipulated structure that combines certain messages of related type, and visibleMessages is the filtered structure that removes messages that should not be rendered
 							itemContent={itemContent}
-							atBottomStateChange={(isAtBottom) => {
-								setIsAtBottom(isAtBottom)
-								if (isAtBottom) {
-									disableAutoScrollRef.current = false
-								}
-								setShowScrollToBottom(disableAutoScrollRef.current && !isAtBottom)
-							}}
+							atBottomStateChange={atBottomStateChange}
 							atBottomThreshold={10} // anything lower causes issues with followOutput
 							initialTopMostItemIndex={groupedMessages.length - 1}
 						/>
