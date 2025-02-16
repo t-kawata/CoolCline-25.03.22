@@ -240,7 +240,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							value={apiConfiguration?.anthropicBaseUrl || ""}
 							style={{ width: "100%", marginTop: 3 }}
 							type="url"
-							onInput={handleInputChange("anthropicBaseUrl")}
+							onBlur={handleInputChange("anthropicBaseUrl")}
 							placeholder={t("settings.provider.customBaseUrl.placeholder", {
 								defaultUrl: "https://api.anthropic.com",
 							}).toString()}
@@ -251,7 +251,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.apiKey || ""}
 						style={{ marginTop: 8, width: "100%" }}
 						type="password"
-						onInput={handleInputChange("apiKey")}
+						onBlur={handleInputChange("apiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
 						<span style={{ fontWeight: 500 }}>
 							{t("settings.provider.providers.anthropic.title").toString()}
@@ -283,7 +283,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.glamaApiKey || ""}
 						style={{ width: "100%", marginTop: 8 }}
 						type="password"
-						onInput={handleInputChange("glamaApiKey")}
+						onBlur={handleInputChange("glamaApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
 						<span style={{ fontWeight: 500 }}>
 							{t("settings.provider.providers.glama.title").toString()}
@@ -313,7 +313,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.openAiNativeApiKey || ""}
 						style={{ width: "100%", marginTop: 8 }}
 						type="password"
-						onInput={handleInputChange("openAiNativeApiKey")}
+						onBlur={handleInputChange("openAiNativeApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
 						<span>{t("settings.provider.providers.openaiNative.title").toString()}</span>
 					</VSCodeTextField>
@@ -341,7 +341,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.mistralApiKey || ""}
 						style={{ width: "100%", marginTop: 8 }}
 						type="password"
-						onInput={handleInputChange("mistralApiKey")}
+						onBlur={handleInputChange("mistralApiKey")}
 						placeholder={t("settings.provider.providers.mistral.placeholder").toString()}>
 						<span style={{ fontWeight: 500 }}>
 							{t("settings.provider.providers.mistral.title").toString()}
@@ -388,7 +388,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							value={apiConfiguration?.openRouterBaseUrl || ""}
 							style={{ width: "100%", marginTop: 3 }}
 							type="url"
-							onInput={handleInputChange("openRouterBaseUrl")}
+							onBlur={handleInputChange("openRouterBaseUrl")}
 							placeholder={t("settings.provider.customBaseUrl.placeholder", {
 								defaultUrl: "https://openrouter.ai/api",
 							}).toString()}
@@ -399,7 +399,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.openRouterApiKey || ""}
 						style={{ width: "100%", marginTop: 8 }}
 						type="password"
-						onInput={handleInputChange("openRouterApiKey")}
+						onBlur={handleInputChange("openRouterApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
 						<span>{t("settings.provider.providers.openRouter.title").toString()}</span>
 					</VSCodeTextField>
@@ -533,7 +533,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.vertexProjectId || ""}
 						style={{ width: "100%" }}
 						type="text"
-						onInput={handleInputChange("vertexProjectId")}
+						onBlur={handleInputChange("vertexProjectId")}
 						placeholder={t("settings.provider.providers.vertex.enterProjectId").toString()}>
 						<span style={{ marginTop: 8 }}>
 							{t("settings.provider.providers.vertex.projectId").toString()}
@@ -603,7 +603,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.geminiApiKey || ""}
 						style={{ width: "100%", marginTop: 3 }}
 						type="password"
-						onInput={handleInputChange("geminiApiKey")}
+						onBlur={handleInputChange("geminiApiKey")}
 						placeholder={t("settings.provider.providers.gemini.placeholder").toString()}>
 						<span>{t("settings.provider.providers.gemini.title").toString()}</span>
 					</VSCodeTextField>
@@ -636,7 +636,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.openAiBaseUrl || ""}
 						style={{ width: "100%", marginTop: 5 }}
 						type="text"
-						onInput={handleInputChange("openAiBaseUrl")}
+						onBlur={handleInputChange("openAiBaseUrl")}
 						placeholder={t("settings.provider.providers.openai.enterBaseUrl").toString()}>
 						<span>{t("settings.provider.providers.openai.baseUrl").toString()}</span>
 					</VSCodeTextField>
@@ -644,7 +644,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.openAiApiKey || ""}
 						style={{ width: "100%", marginTop: 5 }}
 						type="password"
-						onInput={handleInputChange("openAiApiKey")}
+						onBlur={handleInputChange("openAiApiKey")}
 						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
 						<span>{t("settings.provider.providers.openai.title").toString()}</span>
 					</VSCodeTextField>
@@ -690,7 +690,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						<VSCodeTextField
 							value={apiConfiguration?.azureApiVersion || ""}
 							style={{ width: "100%", marginTop: 3 }}
-							onInput={handleInputChange("azureApiVersion")}
+							onBlur={handleInputChange("azureApiVersion")}
 							placeholder={`Default: ${azureOpenAiDefaultApiVersion}`}
 						/>
 					)}
@@ -1299,7 +1299,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							value={apiConfiguration?.lmStudioBaseUrl || ""}
 							style={{ width: "100%", marginTop: 3 }}
 							type="url"
-							onInput={handleInputChange("lmStudioBaseUrl")}
+							onBlur={handleInputChange("lmStudioBaseUrl")}
 							placeholder={t("settings.provider.customBaseUrl.placeholder", {
 								defaultUrl: "http://localhost:1234/v1",
 							}).toString()}></VSCodeTextField>
@@ -1308,7 +1308,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 					<VSCodeTextField
 						value={apiConfiguration?.lmStudioModelId || ""}
 						style={{ width: "100%" }}
-						onInput={handleInputChange("lmStudioModelId")}
+						onBlur={handleInputChange("lmStudioModelId")}
 						placeholder={t("settings.provider.providers.lmstudio.enterModelId").toString()}>
 						<span style={{ fontWeight: 500 }}>
 							{t("settings.provider.providers.lmstudio.modelId").toString()}
@@ -1371,7 +1371,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.deepSeekApiKey || ""}
 						style={{ width: "100%", marginTop: 5 }}
 						type="password"
-						onInput={handleInputChange("deepSeekApiKey")}
+						onBlur={handleInputChange("deepSeekApiKey")}
 						placeholder={t("settings.provider.providers.deepseek.placeholder").toString()}>
 						<span>{t("settings.provider.providers.deepseek.title").toString()}</span>
 					</VSCodeTextField>
@@ -1470,14 +1470,14 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						value={apiConfiguration?.ollamaBaseUrl || ""}
 						style={{ width: "100%", marginTop: 5 }}
 						type="url"
-						onInput={handleInputChange("ollamaBaseUrl")}
+						onBlur={handleInputChange("ollamaBaseUrl")}
 						placeholder={t("settings.provider.providers.ollama.enterBaseUrl").toString()}>
 						<span>{t("settings.provider.providers.ollama.baseUrl").toString()}</span>
 					</VSCodeTextField>
 					<VSCodeTextField
 						value={apiConfiguration?.ollamaModelId || ""}
 						style={{ width: "100%", marginTop: 5 }}
-						onInput={handleInputChange("ollamaModelId")}
+						onBlur={handleInputChange("ollamaModelId")}
 						placeholder={t("settings.provider.providers.ollama.enterModelId").toString()}>
 						<span>{t("settings.provider.providers.ollama.modelId").toString()}</span>
 					</VSCodeTextField>
