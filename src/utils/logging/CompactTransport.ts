@@ -2,8 +2,8 @@
  * @fileoverview 实现紧凑日志传输系统,支持文件输出功能
  */
 
-import { writeFileSync, mkdirSync } from "fs"
-import { dirname } from "path"
+import * as fs from "fs"
+import * as path from "path"
 import { CompactTransportConfig, ICompactTransport, CompactLogEntry, LogLevel, LOG_LEVELS } from "./types"
 
 /**
@@ -23,46 +23,106 @@ function isLevelEnabled(configLevel: LogLevel, entryLevel: string): boolean {
  * @implements {ICompactTransport}
  */
 export class CompactTransport implements ICompactTransport {
-	private sessionStart: number
-	private lastTimestamp: number
-	private filePath: string
-	private initialized: boolean = false
-	private initError: Error | null = null
+	private logStream: fs.WriteStream | null = null
+	private logDir: string
+	private logPath: string
+	private writeQueue: string[] = []
+	private isWriting: boolean = false
 
 	/**
 	 * 创建新的 CompactTransport 实例
 	 * @param config - 传输配置
 	 */
-	constructor(readonly config: CompactTransportConfig) {
-		this.sessionStart = Date.now()
-		this.lastTimestamp = this.sessionStart
-		this.filePath = config.filePath
+	constructor(private config: CompactTransportConfig) {
+		this.logDir = path.dirname(config.filePath)
+		this.logPath = config.filePath
+		this.initializeLogFile()
 	}
 
-	/**
-	 * 确保日志文件已初始化,包括创建必要的目录结构和会话开始标记
-	 * @private
-	 */
-	private ensureInitialized(): void {
-		if (this.initialized || this.initError) return
-
+	private async initializeLogFile() {
 		try {
-			mkdirSync(dirname(this.filePath), { recursive: true })
-			writeFileSync(this.filePath, "", { flag: "w" })
+			console.log("正在初始化日志文件:", {
+				logDir: this.logDir,
+				logPath: this.logPath,
+				exists: fs.existsSync(this.logDir),
+			})
 
-			const sessionStart = {
-				t: 0,
-				l: "info",
-				m: "日志会话已开始",
-				d: { timestamp: new Date(this.sessionStart).toISOString() },
+			// 确保日志目录存在
+			if (!fs.existsSync(this.logDir)) {
+				console.log("创建日志目录:", this.logDir)
+				await fs.promises.mkdir(this.logDir, { recursive: true })
 			}
-			writeFileSync(this.filePath, JSON.stringify(sessionStart) + "\n", { flag: "w" })
 
-			this.initialized = true
-		} catch (err) {
-			this.initError = new Error(`初始化日志文件失败: ${(err as Error).message}`)
-			// 不抛出错误，而是记录初始化失败
-			console.error(this.initError.message)
+			// 验证目录权限
+			try {
+				await fs.promises.access(this.logDir, fs.constants.W_OK)
+				console.log("日志目录权限验证成功:", this.logDir)
+			} catch (error) {
+				console.error("日志目录权限验证失败:", {
+					dir: this.logDir,
+					error: error instanceof Error ? error.message : String(error),
+				})
+				throw new Error(`没有日志目录的写入权限: ${this.logDir}`)
+			}
+
+			// 创建或打开日志文件流
+			console.log("创建日志文件流:", this.logPath)
+			this.logStream = fs.createWriteStream(this.logPath, {
+				flags: "a", // append 模式
+				encoding: "utf8",
+				mode: 0o644, // 设置文件权限
+			})
+
+			// 等待流准备就绪
+			await new Promise<void>((resolve, reject) => {
+				if (!this.logStream) {
+					reject(new Error("日志流创建失败"))
+					return
+				}
+
+				const timeoutId = setTimeout(() => {
+					reject(new Error("日志流初始化超时"))
+				}, 5000) // 5秒超时
+
+				this.logStream.once("error", (error) => {
+					clearTimeout(timeoutId)
+					reject(error)
+				})
+
+				this.logStream.once("ready", () => {
+					clearTimeout(timeoutId)
+					this.logStream?.removeListener("error", reject)
+					console.log("日志流准备就绪")
+					resolve()
+				})
+			})
+
+			// 处理错误事件
+			this.logStream.on("error", (error) => {
+				console.error("日志文件写入错误:", {
+					path: this.logPath,
+					error: error instanceof Error ? error.message : String(error),
+				})
+				// 尝试重新初始化
+				this.logStream = null
+				setTimeout(() => this.initializeLogFile(), 1000)
+			})
+
+			console.log("日志文件初始化成功:", this.logPath)
+
+			// 如果有待写入的日志，开始处理
+			if (this.writeQueue.length > 0) {
+				console.log(`处理${this.writeQueue.length}条待写入日志`)
+				await this.processWriteQueue()
+			}
+		} catch (error) {
+			const errorMessage = `初始化日志文件失败: ${error instanceof Error ? error.message : String(error)}`
+			console.error(errorMessage, {
+				logDir: this.logDir,
+				logPath: this.logPath,
+				error,
+			})
+			throw new Error(errorMessage)
 		}
 	}
 
@@ -71,32 +131,52 @@ export class CompactTransport implements ICompactTransport {
 	 * @param entry - 要写入的日志条目
 	 */
 	write(entry: CompactLogEntry): void {
-		// 首先检查日志级别
-		if (!isLevelEnabled(this.config.level, entry.l)) {
+		const logLine = JSON.stringify(entry) + "\n"
+
+		if (!this.logStream) {
+			// 如果日志流还未初始化，加入队列
+			this.writeQueue.push(logLine)
 			return
 		}
 
-		const deltaT = entry.t - this.lastTimestamp
-		this.lastTimestamp = entry.t
+		this.writeQueue.push(logLine)
+		if (!this.isWriting) {
+			this.processWriteQueue()
+		}
+	}
 
-		const compact = {
-			...entry,
-			t: deltaT,
+	private async processWriteQueue() {
+		if (this.isWriting || this.writeQueue.length === 0 || !this.logStream) {
+			return
 		}
 
-		const output = JSON.stringify(compact) + "\n"
+		this.isWriting = true
 
-		// 写入控制台
-		process.stdout.write(output)
+		try {
+			while (this.writeQueue.length > 0) {
+				const line = this.writeQueue.shift()
+				if (line) {
+					// 使用 Promise 包装写入操作
+					await new Promise<void>((resolve, reject) => {
+						if (!this.logStream) {
+							reject(new Error("日志流未初始化"))
+							return
+						}
 
-		// 尝试写入文件
-		this.ensureInitialized()
-		if (this.initialized && !this.initError) {
-			try {
-				writeFileSync(this.filePath, output, { flag: "a" })
-			} catch (err) {
-				console.error(`写入日志文件失败: ${(err as Error).message}`)
+						this.logStream.write(line, (error) => {
+							if (error) {
+								reject(error)
+							} else {
+								resolve()
+							}
+						})
+					})
+				}
 			}
+		} catch (error) {
+			console.error("处理日志写入队列时出错:", error)
+		} finally {
+			this.isWriting = false
 		}
 	}
 
@@ -104,18 +184,9 @@ export class CompactTransport implements ICompactTransport {
 	 * 关闭传输并写入会话结束标记
 	 */
 	close(): void {
-		if (this.initialized && !this.initError) {
-			try {
-				const sessionEnd = {
-					t: Date.now() - this.lastTimestamp,
-					l: "info",
-					m: "日志会话已结束",
-					d: { timestamp: new Date().toISOString() },
-				}
-				writeFileSync(this.filePath, JSON.stringify(sessionEnd) + "\n", { flag: "a" })
-			} catch (err) {
-				console.error(`写入会话结束标记失败: ${(err as Error).message}`)
-			}
+		if (this.logStream) {
+			this.logStream.end()
+			this.logStream = null
 		}
 	}
 }

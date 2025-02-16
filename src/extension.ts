@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { logger, initializeLogger } from "./utils/logging"
 
 import { CoolClineProvider } from "./core/webview/CoolClineProvider"
 import { createCoolClineAPI } from "./exports"
@@ -21,11 +22,30 @@ let extensionContext: vscode.ExtensionContext
 
 // This method is called when your extension is activated.
 // Your extension is activated the very first time the command is executed.
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	extensionContext = context
 	outputChannel = vscode.window.createOutputChannel("CoolCline")
 	context.subscriptions.push(outputChannel)
 	outputChannel.appendLine("CoolCline extension activated")
+
+	// 初始化日志系统
+	try {
+		await initializeLogger(context)
+		logger.info("CoolCline extension activated", { ctx: "extension" })
+	} catch (error) {
+		const errorMessage = `日志系统初始化失败: ${error instanceof Error ? error.message : String(error)}`
+		outputChannel.appendLine(errorMessage)
+		console.error(errorMessage)
+
+		// 尝试记录更多诊断信息
+		try {
+			const storageUri = context.globalStorageUri
+			outputChannel.appendLine(`存储路径: ${storageUri.fsPath}`)
+			console.log("存储路径:", storageUri.fsPath)
+		} catch (e) {
+			outputChannel.appendLine(`无法获取存储路径: ${e instanceof Error ? e.message : String(e)}`)
+		}
+	}
 
 	// Get default commands from configuration.
 	const defaultCommands = vscode.workspace.getConfiguration("coolcline").get<string[]>("allowedCommands") || []

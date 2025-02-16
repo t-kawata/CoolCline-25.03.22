@@ -1,6 +1,7 @@
 import { EventEmitter } from "events"
 import stripAnsi from "strip-ansi"
 import * as vscode from "vscode"
+import { logger } from "../../utils/logging"
 
 const PROCESS_HOT_TIMEOUT_NORMAL = 2_000
 const PROCESS_HOT_TIMEOUT_COMPILING = 15_000
@@ -34,17 +35,60 @@ export class TerminalProcess extends EventEmitter {
 		generic: ["$", ">", "#", "❯", "→", "➜"],
 	}
 
+	private static readonly MAX_OUTPUT_LENGTH = 1000000 // 1MB 限制
+	private static readonly MAX_OUTPUT_PREVIEW_LENGTH = 100000 // 预览长度限制
+
 	async run(terminal: vscode.Terminal, command: string) {
 		this.command = command
+		const commandPreview = command.length > 30 ? command.substring(0, 30) + "..." : command
+		logger.debug("开始执行命令", {
+			ctx: "terminal",
+			command: commandPreview,
+			fullCommand: command,
+			hasShellIntegration: !!terminal.shellIntegration,
+			hasExecuteCommand: !!terminal.shellIntegration?.executeCommand,
+			terminalType: terminal.name, // 终端类型（如 bash, zsh 等）
+		})
 		try {
 			if (terminal.shellIntegration && terminal.shellIntegration.executeCommand) {
+				logger.debug("使用 shellIntegration 执行命令", {
+					ctx: "terminal",
+					terminalName: terminal.name,
+				})
 				const execution = terminal.shellIntegration.executeCommand(command)
 				const stream = execution.read()
 				let isFirstChunk = true
 				let didOutputNonCommand = false
 				let didEmitEmptyLine = false
+				this.fullOutput = "" // 重置输出
 
 				for await (let data of stream) {
+					// 检查数据大小
+					if (this.fullOutput.length + data.length > TerminalProcess.MAX_OUTPUT_LENGTH) {
+						logger.warn("命令输出超过限制", {
+							ctx: "terminal",
+							currentLength: this.fullOutput.length,
+							newDataLength: data.length,
+							limit: TerminalProcess.MAX_OUTPUT_LENGTH,
+						})
+
+						// 发送截断警告
+						this.emit(
+							"line",
+							"\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，" +
+								"比如将输出重定向到文件：command > output.txt]",
+						)
+						break
+					}
+
+					const dataPreview = data.length > 30 ? data.substring(0, 30) + "..." : data
+					logger.debug("收到命令输出块", {
+						ctx: "terminal",
+						length: data.length,
+						preview: dataPreview,
+						isFirstChunk,
+						hasNonCommand: didOutputNonCommand,
+					})
 					if (isFirstChunk) {
 						const outputBetweenSequences = this.removeLastLineArtifacts(
 							data.match(/\]633;C([\s\S]*?)\]633;D/)?.[1] || "",
@@ -141,6 +185,12 @@ export class TerminalProcess extends EventEmitter {
 					}
 				}
 
+				logger.debug("命令执行完成", {
+					ctx: "terminal",
+					totalOutputLength: this.fullOutput.length,
+					lastRetrievedIndex: this.lastRetrievedIndex,
+				})
+
 				this.emitRemainingBufferIfListening()
 				if (this.hotTimer) {
 					clearTimeout(this.hotTimer)
@@ -149,27 +199,45 @@ export class TerminalProcess extends EventEmitter {
 				this.emit("completed")
 				this.emit("continue")
 			} else {
+				// 记录为什么不能使用 Shell Integration
+				logger.debug("无法使用 shellIntegration", {
+					ctx: "terminal",
+					reason: !terminal.shellIntegration ? "Shell Integration 未启用" : "executeCommand 方法不可用",
+					terminalName: terminal.name,
+					commandType: this.getCommandType(command),
+				})
+				// 传统方式
+				logger.debug("使用传统方式执行命令", { ctx: "terminal" })
 				this.fullOutput = ""
 				this.buffer = ""
 				this.outputBuffer = []
 
-				// 先发送命令，让命令开始执行
+				// 发送命令
 				terminal.sendText(command, true)
-
-				// 等待一小段时间让命令开始执行
 				await new Promise((resolve) => setTimeout(resolve, 100))
 
-				// 尝试获取输出
+				// 使用改进后的方法获取输出
 				const output = await this.waitForCommandCompletion()
 				if (output) {
-					// 处理输出前发出开始信号
-					this.emit("line", "")
-					this.processOutput(output)
-				}
+					// 检查输出大小
+					if (output.length > TerminalProcess.MAX_OUTPUT_LENGTH) {
+						logger.warn("命令输出超过限制", {
+							ctx: "terminal",
+							length: output.length,
+							limit: TerminalProcess.MAX_OUTPUT_LENGTH,
+						})
 
-				this.isHot = false
-				if (this.hotTimer) {
-					clearTimeout(this.hotTimer)
+						const truncatedOutput =
+							output.substring(0, TerminalProcess.MAX_OUTPUT_PREVIEW_LENGTH) +
+							"\n\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，" +
+							"比如将输出重定向到文件：command > output.txt]"
+
+						this.emit("line", "")
+						this.emit("line", truncatedOutput)
+					} else {
+						this.emit("line", "")
+						this.processOutput(output)
+					}
 				}
 
 				this.emit("no_shell_integration")
@@ -177,7 +245,10 @@ export class TerminalProcess extends EventEmitter {
 				this.emit("continue")
 			}
 		} catch (error) {
-			console.error(`Error executing command in terminal: ${error}`)
+			logger.error("命令执行失败", {
+				ctx: "terminal",
+				error: error instanceof Error ? error : new Error(String(error)),
+			})
 			this.emit("error", error instanceof Error ? error : new Error(String(error)))
 		}
 	}
@@ -189,12 +260,29 @@ export class TerminalProcess extends EventEmitter {
 		let stableCount = 0
 		let waitTime = TerminalProcess.OUTPUT_CHECK_CONFIG.minWaitMs
 
-		// 给命令执行一些初始时间
+		logger.debug("开始等待命令完成", {
+			ctx: "terminal",
+			command: this.command.length > 30 ? this.command.substring(0, 30) + "..." : this.command,
+			maxAttempts: TerminalProcess.OUTPUT_CHECK_CONFIG.maxAttempts,
+			initialWaitTime: waitTime,
+		})
+
 		await new Promise((resolve) => setTimeout(resolve, 200))
 
 		while (attemptCount < TerminalProcess.OUTPUT_CHECK_CONFIG.maxAttempts) {
 			try {
 				const newOutput = await TerminalProcess.getTerminalContents()
+
+				const outputPreview = newOutput?.length > 30 ? newOutput.substring(0, 30) + "..." : newOutput
+				logger.debug("轮询检查输出", {
+					ctx: "terminal",
+					attempt: attemptCount + 1,
+					hasNewOutput: !!newOutput,
+					outputLength: newOutput?.length || 0,
+					preview: outputPreview,
+					waitTime,
+					stableCount,
+				})
 
 				if (newOutput) {
 					if (newOutput !== lastOutput) {
@@ -202,19 +290,35 @@ export class TerminalProcess extends EventEmitter {
 						lastOutput = newOutput
 						stableCount = 0
 
-						// 动态调整等待时间
 						if (this.isCompiling(newOutput)) {
 							waitTime = Math.min(500, waitTime * 1.5)
+							logger.debug("检测到编译中,增加等待时间", {
+								ctx: "terminal",
+								newWaitTime: waitTime,
+								outputPreview: outputPreview,
+							})
 						} else {
 							waitTime = TerminalProcess.OUTPUT_CHECK_CONFIG.minWaitMs
 						}
 					} else {
 						stableCount++
+						logger.debug("输出稳定", {
+							ctx: "terminal",
+							stableCount,
+							outputPreview: outputPreview,
+						})
 						if (stableCount >= TerminalProcess.OUTPUT_CHECK_CONFIG.stableCount) {
-							// 在认为命令完成之前，再次检查最后一次输出
 							await new Promise((resolve) => setTimeout(resolve, 100))
 							const finalCheck = await TerminalProcess.getTerminalContents()
+							const finalPreview =
+								finalCheck?.length > 30 ? finalCheck.substring(0, 30) + "..." : finalCheck
 							if (finalCheck === output && this.checkCommandCompletion(finalCheck)) {
+								logger.debug("命令执行完成", {
+									ctx: "terminal",
+									totalAttempts: attemptCount + 1,
+									finalOutputLength: output.length,
+									outputPreview: finalPreview,
+								})
 								return output
 							}
 						}
@@ -224,12 +328,22 @@ export class TerminalProcess extends EventEmitter {
 				attemptCount++
 				await new Promise((resolve) => setTimeout(resolve, waitTime))
 			} catch (error) {
-				console.error("Failed to get terminal contents:", error)
+				logger.error("获取终端内容失败", {
+					ctx: "terminal",
+					error: error instanceof Error ? error.message : String(error),
+					command: this.command.length > 30 ? this.command.substring(0, 30) + "..." : this.command,
+				})
 				attemptCount++
 				waitTime = Math.min(waitTime * 1.5, TerminalProcess.OUTPUT_CHECK_CONFIG.maxWaitMs)
 			}
 		}
 
+		logger.debug("达到最大尝试次数", {
+			ctx: "terminal",
+			finalOutputLength: output.length,
+			totalAttempts: attemptCount,
+			outputPreview: output.length > 30 ? output.substring(0, 30) + "..." : output,
+		})
 		return output
 	}
 
@@ -237,51 +351,64 @@ export class TerminalProcess extends EventEmitter {
 		const maxRetries = 3
 		let lastError: Error | undefined
 		let originalClipboard: string | undefined
+		let content = ""
 
 		try {
-			// 首先保存原始剪贴板内容
+			// 保存原始剪贴板内容
 			originalClipboard = await vscode.env.clipboard.readText()
 
 			for (let attempt = 0; attempt < maxRetries; attempt++) {
 				try {
-					// 确保清除任何现有选择
+					// 清除现有选择
 					await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
 					await new Promise((resolve) => setTimeout(resolve, 50))
 
-					// 根据参数选择不同的选择策略
-					if (commands < 0) {
-						await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
-					} else {
-						await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
-					}
+					// 使用 selectToPreviousCommand 只选择最后一个命令的输出
+					await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
+					await new Promise((resolve) => setTimeout(resolve, 200))
 
-					// 给足够的时间让选择完成
-					await new Promise((resolve) => setTimeout(resolve, 150))
-
-					// 复制选中内容到剪贴板
+					// 复制选中内容
 					await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
-
-					// 确保复制操作完成
-					await new Promise((resolve) => setTimeout(resolve, 150))
+					await new Promise((resolve) => setTimeout(resolve, 200))
 
 					// 获取复制的内容
-					const content = await vscode.env.clipboard.readText()
+					const newContent = await vscode.env.clipboard.readText()
 
-					// 立即清除选择避免影响视觉
+					// 清除选择
 					await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
 
-					// 如果获取到了新内容
-					if (content && content !== originalClipboard) {
+					if (newContent && newContent !== originalClipboard) {
+						content = newContent
+
+						// 检查内容长度
+						if (content.length > TerminalProcess.MAX_OUTPUT_LENGTH) {
+							logger.warn("终端输出超过限制", {
+								ctx: "terminal",
+								length: content.length,
+								limit: TerminalProcess.MAX_OUTPUT_LENGTH,
+							})
+
+							// 截取内容并添加警告信息
+							content =
+								content.substring(0, TerminalProcess.MAX_OUTPUT_PREVIEW_LENGTH) +
+								"\n\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，" +
+								"比如将输出重定向到文件：command > output.txt]\n"
+							break
+						}
+
 						return content
 					}
 
-					// 如果还有重试机会，等待后重试
 					if (attempt < maxRetries - 1) {
 						await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempt) * 200))
 						continue
 					}
 				} catch (error) {
-					console.error(`Terminal content retrieval attempt ${attempt + 1} failed:`, error)
+					logger.error("获取终端内容失败", {
+						ctx: "terminal",
+						attempt: attempt + 1,
+						error: error instanceof Error ? error.message : String(error),
+					})
 					lastError = error instanceof Error ? error : new Error(String(error))
 
 					if (attempt < maxRetries - 1) {
@@ -295,14 +422,17 @@ export class TerminalProcess extends EventEmitter {
 				throw lastError
 			}
 
-			return ""
+			return content || ""
 		} finally {
-			// 确保在所有情况下都恢复原始剪贴板内容
+			// 恢复原始剪贴板内容
 			if (originalClipboard !== undefined) {
 				try {
 					await vscode.env.clipboard.writeText(originalClipboard)
 				} catch (error) {
-					console.error("Failed to restore clipboard:", error)
+					logger.error("恢复剪贴板失败", {
+						ctx: "terminal",
+						error: error instanceof Error ? error.message : String(error),
+					})
 				}
 			}
 		}
@@ -502,6 +632,16 @@ export class TerminalProcess extends EventEmitter {
 			lines[lines.length - 1] = lastLine.replace(/[%$#>]\s*$/, "")
 		}
 		return lines.join("\n").trimEnd()
+	}
+
+	// 添加辅助方法来分析命令类型
+	private getCommandType(command: string): string {
+		if (command.includes("|")) return "pipe"
+		if (command.includes(">") || command.includes("<")) return "redirect"
+		if (command.includes("&&") || command.includes("||")) return "conditional"
+		if (command.includes(";")) return "multiple"
+		if (command.startsWith("sudo ")) return "sudo"
+		return "simple"
 	}
 }
 

@@ -63,6 +63,7 @@ import crypto from "crypto"
 import { insertGroups } from "./diff/insert-groups"
 import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiments"
 import { CheckpointService } from "../services/checkpoints/CheckpointService"
+import { logger } from "../utils/logging"
 
 const cwd =
 	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? path.join(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
@@ -241,34 +242,95 @@ export class CoolCline {
 		await this.saveCoolClineMessages()
 	}
 
+	private static readonly MAX_MESSAGE_SIZE = 1000000 // 1MB 限制
+	private static readonly MAX_MESSAGE_PREVIEW_SIZE = 100000 // 预览大小限制
+
 	private async saveCoolClineMessages() {
 		try {
 			const filePath = path.join(await this.ensureTaskDirectoryExists(), GlobalFileNames.uiMessages)
-			await fs.writeFile(filePath, JSON.stringify(this.coolclineMessages))
-			// combined as they are in ChatView
-			const apiMetrics = getApiMetrics(
-				combineApiRequests(combineCommandSequences(this.coolclineMessages.slice(1))),
-			)
-			const taskMessage = this.coolclineMessages[0] // first message is always the task say
-			const lastRelevantMessage =
-				this.coolclineMessages[
-					findLastIndex(
-						this.coolclineMessages,
-						(m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
-					)
-				]
-			await this.providerRef.deref()?.updateTaskHistory({
-				id: this.taskId,
-				ts: lastRelevantMessage.ts,
-				task: taskMessage.text ?? "",
-				tokensIn: apiMetrics.totalTokensIn,
-				tokensOut: apiMetrics.totalTokensOut,
-				cacheWrites: apiMetrics.totalCacheWrites,
-				cacheReads: apiMetrics.totalCacheReads,
-				totalCost: apiMetrics.totalCost,
+
+			// 处理大型消息
+			const processedMessages = this.coolclineMessages.map((msg) => {
+				if (!msg.text) return msg
+
+				// 检查消息大小
+				if (msg.text.length > CoolCline.MAX_MESSAGE_SIZE) {
+					logger.warn("消息内容过大，将被截断", {
+						ctx: "coolcline",
+						messageType: msg.type,
+						messageLength: msg.text.length,
+						limit: CoolCline.MAX_MESSAGE_SIZE,
+					})
+
+					// 对于命令输出类型的消息，添加特殊提示
+					if (msg.type === "say" && msg.say === "command_output") {
+						return {
+							...msg,
+							text:
+								msg.text.substring(0, CoolCline.MAX_MESSAGE_PREVIEW_SIZE) +
+								"\n\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，比如将输出重定向到文件：command > output.txt]",
+						}
+					}
+
+					// 其他类型消息的通用处理
+					return {
+						...msg,
+						text: msg.text.substring(0, CoolCline.MAX_MESSAGE_PREVIEW_SIZE) + "\n... [内容过长已截断]",
+					}
+				}
+				return msg
 			})
+
+			// 分块写入文件
+			try {
+				await fs.writeFile(filePath, JSON.stringify(processedMessages), "utf8")
+
+				// 更新任务历史
+				const apiMetrics = getApiMetrics(
+					combineApiRequests(combineCommandSequences(processedMessages.slice(1))),
+				)
+				const taskMessage = processedMessages[0]
+				const lastRelevantMessage =
+					processedMessages[
+						findLastIndex(
+							processedMessages,
+							(m) => !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
+						)
+					]
+
+				await this.providerRef.deref()?.updateTaskHistory({
+					id: this.taskId,
+					ts: lastRelevantMessage.ts,
+					task: taskMessage.text ?? "",
+					tokensIn: apiMetrics.totalTokensIn,
+					tokensOut: apiMetrics.totalTokensOut,
+					cacheWrites: apiMetrics.totalCacheWrites,
+					cacheReads: apiMetrics.totalCacheReads,
+					totalCost: apiMetrics.totalCost,
+				})
+			} catch (error) {
+				// 如果写入失败，尝试只保存最近的消息
+				logger.error("保存完整消息失败，尝试只保存最近的消息", {
+					ctx: "coolcline",
+					error: error instanceof Error ? error.message : String(error),
+				})
+
+				const recentMessages = processedMessages.slice(-10) // 只保留最近的10条消息
+				await fs.writeFile(filePath, JSON.stringify(recentMessages), "utf8")
+
+				// 通知用户
+				vscode.window.showWarningMessage(
+					"由于消息内容过大，只保存了最近的消息。建议清理历史记录或开启新的任务。",
+				)
+			}
 		} catch (error) {
-			console.error("Failed to save coolcline messages:", error)
+			logger.error("保存消息完全失败", {
+				ctx: "coolcline",
+				error: error instanceof Error ? error.message : String(error),
+			})
+
+			// 通知用户但继续运行
+			vscode.window.showErrorMessage("保存消息历史失败。建议保存重要内容到文件并重新开始任务。")
 		}
 	}
 
