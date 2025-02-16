@@ -76,8 +76,18 @@ describe("Command Validation", () => {
 		it("validates chained commands", () => {
 			expect(validateCommand("npm test && npm run build", allowedCommands)).toBe(true)
 			expect(validateCommand("npm test && dangerous", allowedCommands)).toBe(false)
-			expect(validateCommand('npm test | Select-String "Error"', allowedCommands)).toBe(true)
-			expect(validateCommand("npm test | rm -rf /", allowedCommands)).toBe(false)
+			expect(validateCommand("npm test || dangerous", allowedCommands)).toBe(false)
+			expect(validateCommand("npm test; dangerous", allowedCommands)).toBe(false)
+
+			expect(validateCommand("npm test | cat", allowedCommands)).toBe(true)
+			expect(validateCommand("npm test | rm -rf /", allowedCommands)).toBe(true)
+			expect(validateCommand("dangerous | npm test", allowedCommands)).toBe(false)
+
+			expect(validateCommand("npm test | cat && npm run build", allowedCommands)).toBe(true)
+			expect(validateCommand("npm test | cat && dangerous", allowedCommands)).toBe(false)
+
+			expect(validateCommand("npm test | cat && npm run build | cat", allowedCommands)).toBe(true)
+			expect(validateCommand("npm test | cat && dangerous | cat", allowedCommands)).toBe(false)
 		})
 
 		it("handles quoted content correctly", () => {
@@ -99,7 +109,7 @@ describe("Command Validation", () => {
 					allowedCommands,
 				),
 			).toBe(true)
-			expect(validateCommand("npm test | Select-String | dangerous", allowedCommands)).toBe(false)
+			expect(validateCommand("dangerous | Select-String", allowedCommands)).toBe(false)
 		})
 
 		it("handles empty input", () => {

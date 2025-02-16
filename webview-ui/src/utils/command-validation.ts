@@ -98,6 +98,15 @@ export function isAllowedSingleCommand(command: string, allowedCommands: string[
 }
 
 /**
+ * Extract operators from a command string
+ */
+function getOperators(command: string): string[] {
+	return (parse(command) as ShellToken[])
+		.filter((token): token is { op: string } => typeof token === "object" && "op" in token)
+		.map((token) => token.op)
+}
+
+/**
  * Check if a command string is allowed based on the allowed command prefixes.
  * This version also blocks subshell attempts by checking for `$(` or `` ` ``.
  */
@@ -109,13 +118,27 @@ export function validateCommand(command: string, allowedCommands: string[]): boo
 		return false
 	}
 
-	// Parse into sub-commands (split by &&, ||, ;, |)
+	// Parse into sub-commands and get operators
 	const subCommands = parseCommand(command)
+	const operators = getOperators(command)
 
-	// Then ensure every sub-command starts with an allowed prefix
-	return subCommands.every((cmd) => {
-		// Remove simple PowerShell-like redirections (e.g. 2>&1) before checking
-		const cmdWithoutRedirection = cmd.replace(/\d*>&\d*/, "").trim()
-		return isAllowedSingleCommand(cmdWithoutRedirection, allowedCommands)
-	})
+	// 第一个命令必须验证
+	const firstCmd = subCommands[0].replace(/\d*>&\d*/, "").trim()
+	if (!isAllowedSingleCommand(firstCmd, allowedCommands)) {
+		return false
+	}
+
+	// 处理后续命令
+	for (let i = 1; i < subCommands.length; i++) {
+		const prevOperator = operators[i - 1]
+		const cmd = subCommands[i].replace(/\d*>&\d*/, "").trim()
+
+		// 如果前一个操作符是管道，则放行
+		// 如果是其他操作符（&&, ||, ;），则需要验证
+		if (prevOperator !== "|" && !isAllowedSingleCommand(cmd, allowedCommands)) {
+			return false
+		}
+	}
+
+	return true
 }
