@@ -291,8 +291,17 @@ export class CheckpointService {
 			log(`[initRepo] Initialized new Git repository at ${baseDir}`)
 		}
 
-		await git.addConfig("user.name", "CoolCline")
-		await git.addConfig("user.email", "support@coolcline.com")
+		// Only set user config if not already configured
+		const userName = await git.getConfig("user.name")
+		const userEmail = await git.getConfig("user.email")
+
+		if (!userName.value) {
+			await git.addConfig("user.name", "CoolCline")
+		}
+
+		if (!userEmail.value) {
+			await git.addConfig("user.email", "support@coolcline.com")
+		}
 
 		if (!isExistingRepo) {
 			// We need at least one file to commit, otherwise the initial

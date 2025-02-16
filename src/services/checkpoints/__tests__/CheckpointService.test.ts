@@ -385,5 +385,32 @@ describe("CheckpointService", () => {
 
 			await fs.rm(newService.baseDir, { recursive: true, force: true })
 		})
+
+		it("respects existing git user configuration", async () => {
+			const baseDir = path.join(os.tmpdir(), `checkpoint-service-test-config-${Date.now()}`)
+			await fs.mkdir(baseDir)
+
+			// Initialize a git repo with custom user config
+			const customName = "Custom User"
+			const customEmail = "custom@example.com"
+			const git = simpleGit(baseDir)
+			await git.init()
+			await git.addConfig("user.name", customName)
+			await git.addConfig("user.email", customEmail)
+
+			// Create initial commit
+			await fs.writeFile(path.join(baseDir, ".gitkeep"), "")
+			await git.add(".gitkeep")
+			await git.commit("Initial commit")
+
+			// Create service instance
+			const service = await CheckpointService.create({ taskId, git, baseDir, log: () => {} })
+
+			// Verify the custom config was preserved
+			expect((await git.getConfig("user.name")).value).toBe(customName)
+			expect((await git.getConfig("user.email")).value).toBe(customEmail)
+
+			await fs.rm(baseDir, { recursive: true, force: true })
+		})
 	})
 })
