@@ -30,7 +30,7 @@ export class TerminalProcess extends EventEmitter {
 		zsh: ["%", "$", "➜", "❯"],
 		bash: ["$", "#", "@", "❯"],
 		fish: ["›", "$", "❯", "→"],
-		powershell: [">", "PS>", "PS❯"],
+		powershell: [">", "PS>", "PS❯", "PWD>"],
 		cmd: [">", "C:\\>", "D:\\>"],
 		generic: ["$", ">", "#", "❯", "→", "➜"],
 	}
@@ -54,6 +54,8 @@ export class TerminalProcess extends EventEmitter {
 				logger.debug("使用 shellIntegration 执行命令", {
 					ctx: "terminal",
 					terminalName: terminal.name,
+					hasShellIntegration: !!terminal.shellIntegration,
+					hasExecuteCommand: !!terminal.shellIntegration?.executeCommand,
 				})
 				const execution = terminal.shellIntegration.executeCommand(command)
 				const stream = execution.read()
@@ -273,6 +275,15 @@ export class TerminalProcess extends EventEmitter {
 			try {
 				const newOutput = await TerminalProcess.getTerminalContents()
 
+				// 如果检测到提示符，立即返回结果
+				if (newOutput && this.checkCommandCompletion(newOutput)) {
+					logger.debug("检测到提示符，命令执行完成", {
+						ctx: "terminal",
+						attempt: attemptCount + 1,
+					})
+					return newOutput
+				}
+
 				const outputPreview = newOutput?.length > 30 ? newOutput.substring(0, 30) + "..." : newOutput
 				logger.debug("轮询检查输出", {
 					ctx: "terminal",
@@ -292,36 +303,11 @@ export class TerminalProcess extends EventEmitter {
 
 						if (this.isCompiling(newOutput)) {
 							waitTime = Math.min(500, waitTime * 1.5)
-							logger.debug("检测到编译中,增加等待时间", {
-								ctx: "terminal",
-								newWaitTime: waitTime,
-								outputPreview: outputPreview,
-							})
 						} else {
 							waitTime = TerminalProcess.OUTPUT_CHECK_CONFIG.minWaitMs
 						}
 					} else {
 						stableCount++
-						logger.debug("输出稳定", {
-							ctx: "terminal",
-							stableCount,
-							outputPreview: outputPreview,
-						})
-						if (stableCount >= TerminalProcess.OUTPUT_CHECK_CONFIG.stableCount) {
-							await new Promise((resolve) => setTimeout(resolve, 100))
-							const finalCheck = await TerminalProcess.getTerminalContents()
-							const finalPreview =
-								finalCheck?.length > 30 ? finalCheck.substring(0, 30) + "..." : finalCheck
-							if (finalCheck === output && this.checkCommandCompletion(finalCheck)) {
-								logger.debug("命令执行完成", {
-									ctx: "terminal",
-									totalAttempts: attemptCount + 1,
-									finalOutputLength: output.length,
-									outputPreview: finalPreview,
-								})
-								return output
-							}
-						}
 					}
 				}
 
@@ -331,19 +317,12 @@ export class TerminalProcess extends EventEmitter {
 				logger.error("获取终端内容失败", {
 					ctx: "terminal",
 					error: error instanceof Error ? error.message : String(error),
-					command: this.command.length > 30 ? this.command.substring(0, 30) + "..." : this.command,
 				})
 				attemptCount++
 				waitTime = Math.min(waitTime * 1.5, TerminalProcess.OUTPUT_CHECK_CONFIG.maxWaitMs)
 			}
 		}
 
-		logger.debug("达到最大尝试次数", {
-			ctx: "terminal",
-			finalOutputLength: output.length,
-			totalAttempts: attemptCount,
-			outputPreview: output.length > 30 ? output.substring(0, 30) + "..." : output,
-		})
 		return output
 	}
 
@@ -466,17 +445,17 @@ export class TerminalProcess extends EventEmitter {
 		if (!data) return false
 
 		const lines = data.split("\n")
-		const lastLine = lines[lines.length - 1].trim()
 
-		// 如果最后一行是空的，检查倒数第二行
-		if (!lastLine && lines.length > 1) {
-			const secondLastLine = lines[lines.length - 2].trim()
-			if (this.isPromptLine(secondLastLine)) {
-				return true
+		// 从后向前查找第一个非空行
+		for (let i = lines.length - 1; i >= 0; i--) {
+			const line = lines[i].trim()
+			if (line) {
+				// 找到第一个非空行，检查是否是提示符
+				return this.isPromptLine(line)
 			}
 		}
 
-		return this.isPromptLine(lastLine)
+		return false
 	}
 
 	private isPromptLine(line: string): boolean {
@@ -486,20 +465,44 @@ export class TerminalProcess extends EventEmitter {
 		const hasPrompt = Object.values(TerminalProcess.SHELL_PROMPTS)
 			.flat()
 			.some((prompt) => {
-				// 添加更多提示符模式的检查
 				return line.endsWith(prompt) || line.endsWith(` ${prompt}`) || line === prompt
 			})
 
-		// 检查常见的用户@主机格式
-		const hasUserHostPrompt = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+:[~\w/.-]+[$#%>❯]/.test(line)
+		// 检查 macOS zsh 格式
+		const hasMacZshPrompt = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+\s+[a-zA-Z0-9_/.-]+\s+[%$#>❯]/.test(line)
 
-		// 检查 Windows 路径格式
-		const hasWindowsPathPrompt = /^[A-Z]:\\[^>]*>/.test(line)
+		// 检查 Linux/Unix 格式 (支持更多格式)
+		const hasUnixPrompt = [
+			// username@hostname:~/path$
+			/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+:[~\w/.-]+[$#%>❯]/,
+			// [username@hostname path]$
+			/^\[[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\s+[~\w/.-]+\][$#%>❯]/,
+			// username@hostname ~/path$
+			/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\s+[~\w/.-]+[$#%>❯]/,
+		].some((pattern) => pattern.test(line))
 
-		// 检查 Git bash 风格的提示符
-		const hasGitBashPrompt = /^[A-Z]:[\w\s/\\-]+[$#>❯]/.test(line)
+		// 检查 PowerShell 格式 (支持更多格式)
+		const hasPowerShellPrompt = [
+			// PS C:\path>
+			/^PS\s+[A-Z]:\\[^>]*>/,
+			// PS /Users/path>
+			/^PS\s+\/[^>]*>/,
+			// username@hostname /path>
+			/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\s+\/[^>]*>/,
+		].some((pattern) => pattern.test(line))
 
-		return hasPrompt || hasUserHostPrompt || hasWindowsPathPrompt || hasGitBashPrompt
+		// 检查 Windows CMD 格式
+		const hasWindowsPrompt = /^[A-Z]:\\[^>]*>/.test(line)
+
+		// 检查 Fish shell 格式
+		const hasFishPrompt = [
+			// username@hostname ~/path>
+			/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+\s+~?\/[^>]*[›>❯→]/,
+			// ~/path>
+			/^~?\/[^>]*[›>❯→]/,
+		].some((pattern) => pattern.test(line))
+
+		return hasPrompt || hasMacZshPrompt || hasUnixPrompt || hasPowerShellPrompt || hasWindowsPrompt || hasFishPrompt
 	}
 
 	private processOutput(output: string): void {
@@ -509,32 +512,49 @@ export class TerminalProcess extends EventEmitter {
 			const normalizedOutput = this.normalizeLineEndings(output)
 			const lines = normalizedOutput.split("\n")
 
-			// 寻找最后一个提示符的位置
-			let lastPromptIndex = -1
-			for (let i = lines.length - 1; i >= 0; i--) {
+			// 寻找第一个提示符的位置
+			let firstPromptIndex = -1
+			for (let i = 0; i < lines.length; i++) {
 				if (this.isPromptLine(lines[i].trim())) {
-					lastPromptIndex = i
+					firstPromptIndex = i
 					break
 				}
 			}
 
-			// 获取相关行
-			const relevantLines = lastPromptIndex !== -1 ? lines.slice(0, lastPromptIndex) : lines
+			// 如果找到提示符，从提示符开始处理
+			if (firstPromptIndex !== -1) {
+				// 寻找最后一个提示符的位置
+				let lastPromptIndex = -1
+				for (let i = lines.length - 1; i > firstPromptIndex; i--) {
+					if (this.isPromptLine(lines[i].trim())) {
+						lastPromptIndex = i
+						break
+					}
+				}
 
-			// 清理和过滤输出行
-			const cleanedLines = relevantLines
-				.map((line) => this.cleanLine(line))
-				.filter((line) => {
-					return line && !this.isCommandEcho(line) && !this.isPromptLine(line) && !this.isSystemPrompt(line)
-				})
+				// 获取相关行（从第一个提示符到最后一个提示符之间的内容）
+				const relevantLines =
+					lastPromptIndex !== -1
+						? lines.slice(firstPromptIndex, lastPromptIndex)
+						: lines.slice(firstPromptIndex)
 
-			// 如果有新的输出内容
-			if (cleanedLines.length > 0) {
-				const processedOutput = cleanedLines.join("\n")
-				if (!this.outputBuffer.includes(processedOutput)) {
-					this.outputBuffer.push(processedOutput)
-					this.fullOutput = this.outputBuffer.join("\n")
-					this.emit("line", processedOutput)
+				// 清理和过滤输出行
+				const cleanedLines = relevantLines
+					.map((line) => this.cleanLine(line))
+					.filter((line) => {
+						return (
+							line && !this.isCommandEcho(line) && !this.isPromptLine(line) && !this.isSystemPrompt(line)
+						)
+					})
+
+				// 如果有新的输出内容
+				if (cleanedLines.length > 0) {
+					const processedOutput = cleanedLines.join("\n")
+					if (!this.outputBuffer.includes(processedOutput)) {
+						this.outputBuffer.push(processedOutput)
+						this.fullOutput = this.outputBuffer.join("\n")
+						this.emit("line", processedOutput)
+					}
 				}
 			}
 		} catch (error) {

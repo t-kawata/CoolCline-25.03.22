@@ -3,6 +3,7 @@ import * as vscode from "vscode"
 import { arePathsEqual } from "../../utils/path"
 import { mergePromise, TerminalProcess, TerminalProcessResultPromise } from "./TerminalProcess"
 import { TerminalInfo, TerminalRegistry } from "./TerminalRegistry"
+import { logger } from "../../utils/logging"
 
 /*
 TerminalManager:
@@ -81,13 +82,15 @@ declare module "vscode" {
 }
 
 // Extend the Terminal type to include our custom properties
-type ExtendedTerminal = vscode.Terminal & {
-	shellIntegration?: {
-		cwd?: vscode.Uri
-		executeCommand?: (command: string) => {
-			read: () => AsyncIterable<string>
-		}
+interface TerminalShellIntegration {
+	readonly cwd?: vscode.Uri
+	readonly executeCommand?: (command: string) => {
+		read: () => AsyncIterable<string>
 	}
+}
+
+type ExtendedTerminal = vscode.Terminal & {
+	readonly shellIntegration?: TerminalShellIntegration
 }
 
 export class TerminalManager {
@@ -98,12 +101,23 @@ export class TerminalManager {
 	constructor() {
 		let disposable: vscode.Disposable | undefined
 		try {
+			// 尝试注册 shell execution 事件监听
 			disposable = (vscode.window as vscode.Window).onDidStartTerminalShellExecution?.(async (e) => {
-				// Creating a read stream here results in a more consistent output. This is most obvious when running the `date` command.
-				e?.execution?.read()
+				if (e?.execution?.read) {
+					// 创建读取流以确保更一致的输出
+					e.execution.read()
+					logger.debug("Shell integration 事件监听已注册", {
+						ctx: "terminal",
+						hasRead: !!e.execution.read,
+						event: e,
+					})
+				}
 			})
 		} catch (error) {
-			// console.error("Error setting up onDidEndTerminalShellExecution", error)
+			logger.warn("Shell integration 事件监听注册失败", {
+				ctx: "terminal",
+				error: error instanceof Error ? error.message : String(error),
+			})
 		}
 		if (disposable) {
 			this.disposables.push(disposable)
@@ -120,25 +134,32 @@ export class TerminalManager {
 			terminalInfo.busy = false
 		})
 
-		// 移除原有的 no_shell_integration 处理逻辑，因为我们现在有更可靠的后备方案
 		const promise = new Promise<void>((resolve, reject) => {
 			process.once("continue", () => {
 				resolve()
 			})
 			process.once("error", (error) => {
-				console.error(`Error in terminal ${terminalInfo.id}:`, error)
+				logger.error(`终端 ${terminalInfo.id} 执行出错:`, {
+					ctx: "terminal",
+					error: error instanceof Error ? error.message : String(error),
+				})
 				reject(error)
 			})
 		})
 
 		const terminal = terminalInfo.terminal as ExtendedTerminal
-		if (terminal.shellIntegration) {
-			process.run(terminal, command)
-		} else {
-			// 直接运行命令，使用后备方案获取输出
-			process.run(terminal, command)
-		}
+		// 检查 shell integration 支持
+		const hasShellIntegration = !!terminal.shellIntegration?.executeCommand
+		logger.debug("检查 shell integration 支持", {
+			ctx: "terminal",
+			hasShellIntegration,
+			terminalName: terminal.name,
+			shellIntegration: terminal.shellIntegration,
+			executeCommand: !!terminal.shellIntegration?.executeCommand,
+			terminal: terminal,
+		})
 
+		process.run(terminal, command)
 		return mergePromise(process, promise)
 	}
 
@@ -172,7 +193,7 @@ export class TerminalManager {
 		}
 
 		// If all terminals are busy, create a new one
-		const newTerminalInfo = TerminalRegistry.createTerminal(cwd)
+		const newTerminalInfo = await TerminalRegistry.createTerminal(cwd)
 		this.terminalIds.add(newTerminalInfo.id)
 		return newTerminalInfo
 	}

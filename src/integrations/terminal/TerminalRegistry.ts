@@ -1,5 +1,12 @@
 import * as vscode from "vscode"
 
+// 扩展 VSCode 的类型定义
+declare module "vscode" {
+	interface TerminalOptions {
+		shellIntegration?: boolean
+	}
+}
+
 export interface TerminalInfo {
 	terminal: vscode.Terminal
 	busy: boolean
@@ -13,15 +20,28 @@ export class TerminalRegistry {
 	private static terminals: TerminalInfo[] = []
 	private static nextTerminalId = 1
 
-	static createTerminal(cwd?: string | vscode.Uri | undefined): TerminalInfo {
+	static async createTerminal(cwd?: string | vscode.Uri | undefined): Promise<TerminalInfo> {
+		// 创建终端时启用 shell integration
 		const terminal = vscode.window.createTerminal({
 			cwd,
 			name: "CoolCline",
 			iconPath: new vscode.ThemeIcon("webhook"),
 			env: {
 				PAGER: "cat",
+				VSCODE_SHELL_INTEGRATION: "1",
+				SHELL_INTEGRATION: "1",
+				ENABLE_SHELL_INTEGRATION: "1",
+				TERM_PROGRAM: "vscode",
 			},
+			shellIntegration: true,
 		})
+
+		// 确保终端显示并激活
+		terminal.show(true)
+
+		// 等待 shell integration 初始化
+		await new Promise((resolve) => setTimeout(resolve, 1000))
+
 		const newInfo: TerminalInfo = {
 			terminal,
 			busy: false,
