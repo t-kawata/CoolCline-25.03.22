@@ -106,6 +106,9 @@ export class TerminalProcess extends EventEmitter {
 					command: commandPreview,
 				})
 
+				// 触发 no_shell_integration 事件
+				this.emit("no_shell_integration")
+
 				this.fullOutput = ""
 				this.buffer = ""
 				this.outputBuffer = []
