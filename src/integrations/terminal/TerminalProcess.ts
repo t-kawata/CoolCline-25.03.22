@@ -77,6 +77,7 @@ export class TerminalProcess extends EventEmitter {
 
 	async run(terminal: vscode.Terminal, command: string) {
 		this.command = command
+		this.isHot = true
 		const commandPreview = command.length > 30 ? command.substring(0, 30) + "..." : command
 
 		try {
@@ -145,6 +146,8 @@ export class TerminalProcess extends EventEmitter {
 				error: error instanceof Error ? error : new Error(String(error)),
 			})
 			this.emit("error", error instanceof Error ? error : new Error(String(error)))
+		} finally {
+			this.isHot = false
 		}
 	}
 
