@@ -104,6 +104,11 @@ export class CompactTransport implements ICompactTransport {
 	 * @param entry - 要写入的日志条目
 	 */
 	write(entry: CompactLogEntry): void {
+		// 检查日志级别
+		if (!isLevelEnabled(this.config.level, entry.l)) {
+			return
+		}
+
 		const logLine = JSON.stringify(entry) + "\n"
 
 		if (!this.logStream) {
