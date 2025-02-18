@@ -73,8 +73,8 @@ This approach allows us to leverage advanced features when available while ensur
 declare module "vscode" {
 	// https://github.com/microsoft/vscode/blob/f0417069c62e20f3667506f4b7e53ca0004b4e3e/src/vscode-dts/vscode.d.ts#L10794
 	interface Window {
-		onDidStartTerminalShellExecution?: (
-			listener: (e: any) => any,
+		onDidChangeTerminalShellIntegration?: (
+			listener: (e: { terminal: vscode.Terminal; shellIntegration: TerminalShellIntegration }) => any,
 			thisArgs?: any,
 			disposables?: vscode.Disposable[],
 		) => vscode.Disposable
@@ -84,7 +84,8 @@ declare module "vscode" {
 // Extend the Terminal type to include our custom properties
 interface TerminalShellIntegration {
 	readonly cwd?: vscode.Uri
-	readonly executeCommand?: (command: string) => {
+	readonly executeCommand: (commandLine: string) => {
+		exitCode: Promise<number | undefined>
 		read: () => AsyncIterable<string>
 	}
 }
@@ -97,30 +98,39 @@ export class TerminalManager {
 	private terminalIds: Set<number> = new Set()
 	private processes: Map<number, TerminalProcess> = new Map()
 	private disposables: vscode.Disposable[] = []
+	private shellIntegrationActivated: Map<number, boolean> = new Map()
 
 	constructor() {
-		let disposable: vscode.Disposable | undefined
+		// 监听 shell integration 激活事件
 		try {
-			// 尝试注册 shell execution 事件监听
-			disposable = (vscode.window as vscode.Window).onDidStartTerminalShellExecution?.(async (e) => {
-				if (e?.execution?.read) {
-					// 创建读取流以确保更一致的输出
-					e.execution.read()
-					logger.debug("Shell integration 事件监听已注册", {
-						ctx: "terminal",
-						hasRead: !!e.execution.read,
-						event: e,
-					})
-				}
-			})
+			const shellIntegrationDisposable = (vscode.window as vscode.Window).onDidChangeTerminalShellIntegration?.(
+				(e) => {
+					const terminal = e.terminal as ExtendedTerminal
+					const shellIntegration = e.shellIntegration
+
+					if (typeof shellIntegration?.executeCommand === "function") {
+						terminal.processId.then((id) => {
+							if (id) {
+								this.shellIntegrationActivated.set(id, true)
+								logger.debug("Shell integration 已激活", {
+									ctx: "terminal",
+									terminalName: terminal.name,
+									terminalId: id,
+									hasExecuteCommand: true,
+								})
+							}
+						})
+					}
+				},
+			)
+			if (shellIntegrationDisposable) {
+				this.disposables.push(shellIntegrationDisposable)
+			}
 		} catch (error) {
 			logger.warn("Shell integration 事件监听注册失败", {
 				ctx: "terminal",
 				error: error instanceof Error ? error.message : String(error),
 			})
-		}
-		if (disposable) {
-			this.disposables.push(disposable)
 		}
 	}
 
@@ -148,31 +158,53 @@ export class TerminalManager {
 		})
 
 		const terminal = terminalInfo.terminal as ExtendedTerminal
-		// 检查 shell integration 支持
-		const hasShellIntegration = !!terminal.shellIntegration?.executeCommand
-		logger.debug("检查 shell integration 支持", {
-			ctx: "terminal",
-			hasShellIntegration,
-			terminalName: terminal.name,
-			shellIntegration: terminal.shellIntegration,
-			executeCommand: !!terminal.shellIntegration?.executeCommand,
-			terminal: terminal,
-		})
+		const resultPromise = mergePromise(process, promise)
 
-		process.run(terminal, command)
-		return mergePromise(process, promise)
+		// 在后台执行命令
+		;(async () => {
+			// 检查是否已经激活
+			const shellIntegration = terminal.shellIntegration
+			const hasExecuteCommand = typeof shellIntegration?.executeCommand === "function"
+
+			if (hasExecuteCommand) {
+				process.run(terminal, command)
+				return
+			}
+
+			// 如果还没激活，等待激活
+			const terminalId = await terminal.processId
+			if (terminalId) {
+				try {
+					await pWaitFor(() => this.shellIntegrationActivated.get(terminalId) === true, { timeout: 3000 })
+					process.run(terminal, command)
+				} catch (error) {
+					// 如果等待超时，使用传统方式执行
+					logger.warn("Shell integration 等待超时，使用传统方式执行", {
+						ctx: "terminal",
+						terminalName: terminal.name,
+						terminalId,
+					})
+					process.run(terminal, command)
+				}
+			} else {
+				// 如果无法获取 terminalId，直接使用传统方式
+				process.run(terminal, command)
+			}
+		})()
+
+		return resultPromise
 	}
 
 	async getOrCreateTerminal(cwd: string): Promise<TerminalInfo> {
 		const terminals = TerminalRegistry.getAllTerminals()
 
-		// Find available terminal from our pool first (created for this task)
+		// 首先尝试找到匹配的终端
 		const matchingTerminal = terminals.find((t) => {
 			if (t.busy) {
 				return false
 			}
 			const terminal = t.terminal as ExtendedTerminal
-			const terminalCwd = terminal.shellIntegration?.cwd // one of coolcline's commands could have changed the cwd of the terminal
+			const terminalCwd = terminal.shellIntegration?.cwd
 			if (!terminalCwd) {
 				return false
 			}
@@ -183,16 +215,15 @@ export class TerminalManager {
 			return matchingTerminal
 		}
 
-		// If no matching terminal exists, try to find any non-busy terminal
+		// 如果没有匹配的，尝试找到空闲的终端
 		const availableTerminal = terminals.find((t) => !t.busy)
 		if (availableTerminal) {
-			// Navigate back to the desired directory
 			await this.runCommand(availableTerminal, `cd "${cwd}"`)
 			this.terminalIds.add(availableTerminal.id)
 			return availableTerminal
 		}
 
-		// If all terminals are busy, create a new one
+		// 如果都没有，创建新终端
 		const newTerminalInfo = await TerminalRegistry.createTerminal(cwd)
 		this.terminalIds.add(newTerminalInfo.id)
 		return newTerminalInfo
@@ -259,9 +290,6 @@ export class TerminalManager {
 	}
 
 	disposeAll() {
-		// for (const info of this.terminals) {
-		// 	//info.terminal.dispose() // dont want to dispose terminals when task is aborted
-		// }
 		this.terminalIds.clear()
 		this.processes.clear()
 		this.disposables.forEach((disposable) => disposable.dispose())
