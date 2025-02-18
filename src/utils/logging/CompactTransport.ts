@@ -41,32 +41,19 @@ export class CompactTransport implements ICompactTransport {
 
 	private async initializeLogFile() {
 		try {
-			console.log("正在初始化日志文件:", {
-				logDir: this.logDir,
-				logPath: this.logPath,
-				exists: fs.existsSync(this.logDir),
-			})
-
 			// 确保日志目录存在
 			if (!fs.existsSync(this.logDir)) {
-				console.log("创建日志目录:", this.logDir)
 				await fs.promises.mkdir(this.logDir, { recursive: true })
 			}
 
 			// 验证目录权限
 			try {
 				await fs.promises.access(this.logDir, fs.constants.W_OK)
-				console.log("日志目录权限验证成功:", this.logDir)
 			} catch (error) {
-				console.error("日志目录权限验证失败:", {
-					dir: this.logDir,
-					error: error instanceof Error ? error.message : String(error),
-				})
 				throw new Error(`没有日志目录的写入权限: ${this.logDir}`)
 			}
 
 			// 创建或打开日志文件流
-			console.log("创建日志文件流:", this.logPath)
 			this.logStream = fs.createWriteStream(this.logPath, {
 				flags: "a", // append 模式
 				encoding: "utf8",
@@ -92,36 +79,22 @@ export class CompactTransport implements ICompactTransport {
 				this.logStream.once("ready", () => {
 					clearTimeout(timeoutId)
 					this.logStream?.removeListener("error", reject)
-					console.log("日志流准备就绪")
 					resolve()
 				})
 			})
 
 			// 处理错误事件
 			this.logStream.on("error", (error) => {
-				console.error("日志文件写入错误:", {
-					path: this.logPath,
-					error: error instanceof Error ? error.message : String(error),
-				})
-				// 尝试重新初始化
 				this.logStream = null
 				setTimeout(() => this.initializeLogFile(), 1000)
 			})
 
-			console.log("日志文件初始化成功:", this.logPath)
-
 			// 如果有待写入的日志，开始处理
 			if (this.writeQueue.length > 0) {
-				console.log(`处理${this.writeQueue.length}条待写入日志`)
 				await this.processWriteQueue()
 			}
 		} catch (error) {
 			const errorMessage = `初始化日志文件失败: ${error instanceof Error ? error.message : String(error)}`
-			console.error(errorMessage, {
-				logDir: this.logDir,
-				logPath: this.logPath,
-				error,
-			})
 			throw new Error(errorMessage)
 		}
 	}
