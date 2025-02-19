@@ -86,13 +86,41 @@ export class TerminalProcess extends EventEmitter {
 
 			if (hasExecuteCommand) {
 				// 使用 shell integration
+				// console.log("[DEBUG] 使用 shell integration 执行命令:", command)
 				const execution = shellIntegration.executeCommand(command)
 				const stream = execution.read()
 
 				this.fullOutput = ""
+				// console.log("[DEBUG] 开始读取流")
+
+				// 创建一个 Promise 来等待命令执行完成
+				const exitCodePromise = execution.exitCode
+
+				// 读取输出流
 				for await (const chunk of stream) {
+					// console.log("[DEBUG] 收到 chunk:", chunk)
 					if (chunk) {
+						console.log("[DEBUG] 处理 chunk，长度:", chunk.length)
 						this.processOutput(chunk)
+					}
+				}
+				console.log("[DEBUG] 流读取完成")
+
+				// 等待命令执行完成
+				const exitCode = await exitCodePromise
+				console.log("[DEBUG] 命令执行完成，退出码:", exitCode)
+
+				// 获取最终输出
+				const finalOutput = await this.getTerminalContents()
+				if (finalOutput) {
+					console.log("[DEBUG] 获取到最终输出:", finalOutput)
+					// 只处理新的输出部分
+					const lines = finalOutput.split("\n")
+					const commandIndex = lines.findIndex((line) => line.includes(this.command))
+					if (commandIndex !== -1 && commandIndex < lines.length - 1) {
+						const newOutput = lines.slice(commandIndex + 1).join("\n")
+						console.log("[DEBUG] 提取的新输出:", newOutput)
+						this.processOutput(newOutput)
 					}
 				}
 
@@ -155,19 +183,42 @@ export class TerminalProcess extends EventEmitter {
 	}
 
 	private processOutput(output: string) {
+		console.log("[DEBUG] processOutput 开始处理输出:", output)
 		// 移除 ANSI 转义序列
 		const cleanOutput = stripAnsi(output)
+		console.log("[DEBUG] 清理后的输出:", cleanOutput)
+
+		// 过滤掉 shell integration 的控制序列和命令行
+		const lines = cleanOutput
+			.split("\n")
+			.map((line) => {
+				return line
+					.replace(/\[(\?2004[hl]|K)\]/g, "") // 移除终端控制序列
+					.replace(/\]633;[^]*?\\/g, "") // 移除 shell integration 序列
+					.replace(/^n/, "") // 移除开头的 n
+					.trim()
+			})
+			.filter((line) => {
+				// 过滤掉不需要的行
+				if (!line) return false
+				if (line.startsWith(";")) return false
+				if (line.includes("633;")) return false
+				if (line.match(/^[^@]*@[^%]*%/)) return false // 过滤掉提示符行
+				if (line === this.command) return false // 过滤掉命令本身
+				return true
+			})
+
+		console.log("[DEBUG] 过滤后的行:", lines)
 
 		// 更新完整输出
-		this.fullOutput += cleanOutput
+		if (lines.length > 0) {
+			this.fullOutput += lines.join("\n") + "\n"
+		}
 
-		// 按行处理输出
-		const lines = cleanOutput.split("\n")
+		// 发送每一行
 		for (const line of lines) {
-			const trimmedLine = line.trim()
-			if (trimmedLine) {
-				this.emit("line", trimmedLine)
-			}
+			console.log("[DEBUG] 发送行:", line)
+			this.emit("line", line)
 		}
 	}
 
@@ -206,10 +257,21 @@ export class TerminalProcess extends EventEmitter {
 
 	private async getTerminalContents(): Promise<string> {
 		try {
-			const content = await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
-			await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
+			// 清除当前选择
 			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
+
+			// 选择到上一个命令
+			await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
+
+			// 复制选中内容
+			await vscode.commands.executeCommand("workbench.action.terminal.copySelection")
+
+			// 获取复制的内容
 			const clipboardContent = await vscode.env.clipboard.readText()
+
+			// 清除选择
+			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
+
 			return clipboardContent
 		} catch (error) {
 			logger.error("获取终端内容失败", {
