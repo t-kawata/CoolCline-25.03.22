@@ -750,10 +750,35 @@ export const ChatRowContent = ({
 									</span>
 								</div>
 								<div>
-									CoolCline won't be able to view the command's output. Please update VSCode (
-									<code>CMD/CTRL + Shift + P</code> → "Code:Check for Updates...") and make sure
-									you're using a supported shell: zsh, bash, fish, or PowerShell (
-									<code>CMD/CTRL + Shift + P</code> → "Terminal: Select Default Profile").
+									CoolCline supports two terminal operation modes: advanced Shell Integration API and
+									traditional command text. While we prefer the advanced API, CoolCline will
+									automatically fall back to the traditional mode if needed. This message indicates
+									that Shell Integration is not available and we're using the fallback mode. To enable
+									Shell Integration, please check these requirements:
+									<ol>
+										<li>
+											Enable Shell Integration in VSCode settings:
+											<br />
+											Settings (⚙️ icon in bottom right) → Search
+											"terminal.integrated.shellIntegration.enabled" → Enable it
+											<br />
+											If you can't find this option, your VSCode version needs to be updated.
+										</li>
+										<li>
+											Update VSCode (if needed):
+											<br />
+											<code>CMD/CTRL + Shift + P</code> → "Code:Check for Updates..." or manually
+											update/reinstall VSCode
+										</li>
+										<li>
+											Use a supported terminal:
+											<br />
+											<code>CMD/CTRL + Shift + P</code> → "Terminal: Select Default Profile" or
+											switch terminal in the terminal dropdown
+											<br />
+											Supported terminals: zsh, bash, fish, or PowerShell
+										</li>
+									</ol>
 								</div>
 							</div>
 						</>
