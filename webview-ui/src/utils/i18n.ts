@@ -54,7 +54,7 @@ function getInitialLanguage(): string {
 		if (stateElement) {
 			const state = JSON.parse(decodeURIComponent(stateElement.getAttribute("content") || "{}"))
 			if (state.preferredLanguage) {
-				console.log("Found initial language in vscode state:", state.preferredLanguage)
+				// console.log("Found initial language in vscode state:", state.preferredLanguage)
 				return state.preferredLanguage
 			}
 		}
@@ -62,7 +62,7 @@ function getInitialLanguage(): string {
 		console.warn("Failed to get initial language from vscode state:", error)
 	}
 
-	console.log("Using default language: English")
+	// console.log("Using default language: English")
 	return "English"
 }
 
@@ -182,7 +182,7 @@ export function getDisplayLanguage(code: string): string {
 const initialLanguage = getInitialLanguage()
 const langCode = getLanguageCode(initialLanguage)
 
-console.log("Initializing i18n with language:", { initialLanguage, langCode })
+// console.log("Initializing i18n with language:", { initialLanguage, langCode })
 
 const i18nInstance = i18n.use(initReactI18next).init({
 	resources: {
@@ -215,7 +215,7 @@ const i18nInstance = i18n.use(initReactI18next).init({
 
 // 切换语言
 export async function changeLanguage(language: string): Promise<string | null> {
-	console.log("Changing language to:", language)
+	// console.log("Changing language to:", language)
 	const langCode = getLanguageCode(language)
 
 	if (!langCode) {
@@ -230,7 +230,7 @@ export async function changeLanguage(language: string): Promise<string | null> {
 
 	try {
 		await i18n.changeLanguage(langCode)
-		console.log("Language successfully changed to:", langCode)
+		// console.log("Language successfully changed to:", langCode)
 		return langCode
 	} catch (error) {
 		console.error("Failed to change language:", error)
@@ -240,16 +240,16 @@ export async function changeLanguage(language: string): Promise<string | null> {
 
 // 初始化语言设置
 export async function initializeLanguage(preferredLanguage?: string): Promise<void> {
-	console.log("Initializing language with preferred language:", preferredLanguage)
+	// console.log("Initializing language with preferred language:", preferredLanguage)
 
 	if (!preferredLanguage) {
-		console.log("No preferred language provided, using default")
+		// console.log("No preferred language provided, using default")
 		return
 	}
 
 	const result = await changeLanguage(preferredLanguage)
 	if (result) {
-		console.log("Language initialized successfully to:", result)
+		// console.log("Language initialized successfully to:", result)
 	} else {
 		console.warn("Failed to initialize language, using default")
 	}
