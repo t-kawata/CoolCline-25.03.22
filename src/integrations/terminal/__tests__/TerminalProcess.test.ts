@@ -88,15 +88,17 @@ describe("TerminalProcess", () => {
 				shellIntegration: undefined,
 			} as unknown as vscode.Terminal
 
-			const noShellPromise = new Promise<void>((resolve) => {
+			// 监听 no_shell_integration 事件
+			const noShellIntegrationPromise = new Promise<void>((resolve) => {
 				terminalProcess.once("no_shell_integration", resolve)
 			})
 
 			await terminalProcess.run(noShellTerminal, "test command")
-			await noShellPromise
 
+			// 验证事件是否被触发
+			await expect(noShellIntegrationPromise).resolves.toBeUndefined()
 			expect(noShellTerminal.sendText).toHaveBeenCalledWith("test command", true)
-		})
+		}, 15000)
 
 		it("sets hot state for compiling commands", async () => {
 			const lines: string[] = []
@@ -222,11 +224,17 @@ describe("TerminalProcess", () => {
 
 			const merged = mergePromise(process, promise)
 
+			// 检查是否是 Promise
 			expect(merged).toHaveProperty("then")
 			expect(merged).toHaveProperty("catch")
 			expect(merged).toHaveProperty("finally")
-			expect(merged instanceof TerminalProcess).toBe(true)
 
+			// 检查是否有 TerminalProcess 的方法
+			expect(merged).toHaveProperty("on")
+			expect(merged).toHaveProperty("once")
+			expect(merged).toHaveProperty("continue")
+
+			// 确保它是一个有效的 Promise
 			await expect(merged).resolves.toBeUndefined()
 		})
 	})

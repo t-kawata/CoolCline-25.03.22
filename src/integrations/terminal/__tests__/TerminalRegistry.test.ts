@@ -9,6 +9,9 @@ jest.mock("vscode", () => ({
 			mockCreateTerminal(...args)
 			return {
 				exitStatus: undefined,
+				sendText: jest.fn(),
+				shellIntegration: undefined,
+				show: jest.fn(),
 			}
 		},
 	},
@@ -28,6 +31,7 @@ describe("TerminalRegistry", () => {
 				cwd: "/test/path",
 				name: "CoolCline",
 				iconPath: expect.any(Object),
+				shellIntegration: true,
 				env: {
 					PAGER: "cat",
 				},
