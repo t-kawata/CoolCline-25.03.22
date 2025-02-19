@@ -259,7 +259,8 @@ export class TerminalManager {
 
 			// 根据 commands 参数选择不同的选择策略
 			if (commands < 0) {
-				await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
+				// await vscode.commands.executeCommand("workbench.action.terminal.selectAll")
+				await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
 			} else {
 				await vscode.commands.executeCommand("workbench.action.terminal.selectToPreviousCommand")
 			}
