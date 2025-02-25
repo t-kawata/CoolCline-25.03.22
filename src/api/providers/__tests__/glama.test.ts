@@ -71,8 +71,8 @@ describe("GlamaHandler", () => {
 
 	beforeEach(() => {
 		mockOptions = {
-			apiModelId: "anthropic/claude-3-5-sonnet",
-			glamaModelId: "anthropic/claude-3-5-sonnet",
+			apiModelId: "anthropic/claude-3-7-sonnet",
+			glamaModelId: "anthropic/claude-3-7-sonnet",
 			glamaApiKey: "test-api-key",
 		}
 		handler = new GlamaHandler(mockOptions)
@@ -179,7 +179,7 @@ describe("GlamaHandler", () => {
 					model: mockOptions.apiModelId,
 					messages: [{ role: "user", content: "Test prompt" }],
 					temperature: 0,
-					max_tokens: 8192,
+					max_tokens: 128_000,
 				}),
 			)
 		})
@@ -231,7 +231,7 @@ describe("GlamaHandler", () => {
 			const modelInfo = handler.getModel()
 			expect(modelInfo.id).toBe(mockOptions.apiModelId)
 			expect(modelInfo.info).toBeDefined()
-			expect(modelInfo.info.maxTokens).toBe(8192)
+			expect(modelInfo.info.maxTokens).toBe(128_000)
 			expect(modelInfo.info.contextWindow).toBe(200_000)
 		})
 	})

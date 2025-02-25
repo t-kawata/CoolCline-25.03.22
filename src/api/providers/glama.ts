@@ -69,7 +69,11 @@ export class GlamaHandler implements ApiHandler, SingleCompletionHandler {
 		let maxTokens: number | undefined
 
 		if (this.getModel().id.startsWith("anthropic/")) {
-			maxTokens = 8_192
+			if (this.getModel().id.includes("claude-3-7")) {
+				maxTokens = 128_000
+			} else {
+				maxTokens = 8192
+			}
 		}
 
 		const requestOptions: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -178,7 +182,11 @@ export class GlamaHandler implements ApiHandler, SingleCompletionHandler {
 			}
 
 			if (this.getModel().id.startsWith("anthropic/")) {
-				requestOptions.max_tokens = 8192
+				if (this.getModel().id.includes("claude-3-7")) {
+					requestOptions.max_tokens = 128_000
+				} else {
+					requestOptions.max_tokens = 8192
+				}
 			}
 
 			const response = await this.client.chat.completions.create(requestOptions)

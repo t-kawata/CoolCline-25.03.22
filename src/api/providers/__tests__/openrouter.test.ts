@@ -55,7 +55,7 @@ describe("OpenRouterHandler", () => {
 		const handler = new OpenRouterHandler({})
 		const result = handler.getModel()
 
-		expect(result.id).toBe("anthropic/claude-3.5-sonnet:beta")
+		expect(result.id).toBe("anthropic/claude-3.7-sonnet")
 		expect(result.info.supportsPromptCache).toBe(true)
 	})
 

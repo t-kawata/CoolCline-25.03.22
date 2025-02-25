@@ -289,7 +289,7 @@ describe("VertexHandler", () => {
 				vertexRegion: "us-central1",
 			})
 			const modelInfo = invalidHandler.getModel()
-			expect(modelInfo.id).toBe("claude-3-5-sonnet-v2@20241022") // Default model
+			expect(modelInfo.id).toBe("claude-3-7-sonnet@20250219") // Default model
 		})
 	})
 })
