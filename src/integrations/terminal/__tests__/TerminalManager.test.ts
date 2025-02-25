@@ -54,7 +54,10 @@ describe("TerminalManager", () => {
 		it("should get all terminal content when commands is -1", async () => {
 			const result = await terminalManager.getTerminalContents(-1)
 
-			expect(vscode.commands.executeCommand).toHaveBeenCalledWith("workbench.action.terminal.selectAll")
+			expect(vscode.commands.executeCommand).toHaveBeenCalledWith("workbench.action.terminal.clearSelection")
+			expect(vscode.commands.executeCommand).toHaveBeenCalledWith(
+				"workbench.action.terminal.selectToPreviousCommand",
+			)
 			expect(vscode.commands.executeCommand).toHaveBeenCalledWith("workbench.action.terminal.copySelection")
 			expect(vscode.commands.executeCommand).toHaveBeenCalledWith("workbench.action.terminal.clearSelection")
 			expect(result).toBe(terminalContent)
