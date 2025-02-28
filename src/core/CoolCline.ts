@@ -932,7 +932,9 @@ export class CoolCline {
 		if (mcpEnabled ?? true) {
 			mcpHub = this.providerRef.deref()?.mcpHub
 			if (!mcpHub) {
-				throw new Error("MCP hub not available")
+				throw new Error(
+					"MCP hub is not available. If you just moved the extension between the main sidebar and secondary sidebar, please try restarting VSCode to resolve this issue.",
+				)
 			}
 			// Wait for MCP servers to be connected before generating system prompt
 			await pWaitFor(() => mcpHub!.isConnecting !== true, { timeout: 10_000 }).catch(() => {
