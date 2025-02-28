@@ -56,6 +56,9 @@ export type CheckpointServiceOptions = {
  */
 
 export class CheckpointService {
+	private static readonly USER_NAME = "CoolCline"
+	private static readonly USER_EMAIL = "support@coolcline.com"
+
 	private _currentCheckpoint?: string
 
 	public get currentCheckpoint() {
@@ -291,16 +294,31 @@ export class CheckpointService {
 			log(`[initRepo] Initialized new Git repository at ${baseDir}`)
 		}
 
-		// Only set user config if not already configured
-		const userName = await git.getConfig("user.name")
-		const userEmail = await git.getConfig("user.email")
+		// Get both global and local Git configurations
+		const globalUserName = await git.getConfig("user.name", "global")
+		const localUserName = await git.getConfig("user.name", "local")
+		const userName = localUserName.value || globalUserName.value
 
-		if (!userName.value) {
-			await git.addConfig("user.name", "CoolCline")
+		const globalUserEmail = await git.getConfig("user.email", "global")
+		const localUserEmail = await git.getConfig("user.email", "local")
+		const userEmail = localUserEmail.value || globalUserEmail.value
+
+		// Remove local config if it matches our default values and there's a global config
+		if (globalUserName.value && localUserName.value === CheckpointService.USER_NAME) {
+			await git.raw(["config", "--unset", "--local", "user.name"])
 		}
 
-		if (!userEmail.value) {
-			await git.addConfig("user.email", "support@coolcline.com")
+		if (globalUserEmail.value && localUserEmail.value === CheckpointService.USER_EMAIL) {
+			await git.raw(["config", "--unset", "--local", "user.email"])
+		}
+
+		// Only set user config if not already configured
+		if (!userName) {
+			await git.addConfig("user.name", CheckpointService.USER_NAME)
+		}
+
+		if (!userEmail) {
+			await git.addConfig("user.email", CheckpointService.USER_EMAIL)
 		}
 
 		if (!isExistingRepo) {
