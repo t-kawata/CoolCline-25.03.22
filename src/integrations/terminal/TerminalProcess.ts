@@ -37,6 +37,28 @@ export class TerminalProcess extends EventEmitter {
 	private static readonly MAX_OUTPUT_LENGTH = 1000000
 	private static readonly MAX_OUTPUT_PREVIEW_LENGTH = 100000
 
+	// 不同终端类型的提示符正则
+	private readonly PROMPT_PATTERNS = {
+		// Unix-like (bash/zsh)
+		bash: /^[\w-]+@[\w-]+[^%$#>]+[$#>]/, // username@hostname path $
+		zsh: /^[\w-]+@[\w-]+[^%$#>]+[%$#>]/, // username@hostname path %
+		bashBracket: /^\[[\w-]+@[\w-]+[^\]]+\][$#>]/, // [username@hostname path]$
+		bashSimple: /^-(?:bash|zsh)-[\d.]+[$#>]/, // -bash-3.2$ 或 -zsh-5.8$
+		ohmyzsh: /^➜\s+[^$#%>]*/, // oh-my-zsh theme
+		starship: /^[^>]*[❯→➜]/, // starship prompt
+
+		// Windows
+		cmd: /^[A-Z]:\\[^>]+>/, // C:\path>
+		cmdSimple: /^[^>]+>/, // path>
+		powershell: /^PS\s+[A-Z]:\\[^>]+>/, // PS C:\path>
+		powershellSimple: /^PS>/, // PS>
+
+		// 通用格式
+		simple: /^[%$#>]\s*/, // 简单提示符
+		git: /^[\w-]+@[\w-]+[^(]+\([\w-/]+\)[$#>]/, // git branch in prompt
+		time: /^\[\d{2}:\d{2}:\d{2}\][$#>]/, // time in prompt
+	}
+
 	// 为测试添加的方法
 	private emitIfEol(chunk: string) {
 		this.buffer += chunk
@@ -80,146 +102,268 @@ export class TerminalProcess extends EventEmitter {
 		this.isHot = true
 		const commandPreview = command.length > 30 ? command.substring(0, 30) + "..." : command
 
-		try {
-			const shellIntegration = (terminal as any).shellIntegration
-			const hasExecuteCommand = typeof shellIntegration?.executeCommand === "function"
+		return new Promise<void>((resolve, reject) => {
+			let timeoutId: NodeJS.Timeout | undefined
+			let disposable: vscode.Disposable | undefined
 
-			if (hasExecuteCommand) {
-				// 使用 shell integration
-				// console.log("[DEBUG] 使用 shell integration 执行命令:", command)
-				const execution = shellIntegration.executeCommand(command)
-				const stream = execution.read()
-
-				this.fullOutput = ""
-				// console.log("[DEBUG] 开始读取流")
-
-				// 创建一个 Promise 来等待命令执行完成
-				const exitCodePromise = execution.exitCode
-
-				// 读取输出流
-				for await (const chunk of stream) {
-					// console.log("[DEBUG] 收到 chunk:", chunk)
-					if (chunk) {
-						console.log("[DEBUG] 处理 chunk，长度:", chunk.length)
-						this.processOutput(chunk)
-					}
-				}
-				console.log("[DEBUG] 流读取完成")
-
-				// 等待命令执行完成
-				const exitCode = await exitCodePromise
-				console.log("[DEBUG] 命令执行完成，退出码:", exitCode)
-
-				// 获取最终输出
-				const finalOutput = await this.getTerminalContents()
-				if (finalOutput) {
-					console.log("[DEBUG] 获取到最终输出:", finalOutput)
-					// 只处理新的输出部分
-					const lines = finalOutput.split("\n")
-					const commandIndex = lines.findIndex((line) => line.includes(this.command))
-					if (commandIndex !== -1 && commandIndex < lines.length - 1) {
-						const newOutput = lines.slice(commandIndex + 1).join("\n")
-						console.log("[DEBUG] 提取的新输出:", newOutput)
-						this.processOutput(newOutput)
-					}
-				}
-
-				// 命令执行完成
-				this.emit("completed")
-				this.emit("continue")
-			} else {
-				// 使用传统方式
-				logger.debug("使用传统方式执行命令", {
-					ctx: "terminal",
-					command: commandPreview,
-				})
-
-				// 触发 no_shell_integration 事件
-				this.emit("no_shell_integration")
-
-				this.fullOutput = ""
-				this.buffer = ""
-				this.outputBuffer = []
-
-				// 发送命令
-				terminal.sendText(command, true)
-				await new Promise((resolve) => setTimeout(resolve, 100))
-
-				// 等待命令完成
-				const output = await this.waitForCommandCompletion()
-				if (output) {
-					if (output.length > TerminalProcess.MAX_OUTPUT_LENGTH) {
-						logger.warn("命令输出超过限制", {
-							ctx: "terminal",
-							length: output.length,
-							limit: TerminalProcess.MAX_OUTPUT_LENGTH,
-						})
-
-						const truncatedOutput =
-							output.substring(0, TerminalProcess.MAX_OUTPUT_PREVIEW_LENGTH) +
-							"\n\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，" +
-							"比如将输出重定向到文件：command > output.txt]"
-
-						this.emit("line", "")
-						this.emit("line", truncatedOutput)
-					} else {
-						this.emit("line", "")
-						this.processOutput(output)
-					}
-				}
-
-				this.emit("completed")
-				this.emit("continue")
+			const cleanup = () => {
+				logger.debug("清理资源", { ctx: "terminal" })
+				if (timeoutId) clearTimeout(timeoutId)
+				if (disposable) disposable.dispose()
+				this.isHot = false
 			}
-		} catch (error) {
-			logger.error("命令执行失败", {
-				ctx: "terminal",
-				error: error instanceof Error ? error : new Error(String(error)),
-			})
-			this.emit("error", error instanceof Error ? error : new Error(String(error)))
-		} finally {
-			this.isHot = false
-		}
+
+			try {
+				const shellIntegration = (terminal as any).shellIntegration
+				const hasExecuteCommand = typeof shellIntegration?.executeCommand === "function"
+
+				if (hasExecuteCommand) {
+					logger.debug("使用 shell integration 执行命令", {
+						ctx: "terminal",
+						command: commandPreview,
+					})
+
+					const execution = shellIntegration.executeCommand(command)
+
+					disposable = vscode.window.onDidEndTerminalShellExecution(async (event) => {
+						if (event.execution === execution) {
+							try {
+								logger.debug("命令执行完成", {
+									ctx: "terminal",
+									exitCode: event.exitCode,
+								})
+
+								// 获取最终输出
+								const finalOutput = await this.getTerminalContents()
+								if (finalOutput) {
+									logger.debug("获取到最终输出", {
+										ctx: "terminal",
+										outputLength: finalOutput.length,
+									})
+
+									// 只处理新的输出部分
+									const lines = finalOutput.split("\n")
+									const commandIndex = lines.findIndex((line) => line.includes(this.command))
+									if (commandIndex !== -1 && commandIndex < lines.length - 1) {
+										const newOutput = lines.slice(commandIndex + 1).join("\n")
+										this.processOutput(newOutput)
+									}
+								}
+
+								// 命令执行完成
+								this.emit("completed")
+								this.emit("continue")
+								cleanup()
+								resolve()
+							} catch (error) {
+								logger.error("处理命令输出时发生错误", {
+									ctx: "terminal",
+									error: error instanceof Error ? error : new Error(String(error)),
+								})
+								cleanup()
+								reject(error)
+							}
+						}
+					})
+
+					// 设置超时
+					timeoutId = setTimeout(() => {
+						logger.warn("命令执行超时", {
+							ctx: "terminal",
+							command: commandPreview,
+						})
+						cleanup()
+						reject(new Error("Command execution timeout"))
+					}, PROCESS_HOT_TIMEOUT_COMPILING)
+				} else {
+					// 使用传统方式
+					logger.debug("使用传统方式执行命令", {
+						ctx: "terminal",
+						command: commandPreview,
+					})
+
+					// 触发 no_shell_integration 事件
+					this.emit("no_shell_integration")
+
+					this.fullOutput = ""
+					this.buffer = ""
+					this.outputBuffer = []
+
+					// 发送命令
+					terminal.sendText(command, true)
+
+					// 设置较短的超时时间
+					timeoutId = setTimeout(() => {
+						logger.warn("传统方式执行超时", {
+							ctx: "terminal",
+							command: commandPreview,
+						})
+						cleanup()
+						reject(new Error("Command execution timeout"))
+					}, PROCESS_HOT_TIMEOUT_NORMAL)
+
+					// 等待命令完成
+					this.waitForCommandCompletion()
+						.then((output) => {
+							if (output) {
+								if (output.length > TerminalProcess.MAX_OUTPUT_LENGTH) {
+									logger.warn("命令输出超过限制", {
+										ctx: "terminal",
+										length: output.length,
+										limit: TerminalProcess.MAX_OUTPUT_LENGTH,
+									})
+
+									const truncatedOutput =
+										output.substring(0, TerminalProcess.MAX_OUTPUT_PREVIEW_LENGTH) +
+										"\n\n... [输出内容过长，已截断。建议使用其他工具查看完整输出，" +
+										"比如将输出重定向到文件：command > output.txt]"
+
+									this.emit("line", "")
+									this.emit("line", truncatedOutput)
+								} else {
+									this.emit("line", "")
+									this.processOutput(output)
+								}
+							}
+
+							this.emit("completed")
+							this.emit("continue")
+							cleanup()
+							resolve()
+						})
+						.catch((error) => {
+							cleanup()
+							reject(error)
+						})
+				}
+			} catch (error) {
+				logger.error("命令执行失败", {
+					ctx: "terminal",
+					error: error instanceof Error ? error : new Error(String(error)),
+				})
+				cleanup()
+				reject(error instanceof Error ? error : new Error(String(error)))
+			}
+		})
 	}
 
 	private processOutput(output: string) {
-		console.log("[DEBUG] processOutput 开始处理输出:", output)
+		logger.debug("开始处理终端输出", {
+			ctx: "terminal",
+			outputLength: output.length,
+		})
+
 		// 移除 ANSI 转义序列
 		const cleanOutput = stripAnsi(output)
-		console.log("[DEBUG] 清理后的输出:", cleanOutput)
 
-		// 过滤掉 shell integration 的控制序列和命令行
-		const lines = cleanOutput
-			.split("\n")
-			.map((line) => {
-				return line
-					.replace(/\[(\?2004[hl]|K)\]/g, "") // 移除终端控制序列
-					.replace(/\]633;[^]*?\\/g, "") // 移除 shell integration 序列
-					.replace(/^n/, "") // 移除开头的 n
-					.trim()
-			})
-			.filter((line) => {
-				// 过滤掉不需要的行
-				if (!line) return false
-				if (line.startsWith(";")) return false
-				if (line.includes("633;")) return false
-				if (line.match(/^[^@]*@[^%]*%/)) return false // 过滤掉提示符行
-				if (line === this.command) return false // 过滤掉命令本身
-				return true
-			})
-
-		console.log("[DEBUG] 过滤后的行:", lines)
+		// 处理输出内容
+		const lines = this.processTerminalOutput(cleanOutput)
+		if (!lines || lines.length === 0) {
+			return
+		}
 
 		// 更新完整输出
-		if (lines.length > 0) {
-			this.fullOutput += lines.join("\n") + "\n"
-		}
+		this.fullOutput += lines.join("\n") + "\n"
 
 		// 发送每一行
 		for (const line of lines) {
-			console.log("[DEBUG] 发送行:", line)
 			this.emit("line", line)
 		}
+	}
+
+	/**
+	 * 处理终端输出
+	 * 考虑到了前后无效内容，前有无效回显，后有无效空行
+	 */
+	private processTerminalOutput(fullOutput: string): string[] | null {
+		// 1. 去掉尾部空行
+		let lines = this.removeTrailingEmptyLines(fullOutput)
+		if (lines.length === 0) {
+			return null
+		}
+
+		// 2. 处理每一行，移除控制字符等
+		lines = lines.map((line) => {
+			return this.cleanTerminalLine(line)
+		})
+
+		// 3. 过滤不需要的行
+		lines = this.filterOutputLines(lines)
+
+		return lines.length > 0 ? lines : null
+	}
+
+	/**
+	 * 清理终端行内容
+	 */
+	private cleanTerminalLine(line: string): string {
+		return line
+			.replace(/\[(\?2004[hl]|K)\]/g, "") // 移除终端控制序列
+			.replace(/\]633;[^]*?\\/g, "") // 移除 shell integration 序列
+			.replace(/\x1B\[[0-9;]*[JKmsu]/g, "") // 移除 ANSI 颜色和控制字符
+			.replace(/^n/, "") // 移除开头的 n
+			.replace(/\r/g, "") // 移除回车符
+			.trim()
+	}
+
+	/**
+	 * 过滤输出行
+	 */
+	private filterOutputLines(lines: string[]): string[] {
+		return lines.filter((line) => {
+			// 空行过滤
+			if (!line) return false
+
+			// 控制序列过滤
+			if (line.startsWith(";")) return false
+			if (line.includes("633;")) return false
+
+			// 提示符过滤
+			if (this.isPromptLine(line)) return false
+
+			// 命令本身过滤
+			if (line === this.command) return false
+
+			// 其他特殊字符过滤
+			if (/^\x1b[\[\(].*[\)\]]$/.test(line)) return false // 控制序列
+			if (/^[\x00-\x1F\x7F]+$/.test(line)) return false // 不可打印字符
+
+			return true
+		})
+	}
+
+	/**
+	 * 检查是否是提示符行
+	 */
+	private isPromptLine(line: string): boolean {
+		return Object.values(this.PROMPT_PATTERNS).some((pattern) => pattern.test(line))
+	}
+
+	/**
+	 * 从终端输出中提取提示符
+	 */
+	private extractPromptText(promptLine: string): string {
+		let promptText = ""
+		Object.values(this.PROMPT_PATTERNS).find((pattern) => {
+			const match = promptLine.match(pattern)
+			if (match) {
+				promptText = match[0]
+				return true
+			}
+			return false
+		})
+		return promptText
+	}
+
+	/**
+	 * 去掉尾部空行
+	 */
+	private removeTrailingEmptyLines(fullOutput: string): string[] {
+		let lines = fullOutput.split("\n")
+		while (lines.length > 0 && lines[lines.length - 1].trim() === "") {
+			lines.pop()
+		}
+		return lines
 	}
 
 	private async waitForCommandCompletion(): Promise<string> {
@@ -257,6 +401,9 @@ export class TerminalProcess extends EventEmitter {
 
 	private async getTerminalContents(): Promise<string> {
 		try {
+			// 保存原始剪贴板内容
+			const originalClipboard = await vscode.env.clipboard.readText()
+
 			// 清除当前选择
 			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
 
@@ -268,6 +415,9 @@ export class TerminalProcess extends EventEmitter {
 
 			// 获取复制的内容
 			const clipboardContent = await vscode.env.clipboard.readText()
+
+			// 恢复原始剪贴板内容
+			await vscode.env.clipboard.writeText(originalClipboard)
 
 			// 清除选择
 			await vscode.commands.executeCommand("workbench.action.terminal.clearSelection")
