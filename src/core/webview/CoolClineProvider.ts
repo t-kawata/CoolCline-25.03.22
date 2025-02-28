@@ -1798,7 +1798,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 				this.outputChannel.appendLine("Invalid response from Glama API")
 			}
 			await fs.writeFile(glamaModelsFilePath, JSON.stringify(models))
-			this.outputChannel.appendLine(`Glama models fetched and saved: ${JSON.stringify(models, null, 2)}`)
+			this.outputChannel.appendLine("Glama models fetched and saved")
 		} catch (error) {
 			this.outputChannel.appendLine(
 				`Error fetching Glama models: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
@@ -1910,7 +1910,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 				this.outputChannel.appendLine("Invalid response from OpenRouter API")
 			}
 			await fs.writeFile(openRouterModelsFilePath, JSON.stringify(models))
-			this.outputChannel.appendLine(`OpenRouter models fetched and saved: ${JSON.stringify(models, null, 2)}`)
+			this.outputChannel.appendLine("OpenRouter models fetched and saved")
 		} catch (error) {
 			this.outputChannel.appendLine(
 				`Error fetching OpenRouter models: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
@@ -1924,6 +1924,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	async refreshUnboundModels() {
 		const models: Record<string, ModelInfo> = {}
 		try {
+			const cacheDir = await this.ensureCacheDirectoryExists()
+			const unboundModelsFilePath = path.join(cacheDir, "unbound-models.json")
 			const response = await axios.get("https://api.getunbound.ai/models")
 			if (response.data) {
 				const rawModels = response.data
@@ -1946,7 +1948,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			} else {
 				this.outputChannel.appendLine("Invalid response from Unbound API")
 			}
-			this.outputChannel.appendLine(`Unbound models fetched: ${JSON.stringify(models, null, 2)}`)
+			await fs.writeFile(unboundModelsFilePath, JSON.stringify(models))
+			this.outputChannel.appendLine("Unbound models fetched and saved")
 		} catch (error) {
 			this.outputChannel.appendLine(
 				`Error fetching Unbound models: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
