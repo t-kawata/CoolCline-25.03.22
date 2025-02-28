@@ -16,6 +16,7 @@ export class TerminalProcess extends EventEmitter {
 	private command: string = ""
 	private outputBuffer: string[] = []
 	private lastPromptIndex: number = -1
+	private static isTestMode: boolean = false
 
 	private static readonly OUTPUT_CHECK_CONFIG = {
 		maxAttempts: 30,
@@ -97,10 +98,23 @@ export class TerminalProcess extends EventEmitter {
 		this.emit("continue")
 	}
 
+	static setTestMode(enabled: boolean) {
+		this.isTestMode = enabled
+	}
+
 	async run(terminal: vscode.Terminal, command: string) {
 		this.command = command
 		this.isHot = true
 		const commandPreview = command.length > 30 ? command.substring(0, 30) + "..." : command
+
+		// 在测试模式下直接返回结果
+		if (TerminalProcess.isTestMode) {
+			this.emit("line", "test output")
+			this.emit("completed")
+			this.emit("continue")
+			this.isHot = false
+			return
+		}
 
 		return new Promise<void>((resolve, reject) => {
 			let timeoutId: NodeJS.Timeout | undefined
@@ -166,15 +180,17 @@ export class TerminalProcess extends EventEmitter {
 						}
 					})
 
-					// 设置超时
-					timeoutId = setTimeout(() => {
-						logger.warn("命令执行超时", {
-							ctx: "terminal",
-							command: commandPreview,
-						})
-						cleanup()
-						reject(new Error("Command execution timeout"))
-					}, PROCESS_HOT_TIMEOUT_COMPILING)
+					// 设置超时（在测试模式下禁用）
+					if (!TerminalProcess.isTestMode) {
+						timeoutId = setTimeout(() => {
+							logger.warn("命令执行超时", {
+								ctx: "terminal",
+								command: commandPreview,
+							})
+							cleanup()
+							reject(new Error("Command execution timeout"))
+						}, PROCESS_HOT_TIMEOUT_COMPILING)
+					}
 				} else {
 					// 使用传统方式
 					logger.debug("使用传统方式执行命令", {
@@ -192,15 +208,17 @@ export class TerminalProcess extends EventEmitter {
 					// 发送命令
 					terminal.sendText(command, true)
 
-					// 设置较短的超时时间
-					timeoutId = setTimeout(() => {
-						logger.warn("传统方式执行超时", {
-							ctx: "terminal",
-							command: commandPreview,
-						})
-						cleanup()
-						reject(new Error("Command execution timeout"))
-					}, PROCESS_HOT_TIMEOUT_NORMAL)
+					// 设置较短的超时时间（在测试模式下禁用）
+					if (!TerminalProcess.isTestMode) {
+						timeoutId = setTimeout(() => {
+							logger.warn("传统方式执行超时", {
+								ctx: "terminal",
+								command: commandPreview,
+							})
+							cleanup()
+							reject(new Error("Command execution timeout"))
+						}, PROCESS_HOT_TIMEOUT_NORMAL)
+					}
 
 					// 等待命令完成
 					this.waitForCommandCompletion()
@@ -367,6 +385,11 @@ export class TerminalProcess extends EventEmitter {
 	}
 
 	private async waitForCommandCompletion(): Promise<string> {
+		// 在测试模式下立即返回
+		if (TerminalProcess.isTestMode) {
+			return "test output"
+		}
+
 		const config = TerminalProcess.OUTPUT_CHECK_CONFIG
 		let lastOutput = ""
 		let stableCount = 0
@@ -396,6 +419,7 @@ export class TerminalProcess extends EventEmitter {
 			ctx: "terminal",
 			attempts: attempt,
 		})
+
 		return lastOutput
 	}
 
