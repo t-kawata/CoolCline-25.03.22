@@ -1277,15 +1277,32 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 					case "loadApiConfiguration":
 						if (message.text) {
 							try {
+								// 1. 先加载配置
 								const apiConfig = await this.configManager.loadConfig(message.text)
 								const listApiConfig = await this.configManager.listConfig()
 
-								await Promise.all([
-									this.updateGlobalState("listApiConfigMeta", listApiConfig),
-									this.updateGlobalState("currentApiConfigName", message.text),
-									this.updateApiConfiguration(apiConfig),
-								])
+								// 2. 更新配置元数据
+								await this.updateGlobalState("listApiConfigMeta", listApiConfig)
+								await this.updateGlobalState("currentApiConfigName", message.text)
 
+								// 3. 更新具体配置前先请求模型信息
+								if (apiConfig.llmProvider) {
+									switch (apiConfig.llmProvider) {
+										case "ollama":
+											// 直接调用请求模型的方法
+											await this.getOllamaModels(apiConfig.ollamaBaseUrl)
+											break
+										case "lmstudio":
+											await this.getLmStudioModels(apiConfig.lmStudioBaseUrl)
+											break
+										case "vscode-lm":
+											await this.getVsCodeLmModels()
+											break
+									}
+								}
+
+								// 4. 更新配置并通知UI
+								await this.updateApiConfiguration(apiConfig)
 								await this.postStateToWebview()
 							} catch (error) {
 								this.outputChannel.appendLine(
