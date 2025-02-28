@@ -231,7 +231,7 @@ describe("GlamaHandler", () => {
 			const modelInfo = handler.getModel()
 			expect(modelInfo.id).toBe(mockOptions.apiModelId)
 			expect(modelInfo.info).toBeDefined()
-			expect(modelInfo.info.maxTokens).toBe(128_000)
+			expect(modelInfo.info.maxTokens).toBe(64_000)
 			expect(modelInfo.info.contextWindow).toBe(200_000)
 		})
 	})

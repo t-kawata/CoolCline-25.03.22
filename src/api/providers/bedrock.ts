@@ -101,12 +101,13 @@ export class AwsBedrockHandler implements ApiHandler, SingleCompletionHandler {
 		const formattedMessages = convertToBedrockConverseMessages(messages)
 
 		// Construct the payload
+		const is37Model = modelId.includes("claude-3-7-sonnet")
 		const payload = {
 			modelId,
 			messages: formattedMessages,
 			system: [{ text: systemPrompt }],
 			inferenceConfig: {
-				maxTokens: modelConfig.info.maxTokens || 5000,
+				maxTokens: is37Model ? 128_000 : modelConfig.info.maxTokens || 5000,
 				temperature: this.options.modelTemperature ?? BEDROCK_DEFAULT_TEMPERATURE,
 				topP: BEDROCK_DEFAULT_TOP_P,
 				...(this.options.awsUsePromptCache
@@ -255,6 +256,7 @@ export class AwsBedrockHandler implements ApiHandler, SingleCompletionHandler {
 				modelId = modelConfig.id
 			}
 
+			const is37Model = modelId.includes("claude-3-7-sonnet")
 			const payload = {
 				modelId,
 				messages: convertToBedrockConverseMessages([
@@ -264,7 +266,7 @@ export class AwsBedrockHandler implements ApiHandler, SingleCompletionHandler {
 					},
 				]),
 				inferenceConfig: {
-					maxTokens: modelConfig.info.maxTokens || 5000,
+					maxTokens: is37Model ? 128_000 : modelConfig.info.maxTokens || 5000,
 					temperature: this.options.modelTemperature ?? BEDROCK_DEFAULT_TEMPERATURE,
 					topP: BEDROCK_DEFAULT_TOP_P,
 				},

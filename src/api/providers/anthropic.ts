@@ -95,16 +95,24 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 				break
 			}
 			default: {
-				stream = (await this.client.messages.create({
-					model: modelId,
-					max_tokens: this.getModel().info.maxTokens || 8192,
-					temperature: this.options.modelTemperature ?? ANTHROPIC_DEFAULT_TEMPERATURE,
-					system: [{ text: systemPrompt, type: "text" }],
-					messages,
-					// tools,
-					// tool_choice: { type: "auto" },
-					stream: true,
-				})) as any
+				const is37Model = modelId === "claude-3-7-sonnet-20250219"
+				stream = (await this.client.messages.create(
+					{
+						model: modelId,
+						max_tokens: is37Model ? 128_000 : this.getModel().info.maxTokens || 8192,
+						temperature: this.options.modelTemperature ?? ANTHROPIC_DEFAULT_TEMPERATURE,
+						system: [{ text: systemPrompt, type: "text" }],
+						messages,
+						stream: true,
+					},
+					is37Model
+						? {
+								headers: {
+									"anthropic-beta": "output-128k-2025-02-19",
+								},
+							}
+						: undefined,
+				)) as any
 				break
 			}
 		}
