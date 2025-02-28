@@ -17,29 +17,29 @@ export async function initializeLogger(context: vscode.ExtensionContext) {
 	try {
 		// 获取正确的存储路径
 		const extensionDir = context.globalStorageUri.fsPath
-		console.log("扩展目录路径:", extensionDir)
+		// console.log("扩展目录路径:", extensionDir)
 
 		// 确保扩展目录存在
 		if (!fs.existsSync(extensionDir)) {
-			console.log("创建扩展目录:", extensionDir)
+			// console.log("创建扩展目录:", extensionDir)
 			await fs.promises.mkdir(extensionDir, { recursive: true })
 		}
 
 		// 创建日志目录
 		const logDir = path.join(extensionDir, "logs")
-		console.log("日志目录路径:", logDir)
+		// console.log("日志目录路径:", logDir)
 		if (!fs.existsSync(logDir)) {
-			console.log("创建日志目录:", logDir)
+			// console.log("创建日志目录:", logDir)
 			await fs.promises.mkdir(logDir, { recursive: true })
 		}
 
 		const logPath = path.join(logDir, "coolcline.log")
-		console.log("日志文件完整路径:", logPath)
+		// console.log("日志文件完整路径:", logPath)
 
 		// 验证目录权限
 		try {
 			await fs.promises.access(logDir, fs.constants.W_OK)
-			console.log("日志目录权限验证成功")
+			// console.log("日志目录权限验证成功")
 		} catch (error) {
 			console.error("日志目录权限验证失败:", error)
 			throw error
