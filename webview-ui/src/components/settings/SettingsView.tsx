@@ -708,6 +708,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 								checked={checkpointsEnabled}
 								onChange={(e: any) => {
 									setCheckpointsEnabled(e.target.checked)
+									vscode.postMessage({ type: "checkpointsEnabled", bool: e.target.checked })
 								}}>
 								<span style={{ fontWeight: "500" }}>{t("settings.advanced.checkpoints.enable")}</span>
 							</VSCodeCheckbox>

@@ -1098,6 +1098,10 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 						await this.updateGlobalState("autoApprovalEnabled", message.bool ?? false)
 						await this.postStateToWebview()
 						break
+					case "checkpointsEnabled":
+						await this.updateGlobalState("checkpointsEnabled", message.bool ?? false)
+						await this.postStateToWebview()
+						break
 					case "enhancePrompt":
 						if (message.text) {
 							try {
