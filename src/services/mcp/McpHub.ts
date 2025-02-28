@@ -67,6 +67,11 @@ export class McpHub {
 		return this.connections.filter((conn) => !conn.server.disabled).map((conn) => conn.server)
 	}
 
+	getAllServers(): McpServer[] {
+		// Return all servers regardless of state
+		return this.connections.map((conn) => conn.server)
+	}
+
 	async getMcpServersPath(): Promise<string> {
 		const provider = this.providerRef.deref()
 		if (!provider) {
@@ -426,20 +431,14 @@ export class McpHub {
 	}
 
 	private async notifyWebviewOfServerChanges(): Promise<void> {
-		// servers should always be sorted in the order they are defined in the settings file
-		const settingsPath = await this.getMcpSettingsFilePath()
-		const content = await fs.readFile(settingsPath, "utf-8")
-		const config = JSON.parse(content)
-		const serverOrder = Object.keys(config.mcpServers || {})
-		await this.providerRef.deref()?.postMessageToWebview({
+		const provider = this.providerRef.deref()
+		if (!provider) {
+			return
+		}
+
+		provider.postMessageToWebview({
 			type: "mcpServers",
-			mcpServers: [...this.connections]
-				.sort((a, b) => {
-					const indexA = serverOrder.indexOf(a.server.name)
-					const indexB = serverOrder.indexOf(b.server.name)
-					return indexA - indexB
-				})
-				.map((connection) => connection.server),
+			mcpServers: this.getAllServers(),
 		})
 	}
 
