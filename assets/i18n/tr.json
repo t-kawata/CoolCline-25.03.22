@@ -550,7 +550,7 @@
 					"localServer": "Yerel sunucu"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "VS Code'un yerleşik dil modeli API'sini kullan",
 					"modelSelector": "Dil modeli",

@@ -550,7 +550,7 @@
 					"localServer": "Lokaler Server"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "Verwenden Sie die eingebaute Sprachmodell-API von VS Code",
 					"modelSelector": "Sprachmodell",

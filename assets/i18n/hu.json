@@ -550,7 +550,7 @@
 					"localServer": "Helyi szerver"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "Használja a VS Code beépített nyelvi modell API-ját",
 					"modelSelector": "Nyelvi modell",

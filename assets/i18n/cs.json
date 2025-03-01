@@ -550,7 +550,7 @@
 					"localServer": "Lokální server"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "Použít vestavěné API jazykového modelu VS Code",
 					"modelSelector": "Jazykový model",

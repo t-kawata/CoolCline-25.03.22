@@ -550,7 +550,7 @@
 					"localServer": "स्थानीय सर्वर"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "VS Code में बिल्ट-इन भाषा मॉडल API का उपयोग करें",
 					"modelSelector": "भाषा मॉडल",

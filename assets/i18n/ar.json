@@ -549,7 +549,7 @@
 					"localServer": "الخادم المحلي"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "استخدام واجهة برمجة تطبيقات نموذج اللغة المدمجة في VS Code",
 					"modelSelector": "نموذج اللغة",

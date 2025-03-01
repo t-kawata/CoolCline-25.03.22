@@ -550,7 +550,7 @@
 					"localServer": "本機伺服器"
 				},
 				"vscode": {
-					"name": "VS Code",
+					"name": "GitHub Copilot LLM API",
 					"title": "VS Code LM API",
 					"description": "使用 VS Code 內建的語言模型 API",
 					"modelSelector": "語言模型",
