@@ -4,7 +4,7 @@ import * as vscode from "vscode"
 import { logger } from "../../utils/logging"
 
 const PROCESS_HOT_TIMEOUT_NORMAL = 2_000
-const PROCESS_HOT_TIMEOUT_COMPILING = 15_000
+const PROCESS_HOT_TIMEOUT_COMPILING = 1000 * 60 * 60 // 1小时
 
 export class TerminalProcess extends EventEmitter {
 	private isListening: boolean = true
@@ -137,8 +137,7 @@ export class TerminalProcess extends EventEmitter {
 						command: commandPreview,
 					})
 
-					const execution = shellIntegration.executeCommand(command)
-
+					//先启动监听命令输出,再执行命令,防止执行速度太快或慢漏了监听的东西
 					disposable = vscode.window.onDidEndTerminalShellExecution(async (event) => {
 						if (event.execution === execution) {
 							try {
@@ -179,6 +178,9 @@ export class TerminalProcess extends EventEmitter {
 							}
 						}
 					})
+
+					// 再执行命令
+					const execution = shellIntegration.executeCommand(command)
 
 					// 设置超时（在测试模式下禁用）
 					if (!TerminalProcess.isTestMode) {
