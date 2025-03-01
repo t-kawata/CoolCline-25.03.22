@@ -34,14 +34,13 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import * as vscodemodels from "vscode"
 import VSCodeButtonLink from "../common/VSCodeButtonLink"
-import OpenRouterModelPicker, {
-	ModelDescriptionMarkdown,
-	OPENROUTER_MODEL_PICKER_Z_INDEX,
-} from "./OpenRouterModelPicker"
+import OpenRouterModelPicker from "./OpenRouterModelPicker"
 import OpenAiModelPicker from "./OpenAiModelPicker"
 import GlamaModelPicker from "./GlamaModelPicker"
 import { useTranslation } from "react-i18next"
 import { TemperatureControl } from "./TemperatureControl"
+import { ModelDescriptionMarkdown } from "../SearchModelPicker/ModelDescriptionMarkdown"
+import { DROPDOWN_Z_INDEX } from "../ui/dropdown"
 
 interface ApiOptionsProps {
 	apiErrorMessage?: string
@@ -125,7 +124,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						},
 					})
 				}}
-				style={{ width: "100%" }}
+				style={{ width: "100%", position: "relative", zIndex: DROPDOWN_Z_INDEX + 1 }}
 				options={options}
 			/>
 		)
@@ -154,7 +153,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						minWidth: 180,
 						width: "100%",
 						position: "relative",
-						zIndex: OPENROUTER_MODEL_PICKER_Z_INDEX + 1,
+						zIndex: DROPDOWN_Z_INDEX + 1,
 					}}
 					options={[
 						{
