@@ -9,33 +9,56 @@ import { simpleGit, SimpleGit, SimpleGitTaskCallback } from "simple-git"
 import { CheckpointService } from "../CheckpointService"
 
 describe("CheckpointService", () => {
-	const taskId = "test-task"
+	let baseDir: string
 	let git: SimpleGit
 	let testFile: string
 	let service: CheckpointService
+	let originalPlatform: string
+	const taskId = "test-task"
 
-	beforeEach(async () => {
-		// Create a temporary directory for testing.
-		const baseDir = path.join(os.tmpdir(), `checkpoint-service-test-${Date.now()}`)
-		await fs.mkdir(baseDir)
+	const initRepo = async ({
+		baseDir,
+		initialContent = "Hello, world!",
+	}: {
+		baseDir: string
+		initialContent?: string
+	}): Promise<{ git: SimpleGit; testFile: string }> => {
+		await fs.mkdir(baseDir, { recursive: true })
+		git = simpleGit({
+			baseDir,
+			config: [],
+		})
 
-		// Initialize git repo.
-		git = simpleGit(baseDir)
 		await git.init()
 		await git.addConfig("user.name", "CoolCline")
 		await git.addConfig("user.email", "support@coolcline.com")
-
-		// Create test file.
 		testFile = path.join(baseDir, "test.txt")
-		await fs.writeFile(testFile, "Hello, world!")
+		await fs.writeFile(testFile, initialContent)
+		await git.add("test.txt")
+		await git.commit("Initial commit")
 
-		// Create initial commit.
-		await git.add(".")
-		await git.commit("Initial commit")!
+		return { git, testFile }
+	}
 
-		// Create service instance.
-		const log = () => {}
-		service = await CheckpointService.create({ taskId, git, baseDir, log })
+	beforeAll(() => {
+		originalPlatform = process.platform
+		Object.defineProperty(process, "platform", {
+			value: "darwin",
+		})
+	})
+
+	afterAll(() => {
+		Object.defineProperty(process, "platform", {
+			value: originalPlatform,
+		})
+	})
+
+	beforeEach(async () => {
+		baseDir = path.join(os.tmpdir(), `checkpoint-service-test-${Date.now()}`)
+		const repo = await initRepo({ baseDir })
+		git = repo.git
+		testFile = repo.testFile
+		service = await CheckpointService.create({ taskId, git, baseDir })
 	})
 
 	afterEach(async () => {
@@ -456,23 +479,3 @@ describe("CheckpointService", () => {
 		})
 	})
 })
-
-async function initRepo({ baseDir }: { baseDir: string }) {
-	await fs.mkdir(baseDir, { recursive: true })
-	const git = simpleGit({
-		baseDir,
-		binary: "git",
-		maxConcurrentProcesses: 1,
-		config: [],
-		trimmed: true,
-	})
-
-	await git.init()
-	await git.addConfig("user.name", "CoolCline")
-	await git.addConfig("user.email", "support@coolcline.com")
-	await fs.writeFile(path.join(baseDir, ".gitkeep"), "")
-	await git.add(".gitkeep")
-	await git.commit("Initial commit")
-
-	return { git }
-}

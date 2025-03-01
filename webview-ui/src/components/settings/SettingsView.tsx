@@ -709,42 +709,46 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 5px 0", fontWeight: "600" }}>
 							{t("settings.advanced.checkpoints.title")}
 						</h3>
-						<div style={{ marginBottom: 15 }}>
-							<VSCodeCheckbox
-								checked={checkpointsEnabled}
-								onChange={(e: any) => {
-									setCheckpointsEnabled(e.target.checked)
-									vscode.postMessage({ type: "checkpointsEnabled", bool: e.target.checked })
-								}}>
-								<span style={{ fontWeight: "500" }}>{t("settings.advanced.checkpoints.enable")}</span>
-							</VSCodeCheckbox>
-							<p
-								style={{
-									fontSize: "12px",
-									marginTop: "5px",
-									color: "var(--vscode-descriptionForeground)",
-								}}>
-								{t("settings.advanced.checkpoints.description")}
-							</p>
-							{checkpointsEnabled && (
-								<ul
+						{process.platform !== "win32" && (
+							<div style={{ marginBottom: 15 }}>
+								<VSCodeCheckbox
+									checked={checkpointsEnabled}
+									onChange={(e: any) => {
+										setCheckpointsEnabled(e.target.checked)
+										vscode.postMessage({ type: "checkpointsEnabled", bool: e.target.checked })
+									}}>
+									<span style={{ fontWeight: "500" }}>
+										{t("settings.advanced.checkpoints.enable")}
+									</span>
+								</VSCodeCheckbox>
+								<p
 									style={{
 										fontSize: "12px",
-										marginTop: "10px",
+										marginTop: "5px",
 										color: "var(--vscode-descriptionForeground)",
-										paddingLeft: "20px",
-										listStyleType: "disc",
 									}}>
-									{Object.keys(
-										t("settings.advanced.checkpoints.features", { returnObjects: true }),
-									).map((key) => (
-										<li key={key} style={{ marginBottom: "4px" }}>
-											{t(`settings.advanced.checkpoints.features.${key}`)}
-										</li>
-									))}
-								</ul>
-							)}
-						</div>
+									{t("settings.advanced.checkpoints.description")}
+								</p>
+								{checkpointsEnabled && (
+									<ul
+										style={{
+											fontSize: "12px",
+											marginTop: "10px",
+											color: "var(--vscode-descriptionForeground)",
+											paddingLeft: "20px",
+											listStyleType: "disc",
+										}}>
+										{Object.keys(
+											t("settings.advanced.checkpoints.features", { returnObjects: true }),
+										).map((key) => (
+											<li key={key} style={{ marginBottom: "4px" }}>
+												{t(`settings.advanced.checkpoints.features.${key}`)}
+											</li>
+										))}
+									</ul>
+								)}
+							</div>
+						)}
 					</div>
 
 					<div style={{ marginBottom: 15 }}>

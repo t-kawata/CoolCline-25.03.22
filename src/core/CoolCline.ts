@@ -3468,6 +3468,16 @@ export class CoolCline {
 
 		// ... existing code ...
 	}
+
+	private async initializeCheckpointService() {
+		if (this.checkpointsEnabled && !this.checkpointService) {
+			this.checkpointService = await CheckpointService.create({
+				taskId: this.taskId,
+				baseDir: vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? "",
+				log: (message) => this.providerRef.deref()?.log(message),
+			})
+		}
+	}
 }
 
 function escapeRegExp(string: string): string {
