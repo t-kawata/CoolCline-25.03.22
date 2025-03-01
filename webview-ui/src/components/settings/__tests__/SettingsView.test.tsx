@@ -1,5 +1,5 @@
 import React from "react"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import SettingsView from "../SettingsView"
 import { ExtensionStateContextProvider } from "../../../context/ExtensionStateContext"
 import { vscode } from "../../../utils/vscode"
@@ -134,27 +134,31 @@ describe("SettingsView - Sound Settings", () => {
 		expect(screen.queryByRole("slider", { name: /volume/i })).not.toBeInTheDocument()
 	})
 
-	it("toggles sound setting and sends message to VSCode", () => {
+	it("toggles sound setting and sends message to VSCode", async () => {
 		renderSettingsView()
 
 		const soundCheckbox = screen.getByRole("checkbox", {
 			name: /Enable sound effects/i,
 		})
 
-		// Enable sound
+		// Toggle sound on
+		expect(soundCheckbox).not.toBeChecked()
 		fireEvent.click(soundCheckbox)
 		expect(soundCheckbox).toBeChecked()
 
-		// Click Done to save settings
+		// Click Done
 		const doneButton = screen.getByText("Done")
 		fireEvent.click(doneButton)
 
-		expect(vscode.postMessage).toHaveBeenCalledWith(
-			expect.objectContaining({
-				type: "soundEnabled",
-				bool: true,
-			}),
-		)
+		// Wait for messages to be sent
+		await waitFor(() => {
+			expect(vscode.postMessage).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: "soundEnabled",
+					bool: true,
+				}),
+			)
+		})
 	})
 
 	it("shows volume slider when sound is enabled", () => {
@@ -172,7 +176,7 @@ describe("SettingsView - Sound Settings", () => {
 		expect(volumeSlider).toHaveValue("0.5")
 	})
 
-	it("updates volume and sends message to VSCode when slider changes", () => {
+	it("updates volume and sends message to VSCode when slider changes", async () => {
 		renderSettingsView()
 
 		// Enable sound
@@ -182,17 +186,19 @@ describe("SettingsView - Sound Settings", () => {
 		fireEvent.click(soundCheckbox)
 
 		// Change volume
-		const volumeSlider = screen.getByRole("slider", { name: /volume/i })
+		const volumeSlider = screen.getByRole("slider", { name: /Volume/i })
 		fireEvent.change(volumeSlider, { target: { value: "0.75" } })
 
-		// Click Done to save settings
+		// Click Done
 		const doneButton = screen.getByText("Done")
 		fireEvent.click(doneButton)
 
-		// Verify message sent to VSCode
-		expect(vscode.postMessage).toHaveBeenCalledWith({
-			type: "soundVolume",
-			value: 0.75,
+		// Wait for messages to be sent
+		await waitFor(() => {
+			expect(vscode.postMessage).toHaveBeenCalledWith({
+				type: "soundVolume",
+				value: 0.75,
+			})
 		})
 	})
 })
@@ -309,7 +315,7 @@ describe("SettingsView - Allowed Commands", () => {
 		expect(commands).toHaveLength(1)
 	})
 
-	it("saves allowed commands when clicking Done", () => {
+	it("saves allowed commands when clicking Done", async () => {
 		const { onDone } = renderSettingsView()
 
 		// Enable always allow execute
@@ -319,8 +325,8 @@ describe("SettingsView - Allowed Commands", () => {
 		fireEvent.click(executeCheckbox)
 
 		// Add a command
-		const input = screen.getByPlaceholderText(/Enter command prefix/i)
-		fireEvent.change(input, { target: { value: "npm test" } })
+		const commandInput = screen.getByPlaceholderText(/Enter command prefix/i)
+		fireEvent.change(commandInput, { target: { value: "npm test" } })
 		const addButton = screen.getByText("Add")
 		fireEvent.click(addButton)
 
@@ -328,13 +334,15 @@ describe("SettingsView - Allowed Commands", () => {
 		const doneButton = screen.getByText("Done")
 		fireEvent.click(doneButton)
 
-		// Verify VSCode messages were sent
-		expect(vscode.postMessage).toHaveBeenCalledWith(
-			expect.objectContaining({
-				type: "allowedCommands",
-				commands: ["npm test"],
-			}),
-		)
-		expect(onDone).toHaveBeenCalled()
+		// Wait for messages to be sent
+		await waitFor(() => {
+			expect(vscode.postMessage).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: "allowedCommands",
+					commands: ["npm test"],
+				}),
+			)
+			expect(onDone).toHaveBeenCalled()
+		})
 	})
 })
