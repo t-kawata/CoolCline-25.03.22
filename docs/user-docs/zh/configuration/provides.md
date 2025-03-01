@@ -1,8 +1,8 @@
 # LLM Provider 配置
 
-## VS Code LLM Provider 配置（推荐）
+## GitHub Copilot LLM Provider 配置（推荐）
 
-CoolCline 可以通过 VS Code LM API 使用 GitHub Copilot 提供的模型，如 Claude 3.5 Sonnet、gpt-4o 等。
+CoolCline 可以通过 GitHub Copilot LLM API 使用 GitHub Copilot 提供的模型，如 Claude 3.5 Sonnet、gpt-4o 等。
 
 价格：每月的免费额度为 2000 次 code completions 和 50 次聊天，Pro 计划价格为 $10/月，详情请查看 [https://github.com/settings/copilot](https://github.com/settings/copilot)。
 
