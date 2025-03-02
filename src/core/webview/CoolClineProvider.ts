@@ -2689,9 +2689,15 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 			const response = await axios.get("https://router.requesty.ai/v1/models")
 
+			// 添加日志
+			// console.log("Requesty API Response:", JSON.stringify(response.data, null, 2))
+
 			if (response.data?.data) {
 				const rawModels = response.data.data
 				for (const rawModel of rawModels) {
+					// 添加日志
+					// console.log("Processing model:", JSON.stringify(rawModel, null, 2))
+
 					const modelInfo: ModelInfo = {
 						contextWindow: rawModel.context_length,
 						maxTokens: rawModel.max_tokens,

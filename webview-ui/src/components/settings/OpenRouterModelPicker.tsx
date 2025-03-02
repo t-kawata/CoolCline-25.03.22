@@ -35,9 +35,9 @@ const convertModelInfo = (models: Record<string, OpenRouterModelInfo>): Record<s
 				maxTokens: info.maxTokens,
 
 				// 功能支持
-				supportsImages: info.supportsImages,
-				supportsComputerUse: info.supportsComputerUse,
-				supportsPromptCache: info.supportsPromptCache,
+				supportsImages: info.supportsImages ?? false,
+				supportsComputerUse: info.supportsComputerUse ?? false,
+				supportsPromptCache: info.supportsPromptCache ?? false,
 
 				// 价格信息
 				pricing: {

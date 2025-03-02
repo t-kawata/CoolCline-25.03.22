@@ -87,10 +87,10 @@ export const ModelInfoView: React.FC<ModelInfoViewProps> = ({
 				{modelInfo.pricing?.completion !== undefined && (
 					<div>Output price: ${modelInfo.pricing?.completion.toFixed(2)}/million tokens</div>
 				)}
-				{modelInfo.supportsPromptCache && modelInfo.pricing?.cacheWritesPrice && (
+				{modelInfo.pricing?.cacheWritesPrice && (
 					<div>Cache writes: ${modelInfo.pricing?.cacheWritesPrice.toFixed(2)}/million tokens</div>
 				)}
-				{modelInfo.supportsPromptCache && modelInfo.pricing?.cacheReadsPrice && (
+				{modelInfo.pricing?.cacheReadsPrice && (
 					<div>Cache reads: ${modelInfo.pricing?.cacheReadsPrice.toFixed(2)}/million tokens</div>
 				)}
 			</div>

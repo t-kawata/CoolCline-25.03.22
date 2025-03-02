@@ -1,18 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react"
 import debounce from "debounce"
-import { requestyDefaultModelId } from "../../../../src/shared/api"
+import { requestyDefaultModelId, ModelInfo } from "../../../../src/shared/api"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import SearchModelPicker from "../SearchModelPicker"
 import { ModelInfo as SearchModelInfo } from "../SearchModelPicker/types"
-import { ModelInfo as RequestyModelInfo } from "../../../../src/shared/api"
 import { ModelInfoView } from "../SearchModelPicker/ModelInfoView"
 import { vscode } from "../../utils/vscode"
 
 /**
  * 将 Requesty 特定的模型信息转换为通用的 SearchModelInfo 格式
  */
-const convertModelInfo = (models: Record<string, RequestyModelInfo> = {}): Record<string, SearchModelInfo> => {
-	// console.log('Converting models:', models)
+const convertModelInfo = (models: Record<string, ModelInfo> = {}): Record<string, SearchModelInfo> => {
 	return Object.entries(models).reduce(
 		(acc, [id, info]) => {
 			acc[id] = {
@@ -27,16 +25,16 @@ const convertModelInfo = (models: Record<string, RequestyModelInfo> = {}): Recor
 				maxTokens: info.maxTokens,
 
 				// 功能支持
-				supportsImages: info.supportsImages,
-				supportsComputerUse: info.supportsComputerUse,
+				supportsImages: info.supportsImages ?? false,
+				supportsComputerUse: info.supportsComputerUse ?? false,
 				supportsPromptCache: info.supportsPromptCache,
 
 				// 价格信息
 				pricing: {
 					prompt: info.inputPrice,
 					completion: info.outputPrice,
-					...(info.cacheWritesPrice !== undefined && { cacheWrites: info.cacheWritesPrice }),
-					...(info.cacheReadsPrice !== undefined && { cacheReads: info.cacheReadsPrice }),
+					cacheWritesPrice: info.cacheWritesPrice,
+					cacheReadsPrice: info.cacheReadsPrice,
 				},
 
 				// 其他信息
