@@ -26,6 +26,7 @@ export const ModelInfoView: React.FC<ModelInfoViewProps> = ({
 				border: "1px solid var(--vscode-widget-border)",
 				borderRadius: "4px",
 				fontSize: "12px",
+				color: "var(--vscode-descriptionForeground)",
 			}}>
 			{/* 描述部分 */}
 			{modelInfo.description && (
@@ -39,61 +40,64 @@ export const ModelInfoView: React.FC<ModelInfoViewProps> = ({
 				</div>
 			)}
 
-			{/* 信息网格 */}
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-					gap: "2px",
-					marginBottom: "2px",
-				}}>
-				{/* 基本信息 */}
-				{modelInfo.supportsImages !== undefined && (
-					<div>supportsImages: {modelInfo.supportsImages ? "yes" : "no"}</div>
-				)}
-				{modelInfo.supportsComputerUse !== undefined && (
-					<div>supportsComputerUse: {modelInfo.supportsComputerUse ? "yes" : "no"}</div>
-				)}
+			{/* 功能支持信息 */}
+			<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+				<div
+					style={{
+						color: modelInfo.supportsImages
+							? "var(--vscode-charts-green)"
+							: "var(--vscode-errorForeground)",
+					}}>
+					{modelInfo.supportsImages ? "✓" : "✕"} {modelInfo.supportsImages ? "Supports" : "Does not support"}{" "}
+					images
+				</div>
+				<div
+					style={{
+						color: modelInfo.supportsComputerUse
+							? "var(--vscode-charts-green)"
+							: "var(--vscode-errorForeground)",
+					}}>
+					{modelInfo.supportsComputerUse ? "✓" : "✕"}{" "}
+					{modelInfo.supportsComputerUse ? "Supports" : "Does not support"} computer use
+				</div>
+				<div
+					style={{
+						color: modelInfo.supportsPromptCache
+							? "var(--vscode-charts-green)"
+							: "var(--vscode-errorForeground)",
+					}}>
+					{modelInfo.supportsPromptCache ? "✓" : "✕"}{" "}
+					{modelInfo.supportsPromptCache ? "Supports" : "Does not support"} prompt caching
+				</div>
+			</div>
 
-				{modelInfo.supportsPromptCache !== undefined && (
-					<div>supportsPromptCache: {modelInfo.supportsPromptCache ? "yes" : "no"}</div>
-				)}
+			{/* Token 信息 */}
+			<div style={{ marginTop: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+				{modelInfo.maxTokens && <div>Max output: {formatLargeNumber(modelInfo.maxTokens)} tokens</div>}
 				{modelInfo.contextWindow && (
-					<div>contextWindow: {formatLargeNumber(modelInfo.contextWindow)} tokens</div>
+					<div>Context window: {formatLargeNumber(modelInfo.contextWindow)} tokens</div>
 				)}
-				{modelInfo.maxTokens && <div>maxTokens: {formatLargeNumber(modelInfo.maxTokens)} tokens</div>}
 			</div>
 
 			{/* 价格信息 */}
-			{modelInfo.pricing && (
-				<div style={{ marginBottom: "4px" }}>
-					<div
-						style={{
-							display: "grid",
-							gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-							gap: "0px",
-							marginTop: "0px",
-							marginLeft: "0px",
-						}}>
-						{modelInfo.pricing.prompt !== undefined && (
-							<div>inputPrice: ${modelInfo.pricing.prompt.toFixed(3)}/M tokens</div>
-						)}
-						{modelInfo.pricing.completion !== undefined && (
-							<div>outputPrice: ${modelInfo.pricing.completion.toFixed(3)}/M tokens</div>
-						)}
-						{modelInfo.pricing.cacheWritesPrice !== undefined && (
-							<div>cacheWrites: ${modelInfo.pricing.cacheWritesPrice.toFixed(3)}/M tokens</div>
-						)}
-						{modelInfo.pricing.cacheReadsPrice !== undefined && (
-							<div>cacheReads: ${modelInfo.pricing.cacheReadsPrice.toFixed(3)}/M tokens</div>
-						)}
-					</div>
-				</div>
-			)}
+			<div style={{ marginTop: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+				{modelInfo.pricing?.prompt !== undefined && (
+					<div>Input price: ${modelInfo.pricing?.prompt.toFixed(2)}/million tokens</div>
+				)}
+				{modelInfo.pricing?.completion !== undefined && (
+					<div>Output price: ${modelInfo.pricing?.completion.toFixed(2)}/million tokens</div>
+				)}
+				{modelInfo.supportsPromptCache && modelInfo.pricing?.cacheWritesPrice && (
+					<div>Cache writes: ${modelInfo.pricing?.cacheWritesPrice.toFixed(2)}/million tokens</div>
+				)}
+				{modelInfo.supportsPromptCache && modelInfo.pricing?.cacheReadsPrice && (
+					<div>Cache reads: ${modelInfo.pricing?.cacheReadsPrice.toFixed(2)}/million tokens</div>
+				)}
+			</div>
 
-			{/* 链接 */}
+			{/* 模型链接 */}
 			{modelInfo.modelUrl && (
-				<div>
+				<div style={{ marginTop: "8px" }}>
 					<VSCodeLink href={modelInfo.modelUrl} style={{ fontSize: "inherit" }}>
 						see more
 					</VSCodeLink>
