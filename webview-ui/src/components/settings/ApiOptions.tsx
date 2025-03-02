@@ -28,6 +28,8 @@ import {
 	unboundModels,
 	vertexDefaultModelId,
 	vertexModels,
+	requestyDefaultModelId,
+	requestyDefaultModel,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -41,6 +43,7 @@ import { useTranslation } from "react-i18next"
 import { TemperatureControl } from "./TemperatureControl"
 import { ModelDescriptionMarkdown } from "../SearchModelPicker/ModelDescriptionMarkdown"
 import { DROPDOWN_Z_INDEX } from "../ui/dropdown"
+import RequestyModelPicker from "./RequestyModelPicker"
 
 interface ApiOptionsProps {
 	apiErrorMessage?: string
@@ -211,6 +214,10 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{
 							value: "unbound",
 							label: t("settings.provider.providers.unbound.name").toString(),
+						},
+						{
+							value: "requesty",
+							label: t("settings.provider.providers.requesty.name").toString(),
 						},
 					]}
 				/>
@@ -1562,6 +1569,36 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				</div>
 			)}
 
+			{selectedProvider === "requesty" && (
+				<div>
+					<VSCodeTextField
+						value={apiConfiguration?.requestyApiKey || ""}
+						style={{ width: "100%", marginTop: 5 }}
+						type="password"
+						onBlur={handleInputChange("requestyApiKey")}
+						placeholder={t("settings.provider.apiKey.placeholder").toString()}>
+						<span>{t("settings.provider.providers.requesty.title").toString()}</span>
+					</VSCodeTextField>
+
+					{!apiConfiguration?.requestyApiKey && (
+						<VSCodeButtonLink href="https://app.requesty.ai/router" style={{ margin: "5px 0 0 0" }}>
+							{t("settings.provider.providers.requesty.getKey").toString()}
+						</VSCodeButtonLink>
+					)}
+
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: "5px",
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						{t("settings.provider.apiKey.storedLocally").toString()}
+					</p>
+
+					<RequestyModelPicker />
+				</div>
+			)}
+
 			{apiErrorMessage && (
 				<p
 					style={{
@@ -1582,7 +1619,8 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				selectedProvider !== "openai" &&
 				selectedProvider !== "ollama" &&
 				selectedProvider !== "lmstudio" &&
-				selectedProvider !== "vscode-lm" && (
+				selectedProvider !== "vscode-lm" &&
+				selectedProvider !== "requesty" && (
 					<>
 						<div className="dropdown-container">
 							<label htmlFor="model-id">
@@ -1676,6 +1714,7 @@ export const ModelInfoView = ({
 			<ModelDescriptionMarkdown
 				key="description"
 				markdown={modelInfo.description}
+				modelId={selectedModelId}
 				isExpanded={isDescriptionExpanded}
 				setIsExpanded={setIsDescriptionExpanded}
 			/>
@@ -1862,6 +1901,12 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 			}
 		case "unbound":
 			return getProviderData(unboundModels, unboundDefaultModelId)
+		case "requesty":
+			return {
+				selectedProvider: provider,
+				selectedModelId: apiConfiguration?.requestyModelId || requestyDefaultModelId,
+				selectedModelInfo: apiConfiguration?.requestyModelInfo || requestyDefaultModel,
+			}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
 	}

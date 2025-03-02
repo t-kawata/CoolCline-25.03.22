@@ -81,6 +81,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	checkpointsEnabled: boolean
 	setCheckpointsEnabled: (value: boolean) => void
 	currentCheckpoint?: string
+	requestyModels: Record<string, ModelInfo>
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -116,6 +117,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		autoApprovalEnabled: false,
 		customModes: [],
 		checkpointsEnabled: false,
+		requestyModels: {},
 	})
 
 	const [didHydrateState, setDidHydrateState] = useState(false)
@@ -279,6 +281,13 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					setUnboundModels(updatedModels)
 					break
 				}
+				case "requestyModels": {
+					setState((prevState) => ({
+						...prevState,
+						requestyModels: message.requestyModels ?? {},
+					}))
+					break
+				}
 			}
 		},
 		[setListApiConfigMeta],
@@ -364,6 +373,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		checkpointsEnabled: state.checkpointsEnabled,
 		setCheckpointsEnabled: (value) => setState((prevState) => ({ ...prevState, checkpointsEnabled: value })),
 		currentCheckpoint,
+		requestyModels: state.requestyModels,
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

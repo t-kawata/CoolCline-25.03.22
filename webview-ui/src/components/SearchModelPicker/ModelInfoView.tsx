@@ -32,7 +32,7 @@ export const ModelInfoView: React.FC<ModelInfoViewProps> = ({
 				<div style={{ marginBottom: "12px" }}>
 					<ModelDescriptionMarkdown
 						markdown={modelInfo.description}
-						key={selectedModelId}
+						modelId={selectedModelId}
 						isExpanded={isDescriptionExpanded}
 						setIsExpanded={setIsDescriptionExpanded}
 					/>

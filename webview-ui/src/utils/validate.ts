@@ -45,6 +45,11 @@ export function validateApiConfiguration(apiConfiguration?: ApiConfiguration): s
 					return i18next.t("common.validation.provideApiKey")
 				}
 				break
+			case "requesty":
+				if (!apiConfiguration.requestyApiKey) {
+					return i18next.t("common.validation.provideApiKey")
+				}
+				break
 			case "openai":
 				if (
 					!apiConfiguration.openAiBaseUrl ||

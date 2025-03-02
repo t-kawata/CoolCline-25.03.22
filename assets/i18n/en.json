@@ -565,6 +565,14 @@
 					"getKey": "Get Unbound API Key",
 					"useCustomBaseUrl": "Use custom base URL"
 				},
+				"requesty": {
+					"name": "Requesty",
+					"title": "Requesty API Key",
+					"description": "Use Requesty's AI model service",
+					"getKey": "Get Requesty API Key",
+					"useCustomBaseUrl": "Use custom base URL",
+					"placeholder": "Enter API Key..."
+				},
 				"deepseek": {
 					"name": "DeepSeek",
 					"title": "DeepSeek API Key",

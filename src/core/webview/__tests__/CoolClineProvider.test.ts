@@ -348,6 +348,7 @@ describe("CoolClineProvider", () => {
 				llmProvider: "openrouter",
 			},
 			customInstructions: undefined,
+			requestyModels: {},
 			alwaysAllowReadOnly: false,
 			alwaysAllowWrite: false,
 			alwaysAllowExecute: false,

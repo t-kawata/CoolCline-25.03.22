@@ -18,23 +18,25 @@ export interface LanguageModelChatSelector {
 // webview will hold state
 export interface ExtensionMessage {
 	type:
-		| "action"
 		| "state"
-		| "selectedImages"
-		| "ollamaModels"
-		| "lmStudioModels"
-		| "theme"
-		| "workspaceUpdated"
 		| "invoke"
+		| "action"
+		| "theme"
+		| "selectedImages"
+		| "workspaceUpdated"
 		| "partialMessage"
 		| "glamaModels"
 		| "openRouterModels"
 		| "openAiModels"
+		| "ollamaModels"
+		| "lmStudioModels"
+		| "vsCodeLmModels"
+		| "listApiConfig"
+		| "unboundModels"
+		| "requestyModels"
 		| "mcpServers"
 		| "enhancedPrompt"
 		| "commitSearchResults"
-		| "listApiConfig"
-		| "vsCodeLmModels"
 		| "vsCodeLmApiAvailable"
 		| "requestVsCodeLmModels"
 		| "updatePrompt"
@@ -43,7 +45,7 @@ export interface ExtensionMessage {
 		| "updateCustomMode"
 		| "deleteCustomMode"
 		| "currentCheckpointUpdated"
-		| "unboundModels"
+		| "refreshRequestyModels"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -75,6 +77,7 @@ export interface ExtensionMessage {
 	customMode?: ModeConfig
 	slug?: string
 	unboundModels?: Record<string, ModelInfo>
+	requestyModels?: Record<string, ModelInfo>
 }
 
 export interface ApiConfigMeta {
@@ -124,6 +127,7 @@ export interface ExtensionState {
 	customModes: ModeConfig[]
 	toolRequirements?: Record<string, boolean> // Map of tool names to their requirements (e.g. {"apply_diff": true} if diffEnabled)
 	checkpointsEnabled: boolean
+	requestyModels: Record<string, ModelInfo>
 }
 
 export interface CoolClineMessage {

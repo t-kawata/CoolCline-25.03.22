@@ -48,14 +48,14 @@ const StyledMarkdown = styled.div`
 
 interface ModelDescriptionMarkdownProps {
 	markdown?: string
-	key: string
+	modelId: string
 	isExpanded: boolean
 	setIsExpanded: (expanded: boolean) => void
 }
 
 export const ModelDescriptionMarkdown: React.FC<ModelDescriptionMarkdownProps> = ({
 	markdown,
-	key,
+	modelId,
 	isExpanded,
 	setIsExpanded,
 }) => {
@@ -78,7 +78,7 @@ export const ModelDescriptionMarkdown: React.FC<ModelDescriptionMarkdownProps> =
 	}, [reactContent, setIsExpanded])
 
 	return (
-		<StyledMarkdown key={key} style={{ display: "inline-block", marginBottom: 0 }}>
+		<StyledMarkdown key={modelId} style={{ display: "inline-block", marginBottom: 0 }}>
 			<div
 				ref={textContainerRef}
 				style={{

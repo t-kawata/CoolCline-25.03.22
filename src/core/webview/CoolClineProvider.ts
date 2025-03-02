@@ -34,9 +34,9 @@ import { ConfigManager } from "../config/ConfigManager"
 import { CustomModesManager } from "../config/CustomModesManager"
 import { EXPERIMENT_IDS, experiments as Experiments, experimentDefault, ExperimentId } from "../../shared/experiments"
 import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt"
-
 import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
+import { RequestyProvider } from "./RequestyProvider"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -57,6 +57,7 @@ type SecretKey =
 	| "deepSeekApiKey"
 	| "mistralApiKey"
 	| "unboundApiKey"
+	| "requestyApiKey"
 type GlobalStateKey =
 	| "llmProvider"
 	| "apiModelId"
@@ -99,7 +100,7 @@ type GlobalStateKey =
 	| "browserViewportSize"
 	| "screenshotQuality"
 	| "fuzzyMatchThreshold"
-	| "preferredLanguage" // Language setting for CoolCline's communication
+	| "preferredLanguage"
 	| "writeDelayMs"
 	| "terminalOutputLineLimit"
 	| "mcpEnabled"
@@ -115,13 +116,16 @@ type GlobalStateKey =
 	| "customModePrompts"
 	| "customSupportPrompts"
 	| "enhancementApiConfigId"
-	| "experiments" // Map of experiment IDs to their enabled state
+	| "experiments"
 	| "autoApprovalEnabled"
-	| "customModes" // Array of custom modes
+	| "customModes"
 	| "unboundModelId"
 	| "unboundModelInfo"
 	| "checkpointsEnabled"
 	| "modelTemperature"
+	| "requestyModels"
+	| "requestyModelId"
+	| "requestyModelInfo"
 
 export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
@@ -130,6 +134,8 @@ export const GlobalFileNames = {
 	openRouterModels: "openrouter_models.json",
 	mcpSettings: "coolcline_mcp_settings.json",
 	unboundModels: "unbound_models.json",
+	customModes: "custom_modes.json",
+	requestyModels: "requesty_models.json",
 }
 
 export class CoolClineProvider implements vscode.WebviewViewProvider {
@@ -145,6 +151,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
+	private requestyProvider?: RequestyProvider
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
@@ -165,6 +172,10 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		this.customModesManager = new CustomModesManager(this.context, async () => {
 			await this.postStateToWebview()
 		})
+		this.requestyProvider = new RequestyProvider(
+			path.join(this.context.globalStorageUri.fsPath, "cache"),
+			this.outputChannel,
+		)
 	}
 
 	/*
@@ -1423,6 +1434,13 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							await this.updateGlobalState("mode", defaultModeSlug)
 							await this.postStateToWebview()
 						}
+						break
+					case "refreshOpenRouterModels":
+						await this.refreshOpenRouterModels()
+						break
+					case "refreshRequestyModels":
+						await this.refreshRequestyModels()
+						break
 				}
 			},
 			null,
@@ -1521,6 +1539,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			unboundApiKey,
 			unboundModelId,
 			modelTemperature,
+			requestyApiKey,
+			requestyModelId,
+			requestyModelInfo,
 		} = apiConfiguration
 		await this.updateGlobalState("llmProvider", llmProvider)
 		await this.updateGlobalState("apiModelId", apiModelId)
@@ -1562,6 +1583,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await this.storeSecret("unboundApiKey", unboundApiKey)
 		await this.updateGlobalState("unboundModelId", unboundModelId)
 		await this.updateGlobalState("modelTemperature", modelTemperature)
+		await this.storeSecret("requestyApiKey", requestyApiKey)
+		await this.updateGlobalState("requestyModelId", requestyModelId)
+		await this.updateGlobalState("requestyModelInfo", requestyModelInfo)
 		if (this.coolcline) {
 			this.coolcline.api = buildApiHandler(apiConfiguration)
 		}
@@ -2103,6 +2127,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			autoApprovalEnabled,
 			experiments,
 			checkpointsEnabled,
+			requestyModels,
 		} = await this.getState()
 
 		const allowedCommands = vscode.workspace.getConfiguration("coolcline").get<string[]>("allowedCommands") || []
@@ -2149,6 +2174,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			customModes: await this.customModesManager.getCustomModes(),
 			mcpServers: this.mcpHub?.getAllServers() ?? [],
 			checkpointsEnabled: checkpointsEnabled ?? false,
+			requestyModels: requestyModels ?? {},
 		}
 	}
 
@@ -2280,6 +2306,10 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			unboundModelId,
 			checkpointsEnabled,
 			modelTemperature,
+			requestyModels,
+			requestyModelId,
+			requestyModelInfo,
+			requestyApiKey,
 		] = await Promise.all([
 			this.getGlobalState("llmProvider") as Promise<llmProvider | undefined>,
 			this.getGlobalState("apiModelId") as Promise<string | undefined>,
@@ -2356,18 +2386,19 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			this.getGlobalState("unboundModelId") as Promise<string | undefined>,
 			this.getGlobalState("checkpointsEnabled") as Promise<boolean | undefined>,
 			this.getGlobalState("modelTemperature") as Promise<number | undefined>,
+			this.getGlobalState("requestyModels") as Promise<Record<string, ModelInfo> | undefined>,
+			this.getGlobalState("requestyModelId") as Promise<string | undefined>,
+			this.getGlobalState("requestyModelInfo") as Promise<ModelInfo | undefined>,
+			this.getSecret("requestyApiKey") as Promise<string | undefined>,
 		])
 
 		let llmProvider: llmProvider
 		if (storedllmProvider) {
 			llmProvider = storedllmProvider
 		} else {
-			// Either new user or legacy user that doesn't have the llmProvider stored in state
-			// (If they're using OpenRouter or Bedrock, then llmProvider state will exist)
 			if (apiKey) {
 				llmProvider = "anthropic"
 			} else {
-				// New users should default to vscode-lm
 				llmProvider = "vscode-lm"
 			}
 		}
@@ -2414,6 +2445,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 				unboundApiKey,
 				unboundModelId,
 				modelTemperature,
+				requestyApiKey,
+				requestyModelId,
+				requestyModelInfo,
 			},
 			lastShownAnnouncementId,
 			customInstructions,
@@ -2437,9 +2471,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			preferredLanguage:
 				preferredLanguage ??
 				(() => {
-					// Get VSCode's locale setting
 					const vscodeLang = vscode.env.language
-					// Map VSCode locale to our supported languages
 					const langMap: { [key: string]: string } = {
 						en: "English",
 						ar: "Arabic",
@@ -2460,7 +2492,6 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 						"zh-tw": "Traditional Chinese",
 						tr: "Turkish",
 					}
-					// Return mapped language or default to English
 					return langMap[vscodeLang.split("-")[0]] ?? "English"
 				})(),
 			mcpEnabled: mcpEnabled ?? true,
@@ -2478,6 +2509,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes,
 			checkpointsEnabled: checkpointsEnabled ?? false,
+			requestyModels: requestyModels ?? {},
+			requestyModelId,
+			requestyModelInfo,
 		}
 	}
 
@@ -2637,6 +2671,52 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 				)
 				throw error // 重新抛出错误以便上层处理
 			}
+		}
+	}
+
+	async refreshRequestyModels() {
+		const requestyModelsFilePath = path.join(
+			await this.ensureCacheDirectoryExists(),
+			GlobalFileNames.requestyModels,
+		)
+
+		const models: Record<string, ModelInfo> = {}
+		try {
+			if (!this.requestyProvider) {
+				this.outputChannel.appendLine("Requesty provider not initialized")
+				return models
+			}
+
+			const response = await axios.get("https://router.requesty.ai/v1/models")
+
+			if (response.data?.data) {
+				const rawModels = response.data.data
+				for (const rawModel of rawModels) {
+					const modelInfo: ModelInfo = {
+						contextWindow: rawModel.context_length,
+						maxTokens: rawModel.max_tokens,
+						inputPrice: rawModel.pricing?.prompt,
+						outputPrice: rawModel.pricing?.completion,
+						supportsImages: rawModel.supports_images || false,
+						supportsPromptCache: false,
+						supportsComputerUse: true,
+						description: rawModel.description,
+						reasoningEffort: "medium",
+					}
+					models[rawModel.id] = modelInfo
+				}
+
+				await fs.writeFile(requestyModelsFilePath, JSON.stringify(models))
+				this.outputChannel.appendLine("Requesty models fetched and saved")
+			} else {
+				this.outputChannel.appendLine("Invalid response from Requesty API")
+			}
+
+			this.postMessageToWebview({ type: "requestyModels", requestyModels: models })
+			return models
+		} catch (error) {
+			this.outputChannel.appendLine(`Error refreshing Requesty models: ${error}`)
+			return models
 		}
 	}
 }

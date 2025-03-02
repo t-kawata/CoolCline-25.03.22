@@ -15,6 +15,7 @@ export type llmProvider =
 	| "vscode-lm"
 	| "mistral"
 	| "unbound"
+	| "requesty"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -61,6 +62,9 @@ export interface ApiHandlerOptions {
 	unboundApiKey?: string
 	unboundModelId?: string
 	modelTemperature?: number
+	requestyApiKey?: string
+	requestyModelId?: string
+	requestyModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -702,3 +706,17 @@ export const unboundModels = {
 	"deepseek/deepseek-reasoner": deepSeekModels["deepseek-reasoner"],
 	"mistral/codestral-latest": mistralModels["codestral-latest"],
 } as const satisfies Record<string, ModelInfo>
+
+export const requestyDefaultModelId = "gpt-3.5-turbo"
+
+export const requestyDefaultModel: ModelInfo = {
+	contextWindow: 16384,
+	maxTokens: 4096,
+	inputPrice: 0.0015,
+	outputPrice: 0.002,
+	supportsImages: false,
+	supportsPromptCache: false,
+	supportsComputerUse: true,
+	description: "GPT-3.5 Turbo from Requesty",
+	reasoningEffort: "medium",
+}
