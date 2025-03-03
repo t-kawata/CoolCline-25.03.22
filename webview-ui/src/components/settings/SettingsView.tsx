@@ -709,7 +709,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						<h3 style={{ color: "var(--vscode-foreground)", margin: "0 0 5px 0", fontWeight: "600" }}>
 							{t("settings.advanced.checkpoints.title")}
 						</h3>
-						{navigator.platform.toLowerCase().indexOf("win") === -1 && (
+						{process.platform !== "win32" && (
 							<div style={{ marginBottom: 15 }}>
 								<VSCodeCheckbox
 									checked={checkpointsEnabled}

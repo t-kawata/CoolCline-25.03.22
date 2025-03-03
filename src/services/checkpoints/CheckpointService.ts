@@ -77,7 +77,11 @@ export class CheckpointService {
 		public readonly baseCommitHash: string,
 		public readonly hiddenBranch: string,
 		private readonly log: (message: string) => void,
-	) {}
+	) {
+		if (process.platform === "win32") {
+			throw new Error("Checkpoints are not supported on Windows")
+		}
+	}
 
 	private async pushStash() {
 		const status = await this.git.status()

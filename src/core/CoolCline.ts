@@ -145,7 +145,7 @@ export class CoolCline {
 		this.browserSession = new BrowserSession(provider.context)
 		this.customInstructions = customInstructions
 		this.diffEnabled = enableDiff ?? false
-		this.checkpointsEnabled = enableCheckpoints ?? false
+		this.checkpointsEnabled = process.platform !== "win32" && !!enableCheckpoints
 		this.fuzzyMatchThreshold = fuzzyMatchThreshold ?? 1.0
 		this.providerRef = new WeakRef(provider)
 		this.diffViewProvider = new DiffViewProvider(cwd)

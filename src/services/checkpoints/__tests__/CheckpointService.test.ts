@@ -478,4 +478,23 @@ describe("CheckpointService", () => {
 			await fs.rm(baseDir, { recursive: true, force: true })
 		})
 	})
+
+	describe("Windows platform", () => {
+		beforeEach(() => {
+			Object.defineProperty(process, "platform", {
+				value: "win32",
+				configurable: true,
+			})
+		})
+
+		it("should throw error when initialized on Windows", async () => {
+			await expect(
+				CheckpointService.create({
+					taskId: "test",
+					baseDir: "/tmp",
+					log: console.log,
+				}),
+			).rejects.toThrow("Checkpoints are not supported on Windows")
+		})
+	})
 })
