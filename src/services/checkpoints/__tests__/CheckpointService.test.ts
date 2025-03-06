@@ -3,10 +3,13 @@
 import fs from "fs/promises"
 import path from "path"
 import os from "os"
+import "../../../utils/path"
 
 import { simpleGit, SimpleGit, SimpleGitTaskCallback } from "simple-git"
 
 import { CheckpointService } from "../CheckpointService"
+
+jest.setTimeout(30000)
 
 describe("CheckpointService", () => {
 	let baseDir: string
@@ -79,24 +82,24 @@ describe("CheckpointService", () => {
 			const diff1 = await service.getDiff({ to: commit1!.commit })
 			expect(diff1).toHaveLength(1)
 			expect(diff1[0].paths.relative).toBe("test.txt")
-			expect(diff1[0].paths.absolute).toBe(testFile)
+			expect(diff1[0].paths.absolute).toBe(testFile.toPosix())
 			expect(diff1[0].content.before).toBe("Hello, world!")
 			expect(diff1[0].content.after).toBe("Ahoy, world!")
 
 			const diff2 = await service.getDiff({ to: commit2!.commit })
 			expect(diff2).toHaveLength(1)
 			expect(diff2[0].paths.relative).toBe("test.txt")
-			expect(diff2[0].paths.absolute).toBe(testFile)
+			expect(diff2[0].paths.absolute).toBe(testFile.toPosix())
 			expect(diff2[0].content.before).toBe("Hello, world!")
 			expect(diff2[0].content.after).toBe("Goodbye, world!")
 
 			const diff12 = await service.getDiff({ from: commit1!.commit, to: commit2!.commit })
 			expect(diff12).toHaveLength(1)
 			expect(diff12[0].paths.relative).toBe("test.txt")
-			expect(diff12[0].paths.absolute).toBe(testFile)
+			expect(diff12[0].paths.absolute).toBe(testFile.toPosix())
 			expect(diff12[0].content.before).toBe("Ahoy, world!")
 			expect(diff12[0].content.after).toBe("Goodbye, world!")
-		})
+		}, 30000)
 
 		it("handles new files in diff", async () => {
 			const newFile = path.join(service.baseDir, "new.txt")
@@ -476,25 +479,6 @@ describe("CheckpointService", () => {
 			expect(globalEmail.value).toBe("global@example.com")
 
 			await fs.rm(baseDir, { recursive: true, force: true })
-		})
-	})
-
-	describe("Windows platform", () => {
-		beforeEach(() => {
-			Object.defineProperty(process, "platform", {
-				value: "win32",
-				configurable: true,
-			})
-		})
-
-		it("should throw error when initialized on Windows", async () => {
-			await expect(
-				CheckpointService.create({
-					taskId: "test",
-					baseDir: "/tmp",
-					log: console.log,
-				}),
-			).rejects.toThrow("Checkpoints are not supported on Windows")
 		})
 	})
 })

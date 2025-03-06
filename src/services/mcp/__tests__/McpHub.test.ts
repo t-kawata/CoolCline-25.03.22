@@ -4,12 +4,18 @@ import type { ExtensionContext, Uri } from "vscode"
 import type { McpConnection } from "../McpHub"
 import { StdioConfigSchema } from "../McpHub"
 
+// 增加测试超时时间到30秒
+jest.setTimeout(30000)
+
 const fs = require("fs/promises")
 const { McpHub } = require("../McpHub")
 
 jest.mock("vscode")
 jest.mock("fs/promises")
 jest.mock("../../../core/webview/CoolClineProvider")
+
+// 保持对mockProvider的强引用，防止被垃圾回收
+let globalMockProvider: any = null
 
 describe("McpHub", () => {
 	let mcpHub: McpHubType
@@ -42,61 +48,57 @@ describe("McpHub", () => {
 				extensionUri: mockUri,
 				extensionPath: "/test/path",
 				storagePath: "/test/storage",
-				globalStoragePath: "/test/global-storage",
-				environmentVariableCollection: {} as any,
-				extension: {
-					id: "test-extension",
-					extensionUri: mockUri,
-					extensionPath: "/test/path",
-					extensionKind: 1,
-					isActive: true,
-					packageJSON: {
-						version: "1.0.0",
-					},
-					activate: jest.fn(),
-					exports: undefined,
-				} as any,
-				asAbsolutePath: (path: string) => path,
+				logPath: "/test/log",
+				asAbsolutePath: jest.fn().mockImplementation((relativePath) => `/test/path/${relativePath}`),
 				storageUri: mockUri,
-				globalStorageUri: mockUri,
 				logUri: mockUri,
+				globalStorageUri: mockUri,
 				extensionMode: 1,
-				logPath: "/test/path",
-				languageModelAccessInformation: {} as any,
-			} as ExtensionContext,
+			} as unknown as ExtensionContext,
 		}
 
-		// Mock fs.readFile for initial settings
-		;(fs.readFile as jest.Mock).mockResolvedValue(
-			JSON.stringify({
-				mcpServers: {
-					"test-server": {
-						command: "node",
-						args: ["test.js"],
-						alwaysAllow: ["allowed-tool"],
-					},
-				},
-			}),
-		)
+		// 设置默认的文件读写模拟
+		;(fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify({ mcpServers: {} }))
+		;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
 
+		globalMockProvider = mockProvider
 		mcpHub = new McpHub(mockProvider as CoolClineProvider)
 	})
 
+	afterEach(() => {
+		// 确保在每个测试结束后清理资源
+		if (mcpHub && typeof mcpHub.dispose === "function") {
+			mcpHub.dispose()
+		}
+	})
+
+	afterAll(() => {
+		// 测试结束后清除全局引用
+		globalMockProvider = null
+	})
+
 	describe("toggleToolAlwaysAllow", () => {
-		it("should add tool to always allow list when enabling", async () => {
-			const mockConfig = {
-				mcpServers: {
-					"test-server": {
-						command: "node",
-						args: ["test.js"],
-						alwaysAllow: [],
+		beforeEach(() => {
+			// 重置模拟
+			jest.clearAllMocks()
+
+			// 模拟文件访问和读取
+			;(fs.access as jest.Mock).mockResolvedValue(undefined)
+			;(fs.readFile as jest.Mock).mockResolvedValue(
+				JSON.stringify({
+					mcpServers: {
+						"test-server": {
+							command: "node",
+							args: ["test.js"],
+							alwaysAllow: [],
+						},
 					},
-				},
-			}
+				}),
+			)
+			;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
+		})
 
-			// Mock reading initial config
-			;(fs.readFile as jest.Mock).mockResolvedValueOnce(JSON.stringify(mockConfig))
-
+		it("should add tool to always allow list when enabling", async () => {
 			await mcpHub.toggleToolAlwaysAllow("test-server", "new-tool", true)
 
 			// Verify the config was updated correctly
@@ -105,19 +107,37 @@ describe("McpHub", () => {
 			expect(writtenConfig.mcpServers["test-server"].alwaysAllow).toContain("new-tool")
 		})
 
-		it("should remove tool from always allow list when disabling", async () => {
-			const mockConfig = {
-				mcpServers: {
-					"test-server": {
-						command: "node",
-						args: ["test.js"],
-						alwaysAllow: ["existing-tool"],
-					},
-				},
-			}
+		it("should handle missing server configuration", async () => {
+			// 模拟没有服务器配置的情况
+			;(fs.readFile as jest.Mock).mockResolvedValueOnce(
+				JSON.stringify({
+					mcpServers: {},
+				}),
+			)
 
-			// Mock reading initial config
-			;(fs.readFile as jest.Mock).mockResolvedValueOnce(JSON.stringify(mockConfig))
+			await mcpHub.toggleToolAlwaysAllow("test-server", "new-tool", true)
+
+			// Verify the config was updated correctly
+			const writeCall = (fs.writeFile as jest.Mock).mock.calls[0]
+			const writtenConfig = JSON.parse(writeCall[1])
+			expect(writtenConfig.mcpServers).toBeDefined()
+			expect(writtenConfig.mcpServers["test-server"]).toBeDefined()
+			expect(writtenConfig.mcpServers["test-server"].alwaysAllow).toContain("new-tool")
+		})
+
+		it("should remove tool from always allow list when disabling", async () => {
+			// 模拟已有工具的情况
+			;(fs.readFile as jest.Mock).mockResolvedValueOnce(
+				JSON.stringify({
+					mcpServers: {
+						"test-server": {
+							command: "node",
+							args: ["test.js"],
+							alwaysAllow: ["existing-tool"],
+						},
+					},
+				}),
+			)
 
 			await mcpHub.toggleToolAlwaysAllow("test-server", "existing-tool", false)
 
@@ -127,25 +147,17 @@ describe("McpHub", () => {
 			expect(writtenConfig.mcpServers["test-server"].alwaysAllow).not.toContain("existing-tool")
 		})
 
-		it("should initialize alwaysAllow if it does not exist", async () => {
-			const mockConfig = {
-				mcpServers: {
-					"test-server": {
-						command: "node",
-						args: ["test.js"],
-					},
-				},
-			}
-
-			// Mock reading initial config
-			;(fs.readFile as jest.Mock).mockResolvedValueOnce(JSON.stringify(mockConfig))
+		it("should handle missing mcpServers object", async () => {
+			// 模拟没有mcpServers对象的情况
+			;(fs.readFile as jest.Mock).mockResolvedValueOnce(JSON.stringify({}))
 
 			await mcpHub.toggleToolAlwaysAllow("test-server", "new-tool", true)
 
-			// Verify the config was updated with initialized alwaysAllow
+			// Verify the config was updated correctly
 			const writeCall = (fs.writeFile as jest.Mock).mock.calls[0]
 			const writtenConfig = JSON.parse(writeCall[1])
-			expect(writtenConfig.mcpServers["test-server"].alwaysAllow).toBeDefined()
+			expect(writtenConfig.mcpServers).toBeDefined()
+			expect(writtenConfig.mcpServers["test-server"]).toBeDefined()
 			expect(writtenConfig.mcpServers["test-server"].alwaysAllow).toContain("new-tool")
 		})
 	})

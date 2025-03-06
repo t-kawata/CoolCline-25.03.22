@@ -1,6 +1,7 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
 import path from "path"
+import "../../utils/path"
 
 import debug from "debug"
 import simpleGit, { SimpleGit, CleanOptions } from "simple-git"
@@ -77,11 +78,7 @@ export class CheckpointService {
 		public readonly baseCommitHash: string,
 		public readonly hiddenBranch: string,
 		private readonly log: (message: string) => void,
-	) {
-		if (process.platform === "win32") {
-			throw new Error("Checkpoints are not supported on Windows")
-		}
-	}
+	) {}
 
 	private async pushStash() {
 		const status = await this.git.status()
@@ -135,7 +132,7 @@ export class CheckpointService {
 
 		for (const file of files.filter((f) => !f.binary)) {
 			const relPath = file.file
-			const absPath = path.join(this.baseDir, relPath)
+			const absPath = path.join(this.baseDir, relPath).toPosix()
 
 			// If modified both before and after will generate content.
 			// If added only after will generate content.
@@ -145,18 +142,18 @@ export class CheckpointService {
 
 			try {
 				beforeContent = await this.git.show([`${from}:${relPath}`])
-			} catch (err) {
-				// File doesn't exist in older commit.
+			} catch (error) {
+				// File didn't exist in the 'from' commit
 			}
 
 			try {
 				afterContent = await this.git.show([`${to}:${relPath}`])
-			} catch (err) {
-				// File doesn't exist in newer commit.
+			} catch (error) {
+				// File doesn't exist in the 'to' commit
 			}
 
 			result.push({
-				paths: { relative: relPath, absolute: absPath },
+				paths: { relative: relPath.toPosix(), absolute: absPath },
 				content: { before: beforeContent, after: afterContent },
 			})
 		}
@@ -257,9 +254,10 @@ export class CheckpointService {
 	}
 
 	public static async create({ taskId, git, baseDir, log = console.log }: CheckpointServiceOptions) {
-		if (process.platform === "win32") {
-			throw new Error("Checkpoints are not supported on Windows.")
-		}
+		// 移除Windows平台的限制
+		// if (process.platform === "win32") {
+		// 	throw new Error("Checkpoints are not supported on Windows.")
+		// }
 
 		git = git || simpleGit({ baseDir })
 
@@ -287,11 +285,13 @@ export class CheckpointService {
 	}
 
 	private static async initRepo({ taskId, git, baseDir, log }: Required<CheckpointServiceOptions>) {
+		// 确保baseDir使用POSIX格式的路径，以便在Windows上正常工作
+		const posixBaseDir = baseDir.toPosix()
 		const isExistingRepo = existsSync(path.join(baseDir, ".git"))
 
 		if (!isExistingRepo) {
 			await git.init()
-			log(`[initRepo] Initialized new Git repository at ${baseDir}`)
+			log(`[initRepo] Initialized new Git repository at ${posixBaseDir}`)
 		}
 
 		// Get both global and local Git configurations
@@ -322,12 +322,14 @@ export class CheckpointService {
 		}
 
 		if (!isExistingRepo) {
+			// 使用POSIX格式的路径创建.gitkeep文件
+			const gitkeepPath = path.join(baseDir, ".gitkeep").toPosix()
 			// We need at least one file to commit, otherwise the initial
 			// commit will fail, unless we use the `--allow-empty` flag.
 			// However, using an empty commit causes problems when restoring
 			// the checkpoint (i.e. the `git restore` command doesn't work
 			// for empty commits).
-			await fs.writeFile(path.join(baseDir, ".gitkeep"), "")
+			await fs.writeFile(gitkeepPath, "")
 			await git.add(".gitkeep")
 			const commit = await git.commit("Initial commit")
 

@@ -632,10 +632,38 @@ export class McpHub {
 	async toggleToolAlwaysAllow(serverName: string, toolName: string, shouldAllow: boolean): Promise<void> {
 		try {
 			const settingsPath = await this.getMcpSettingsFilePath()
-			const content = await fs.readFile(settingsPath, "utf-8")
-			const config = JSON.parse(content)
 
-			// Initialize alwaysAllow if it doesn't exist
+			// 读取配置文件内容
+			let content = "{}"
+			try {
+				content = await fs.readFile(settingsPath, "utf-8")
+			} catch (error) {
+				console.warn("Could not read settings file, creating new one:", error)
+			}
+
+			// 解析配置
+			let config: any = {}
+			try {
+				config = JSON.parse(content)
+			} catch (error) {
+				console.error("Failed to parse MCP settings:", error)
+			}
+
+			// 确保mcpServers对象存在
+			if (!config.mcpServers) {
+				config.mcpServers = {}
+			}
+
+			// 确保服务器配置存在
+			if (!config.mcpServers[serverName]) {
+				config.mcpServers[serverName] = {
+					command: "",
+					args: [],
+					alwaysAllow: [],
+				}
+			}
+
+			// 初始化alwaysAllow如果它不存在
 			if (!config.mcpServers[serverName].alwaysAllow) {
 				config.mcpServers[serverName].alwaysAllow = []
 			}
@@ -644,17 +672,17 @@ export class McpHub {
 			const toolIndex = alwaysAllow.indexOf(toolName)
 
 			if (shouldAllow && toolIndex === -1) {
-				// Add tool to always allow list
+				// 添加工具到always allow列表
 				alwaysAllow.push(toolName)
 			} else if (!shouldAllow && toolIndex !== -1) {
-				// Remove tool from always allow list
+				// 从always allow列表中移除工具
 				alwaysAllow.splice(toolIndex, 1)
 			}
 
-			// Write updated config back to file
+			// 将更新后的配置写回文件
 			await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
 
-			// Update the tools list to reflect the change
+			// 更新工具列表以反映变更
 			const connection = this.connections.find((conn) => conn.server.name === serverName)
 			if (connection) {
 				connection.server.tools = await this.fetchToolsList(serverName)
@@ -663,7 +691,7 @@ export class McpHub {
 		} catch (error) {
 			console.error("Failed to update always allow settings:", error)
 			vscode.window.showErrorMessage("Failed to update always allow settings")
-			throw error // Re-throw to ensure the error is properly handled
+			throw error // 重新抛出以确保错误被正确处理
 		}
 	}
 
@@ -680,6 +708,13 @@ export class McpHub {
 		if (this.settingsWatcher) {
 			this.settingsWatcher.dispose()
 		}
-		this.disposables.forEach((d) => d.dispose())
+		// 确保disposables数组中的元素不为undefined
+		if (this.disposables && this.disposables.length > 0) {
+			this.disposables.forEach((d) => {
+				if (d && typeof d.dispose === "function") {
+					d.dispose()
+				}
+			})
+		}
 	}
 }

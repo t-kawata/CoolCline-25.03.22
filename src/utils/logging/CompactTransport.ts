@@ -76,18 +76,24 @@ export class CompactTransport implements ICompactTransport {
 					reject(error)
 				})
 
-				this.logStream.once("ready", () => {
+				// Node.js的WriteStream没有'ready'事件，使用'open'事件代替
+				this.logStream.once("open", () => {
 					clearTimeout(timeoutId)
-					this.logStream?.removeListener("error", reject)
+					if (this.logStream) {
+						this.logStream.removeListener("error", reject)
+					}
 					resolve()
 				})
 			})
 
 			// 处理错误事件
-			this.logStream.on("error", (error) => {
-				this.logStream = null
-				setTimeout(() => this.initializeLogFile(), 1000)
-			})
+			if (this.logStream) {
+				this.logStream.on("error", (error) => {
+					console.error("日志流错误:", error)
+					this.logStream = null
+					setTimeout(() => this.initializeLogFile(), 1000)
+				})
+			}
 
 			// 如果有待写入的日志，开始处理
 			if (this.writeQueue.length > 0) {
