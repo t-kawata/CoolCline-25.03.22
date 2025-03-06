@@ -377,7 +377,7 @@ describe("CoolClineProvider", () => {
 			autoApprovalEnabled: false,
 			customModes: [],
 			experiments: experimentDefault,
-			checkpointsEnabled: false,
+			checkpointsEnabled: true,
 			uriScheme: "vscode",
 		}
 

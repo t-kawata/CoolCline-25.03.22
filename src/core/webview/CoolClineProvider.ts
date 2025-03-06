@@ -2173,7 +2173,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes: await this.customModesManager.getCustomModes(),
 			mcpServers: this.mcpHub?.getAllServers() ?? [],
-			checkpointsEnabled: checkpointsEnabled ?? false,
+			checkpointsEnabled: checkpointsEnabled ?? true,
 			requestyModels: requestyModels ?? {},
 		}
 	}
@@ -2508,7 +2508,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			experiments: experiments ?? experimentDefault,
 			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes,
-			checkpointsEnabled: checkpointsEnabled ?? false,
+			checkpointsEnabled: checkpointsEnabled ?? true,
 			requestyModels: requestyModels ?? {},
 			requestyModelId,
 			requestyModelInfo,

@@ -116,7 +116,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		enhancementApiConfigId: "",
 		autoApprovalEnabled: false,
 		customModes: [],
-		checkpointsEnabled: false,
+		checkpointsEnabled: true,
 		requestyModels: {},
 	})
 

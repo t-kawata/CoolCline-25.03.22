@@ -90,7 +90,7 @@ export class CoolCline {
 	customInstructions?: string
 	diffStrategy?: DiffStrategy
 	diffEnabled: boolean = false
-	checkpointsEnabled: boolean = false
+	checkpointsEnabled: boolean = true
 	private checkpointService?: CheckpointService
 	fuzzyMatchThreshold: number = 1.0
 	isStreaming: boolean = false
@@ -121,6 +121,7 @@ export class CoolCline {
 	private didRejectTool = false
 	private didAlreadyUseTool = false
 	private didCompleteReadingStream = false
+	private awaitCreateCheckpoint: boolean = false // 新增状态
 
 	constructor(
 		provider: CoolClineProvider,
@@ -145,7 +146,7 @@ export class CoolCline {
 		this.browserSession = new BrowserSession(provider.context)
 		this.customInstructions = customInstructions
 		this.diffEnabled = enableDiff ?? false
-		this.checkpointsEnabled = enableCheckpoints ?? false
+		this.checkpointsEnabled = enableCheckpoints ?? true
 		this.fuzzyMatchThreshold = fuzzyMatchThreshold ?? 1.0
 		this.providerRef = new WeakRef(provider)
 		this.diffViewProvider = new DiffViewProvider(cwd)
@@ -509,6 +510,9 @@ export class CoolCline {
 	// Task lifecycle
 
 	private async startTask(task?: string, images?: string[]): Promise<void> {
+		if (task || images) {
+			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
+		}
 		this.coolclineMessages = []
 		this.apiConversationHistory = []
 		await this.providerRef.deref()?.postStateToWebview()
@@ -1150,6 +1154,23 @@ export class CoolCline {
 				break
 			}
 			case "tool_use":
+				// 在执行工具前检查是否需要创建 checkpoint
+				const modifyingTools = [
+					"write_to_file", // 直接写入文件
+					"apply_diff", // 应用差异修改文件
+					"insert_content", // 插入内容到文件
+					"search_and_replace", // 搜索并替换文件内容
+					"execute_command", // 执行命令可能会通过重定向、管道等修改文件
+				]
+
+				if (this.awaitCreateCheckpoint && modifyingTools.includes(block.name)) {
+					if (this.checkpointsEnabled) {
+						console.log("满足条件，生成 checkpoint")
+						await this.checkpointSave()
+					}
+					this.awaitCreateCheckpoint = false // 重置标记
+				}
+
 				const toolDescription = (): string => {
 					switch (block.name) {
 						case "execute_command":
@@ -3456,26 +3477,6 @@ export class CoolCline {
 				)
 
 			this.checkpointsEnabled = false
-		}
-	}
-
-	private async handleToolCall(toolCall: ToolCall) {
-		// ... existing code ...
-
-		if (this.checkpointsEnabled) {
-			await this.checkpointSave()
-		}
-
-		// ... existing code ...
-	}
-
-	private async initializeCheckpointService() {
-		if (this.checkpointsEnabled && !this.checkpointService) {
-			this.checkpointService = await CheckpointService.create({
-				taskId: this.taskId,
-				baseDir: vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? "",
-				log: (message) => this.providerRef.deref()?.log(message),
-			})
 		}
 	}
 }
