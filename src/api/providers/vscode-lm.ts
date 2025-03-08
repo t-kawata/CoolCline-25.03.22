@@ -81,6 +81,10 @@ export class VsCodeLmHandler implements ApiHandler, SingleCompletionHandler {
 	 */
 	async createClient(selector: vscode.LanguageModelChatSelector): Promise<vscode.LanguageModelChat> {
 		try {
+			// 先尝试获取所有模型来触发初始化
+			await vscode.lm.selectChatModels({})
+
+			// 然后使用实际的选择器获取指定模型
 			const models = await vscode.lm.selectChatModels(selector)
 
 			// Use first available model or create a minimal model object
