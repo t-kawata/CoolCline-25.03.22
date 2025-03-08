@@ -103,7 +103,9 @@ describe("VsCodeLmHandler", () => {
 	describe("createClient", () => {
 		it("should create client with selector", async () => {
 			const mockModel = { ...mockLanguageModelChat }
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([mockModel])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([mockModel]) // 实际选择器调用的响应
 
 			const client = await handler["createClient"]({
 				vendor: "test-vendor",
@@ -112,27 +114,34 @@ describe("VsCodeLmHandler", () => {
 
 			expect(client).toBeDefined()
 			expect(client.id).toBe("test-model")
-			expect(vscode.lm.selectChatModels).toHaveBeenCalledWith({
+			expect(vscode.lm.selectChatModels).toHaveBeenCalledTimes(2)
+			expect(vscode.lm.selectChatModels).toHaveBeenNthCalledWith(1, {})
+			expect(vscode.lm.selectChatModels).toHaveBeenNthCalledWith(2, {
 				vendor: "test-vendor",
 				family: "test-family",
 			})
 		})
 
 		it("should return default client when no models available", async () => {
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([]) // 实际选择器调用的响应
 
 			const client = await handler["createClient"]({})
 
 			expect(client).toBeDefined()
 			expect(client.id).toBe("default-lm")
 			expect(client.vendor).toBe("vscode")
+			expect(vscode.lm.selectChatModels).toHaveBeenCalledTimes(2)
 		})
 	})
 
 	describe("createMessage", () => {
 		beforeEach(() => {
 			const mockModel = { ...mockLanguageModelChat }
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([mockModel])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([mockModel]) // 实际选择器调用的响应
 			mockLanguageModelChat.countTokens.mockResolvedValue(10)
 		})
 
@@ -241,7 +250,9 @@ describe("VsCodeLmHandler", () => {
 	describe("getModel", () => {
 		it("should return model info when client exists", async () => {
 			const mockModel = { ...mockLanguageModelChat }
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([mockModel])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([mockModel]) // 实际选择器调用的响应
 
 			// Initialize client
 			await handler["getClient"]()
@@ -262,7 +273,9 @@ describe("VsCodeLmHandler", () => {
 	describe("completePrompt", () => {
 		it("should complete single prompt", async () => {
 			const mockModel = { ...mockLanguageModelChat }
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([mockModel])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([mockModel]) // 实际选择器调用的响应
 
 			const responseText = "Completed text"
 			mockLanguageModelChat.sendRequest.mockResolvedValueOnce({
@@ -283,7 +296,9 @@ describe("VsCodeLmHandler", () => {
 
 		it("should handle errors during completion", async () => {
 			const mockModel = { ...mockLanguageModelChat }
-			;(vscode.lm.selectChatModels as jest.Mock).mockResolvedValueOnce([mockModel])
+			;(vscode.lm.selectChatModels as jest.Mock)
+				.mockResolvedValueOnce([]) // 初始化调用的响应
+				.mockResolvedValueOnce([mockModel]) // 实际选择器调用的响应
 
 			mockLanguageModelChat.sendRequest.mockRejectedValueOnce(new Error("Completion failed"))
 
