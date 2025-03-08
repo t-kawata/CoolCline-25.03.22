@@ -904,6 +904,14 @@ export class CoolCline {
 	}
 
 	async *attemptApiRequest(previousApiReqIndex: number, retryAttempt: number = 0): ApiStream {
+		// Add maximum retry limit
+		const MAX_RETRIES = 3
+		if (retryAttempt >= MAX_RETRIES) {
+			throw new Error(
+				`Maximum retry attempts (${MAX_RETRIES}) reached. Please check your network connection or contact support.`,
+			)
+		}
+
 		let mcpHub: McpHub | undefined
 
 		const { mcpEnabled, alwaysApproveResubmit, requestDelaySeconds, rateLimitSeconds } =
@@ -1047,11 +1055,14 @@ export class CoolCline {
 				const baseDelay = requestDelaySeconds || 5
 				const exponentialDelay = Math.ceil(baseDelay * Math.pow(2, retryAttempt))
 
+				// Add remaining retries info
+				const remainingRetries = MAX_RETRIES - retryAttempt
+
 				// Show countdown timer with exponential backoff
 				for (let i = exponentialDelay; i > 0; i--) {
 					await this.say(
 						"api_req_retry_delayed",
-						`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}\nRetrying in ${i} seconds...`,
+						`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}/${MAX_RETRIES}\nRemaining retries: ${remainingRetries}\nRetrying in ${i} seconds...`,
 						undefined,
 						true,
 					)
@@ -1060,7 +1071,7 @@ export class CoolCline {
 
 				await this.say(
 					"api_req_retry_delayed",
-					`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}\nRetrying now...`,
+					`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}/${MAX_RETRIES}\nRetrying now...`,
 					undefined,
 					false,
 				)
