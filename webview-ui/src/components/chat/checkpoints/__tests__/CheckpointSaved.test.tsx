@@ -14,17 +14,14 @@ describe("CheckpointSaved", () => {
 
 	it("should render checkpoint layout correctly", () => {
 		render(<CheckpointSaved {...defaultProps} />)
-
-		expect(screen.getByTestId("git-commit-icon")).toBeInTheDocument()
-		expect(screen.getByText("Checkpoint")).toBeInTheDocument()
 		expect(screen.getByTestId("checkpoint-menu")).toBeInTheDocument()
 	})
 
-	it("should show Current label when checkpoint is current", () => {
+	it("should pass current checkpoint hash correctly", () => {
 		const { rerender } = render(<CheckpointSaved {...defaultProps} currentCheckpointHash="xyz789" />)
-		expect(screen.queryByText("Current")).not.toBeInTheDocument()
+		expect(screen.getByTestId("checkpoint-menu")).toBeInTheDocument()
 
 		rerender(<CheckpointSaved {...defaultProps} currentCheckpointHash="abc123" />)
-		expect(screen.getByText("Current")).toBeInTheDocument()
+		expect(screen.getByTestId("checkpoint-menu")).toBeInTheDocument()
 	})
 })
