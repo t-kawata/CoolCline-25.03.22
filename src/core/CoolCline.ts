@@ -64,6 +64,7 @@ import { insertGroups } from "./diff/insert-groups"
 import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiments"
 import { CheckpointService } from "../services/checkpoints/CheckpointService"
 import { logger } from "../utils/logging"
+import { CheckpointRecoveryMode } from "../services/checkpoints/types"
 
 const cwd =
 	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? path.join(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
@@ -110,6 +111,7 @@ export class CoolCline {
 	abandoned = false
 	private diffViewProvider: DiffViewProvider
 	private lastApiRequestTime?: number
+	isInitialized = false
 
 	// streaming
 	private currentStreamingContentIndex = 0
@@ -178,11 +180,11 @@ export class CoolCline {
 	// Storing task to disk for history
 
 	private async ensureTaskDirectoryExists(): Promise<string> {
-		const globalStoragePath = this.providerRef.deref()?.context.globalStorageUri.fsPath
-		if (!globalStoragePath) {
+		const vscodeGlobalStorageCoolClinePath = this.providerRef.deref()?.context.globalStorageUri.fsPath
+		if (!vscodeGlobalStorageCoolClinePath) {
 			throw new Error("Global storage uri is invalid")
 		}
-		const taskDir = path.join(globalStoragePath, "tasks", this.taskId)
+		const taskDir = path.join(vscodeGlobalStorageCoolClinePath, "tasks", this.taskId)
 		await fs.mkdir(taskDir, { recursive: true })
 		return taskDir
 	}
@@ -434,6 +436,10 @@ export class CoolCline {
 	}
 
 	async handleWebviewAskResponse(askResponse: CoolClineAskResponse, text?: string, images?: string[]) {
+		if (text) {
+			// 收到发送的消息（一个任务窗口追问的情况）
+			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
+		}
 		this.askResponse = askResponse
 		this.askResponseText = text
 		this.askResponseImages = images
@@ -511,7 +517,7 @@ export class CoolCline {
 
 	private async startTask(task?: string, images?: string[]): Promise<void> {
 		if (task || images) {
-			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
+			this.awaitCreateCheckpoint = true // 当用户第一次发送消息时设置标记
 		}
 		this.coolclineMessages = []
 		this.apiConversationHistory = []
@@ -3320,18 +3326,25 @@ export class CoolCline {
 	}
 
 	// Checkpoints
-
+	// 获取或初始化 CheckpointService 实例
 	private async getCheckpointService() {
 		if (!this.checkpointService) {
-			this.checkpointService = await CheckpointService.create({
-				taskId: this.taskId,
-				baseDir: vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? "",
+			this.checkpointService = await CheckpointService.create(this.taskId, {
+				context: {
+					// 获取当前扩展在 vscode 中的位置，本项目在本机获得到的是
+					// /Users/<user>/Library/Application Support/Code/User/globalStorage/coolcline.coolcline
+					globalStorageUri: {
+						fsPath: this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
+					},
+				},
 			})
+			// 初始化 checkpoint service
+			await this.checkpointService.initialize()
 		}
-
 		return this.checkpointService
 	}
 
+	// 比较差异
 	public async checkpointDiff({
 		ts,
 		commitHash,
@@ -3342,53 +3355,63 @@ export class CoolCline {
 		mode: "full" | "checkpoint"
 	}) {
 		if (!this.checkpointsEnabled) {
+			this.providerRef.deref()?.log("[checkpointDiff] checkpoints 功能已禁用")
+			vscode.window.showWarningMessage("Checkpoints feature is disabled.")
 			return
 		}
 
-		let previousCommitHash = undefined
+		let nextCommitHash = undefined
+		let title = ""
 
 		if (mode === "checkpoint") {
-			const previousCheckpoint = this.coolclineMessages
+			// 查找下一个 checkpoint
+			const nextCheckpoint = this.coolclineMessages
 				.filter(({ say }) => say === "checkpoint_saved")
-				.sort((a, b) => b.ts - a.ts)
-				.find((message) => message.ts < ts)
+				.sort((a, b) => a.ts - b.ts) // 按时间正序排列
+				.find((message) => message.ts > ts)
 
-			previousCommitHash = previousCheckpoint?.text
+			nextCommitHash = nextCheckpoint?.text
+			title = "Changes to next checkpoint"
+		} else {
+			title = "All changes since task started"
 		}
 
 		try {
 			const service = await this.getCheckpointService()
-			const changes = await service.getDiff({ from: previousCommitHash, to: commitHash })
+			const changes = await service.getDiff(commitHash || "HEAD", nextCommitHash || undefined)
 
 			if (!changes?.length) {
 				vscode.window.showInformationMessage("No changes found.")
 				return
 			}
 
+			// 使用 vscode.changes 命令显示差异
 			await vscode.commands.executeCommand(
 				"vscode.changes",
-				mode === "full" ? "Changes since task started" : "Changes since previous checkpoint",
+				title,
 				changes.map((change) => [
-					vscode.Uri.file(change.paths.absolute),
-					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.paths.relative}`).with({
-						query: Buffer.from(change.content.before ?? "").toString("base64"),
+					vscode.Uri.file(change.absolutePath),
+					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.relativePath}`).with({
+						query: Buffer.from(change.before ?? "").toString("base64"),
 					}),
-					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.paths.relative}`).with({
-						query: Buffer.from(change.content.after ?? "").toString("base64"),
+					vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${change.relativePath}`).with({
+						query: Buffer.from(change.after ?? "").toString("base64"),
 					}),
 				]),
 			)
 		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : String(err)
 			this.providerRef
 				.deref()
 				?.log(
 					`[checkpointDiff] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
 				)
-
-			this.checkpointsEnabled = false
+			vscode.window.showErrorMessage(`Failed to show diff: ${errorMessage}`)
+			// this.checkpointsEnabled = false
 		}
 	}
 
+	// 创建 checkpoint 检查点
 	public async checkpointSave() {
 		if (!this.checkpointsEnabled) {
 			return
@@ -3396,14 +3419,13 @@ export class CoolCline {
 
 		try {
 			const service = await this.getCheckpointService()
-			const commit = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
+			const checkpoint = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
 
-			if (commit?.commit) {
+			if (checkpoint?.hash) {
 				await this.providerRef
 					.deref()
-					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: service.currentCheckpoint })
-
-				await this.say("checkpoint_saved", commit.commit)
+					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: checkpoint.hash })
+				await this.say("checkpoint_saved", checkpoint.hash)
 			}
 		} catch (err) {
 			this.providerRef
@@ -3412,10 +3434,11 @@ export class CoolCline {
 					`[checkpointSave] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
 				)
 
-			this.checkpointsEnabled = false
+			// this.checkpointsEnabled = false
 		}
 	}
 
+	// 还原 checkpoint 检查点
 	public async checkpointRestore({
 		ts,
 		commitHash,
@@ -3423,39 +3446,57 @@ export class CoolCline {
 	}: {
 		ts: number
 		commitHash: string
-		mode: "preview" | "restore"
+		//mode: "preview" | "restore" | "files" | "messages" | "files_and_messages"
+		mode: CheckpointRecoveryMode
 	}) {
 		if (!this.checkpointsEnabled) {
+			this.providerRef.deref()?.log("[checkpointRestore] checkpoints feature is disabled.")
+			vscode.window.showWarningMessage("Checkpoints feature is disabled.")
 			return
 		}
 
 		const index = this.coolclineMessages.findIndex((m) => m.ts === ts)
 
 		if (index === -1) {
+			this.providerRef.deref()?.log(`[checkpointRestore] Could not find message with timestamp ${ts}`)
+			vscode.window.showErrorMessage("Could not find specified checkpoint.")
 			return
 		}
 
 		try {
 			const service = await this.getCheckpointService()
-			await service.restoreCheckpoint(commitHash)
 
-			await this.providerRef
-				.deref()
-				?.postMessageToWebview({ type: "currentCheckpointUpdated", text: service.currentCheckpoint })
+			// 处理文件恢复
+			//const shouldRestoreFiles = mode === "restore" || mode === "files" || mode === "files_and_messages"
+			const shouldRestoreFiles =
+				mode === CheckpointRecoveryMode.FILES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
+			if (shouldRestoreFiles) {
+				await service.restoreCheckpoint(commitHash)
+				await this.providerRef
+					.deref()
+					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: commitHash })
+			}
 
-			if (mode === "restore") {
+			// 处理消息恢复
+			// const shouldRestoreMessages = mode === "restore" || mode === "messages" || mode === "files_and_messages"
+			const shouldRestoreMessages =
+				mode === CheckpointRecoveryMode.MESSAGES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
+			if (shouldRestoreMessages) {
+				// 恢复 API 对话历史
 				await this.overwriteApiConversationHistory(
 					this.apiConversationHistory.filter((m) => !m.ts || m.ts < ts),
 				)
 
+				// 计算被删除消息的指标
 				const deletedMessages = this.coolclineMessages.slice(index + 1)
-
 				const { totalTokensIn, totalTokensOut, totalCacheWrites, totalCacheReads, totalCost } = getApiMetrics(
 					combineApiRequests(combineCommandSequences(deletedMessages)),
 				)
 
+				// 更新消息历史
 				await this.overwriteCoolClineMessages(this.coolclineMessages.slice(0, index + 1))
 
+				// 发送删除的 API 请求信息
 				await this.say(
 					"api_req_deleted",
 					JSON.stringify({
@@ -3468,15 +3509,45 @@ export class CoolCline {
 				)
 			}
 
+			// 显示恢复成功消息
+			let successMessage = ""
+			switch (mode) {
+				case CheckpointRecoveryMode.FILES:
+					successMessage = "Files have been restored to the selected checkpoint"
+					break
+				case CheckpointRecoveryMode.MESSAGES:
+					successMessage = "Messages have been restored to the selected checkpoint"
+					break
+				case CheckpointRecoveryMode.FILES_AND_MESSAGES:
+					successMessage = "Files and messages history have been restored to the selected checkpoint"
+					break
+			}
+
+			if (successMessage) {
+				vscode.window.showInformationMessage(successMessage)
+			}
+
+			// 如果恢复了文件，更新 checkpoint 状态
+			if (shouldRestoreFiles) {
+				// 找到所有 checkpoint 消息
+				const checkpointMessages = this.coolclineMessages.filter((m) => m.say === "checkpoint_saved")
+				const currentMessageIndex = checkpointMessages.findIndex((m) => m.ts === ts)
+
+				// 更新 checkpoint 状态 (在我们的实现中不需要设置 isCheckpointCheckedOut 标志)
+				await this.saveCoolClineMessages()
+			}
+
+			// 如果不是预览模式，取消当前任务
 			this.providerRef.deref()?.cancelTask()
 		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : String(err)
 			this.providerRef
 				.deref()
 				?.log(
-					`[restoreCheckpoint] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
+					`[checkpointRestore] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
 				)
-
-			this.checkpointsEnabled = false
+			vscode.window.showErrorMessage(`Failed to restore checkpoint: ${errorMessage}`)
+			// this.checkpointsEnabled = false
 		}
 	}
 }

@@ -93,7 +93,7 @@ describe("CheckpointMenu", () => {
 
 		expect(vscode.postMessage).toHaveBeenCalledWith({
 			type: "checkpointRestore",
-			payload: { ts: props.ts, commitHash: props.commitHash, mode: "restore" },
+			payload: { ts: props.ts, commitHash: props.commitHash, mode: "files_and_messages" },
 		})
 	})
 

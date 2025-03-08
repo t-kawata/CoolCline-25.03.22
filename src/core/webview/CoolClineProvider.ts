@@ -37,6 +37,7 @@ import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt
 import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RequestyProvider } from "./RequestyProvider"
+import { CheckpointRecoveryMode } from "../../services/checkpoints/types"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -811,6 +812,49 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 					case "openMention":
 						openMention(message.text)
 						break
+					case "checkpointDiff":
+						if (message.payload) {
+							try {
+								await this.coolcline?.checkpointDiff({
+									ts: message.payload.ts,
+									commitHash: message.payload.commitHash,
+									mode: message.payload.mode as "full" | "checkpoint",
+								})
+							} catch (error) {
+								const errorMessage = error instanceof Error ? error.message : "未知错误"
+								vscode.window.showErrorMessage(`Failed to show checkpoint diff: ${errorMessage}`)
+								this.log(`[checkpointDiff] 错误: ${errorMessage}`)
+							}
+						}
+						break
+					case "checkpointRestore": {
+						if (message.payload) {
+							// 在恢复之前取消当前任务
+							await this.cancelTask()
+
+							try {
+								// 等待新的 coolcline 实例初始化完成
+								await pWaitFor(() => this.coolcline?.isInitialized === true, {
+									timeout: 3_000,
+								}).catch(() => {
+									console.error("Failed to init new coolcline instance")
+									this.log("[checkpointRestore] 初始化新的 coolcline 实例失败")
+								})
+
+								// 调用 Core 层的 checkpointRestore 方法
+								await this.coolcline?.checkpointRestore({
+									ts: message.payload.ts,
+									commitHash: message.payload.commitHash,
+									mode: message.payload.mode as CheckpointRecoveryMode,
+								})
+							} catch (error) {
+								const errorMessage = error instanceof Error ? error.message : "未知错误"
+								vscode.window.showErrorMessage(`Failed to restore checkpoint: ${errorMessage}`)
+								this.log(`[checkpointRestore] 错误: ${errorMessage}`)
+							}
+						}
+						break
+					}
 					case "cancelTask":
 						await this.cancelTask()
 						break

@@ -1,356 +1,248 @@
-import fs from "fs/promises"
-import { existsSync } from "fs"
-import path from "path"
-import "../../utils/path"
+import { SimpleGit, simpleGit } from "simple-git"
+import * as vscode from "vscode"
+import { CheckpointTracker } from "./CheckpointTracker"
+import { CheckpointMigration } from "./CheckpointMigration"
+import { GitOperations } from "./GitOperations"
+import { getWorkingDirectory, PathUtils, getShadowGitPath, hashWorkingDir } from "./CheckpointUtils"
+import { StorageProvider, Checkpoint, CheckpointDiff, CheckpointServiceOptions } from "./types"
 
-import debug from "debug"
-import simpleGit, { SimpleGit, CleanOptions } from "simple-git"
+/**
+ * Checkpoint 恢复模式
+ */
+// export type RestoreMode = "files" | "messages" | "files_and_messages"
+export type DiffMode = "full" | "checkpoint" | "cross_task"
 
-export interface Checkpoint {
-	hash: string
-	message: string
-	timestamp?: Date
-}
-
-export type CheckpointServiceOptions = {
-	taskId: string
-	git?: SimpleGit
-	baseDir: string
-	log?: (message: string) => void
+export interface CrossTaskDiffOptions {
+	fromTaskId: string
+	fromHash: string
+	toTaskId: string
+	toHash: string
 }
 
 /**
- * The CheckpointService provides a mechanism for storing a snapshot of the
- * current VSCode workspace each time a CoolCline tool is executed. It uses Git
- * under the hood.
- *
- * HOW IT WORKS
- *
- * Two branches are used:
- *  - A main branch for normal operation (the branch you are currently on).
- *  - A hidden branch for storing checkpoints.
- *
- * Saving a checkpoint:
- *  - Current changes are stashed (including untracked files).
- *  - The hidden branch is reset to match main.
- *  - Stashed changes are applied and committed as a checkpoint on the hidden
- *    branch.
- *  - We return to the main branch with the original state restored.
- *
- * Restoring a checkpoint:
- *  - The workspace is restored to the state of the specified checkpoint using
- *    `git restore` and `git clean`.
- *
- * This approach allows for:
- *  - Non-destructive version control (main branch remains untouched).
- *  - Preservation of the full history of checkpoints.
- *  - Safe restoration to any previous checkpoint.
- *
- * NOTES
- *
- *  - Git must be installed.
- *  - If the current working directory is not a Git repository, we will
- *    initialize a new one with a .gitkeep file.
- *  - If you manually edit files and then restore a checkpoint, the changes
- *    will be lost. Addressing this adds some complexity to the implementation
- *    and it's not clear whether it's worth it.
+ * Checkpoint 服务类
+ * 作为唯一的对外接口，整合所有 checkpoint 相关功能
  */
-
 export class CheckpointService {
 	private static readonly USER_NAME = "CoolCline"
 	private static readonly USER_EMAIL = "support@coolcline.com"
+	private static readonly CLEANUP_THRESHOLD = 50 // 检查点数量阈值
+	private static readonly MAX_DIFF_SIZE = 1024 * 1024 * 10 // 10MB
 
-	private _currentCheckpoint?: string
+	private readonly outputChannel: vscode.OutputChannel
+	private readonly tracker: CheckpointTracker
+	private readonly gitOps: GitOperations
+	private lastCheckpoint?: string
+	private git: SimpleGit
+	private readonly vscodeGlobalStorageCoolClinePath: string
+	private readonly userProjectPath: string
+	private readonly _taskId: string
+	private readonly log: (message: string) => void
+	private gitPath?: string
 
-	public get currentCheckpoint() {
-		return this._currentCheckpoint
-	}
-
-	private set currentCheckpoint(value: string | undefined) {
-		this._currentCheckpoint = value
-	}
-
-	constructor(
-		public readonly taskId: string,
-		private readonly git: SimpleGit,
-		public readonly baseDir: string,
-		public readonly mainBranch: string,
-		public readonly baseCommitHash: string,
-		public readonly hiddenBranch: string,
-		private readonly log: (message: string) => void,
-	) {}
-
-	private async pushStash() {
-		const status = await this.git.status()
-
-		if (status.files.length > 0) {
-			await this.git.stash(["-u"]) // Includes tracked and untracked files.
-			return true
-		}
-
-		return false
-	}
-
-	private async applyStash() {
-		const stashList = await this.git.stashList()
-
-		if (stashList.all.length > 0) {
-			await this.git.stash(["apply"]) // Applies the most recent stash only.
-			return true
-		}
-
-		return false
-	}
-
-	private async popStash() {
-		const stashList = await this.git.stashList()
-
-		if (stashList.all.length > 0) {
-			await this.git.stash(["pop", "--index"]) // Pops the most recent stash only.
-			return true
-		}
-
-		return false
-	}
-
-	private async ensureBranch(expectedBranch: string) {
-		const branch = await this.git.revparse(["--abbrev-ref", "HEAD"])
-
-		if (branch.trim() !== expectedBranch) {
-			throw new Error(`Git branch mismatch: expected '${expectedBranch}' but found '${branch}'`)
-		}
-	}
-
-	public async getDiff({ from, to }: { from?: string; to: string }) {
-		const result = []
-
-		if (!from) {
-			from = this.baseCommitHash
-		}
-
-		const { files } = await this.git.diffSummary([`${from}..${to}`])
-
-		for (const file of files.filter((f) => !f.binary)) {
-			const relPath = file.file
-			const absPath = path.join(this.baseDir, relPath).toPosix()
-
-			// If modified both before and after will generate content.
-			// If added only after will generate content.
-			// If deleted only before will generate content.
-			let beforeContent = ""
-			let afterContent = ""
-
-			try {
-				beforeContent = await this.git.show([`${from}:${relPath}`])
-			} catch (error) {
-				// File didn't exist in the 'from' commit
-			}
-
-			try {
-				afterContent = await this.git.show([`${to}:${relPath}`])
-			} catch (error) {
-				// File doesn't exist in the 'to' commit
-			}
-
-			result.push({
-				paths: { relative: relPath.toPosix(), absolute: absPath },
-				content: { before: beforeContent, after: afterContent },
-			})
-		}
-
-		return result
-	}
-
-	public async saveCheckpoint(message: string) {
-		await this.ensureBranch(this.mainBranch)
-
-		// Attempt to stash pending changes (including untracked files).
-		const pendingChanges = await this.pushStash()
-
-		// Get the latest commit on the hidden branch before we reset it.
-		const latestHash = await this.git.revparse([this.hiddenBranch])
-
-		// Check if there is any diff relative to the latest commit.
-		if (!pendingChanges) {
-			const diff = await this.git.diff([latestHash])
-
-			if (!diff) {
-				this.log(`[saveCheckpoint] No changes detected, giving up`)
-				return undefined
-			}
-		}
-
-		await this.git.checkout(this.hiddenBranch)
-
-		const reset = async () => {
-			await this.git.reset(["HEAD", "."])
-			await this.git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
-			await this.git.reset(["--hard", latestHash])
-			await this.git.checkout(this.mainBranch)
-			await this.popStash()
-		}
-
-		try {
-			// Reset hidden branch to match main and apply the pending changes.
-			await this.git.reset(["--hard", this.mainBranch])
-
-			if (pendingChanges) {
-				await this.applyStash()
-			}
-
-			// Using "-A" ensures that deletions are staged as well.
-			await this.git.add(["-A"])
-			const diff = await this.git.diff([latestHash])
-
-			if (!diff) {
-				this.log(`[saveCheckpoint] No changes detected, resetting and giving up`)
-				await reset()
-				return undefined
-			}
-
-			// Otherwise, commit the changes.
-			const status = await this.git.status()
-			this.log(`[saveCheckpoint] Changes detected, committing ${JSON.stringify(status)}`)
-
-			// Allow empty commits in order to correctly handle deletion of
-			// untracked files (see unit tests for an example of this).
-			// Additionally, skip pre-commit hooks so that they don't slow
-			// things down or tamper with the contents of the commit.
-			const commit = await this.git.commit(message, undefined, {
-				"--allow-empty": null,
-				"--no-verify": null,
-			})
-
-			// Only update currentCheckpoint after successful commit
-			this.currentCheckpoint = commit.commit
-
-			await this.git.checkout(this.mainBranch)
-
-			if (pendingChanges) {
-				await this.popStash()
-			}
-
-			return commit
-		} catch (err) {
-			this.log(`[saveCheckpoint] Failed to save checkpoint: ${err instanceof Error ? err.message : String(err)}`)
-
-			// If we're not on the main branch then we need to trigger a reset
-			// to return to the main branch and restore it's previous state.
-			const currentBranch = await this.git.revparse(["--abbrev-ref", "HEAD"])
-
-			if (currentBranch.trim() !== this.mainBranch) {
-				await reset()
-			}
-
-			throw err
-		}
-	}
-
-	public async restoreCheckpoint(commitHash: string) {
-		await this.ensureBranch(this.mainBranch)
-		await this.git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
-		await this.git.raw(["restore", "--source", commitHash, "--worktree", "--", "."])
-		this.currentCheckpoint = commitHash
-	}
-
-	public static async create({ taskId, git, baseDir, log = console.log }: CheckpointServiceOptions) {
-		// 移除Windows平台的限制
-		// if (process.platform === "win32") {
-		// 	throw new Error("Checkpoints are not supported on Windows.")
-		// }
-
-		git = git || simpleGit({ baseDir })
-
-		const version = await git.version()
-
-		if (!version?.installed) {
-			throw new Error(`Git is not installed. Please install Git if you wish to use checkpoints.`)
-		}
-
-		if (!baseDir || !existsSync(baseDir)) {
-			throw new Error(`Base directory is not set or does not exist.`)
-		}
-
-		const { currentBranch, currentSha, hiddenBranch } = await CheckpointService.initRepo({
-			taskId,
-			git,
-			baseDir,
-			log,
-		})
-
-		log(
-			`[CheckpointService] taskId = ${taskId}, baseDir = ${baseDir}, currentBranch = ${currentBranch}, currentSha = ${currentSha}, hiddenBranch = ${hiddenBranch}`,
+	constructor(options: CheckpointServiceOptions) {
+		this.vscodeGlobalStorageCoolClinePath = PathUtils.normalizePath(
+			options.provider?.context.globalStorageUri.fsPath ?? "",
 		)
-		return new CheckpointService(taskId, git, baseDir, currentBranch, currentSha, hiddenBranch, log)
+		this.userProjectPath = PathUtils.normalizePath(options.userProjectPath)
+		this.git = options.git || simpleGit(this.vscodeGlobalStorageCoolClinePath)
+		this._taskId = options.taskId
+		this.log = options.log || console.log
+		this.outputChannel = vscode.window.createOutputChannel("Checkpoint Service")
+		this.tracker = new CheckpointTracker(this.vscodeGlobalStorageCoolClinePath, this._taskId, this.userProjectPath)
+		this.gitOps = new GitOperations(this.vscodeGlobalStorageCoolClinePath, this.userProjectPath)
 	}
 
-	private static async initRepo({ taskId, git, baseDir, log }: Required<CheckpointServiceOptions>) {
-		// 确保baseDir使用POSIX格式的路径，以便在Windows上正常工作
-		const posixBaseDir = baseDir.toPosix()
-		const isExistingRepo = existsSync(path.join(baseDir, ".git"))
+	get taskId(): string {
+		return this._taskId
+	}
 
-		if (!isExistingRepo) {
-			await git.init()
-			log(`[initRepo] Initialized new Git repository at ${posixBaseDir}`)
+	/**
+	 * 创建 CheckpointService 实例
+	 * 核心职责：
+	 * 1. 获取用户项目路径（通过 getWorkingDirectory）
+	 * 2. 规范化全局存储路径（使用 PathUtils）
+	 * 3. 构造服务实例（依赖注入）
+	 */
+	public static async create(taskId: string, provider: StorageProvider): Promise<CheckpointService> {
+		const userProjectPath = await getWorkingDirectory()
+		return new CheckpointService({
+			userProjectPath,
+			vscodeGlobalStorageCoolClinePath: PathUtils.normalizePath(provider.context.globalStorageUri.fsPath),
+			taskId,
+			log: console.log,
+			provider,
+		})
+	}
+
+	/**
+	 * 初始化 checkpoint 服务
+	 * CoolCline.ts 中先调用 create，之后才用 create 的服务 initialize，伪代码为
+	 * const service = await CheckpointService.create(...)
+	 * await service.initialize()
+	 *
+	 * 核心职责：
+	 * 1. 执行数据迁移（当前注释掉）
+	 * 2. 初始化 tracker 组件
+	 * 3. 处理服务启动逻辑
+	 */
+	public async initialize(): Promise<void> {
+		try {
+			// 暂时跳过迁移步骤
+			// await CheckpointMigration.cleanupLegacyCheckpoints(this.userProjectPath, this.outputChannel)
+			// await CheckpointMigration.migrateToNewStructure(this.userProjectPath, this.outputChannel)
+
+			// 直接初始化 tracker
+			await this.tracker.initialize()
+
+			// 获取 shadow git 路径
+			const coolclineShadowGitPath = await getShadowGitPath(
+				this.vscodeGlobalStorageCoolClinePath,
+				this._taskId,
+				hashWorkingDir(this.userProjectPath),
+			)
+			this.gitPath = coolclineShadowGitPath
+		} catch (error) {
+			this.outputChannel.appendLine(`初始化失败: ${error}`)
+			throw error
 		}
+	}
 
-		// Get both global and local Git configurations
-		const globalUserName = await git.getConfig("user.name", "global")
-		const localUserName = await git.getConfig("user.name", "local")
-		const userName = localUserName.value || globalUserName.value
-
-		const globalUserEmail = await git.getConfig("user.email", "global")
-		const localUserEmail = await git.getConfig("user.email", "local")
-		const userEmail = localUserEmail.value || globalUserEmail.value
-
-		// Remove local config if it matches our default values and there's a global config
-		if (globalUserName.value && localUserName.value === CheckpointService.USER_NAME) {
-			await git.raw(["config", "--unset", "--local", "user.name"])
+	/**
+	 * 保存 checkpoint
+	 * @param message - checkpoint 消息
+	 */
+	public async saveCheckpoint(message: string): Promise<Checkpoint> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
 		}
-
-		if (globalUserEmail.value && localUserEmail.value === CheckpointService.USER_EMAIL) {
-			await git.raw(["config", "--unset", "--local", "user.email"])
+		const commitHash = await this.gitOps.commit(this.gitPath, message)
+		await this.scheduleCleanup() // 在创建新的 checkpoint 后执行清理
+		return {
+			hash: commitHash,
+			message,
+			timestamp: new Date(),
 		}
+	}
 
-		// Only set user config if not already configured
-		if (!userName) {
-			await git.addConfig("user.name", CheckpointService.USER_NAME)
+	/**
+	 * 获取文件差异
+	 */
+	public async getDiff(hash1: string, hash2?: string): Promise<CheckpointDiff[]> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
 		}
+		console.log("CheckpointService.ts 中执行 getDiff hash1: ", hash1)
+		console.log("CheckpointService.ts 中执行 getDiff hash2: ", hash2)
+		const changes = await this.gitOps.getDiff(this.gitPath, hash1, hash2)
+		return this.optimizeDiff(changes)
+	}
 
-		if (!userEmail) {
-			await git.addConfig("user.email", CheckpointService.USER_EMAIL)
+	/**
+	 * 比较两个任务之间的差异
+	 */
+	public async getDiffAcrossTasks(otherTaskId: string, fromHash: string, toHash: string): Promise<CheckpointDiff[]> {
+		try {
+			const otherTracker = new CheckpointTracker(this.userProjectPath, otherTaskId, this.userProjectPath)
+			return await otherTracker.getDiff(fromHash, toHash)
+		} catch (error) {
+			this.outputChannel.appendLine(`获取跨任务差异失败: ${error}`)
+			throw error
 		}
+	}
 
-		if (!isExistingRepo) {
-			// 使用POSIX格式的路径创建.gitkeep文件
-			const gitkeepPath = path.join(baseDir, ".gitkeep").toPosix()
-			// We need at least one file to commit, otherwise the initial
-			// commit will fail, unless we use the `--allow-empty` flag.
-			// However, using an empty commit causes problems when restoring
-			// the checkpoint (i.e. the `git restore` command doesn't work
-			// for empty commits).
-			await fs.writeFile(gitkeepPath, "")
-			await git.add(".gitkeep")
-			const commit = await git.commit("Initial commit")
+	/**
+	 * 恢复到指定的 checkpoint
+	 * @param commitHash - 要恢复到的 commit hash
+	 * @param mode - 恢复模式
+	 */
+	public async restoreCheckpoint(commitHash: string): Promise<void> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
+		}
+		console.log("CheckpointService.ts 中执行 restoreCheckpoint commitHash: ", commitHash)
+		try {
+			// 暂存当前更改
+			const hasStash = await this.tracker.stashChanges()
 
-			if (!commit.commit) {
-				throw new Error("Failed to create initial commit")
+			try {
+				await this.tracker.restoreCheckpoint(commitHash)
+
+				// 如果有暂存的更改，尝试重新应用
+				if (hasStash) {
+					await this.tracker.stashChanges()
+				}
+			} catch (error) {
+				// 如果恢复失败且有暂存的更改，恢复暂存
+				if (hasStash) {
+					await this.tracker.stashChanges()
+				}
+				throw error
 			}
-
-			log(`[initRepo] Initial commit: ${commit.commit}`)
+		} catch (error) {
+			this.outputChannel.appendLine(`恢复 checkpoint 失败: ${error}`)
+			throw error
 		}
+	}
 
-		const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
-		const currentSha = await git.revparse(["HEAD"])
-
-		const hiddenBranch = `coolcline-checkpoints-${taskId}`
-		const branchSummary = await git.branch()
-
-		if (!branchSummary.all.includes(hiddenBranch)) {
-			await git.checkoutBranch(hiddenBranch, currentBranch) // git checkout -b <hiddenBranch> <currentBranch>
-			await git.checkout(currentBranch) // git checkout <currentBranch>
+	/**
+	 * 获取 checkpoint 历史记录
+	 */
+	public async getHistory(): Promise<Checkpoint[]> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
 		}
+		const commits = await this.gitOps.getCommits(this.gitPath)
+		return commits.map((commit) => ({
+			hash: commit.hash,
+			message: commit.message,
+			timestamp: new Date(commit.date),
+		}))
+	}
 
-		return { currentBranch, currentSha, hiddenBranch }
+	/**
+	 * 清理孤立的资源
+	 */
+	public async cleanup(activeTasks: string[]): Promise<void> {
+		try {
+			await CheckpointMigration.cleanupOrphanedResources(this.userProjectPath, activeTasks, this.outputChannel)
+			await this.tracker.cleanup()
+		} catch (error) {
+			this.outputChannel.appendLine(`清理失败: ${error}`)
+			throw error
+		}
+	}
+
+	/**
+	 * 销毁服务实例
+	 */
+	public dispose(): void {
+		this.outputChannel.dispose()
+	}
+
+	private async scheduleCleanup() {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
+		}
+		try {
+			const checkpoints = await this.getHistory()
+			if (checkpoints.length > CheckpointService.CLEANUP_THRESHOLD) {
+				// 保留最近的 checkpoints
+				const checkpointsToRemove = checkpoints
+					.slice(CheckpointService.CLEANUP_THRESHOLD)
+					.map((checkpoint: Checkpoint) => checkpoint.hash)
+				await this.gitOps.cleanupCheckpoints(this.gitPath, checkpointsToRemove)
+				this.log(`Cleaned up ${checkpointsToRemove.length} old checkpoints`)
+			}
+		} catch (error) {
+			this.log(`Failed to cleanup checkpoints: ${error}`)
+		}
+	}
+
+	private optimizeDiff(changes: CheckpointDiff[]): CheckpointDiff[] {
+		return changes.filter((change) => {
+			const totalSize = (change.before?.length || 0) + (change.after?.length || 0)
+			return totalSize <= CheckpointService.MAX_DIFF_SIZE
+		})
 	}
 }
