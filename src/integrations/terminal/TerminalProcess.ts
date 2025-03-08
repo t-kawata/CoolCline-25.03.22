@@ -154,6 +154,8 @@ export class TerminalProcess extends EventEmitter {
 										outputLength: finalOutput.length,
 									})
 
+									// 重组命令行（因为终端显示内容时，如果终端宽度窄，命令会被截断，而换行，所有无法找到命令
+
 									// 只处理新的输出部分
 									const lines = finalOutput.split("\n")
 									const commandIndex = lines.findIndex((line) => line.includes(this.command))
@@ -219,7 +221,7 @@ export class TerminalProcess extends EventEmitter {
 							})
 							cleanup()
 							reject(new Error("Command execution timeout"))
-						}, PROCESS_HOT_TIMEOUT_NORMAL)
+						}, PROCESS_HOT_TIMEOUT_COMPILING)
 					}
 
 					// 等待命令完成
@@ -402,18 +404,32 @@ export class TerminalProcess extends EventEmitter {
 			await new Promise((resolve) => setTimeout(resolve, config.intervalMs))
 
 			const currentOutput = await this.getTerminalContents()
-			if (currentOutput === lastOutput) {
+
+			// 提取实际的命令输出
+			let processedOutput = currentOutput
+			if (currentOutput) {
+				// 重组命令行（因为终端显示内容时，如果终端宽度窄，命令会被截断，而换行，所有无法找到命令
+
+				//
+				const lines = currentOutput.split("\n")
+				const commandIndex = lines.findIndex((line) => line.includes(this.command))
+				if (commandIndex !== -1 && commandIndex < lines.length - 1) {
+					processedOutput = lines.slice(commandIndex + 1).join("\n")
+				}
+			}
+
+			if (processedOutput === lastOutput) {
 				stableCount++
 				if (stableCount >= config.stableCount) {
 					logger.debug("检测到提示符，命令执行完成", {
 						ctx: "terminal",
 						attempt,
 					})
-					return currentOutput
+					return processedOutput
 				}
 			} else {
 				stableCount = 0
-				lastOutput = currentOutput
+				lastOutput = processedOutput
 			}
 		}
 
