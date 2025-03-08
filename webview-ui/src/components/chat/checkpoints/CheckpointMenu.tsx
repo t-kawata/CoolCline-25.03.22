@@ -238,7 +238,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 						// 3秒后重新启用按钮
 						setTimeout(() => {
 							setCompareDisabled(false)
-						}, 3000)
+						}, 2000)
 					}}>
 					Compare
 				</CustomButton>
@@ -260,7 +260,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 								onMouseLeave={handleMouseLeave}>
 								<RestoreOption>
 									<Button
-										variant="secondary"
+										variant="default"
 										className="w-full mb-2.5"
 										disabled={restoreBothDisabled}
 										style={{ cursor: restoreBothDisabled ? "wait" : "pointer" }}
@@ -273,7 +273,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 								</RestoreOption>
 								<RestoreOption>
 									<Button
-										variant="secondary"
+										variant="default"
 										className="w-full mb-2.5"
 										disabled={restoreMessagesDisabled}
 										style={{ cursor: restoreMessagesDisabled ? "wait" : "pointer" }}
@@ -286,7 +286,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 								</RestoreOption>
 								<RestoreOption>
 									<Button
-										variant="secondary"
+										variant="default"
 										className="w-full mb-2.5"
 										disabled={restoreFilesDisabled}
 										style={{ cursor: restoreFilesDisabled ? "wait" : "pointer" }}
@@ -449,7 +449,7 @@ const RestoreConfirmTooltip = styled.div`
 	padding: 12px;
 	border-radius: 3px;
 	margin-top: 8px;
-	width: min(calc(100vw - 54px), 600px);
+	width: min(calc(100vw - 10vw), 400px);
 	z-index: 1000;
 
 	// Add invisible padding to create a safe hover zone
