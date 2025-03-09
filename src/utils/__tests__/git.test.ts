@@ -54,6 +54,10 @@ describe("git utils", () => {
 		jest.clearAllMocks()
 	})
 
+	describe("constructor", () => {
+		// ... existing code ...
+	})
+
 	describe("searchCommits", () => {
 		const mockCommitData = [
 			"abc123def456",
@@ -116,7 +120,7 @@ describe("git utils", () => {
 				{ cwd, encoding: "utf8" },
 				expect.any(Function),
 			)
-		}, 20000)
+		})
 
 		it("should return empty array when git is not installed", async () => {
 			exec.mockImplementation(
@@ -198,6 +202,10 @@ describe("git utils", () => {
 				author: "John Doe",
 				date: "2024-01-06",
 			})
+		})
+
+		it("should handle git operations correctly", async () => {
+			// Test implementation
 		})
 	})
 

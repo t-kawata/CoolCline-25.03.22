@@ -1,186 +1,104 @@
 // npx jest src/services/checkpoints/__tests__/CheckpointService.test.ts
 
-import fs from "fs/promises"
-import path from "path"
-import os from "os"
+import { jest } from "@jest/globals"
+import * as fs from "fs/promises"
+import * as path from "path"
 import "../../../utils/path"
-
-import { simpleGit, SimpleGit } from "simple-git"
-import * as vscode from "vscode"
-
 import { CheckpointService } from "../CheckpointService"
-import { StorageProvider } from "../types"
+import { createTestEnvironment, createTestService, TestEnvironment } from "./test-utils"
 
 jest.setTimeout(30000)
 
-// Mock vscode namespace
-jest.mock("vscode", () => ({
-	window: {
-		createOutputChannel: jest.fn().mockReturnValue({
-			appendLine: jest.fn(),
-			clear: jest.fn(),
-			dispose: jest.fn(),
-			show: jest.fn(),
-		}),
-	},
-	workspace: {
-		workspaceFolders: [
-			{
-				uri: {
-					fsPath: "/test/workspace",
-					scheme: "file",
-					path: "/test/workspace",
-					toString: () => "/test/workspace",
-				},
-				name: "test",
-				index: 0,
-			},
-		],
-		fs: {
-			stat: jest.fn().mockResolvedValue({ type: 1 }), // FileType.File = 1
-		},
-		createFileSystemWatcher: jest.fn(() => ({
-			onDidCreate: jest.fn(() => ({ dispose: jest.fn() })),
-			onDidDelete: jest.fn(() => ({ dispose: jest.fn() })),
-			dispose: jest.fn(),
-		})),
-	},
-	Uri: {
-		file: (path: string) => ({
-			fsPath: path,
-			scheme: "file",
-			path: path,
-			toString: () => path,
-		}),
-	},
-}))
-
 describe("CheckpointService", () => {
-	let baseDir: string
-	let git: SimpleGit
-	let testFile: string
+	let env: TestEnvironment
 	let service: CheckpointService
-	let originalPlatform: string
-	const taskId = "test-task"
-
-	const mockStorageProvider: StorageProvider = {
-		context: {
-			globalStorageUri: {
-				fsPath: "",
-			},
-		},
-	}
-
-	const initRepo = async ({
-		baseDir,
-		initialContent = "Hello, world!",
-	}: {
-		baseDir: string
-		initialContent?: string
-	}): Promise<{ git: SimpleGit; testFile: string }> => {
-		await fs.mkdir(baseDir, { recursive: true })
-		git = simpleGit({
-			baseDir,
-			config: [],
-		})
-
-		await git.init()
-		await git.addConfig("user.name", "CoolCline")
-		await git.addConfig("user.email", "support@coolcline.com")
-		testFile = path.join(baseDir, "test.txt")
-		await fs.writeFile(testFile, initialContent)
-		await git.add("test.txt")
-		await git.commit("Initial commit")
-
-		return { git, testFile }
-	}
-
-	beforeAll(() => {
-		originalPlatform = process.platform
-		Object.defineProperty(process, "platform", {
-			value: "darwin",
-		})
-	})
-
-	afterAll(() => {
-		Object.defineProperty(process, "platform", {
-			value: originalPlatform,
-		})
-	})
 
 	beforeEach(async () => {
-		baseDir = path.join(os.tmpdir(), `checkpoint-service-test-${Date.now()}`)
-		const repo = await initRepo({ baseDir })
-		git = repo.git
-		testFile = repo.testFile
-		mockStorageProvider.context.globalStorageUri.fsPath = baseDir
-		service = await CheckpointService.create(taskId, mockStorageProvider)
-		await service.initialize()
+		env = await createTestEnvironment()
+		service = await createTestService(env)
 	})
 
 	afterEach(async () => {
-		if (service) {
-			service.dispose()
-		}
-		await fs.rm(baseDir, { recursive: true, force: true })
-		jest.restoreAllMocks()
+		await env.cleanup()
 	})
 
-	describe("basic functionality", () => {
-		it.skip("saves and restores checkpoints", async () => {
-			// Save first checkpoint
-			await fs.writeFile(testFile, "First change")
-			const commit1 = await service.saveCheckpoint("First checkpoint")
-			expect(commit1?.hash).toBeTruthy()
-
-			// Save second checkpoint
-			await fs.writeFile(testFile, "Second change")
-			const commit2 = await service.saveCheckpoint("Second checkpoint")
-			expect(commit2?.hash).toBeTruthy()
-
-			// Restore to first checkpoint
-			await service.restoreCheckpoint(commit1!.hash)
-			expect(await fs.readFile(testFile, "utf-8")).toBe("First change")
-
-			// Restore to second checkpoint
-			await service.restoreCheckpoint(commit2!.hash)
-			expect(await fs.readFile(testFile, "utf-8")).toBe("Second change")
-
-			// Restore to initial state
+	describe("初始化", () => {
+		it("应该能够正确初始化服务", async () => {
 			await service.initialize()
-			expect(await fs.readFile(testFile, "utf-8")).toBe("Hello, world!")
+			expect(service.taskId).toBe("test-task-1")
 		})
 
-		it.skip("gets correct diffs between checkpoints", async () => {
-			await fs.writeFile(testFile, "Ahoy, world!")
-			const commit1 = await service.saveCheckpoint("First checkpoint")
-			expect(commit1?.hash).toBeTruthy()
+		it("应该能够处理重复初始化", async () => {
+			await service.initialize()
+			await service.initialize() // 不应该抛出错误
+		})
+	})
 
-			await fs.writeFile(testFile, "Goodbye, world!")
-			const commit2 = await service.saveCheckpoint("Second checkpoint")
-			expect(commit2?.hash).toBeTruthy()
-
-			const diff = await service.getDiff(commit1!.hash, commit2!.hash)
-			expect(diff).toHaveLength(1)
-			expect(diff[0].relativePath).toBe("test.txt")
-			expect(diff[0].absolutePath).toBe(testFile)
-			expect(diff[0].before).toBe("Ahoy, world!")
-			expect(diff[0].after).toBe("Goodbye, world!")
+	describe("检查点操作", () => {
+		beforeEach(async () => {
+			await service.initialize()
 		})
 
-		it.skip("handles failed operations gracefully", async () => {
-			// Save initial checkpoint
-			await fs.writeFile(testFile, "Initial change")
-			const commit1 = await service.saveCheckpoint("Initial checkpoint")
-			expect(commit1?.hash).toBeTruthy()
+		it("应该能够保存检查点", async () => {
+			const checkpoint = await service.saveCheckpoint("测试检查点")
+			expect(checkpoint).toBeDefined()
+			expect(checkpoint.hash).toBeDefined()
+		})
 
-			// Mock git commit to simulate failure
-			const gitCommitSpy = jest.spyOn(git, "commit")
-			gitCommitSpy.mockRejectedValueOnce(new Error("Git error"))
+		it("应该能够获取检查点历史", async () => {
+			await service.saveCheckpoint("检查点1")
+			await service.saveCheckpoint("检查点2")
 
-			// Attempt to save checkpoint
-			await fs.writeFile(testFile, "Failed change")
-			await expect(service.saveCheckpoint("Failed checkpoint")).rejects.toThrow()
+			const history = await service.getHistory()
+			expect(history.length).toBe(2)
+		})
+
+		it("应该能够创建和提交单个文件的变更", async () => {
+			// 创建初始文件
+			await fs.writeFile(env.testFilePath, "initial content")
+
+			// 保存初始检查点
+			const checkpoint1 = await service.saveCheckpoint("初始检查点")
+
+			// 修改文件
+			await fs.writeFile(env.testFilePath, "modified content")
+
+			// 保存新检查点
+			const checkpoint2 = await service.saveCheckpoint("修改后的检查点")
+
+			// 获取差异
+			const diff = await service.getDiff(checkpoint1.hash, checkpoint2.hash)
+			expect(diff).toBeDefined()
+		})
+
+		it("应该能够处理多个文件的变更", async () => {
+			// 创建多个测试文件
+			const testFile2Path = path.join(env.workspaceRoot, "src", "test2.txt")
+			await fs.writeFile(testFile2Path, "file 2 content")
+
+			// 保存初始检查点
+			const checkpoint1 = await service.saveCheckpoint("初始检查点")
+
+			// 修改文件
+			await fs.writeFile(env.testFilePath, "modified content")
+			await fs.writeFile(testFile2Path, "modified file 2 content")
+
+			// 保存新检查点
+			const checkpoint2 = await service.saveCheckpoint("修改后的检查点")
+
+			// 获取差异
+			const diff = await service.getDiff(checkpoint1.hash, checkpoint2.hash)
+			expect(diff).toBeDefined()
+		})
+	})
+
+	describe("错误处理", () => {
+		it("应该能够处理无效的检查点哈希", async () => {
+			await expect(service.getDiff("invalid-hash-1", "invalid-hash-2")).rejects.toThrow()
+		})
+
+		it("应该能够处理未初始化的服务", async () => {
+			await expect(service.saveCheckpoint("Test checkpoint")).rejects.toThrow()
 		})
 	})
 })

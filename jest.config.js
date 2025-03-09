@@ -2,17 +2,13 @@
 module.exports = {
 	preset: "ts-jest",
 	testEnvironment: "node",
+	testTimeout: 30000,
 	moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
 	transform: {
 		"^.+\\.tsx?$": [
 			"ts-jest",
 			{
-				tsconfig: {
-					module: "CommonJS",
-					moduleResolution: "node",
-					esModuleInterop: true,
-					allowJs: true,
-				},
+				tsconfig: "tsconfig.test.json",
 				diagnostics: false,
 				isolatedModules: true,
 			},

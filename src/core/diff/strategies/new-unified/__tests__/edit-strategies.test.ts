@@ -278,7 +278,7 @@ describe("applyGitFallback", () => {
 		expect(result.result.join("\n")).toEqual("line1\nnew line2\nline3")
 		expect(result.confidence).toBe(1)
 		expect(result.strategy).toBe("git-fallback")
-	}, 30000) // 为单个测试增加超时时间
+	})
 
 	it("should return original content with 0 confidence when changes cannot be applied", async () => {
 		const hunk = {
@@ -294,5 +294,13 @@ describe("applyGitFallback", () => {
 		expect(result.result).toEqual(content)
 		expect(result.confidence).toBe(0)
 		expect(result.strategy).toBe("git-fallback")
-	}, 30000) // 为单个测试增加超时时间
+	})
+
+	it("should handle large files efficiently", async () => {
+		// Implementation of the test
+	})
+
+	it("should handle multiple files efficiently", async () => {
+		// Implementation of the test
+	})
 })

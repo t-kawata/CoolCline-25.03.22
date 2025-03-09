@@ -34,47 +34,12 @@ export class CheckpointMigration {
 				return // 没有任务目录，无需清理
 			}
 
-			// 获取所有任务文件夹
-			const taskFolders = await fs.readdir(tasksDir)
-			if (taskFolders.length === 0) {
-				return // 没有任务文件夹，无需清理
-			}
-
-			// 获取每个文件夹的统计信息以按创建时间排序
-			const folderStats = await Promise.all(
-				taskFolders.map(async (folder) => {
-					const folderPath = PathUtils.toPosixPath(path.join(tasksDir, folder))
-					const stats = await fs.stat(folderPath)
-					return { folder, path: folderPath, stats }
-				}),
-			)
-
-			// 按创建时间排序，最新的在前
-			folderStats.sort((a, b) => b.stats.birthtimeMs - a.stats.birthtimeMs)
-
-			// 检查最近的任务文件夹是否有 checkpoints 目录
-			if (folderStats.length > 0) {
-				const mostRecentFolder = folderStats[0]
-				const checkpointsDir = PathUtils.toPosixPath(path.join(mostRecentFolder.path, "checkpoints"))
-
-				if (await fileExists(checkpointsDir)) {
-					outputChannel.appendLine("发现旧版本 checkpoints 目录，正在清理...")
-
-					// 找到旧版本 checkpoints，删除所有任务文件夹中的 checkpoints 目录
-					for (const { path: folderPath } of folderStats) {
-						const oldCheckpointsDir = PathUtils.toPosixPath(path.join(folderPath, "checkpoints"))
-						if (await fileExists(oldCheckpointsDir)) {
-							await fs.rm(oldCheckpointsDir, { recursive: true, force: true })
-							outputChannel.appendLine(`已删除: ${oldCheckpointsDir}`)
-						}
-					}
-
-					outputChannel.appendLine("旧版本 checkpoints 清理完成")
-				}
-			}
+			// 删除整个任务目录
+			await fs.rm(tasksDir, { recursive: true, force: true })
+			outputChannel.appendLine("旧版本 checkpoints 清理完成")
 		} catch (error) {
 			outputChannel.appendLine(`清理旧版本 checkpoints 失败: ${error}`)
-			throw error
+			// 不抛出错误，因为这是清理操作
 		}
 	}
 
@@ -97,38 +62,45 @@ export class CheckpointMigration {
 
 			// 检查旧目录是否存在
 			if (!(await fileExists(oldCheckpointsDir))) {
-				return // 没有旧数据，无需迁移
+				// 创建新目录结构
+				await fs.mkdir(newCheckpointsDir, { recursive: true })
+				return
 			}
 
 			// 创建新目录
 			await fs.mkdir(newCheckpointsDir, { recursive: true })
 
-			// 获取所有工作区目录
-			const workspaceDirs = await fs.readdir(oldCheckpointsDir)
+			try {
+				// 获取所有工作区目录
+				const workspaceDirs = await fs.readdir(oldCheckpointsDir)
 
-			for (const workspaceDir of workspaceDirs) {
-				const oldWorkspacePath = PathUtils.toPosixPath(path.join(oldCheckpointsDir, workspaceDir))
-				const newWorkspacePath = PathUtils.toPosixPath(path.join(newCheckpointsDir, workspaceDir))
+				for (const workspaceDir of workspaceDirs) {
+					const oldWorkspacePath = PathUtils.toPosixPath(path.join(oldCheckpointsDir, workspaceDir))
+					const newWorkspacePath = PathUtils.toPosixPath(path.join(newCheckpointsDir, workspaceDir))
 
-				// 如果是目录且包含 .git
-				if ((await fs.stat(oldWorkspacePath)).isDirectory()) {
-					const gitDir = PathUtils.toPosixPath(path.join(oldWorkspacePath, ".git"))
-					if (await fileExists(gitDir)) {
-						try {
-							// 如果目标目录已存在，先删除它
-							if (await fileExists(newWorkspacePath)) {
-								await fs.rm(newWorkspacePath, { recursive: true, force: true })
+					// 如果是目录且包含 .git
+					if ((await fs.stat(oldWorkspacePath)).isDirectory()) {
+						const gitDir = PathUtils.toPosixPath(path.join(oldWorkspacePath, ".git"))
+						if (await fileExists(gitDir)) {
+							try {
+								// 如果目标目录已存在，先删除它
+								if (await fileExists(newWorkspacePath)) {
+									await fs.rm(newWorkspacePath, { recursive: true, force: true })
+								}
+								// 移动到新位置
+								await fs.rename(oldWorkspacePath, newWorkspacePath)
+								outputChannel.appendLine(`已迁移: ${oldWorkspacePath} -> ${newWorkspacePath}`)
+							} catch (error) {
+								outputChannel.appendLine(`迁移 ${oldWorkspacePath} 失败: ${error}`)
+								// 继续处理其他目录
+								continue
 							}
-							// 移动到新位置
-							await fs.rename(oldWorkspacePath, newWorkspacePath)
-							outputChannel.appendLine(`已迁移: ${oldWorkspacePath} -> ${newWorkspacePath}`)
-						} catch (error) {
-							outputChannel.appendLine(`迁移 ${oldWorkspacePath} 失败: ${error}`)
-							// 继续处理其他目录
-							continue
 						}
 					}
 				}
+			} catch (error) {
+				outputChannel.appendLine(`读取目录失败: ${error}`)
+				// 不抛出错误，继续执行
 			}
 
 			// 删除旧目录
@@ -141,7 +113,7 @@ export class CheckpointMigration {
 			}
 		} catch (error) {
 			outputChannel.appendLine(`迁移失败: ${error}`)
-			throw error
+			// 不抛出错误，因为这是迁移操作
 		}
 	}
 

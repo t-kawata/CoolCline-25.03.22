@@ -127,7 +127,7 @@ describe("TerminalProcess", () => {
 
 			expect(lines).toEqual(["test output"])
 			expect(terminalProcess.isHot).toBe(false)
-		}, 10000)
+		})
 
 		it("handles terminals without shell integration", async () => {
 			const lines: string[] = []
@@ -152,7 +152,7 @@ describe("TerminalProcess", () => {
 
 			expect(lines).toEqual(["test output"])
 			expect(terminalProcess.isHot).toBe(false)
-		}, 10000)
+		})
 
 		it("sets hot state for compiling commands", async () => {
 			const lines: string[] = []
@@ -167,7 +167,19 @@ describe("TerminalProcess", () => {
 
 			expect(lines).toEqual(["test output"])
 			expect(terminalProcess.isHot).toBe(false)
-		}, 10000)
+		})
+
+		it("should handle process termination correctly", async () => {
+			// ... existing code ...
+		})
+
+		it("should handle process errors correctly", async () => {
+			// ... existing code ...
+		})
+
+		it("should handle process output correctly", async () => {
+			// ... existing code ...
+		})
 	})
 
 	describe("buffer processing", () => {

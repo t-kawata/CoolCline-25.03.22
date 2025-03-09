@@ -56,33 +56,26 @@ export class GitOperations {
 		console.info("GitOperations: 开始初始化 shadow git, 路径:", coolclineShadowGitPath)
 
 		const normalizedProjectPath = PathUtils.normalizePath(this.userProjectPath)
+		const checkpointsDir = PathUtils.dirname(coolclineShadowGitPath)
+		const git = this.getGit(coolclineShadowGitPath)
 
-		if (await fileExists(coolclineShadowGitPath)) {
-			const git = this.getGit(coolclineShadowGitPath)
+		try {
+			await fs.mkdir(checkpointsDir, { recursive: true })
+			await git.init()
+			await git.addConfig("core.worktree", normalizedProjectPath)
+			await this.initGitConfig(git)
 
+			const lfsPatterns = await getLfsPatterns(normalizedProjectPath)
+			await writeExcludesFile(coolclineShadowGitPath, lfsPatterns)
+			await this.createInitialCommit(git)
+		} catch (error) {
+			// 如果目录已经存在，检查 core.worktree 配置
 			const worktree = await git.getConfig("core.worktree")
 			if (!PathUtils.pathsEqual(worktree.value || "", normalizedProjectPath)) {
 				throw new Error("Checkpoints 只能在原始工作区中使用: " + worktree.value)
 			}
 			console.warn("GitOperations: 使用现有的 shadow git: " + coolclineShadowGitPath)
-			return coolclineShadowGitPath
 		}
-
-		const checkpointsDir = PathUtils.dirname(coolclineShadowGitPath)
-		console.warn("GitOperations: 在 " + checkpointsDir + " 中创建新的 shadow git")
-
-		await fs.mkdir(checkpointsDir, { recursive: true })
-
-		const git = this.getGit(coolclineShadowGitPath)
-
-		await git.init()
-		await this.initGitConfig(git)
-		await git.addConfig("core.worktree", normalizedProjectPath)
-
-		const lfsPatterns = await getLfsPatterns(normalizedProjectPath)
-		await writeExcludesFile(coolclineShadowGitPath, lfsPatterns)
-
-		await this.createInitialCommit(git)
 
 		return coolclineShadowGitPath
 	}
@@ -92,30 +85,16 @@ export class GitOperations {
 	 * 处理全局和本地配置，确保正确的用户信息
 	 */
 	private async initGitConfig(git: SimpleGit): Promise<void> {
-		// 获取全局和本地配置
+		// 获取全局配置
 		const globalUserName = await git.getConfig("user.name", "global")
-		const localUserName = await git.getConfig("user.name", "local")
-		const userName = localUserName.value || globalUserName.value
-
 		const globalUserEmail = await git.getConfig("user.email", "global")
-		const localUserEmail = await git.getConfig("user.email", "local")
-		const userEmail = localUserEmail.value || globalUserEmail.value
-
-		// 如果存在全局配置且本地配置匹配默认值，则移除本地配置
-		if (globalUserName.value && localUserName.value === GitOperations.USER_NAME) {
-			await git.raw(["config", "--unset", "--local", "user.name"])
-		}
-
-		if (globalUserEmail.value && localUserEmail.value === GitOperations.USER_EMAIL) {
-			await git.raw(["config", "--unset", "--local", "user.email"])
-		}
 
 		// 仅在未配置时设置用户信息
-		if (!userName) {
+		if (!globalUserName.value) {
 			await git.addConfig("user.name", GitOperations.USER_NAME)
 		}
 
-		if (!userEmail) {
+		if (!globalUserEmail.value) {
 			await git.addConfig("user.email", GitOperations.USER_EMAIL)
 		}
 
@@ -217,41 +196,83 @@ export class GitOperations {
 
 	/**
 	 * 创建任务分支
-	 *
-	 * @param taskId - 任务 ID
-	 * @param gitPath - .git 目录的路径
-	 * @returns Promise<void>
 	 */
 	public async createTaskBranch(taskId: string, gitPath: string): Promise<void> {
 		const git = this.getGit(gitPath)
 		const branchName = `task-${taskId}`
+		let tempBranch: string | null = null
 
-		// 更新 excludes 文件
-		await writeExcludesFile(gitPath, await getLfsPatterns(this.userProjectPath))
+		try {
+			// 检查分支是否存在
+			const branches = await git.branch()
+			const exists = branches.all.includes(branchName)
 
-		const branches = await git.branch()
-		if (!branches.all.includes(branchName)) {
-			await git.checkoutLocalBranch(branchName)
-		} else {
-			await git.checkout(branchName)
+			if (exists) {
+				// 如果分支存在，先切换到一个临时分支
+				const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
+				if (currentBranch === branchName) {
+					// 创建并切换到临时分支
+					tempBranch = `temp-${Date.now()}`
+					await git.checkout(["-b", tempBranch])
+				}
+				// 删除旧分支
+				await git.branch(["-D", branchName])
+			}
+
+			// 创建新分支
+			await git.checkout(["-b", branchName])
+		} catch (error) {
+			throw new Error(`创建任务分支失败: ${error}`)
+		} finally {
+			// 清理临时分支
+			if (tempBranch) {
+				try {
+					await git.branch(["-D", tempBranch])
+				} catch (cleanupError) {
+					console.warn(`清理临时分支失败: ${cleanupError}`)
+					// 不抛出清理错误，因为主要操作已完成
+				}
+			}
 		}
 	}
 
 	/**
 	 * 删除任务分支
-	 *
-	 * @param taskId - 任务 ID
-	 * @param gitPath - .git 目录的路径
-	 * @returns Promise<void>
 	 */
 	public async deleteTaskBranch(taskId: string, gitPath: string): Promise<void> {
 		const git = this.getGit(gitPath)
 		const branchName = `task-${taskId}`
+		let tempBranch: string | null = null
+
 		try {
-			await git.deleteLocalBranch(branchName, true)
+			// 检查分支是否存在
+			const branches = await git.branch()
+			if (!branches.all.includes(branchName)) {
+				return // 分支不存在，无需删除
+			}
+
+			// 如果当前在要删除的分支上，先切换到一个临时分支
+			const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
+			if (currentBranch === branchName) {
+				// 创建并切换到临时分支
+				tempBranch = `temp-${Date.now()}`
+				await git.checkout(["-b", tempBranch])
+			}
+
+			// 删除分支
+			await git.branch(["-D", branchName])
 		} catch (error) {
-			console.error("删除任务分支失败:", error)
-			throw error
+			throw new Error(`删除任务分支失败: ${error}`)
+		} finally {
+			// 清理临时分支
+			if (tempBranch) {
+				try {
+					await git.branch(["-D", tempBranch])
+				} catch (cleanupError) {
+					console.warn(`清理临时分支失败: ${cleanupError}`)
+					// 不抛出清理错误，因为主要操作已完成
+				}
+			}
 		}
 	}
 

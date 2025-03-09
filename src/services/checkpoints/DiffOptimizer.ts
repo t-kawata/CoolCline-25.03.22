@@ -107,13 +107,15 @@ export class DiffOptimizer {
 		// 如果有上一次的哈希，计算增量差异
 		if (lastKnownHash) {
 			const incrementalChanges = await this.git.diffSummary([lastKnownHash, targetHash])
-			if (incrementalChanges.files.length === 0) {
-				// 没有变化，直接返回缓存的结果
-				const cacheKey = `diff:${baseHash}:${lastKnownHash}`
-				const cached = this.cache.get<any[]>(cacheKey)
-				if (cached) {
-					return cached
-				}
+			if (incrementalChanges.files.length > 0) {
+				// 有变化，计算增量差异
+				return this.computeDiff(lastKnownHash, targetHash)
+			}
+			// 没有变化，返回缓存的结果
+			const cacheKey = `diff:${baseHash}:${lastKnownHash}`
+			const cached = this.cache.get<any[]>(cacheKey)
+			if (cached) {
+				return cached
 			}
 		}
 
