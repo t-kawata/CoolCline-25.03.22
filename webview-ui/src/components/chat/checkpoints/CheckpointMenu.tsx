@@ -361,7 +361,7 @@ const ButtonGroup = styled.div`
 	align-items: center;
 	gap: 4px;
 	flex-shrink: 0;
-	margin-right: 8px;
+	margin-right: 2px;
 `
 
 const CustomButton = styled.button<{ disabled?: boolean; isActive?: boolean; $isCheckedOut?: boolean }>`

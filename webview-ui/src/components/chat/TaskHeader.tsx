@@ -36,7 +36,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	const { t } = useTranslation()
 	const { apiConfiguration } = useExtensionState()
 	const { selectedModelInfo } = useMemo(() => normalizeApiConfiguration(apiConfiguration), [apiConfiguration])
-	const [isTaskExpanded, setIsTaskExpanded] = useState(true)
+	const [isTaskExpanded, setIsTaskExpanded] = useState(false)
 	const [isTextExpanded, setIsTextExpanded] = useState(false)
 	const [showSeeMore, setShowSeeMore] = useState(false)
 	const textContainerRef = useRef<HTMLDivElement>(null)
@@ -166,7 +166,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							)}
 						</div>
 					</div>
-					{!isTaskExpanded && isCostAvailable && (
+					{/* {!isTaskExpanded && isCostAvailable && (
 						<div
 							style={{
 								marginLeft: 10,
@@ -181,7 +181,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							}}>
 							${totalCost?.toFixed(4)}
 						</div>
-					)}
+					)} */}
 					<VSCodeButton appearance="icon" onClick={onClose} style={{ marginLeft: 6, flexShrink: 0 }}>
 						<span className="codicon codicon-close"></span>
 					</VSCodeButton>
