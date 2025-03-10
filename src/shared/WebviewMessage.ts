@@ -89,6 +89,8 @@ export interface WebviewMessage {
 		| "checkpointsEnabled"
 		| "checkpointDiff"
 		| "checkpointRestore"
+		| "deleteAllProjectsAllHistory"
+		| "deleteThisProjectAllHistory"
 	text?: string
 	disabled?: boolean
 	askResponse?: CoolClineAskResponse

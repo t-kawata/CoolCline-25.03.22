@@ -2,12 +2,16 @@ import { VSCodeButton, VSCodeTextField, VSCodeRadioGroup, VSCodeRadio } from "@v
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import { Virtuoso } from "react-virtuoso"
-import React, { memo, useMemo, useState, useEffect } from "react"
+import React, { memo, useMemo, useState, useEffect, useRef, useCallback } from "react"
 import { Fzf } from "fzf"
 import { formatLargeNumber } from "../../utils/format"
 import { highlightFzfMatch } from "../../utils/highlight"
 import { useCopyToClipboard } from "../../utils/clipboard"
 import { useTranslation } from "react-i18next"
+import { ConfirmDialog } from "../ui/ConfirmDialog"
+import styled from "styled-components"
+import { createPortal } from "react-dom"
+import { useFloating, offset, flip, shift } from "@floating-ui/react"
 
 type HistoryViewProps = {
 	onDone: () => void
@@ -22,6 +26,45 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 	const [sortOption, setSortOption] = useState<SortOption>("newest")
 	const [lastNonRelevantSort, setLastNonRelevantSort] = useState<SortOption | null>("newest")
 	const { showCopyFeedback, copyWithFeedback } = useCopyToClipboard()
+	const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+	const [showDeleteMenu, setShowDeleteMenu] = useState(false)
+	const [confirmDialogConfig, setConfirmDialogConfig] = useState<{
+		title: string
+		description: string
+		onConfirm: () => void
+	}>({ title: "", description: "", onConfirm: () => {} })
+
+	const deleteButtonRef = useRef<HTMLDivElement | null>(null)
+	const menuRef = useRef<HTMLDivElement | null>(null)
+
+	const { refs, floatingStyles, update, placement } = useFloating({
+		placement: "bottom-end",
+		middleware: [
+			offset({
+				mainAxis: 6,
+				crossAxis: 0,
+			}),
+			flip({
+				fallbackPlacements: ["top-end"],
+			}),
+			shift({
+				padding: 8,
+			}),
+		],
+	})
+
+	const setRefs = useCallback(
+		(node: HTMLDivElement | null, type: "button" | "tooltip") => {
+			if (type === "button") {
+				deleteButtonRef.current = node
+				refs.setReference(node)
+			} else {
+				menuRef.current = node
+				refs.setFloating(node)
+			}
+		},
+		[refs],
+	)
 
 	useEffect(() => {
 		if (searchQuery && sortOption !== "mostRelevant" && !lastNonRelevantSort) {
@@ -33,12 +76,70 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 		}
 	}, [searchQuery, sortOption, lastNonRelevantSort])
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				menuRef.current &&
+				!menuRef.current.contains(event.target as Node) &&
+				deleteButtonRef.current &&
+				!deleteButtonRef.current.contains(event.target as Node)
+			) {
+				setShowDeleteMenu(false)
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside)
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside)
+		}
+	}, [])
+
+	// 打开选择的历史消息
 	const handleHistorySelect = (id: string) => {
 		vscode.postMessage({ type: "showTaskWithId", text: id })
 	}
 
+	// 删除所有历史消息
+	const handleDeleteAllProjectsAllHistory = () => {
+		setShowDeleteMenu(false)
+		setConfirmDialogConfig({
+			title: "Delete All Projects All History",
+			description:
+				"Are you sure you want to delete all history records from all projects? This action cannot be undone.",
+			onConfirm: () => {
+				vscode.postMessage({ type: "deleteAllProjectsAllHistory" as any })
+				setShowConfirmDialog(false)
+			},
+		})
+		setShowConfirmDialog(true)
+	}
+
+	// 删除当前项目的所有历史消息
+	const handleDeleteThisProjectAllHistory = () => {
+		setShowDeleteMenu(false)
+		setConfirmDialogConfig({
+			title: "Delete This Project All History",
+			description:
+				"Are you sure you want to delete all history records for this project? This action cannot be undone.",
+			onConfirm: () => {
+				vscode.postMessage({ type: "deleteThisProjectAllHistory" as any })
+				setShowConfirmDialog(false)
+			},
+		})
+		setShowConfirmDialog(true)
+	}
+
+	// 删除选择的历史消息
 	const handleDeleteHistoryItem = (id: string) => {
-		vscode.postMessage({ type: "deleteTaskWithId", text: id })
+		setConfirmDialogConfig({
+			title: "Delete Task",
+			description: "Are you sure you want to delete this task? This action cannot be undone.",
+			onConfirm: () => {
+				vscode.postMessage({ type: "deleteTaskWithId", text: id })
+				setShowConfirmDialog(false)
+			},
+		})
+		setShowConfirmDialog(true)
 	}
 
 	const formatDate = (timestamp: number) => {
@@ -134,6 +235,69 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 						z-index: 1000;
 						transition: opacity 0.2s ease-in-out;
 					}
+					.delete-button-container {
+						position: relative;
+					}
+					.delete-menu {
+						position: fixed;
+						background: var(--vscode-editor-background);
+						border: 1px solid var(--vscode-editorGroup-border);
+						border-radius: 4px;
+						z-index: 1000;
+						min-width: 240px;
+						box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+						padding: 4px;
+					}
+					.delete-menu-item {
+						display: flex;
+						align-items: center;
+						gap: 8px;
+						padding: 8px 12px;
+						color: var(--vscode-foreground);
+						cursor: pointer;
+						font-size: 13px;
+						width: 100%;
+						border: none;
+						background: none;
+						text-align: left;
+						border-radius: 3px;
+						transition: background-color 0.1s ease;
+					}
+					.delete-menu-item:hover {
+						background: var(--vscode-list-hoverBackground);
+					}
+					.delete-menu-item .codicon {
+						font-size: 14px;
+						color: var(--vscode-descriptionForeground);
+						flex-shrink: 0;
+					}
+					.delete-menu::after {
+						content: '';
+						position: absolute;
+						right: 7px;
+						top: -4px;
+						width: 8px;
+						height: 8px;
+						background: var(--vscode-editor-background);
+						border-left: 1px solid var(--vscode-editorGroup-border);
+						border-top: 1px solid var(--vscode-editorGroup-border);
+						transform: rotate(45deg);
+						z-index: 1;
+					}
+					.delete-menu[data-placement^='top']::after {
+						top: auto;
+						bottom: -4px;
+						transform: rotate(225deg);
+					}
+					.delete-menu::before {
+						content: '';
+						position: absolute;
+						top: 0;
+						left: 0;
+						right: 0;
+						height: 4px;
+						background: var(--vscode-editor-background);
+					}
 				`}
 			</style>
 			{showCopyFeedback && <div className="copy-modal">{String(t("history.preview.promptCopied"))}</div>}
@@ -156,7 +320,41 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 						padding: "10px 17px 10px 20px",
 					}}>
 					<h3 style={{ fontWeight: "800", fontSize: 15, margin: 0 }}>{String(t("history.title"))}</h3>
-					<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
+					<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+						<div className="delete-button-container" ref={(node) => setRefs(node, "button")}>
+							<VSCodeButton
+								appearance="icon"
+								onClick={() => {
+									setShowDeleteMenu(true)
+									update()
+								}}>
+								<span className="codicon codicon-trash"></span>
+							</VSCodeButton>
+							{showDeleteMenu &&
+								createPortal(
+									<div
+										className="delete-menu"
+										ref={(node) => setRefs(node, "tooltip")}
+										data-placement={placement}
+										style={floatingStyles}>
+										<button
+											className="delete-menu-item"
+											onClick={handleDeleteThisProjectAllHistory}>
+											<i className="codicon codicon-trash"></i>
+											<span>Delete This Project All History</span>
+										</button>
+										<button
+											className="delete-menu-item"
+											onClick={handleDeleteAllProjectsAllHistory}>
+											<i className="codicon codicon-trash"></i>
+											<span>Delete All Projects All History</span>
+										</button>
+									</div>,
+									document.body,
+								)}
+						</div>
+						<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
+					</div>
 				</div>
 				<div style={{ padding: "5px 17px 6px 17px" }}>
 					<div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -438,6 +636,16 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 					/>
 				</div>
 			</div>
+			<ConfirmDialog
+				isOpen={showConfirmDialog}
+				onClose={() => setShowConfirmDialog(false)}
+				onConfirm={() => {
+					confirmDialogConfig.onConfirm()
+					setShowConfirmDialog(false)
+				}}
+				title={confirmDialogConfig.title}
+				description={confirmDialogConfig.description}
+			/>
 		</>
 	)
 }

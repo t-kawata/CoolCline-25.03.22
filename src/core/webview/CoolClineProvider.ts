@@ -38,6 +38,7 @@ import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RequestyProvider } from "./RequestyProvider"
 import { CheckpointRecoveryMode } from "../../services/checkpoints/types"
+import { getShadowGitPath, hashWorkingDir } from "../../services/checkpoints/CheckpointUtils"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -1485,6 +1486,12 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 					case "refreshRequestyModels":
 						await this.refreshRequestyModels()
 						break
+					case "deleteAllProjectsAllHistory":
+						await this.deleteAllProjectsAllHistory()
+						break
+					case "deleteThisProjectAllHistory":
+						await this.deleteThisProjectAllHistory()
+						break
 				}
 			},
 			null,
@@ -2131,6 +2138,72 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await this.postStateToWebview()
 	}
 
+	async deleteAllProjectsAllHistory() {
+		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
+
+		// Delete all task files
+		for (const task of taskHistory) {
+			try {
+				const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks", task.id)
+				const apiConversationHistoryFilePath = path.join(taskDirPath, GlobalFileNames.apiConversationHistory)
+				const uiMessagesFilePath = path.join(taskDirPath, GlobalFileNames.uiMessages)
+				const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json")
+
+				// Delete related files
+				await fs.rm(apiConversationHistoryFilePath, { force: true })
+				await fs.rm(uiMessagesFilePath, { force: true })
+				await fs.rm(legacyMessagesFilePath, { force: true })
+				await fs.rmdir(taskDirPath).catch(() => {}) // Ignore directory not exist error
+			} catch (error) {
+				this.outputChannel.appendLine(`Error deleting task ${task.id}: ${error}`)
+			}
+		}
+
+		// Clear history records
+		await this.updateGlobalState("taskHistory", [])
+		await this.postStateToWebview()
+	}
+
+	async deleteThisProjectAllHistory() {
+		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
+		const currentShadowGitPath = await getShadowGitPath(
+			this.context.globalStorageUri.fsPath,
+			this.coolcline?.taskId ?? "",
+			hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? ""),
+		)
+
+		if (!currentShadowGitPath) {
+			vscode.window.showWarningMessage("Unable to determine current project path")
+			return
+		}
+
+		// Filter tasks for current project
+		const projectTasks = taskHistory.filter((item) => item.shadowGitConfigWorkTree === currentShadowGitPath)
+
+		// Delete task files
+		for (const task of projectTasks) {
+			try {
+				const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks", task.id)
+				const apiConversationHistoryFilePath = path.join(taskDirPath, GlobalFileNames.apiConversationHistory)
+				const uiMessagesFilePath = path.join(taskDirPath, GlobalFileNames.uiMessages)
+				const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json")
+
+				// Delete related files
+				await fs.rm(apiConversationHistoryFilePath, { force: true })
+				await fs.rm(uiMessagesFilePath, { force: true })
+				await fs.rm(legacyMessagesFilePath, { force: true })
+				await fs.rmdir(taskDirPath).catch(() => {}) // Ignore directory not exist error
+			} catch (error) {
+				this.outputChannel.appendLine(`Error deleting task ${task.id}: ${error}`)
+			}
+		}
+
+		// Update history records, keep tasks not from current project
+		const updatedTaskHistory = taskHistory.filter((item) => item.shadowGitConfigWorkTree !== currentShadowGitPath)
+		await this.updateGlobalState("taskHistory", updatedTaskHistory)
+		await this.postStateToWebview()
+	}
+
 	async postStateToWebview() {
 		const state = await this.getStateToPostToWebview()
 		this.postMessageToWebview({ type: "state", state })
@@ -2188,9 +2261,25 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
 			uriScheme: vscode.env.uriScheme,
 			coolclineMessages: this.coolcline?.coolclineMessages || [],
-			taskHistory: (taskHistory || [])
-				.filter((item: HistoryItem) => item.ts && item.task)
-				.sort((a: HistoryItem, b: HistoryItem) => b.ts - a.ts),
+			taskHistory: await (async () => {
+				const history = ((await this.getGlobalState("taskHistory")) as HistoryItem[] | undefined) || []
+				const currentShadowGitPath = await getShadowGitPath(
+					this.context.globalStorageUri.fsPath,
+					this.coolcline?.taskId ?? "",
+					hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? ""),
+				)
+
+				return history
+					.filter(
+						(item) =>
+							item.ts &&
+							item.task &&
+							(!currentShadowGitPath ||
+								!item.shadowGitConfigWorkTree ||
+								item.shadowGitConfigWorkTree === currentShadowGitPath),
+					)
+					.sort((a, b) => b.ts - a.ts)
+			})(),
 			allowedCommands,
 			shouldShowAnnouncement: lastShownAnnouncementId !== this.latestAnnouncementId,
 			soundEnabled: soundEnabled ?? true,
