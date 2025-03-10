@@ -67,11 +67,11 @@ export class CheckpointService {
 	public static async create(taskId: string, provider: StorageProvider): Promise<CheckpointService> {
 		const userProjectPath = await getWorkingDirectory()
 		return new CheckpointService({
-			userProjectPath,
+			userProjectPath: PathUtils.normalizePath(userProjectPath),
 			vscodeGlobalStorageCoolClinePath: PathUtils.normalizePath(provider.context.globalStorageUri.fsPath),
 			taskId,
-			log: console.log,
 			provider,
+			log: console.log,
 		})
 	}
 
