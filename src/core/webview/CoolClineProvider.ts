@@ -39,6 +39,7 @@ import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RequestyProvider } from "./RequestyProvider"
 import { CheckpointRecoveryMode } from "../../services/checkpoints/types"
 import { getShadowGitPath, hashWorkingDir } from "../../services/checkpoints/CheckpointUtils"
+import { ManageCheckpointRepository } from "../../services/checkpoints/ManageCheckpointRepository"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -154,6 +155,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
 	private requestyProvider?: RequestyProvider
+	private checkpointManager: ManageCheckpointRepository
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
@@ -178,6 +180,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			path.join(this.context.globalStorageUri.fsPath, "cache"),
 			this.outputChannel,
 		)
+		this.checkpointManager = new ManageCheckpointRepository(context)
 	}
 
 	/*
@@ -2138,8 +2141,10 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await this.postStateToWebview()
 	}
 
+	// 删除所有项目的所有历史记录
 	async deleteAllProjectsAllHistory() {
 		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
+		const currentWorkspaceHash = hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? "")
 
 		// Delete all task files
 		for (const task of taskHistory) {
@@ -2159,17 +2164,28 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			}
 		}
 
+		// 同时所有 checkpoint 仓库
+		try {
+			await this.checkpointManager.cleanCheckpointRepositories(true, currentWorkspaceHash)
+		} catch (error) {
+			this.outputChannel.appendLine(`Error cleaning checkpoint repositories: ${error}`)
+		}
+
 		// Clear history records
 		await this.updateGlobalState("taskHistory", [])
 		await this.postStateToWebview()
 	}
 
+	// 删除当前项目的所有历史记录
 	async deleteThisProjectAllHistory() {
 		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
+		const currentWorkspaceHash = hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? "")
+
+		// 获取 currentShadowGitPath 当做条件查询历史记录
 		const currentShadowGitPath = await getShadowGitPath(
 			this.context.globalStorageUri.fsPath,
 			this.coolcline?.taskId ?? "",
-			hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? ""),
+			currentWorkspaceHash,
 		)
 
 		if (!currentShadowGitPath) {
@@ -2196,6 +2212,13 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			} catch (error) {
 				this.outputChannel.appendLine(`Error deleting task ${task.id}: ${error}`)
 			}
+		}
+
+		// 处理当前项目的 checkpoint 仓库
+		try {
+			await this.checkpointManager.cleanCheckpointRepositories(false, currentWorkspaceHash)
+		} catch (error) {
+			this.outputChannel.appendLine(`Error cleaning checkpoint repositories: ${error}`)
 		}
 
 		// Update history records, keep tasks not from current project
