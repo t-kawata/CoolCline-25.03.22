@@ -403,9 +403,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							askResponse: "yesButtonClicked",
 						})
 					}
-					// Clear input state after sending
-					setInputValue("")
-					setSelectedImages([])
+					// 只在非工具使用时清空输入框，这样运行过程中输入框内容就不会自动清空了
+					if (coolclineAsk !== "tool") {
+						setInputValue("")
+						setSelectedImages([])
+					}
 					break
 				case "completion_result":
 				case "resume_completed_task":
