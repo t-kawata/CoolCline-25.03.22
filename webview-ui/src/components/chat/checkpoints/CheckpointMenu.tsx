@@ -6,7 +6,7 @@ import styled from "styled-components"
 import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons"
 import { vscode } from "../../../utils/vscode"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@/components/ui"
-import { ConfirmDialog } from "./ConfirmDialog"
+import { ConfirmDialog } from "../../ui/ConfirmDialog"
 import { CheckpointRecoveryMode } from "../../../../../src/services/checkpoints/types"
 
 type CheckpointMenuProps = {
