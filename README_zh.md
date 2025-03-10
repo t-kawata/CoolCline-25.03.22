@@ -6,7 +6,7 @@
 
 ---
 
-[CoolCline](https://gitee.com/coolcline/coolcline.git) 是一个主动型编程助手，提供以下模式：
+[CoolCline](https://gitee.com/coolcline/coolcline.git) 是一个主动编程助手，结合了 `Cline` 和 `Roo Code` 的最佳特性，并提供了以下几种模式：
 
 - `Agent` 模式：一个具有代码理解、生成和项目管理全面能力的自主 AI 编程代理（自动阅读、编辑代码，自动执行命令，自动上下文理解，自动任务理解及分解，自动工具使用，注意：此模式不受自动批准的勾选或取消勾选的限制）
 - `Code` 模式：帮助你编写、重构、修复代码和运行命令（编写代码，执行命令）

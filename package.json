@@ -1,7 +1,7 @@
 {
 	"name": "coolcline",
 	"displayName": "Cool Cline",
-	"description": "[English, 中文, etc] CoolCline is a proactive programming assistant.",
+	"description": "[English, 中文, French, etc] CoolCline is a proactive programming assistant that combines the best features of Cline and Roo Code.",
 	"publisher": "CoolCline",
 	"version": "4.4.3",
 	"icon": "assets/icons/icon.png",

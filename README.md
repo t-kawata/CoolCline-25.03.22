@@ -6,7 +6,7 @@
 
 ---
 
-[CoolCline](https://gitee.com/coolcline/coolcline.git) is a proactive programming assistant that offers the following modes:
+[CoolCline](https://gitee.com/coolcline/coolcline.git) is a proactive programming assistant that combines the best features of `Cline` and `Roo Code`, offering the following modes:
 
 - `Agent` Mode: An autonomous AI programming agent with comprehensive capabilities in code understanding, generation, and project management (automatic code reading/editing, command execution, context understanding, task analysis/decomposition, and tool usage, note: this mode is not affected by the checkboxes in the auto-approval area)
 - `Code` Mode: Helps you write, refactor, fix code and run commands (write code, execute commands)
