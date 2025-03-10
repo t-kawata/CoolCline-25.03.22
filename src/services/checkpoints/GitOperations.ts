@@ -389,10 +389,18 @@ export class GitOperations {
 			const git = this.getGit(gitPath)
 			// 清理工作区
 			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
-			// 恢复文件，恢复工作区的文件内容
-			// await git.raw(["restore", "--source", hash, "--worktree", "--", "."])
-			// 使用 reset --hard 命令完全恢复到指定的 checkpoint，完全重置当前分支到指定的提交（工作区，暂存区）
+			// 使用 reset --hard 命令完全恢复到指定的 checkpoint
 			await git.reset(["--hard", hash])
+
+			// 从指定 commit hash 的提交信息中获取 task id
+			const commitInfo = await git.raw(["show", "-s", "--format=%B", hash]) // 使用 raw 命令以获取原始输出
+			const commitMessage = commitInfo.trim() // 移除可能的空白字符
+			const taskMatch = commitMessage.match(/Task: ([^,\n]+)/) // 增加 \n 以确保不会匹配到换行
+			const taskId = taskMatch ? taskMatch[1].trim() : "" // 确保 taskId 没有空白字符
+
+			// 创建一个新的 commit 来记录这个 restore 操作
+			const message = `task:${taskId},restore:${hash},Time:${Date.now()}`
+			await git.commit(message, ["--allow-empty"])
 		} catch (error) {
 			console.error("GitOperations: 恢复 checkpoint 失败:", error)
 			throw error
