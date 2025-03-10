@@ -53,6 +53,7 @@ export class GitOperations {
 	 */
 	public async initShadowGit(coolclineShadowGitPath: string): Promise<string> {
 		console.info("GitOperations: 开始初始化 shadow git, 路径:", coolclineShadowGitPath)
+		// /Users/zhaoyu/Library/Application Support/Code/User/globalStorage/coolcline.coolcline/shadow-git/06c0bd08/.git
 
 		const normalizedProjectPath = PathUtils.normalizePath(this.userProjectPath)
 		const checkpointsDir = PathUtils.dirname(coolclineShadowGitPath)
