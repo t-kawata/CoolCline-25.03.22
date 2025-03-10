@@ -1,8 +1,8 @@
 import { jest } from "@jest/globals"
 import { FileFilter } from "../FileFilter"
 import { createTestEnvironment, TestEnvironment } from "./test-utils"
-import path from "path"
 import fs from "fs/promises"
+import { PathUtils } from "../CheckpointUtils"
 
 describe("FileFilter", () => {
 	let env: TestEnvironment
@@ -20,9 +20,9 @@ describe("FileFilter", () => {
 	describe("shouldExclude", () => {
 		it("应该排除默认排除的文件", async () => {
 			const files = [
-				path.join(env.workspaceRoot, "node_modules/test.js"),
-				path.join(env.workspaceRoot, "dist/app.js"),
-				path.join(env.workspaceRoot, "src/app.js"),
+				PathUtils.joinPath(env.workspaceRoot, "node_modules/test.js"),
+				PathUtils.joinPath(env.workspaceRoot, "dist/app.js"),
+				PathUtils.joinPath(env.workspaceRoot, "src/app.js"),
 			]
 
 			const results = await Promise.all(files.map((f) => filter.shouldExclude(f)))
@@ -30,7 +30,7 @@ describe("FileFilter", () => {
 		})
 
 		it("应该排除大文件", async () => {
-			const testFile = path.join(env.workspaceRoot, "large.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "large.txt")
 			const content = Buffer.alloc(101 * 1024 * 1024) // 101MB
 			await fs.writeFile(testFile, content)
 
@@ -44,14 +44,14 @@ describe("FileFilter", () => {
 			const env = await createTestEnvironment()
 			const filter = new FileFilter(env.workspaceRoot)
 			const files = await filter.getIncludedFiles()
-			const relativePaths = files.map((f) => path.relative(env.workspaceRoot, f))
+			const relativePaths = files.map((f) => PathUtils.relativePath(env.workspaceRoot, f))
 			expect(relativePaths.sort()).toEqual([".gitignore", "src/app.js", "src/test.js"].sort())
 		})
 	})
 
 	describe("isLargeFile", () => {
 		it("应该正确识别大文件", async () => {
-			const testFile = path.join(env.workspaceRoot, "large.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "large.txt")
 			const content = Buffer.alloc(101 * 1024 * 1024) // 101MB
 			await fs.writeFile(testFile, content)
 
@@ -60,7 +60,7 @@ describe("FileFilter", () => {
 		})
 
 		it("应该正确识别小文件", async () => {
-			const testFile = path.join(env.workspaceRoot, "small.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "small.txt")
 			await fs.writeFile(testFile, "small file")
 
 			const result = await filter.isLargeFile(testFile)

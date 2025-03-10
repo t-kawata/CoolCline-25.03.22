@@ -1,12 +1,13 @@
 import * as vscode from "vscode"
 import * as fs from "fs/promises"
-import * as path from "path"
 import { Browser, Page, launch } from "puppeteer-core"
 import * as cheerio from "cheerio"
 import TurndownService from "turndown"
 // @ts-ignore
 import PCR from "puppeteer-chromium-resolver"
 import { fileExistsAtPath } from "../../utils/fs"
+import { toPosixPath } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 interface PCRStats {
 	puppeteer: { launch: typeof launch }
@@ -27,7 +28,7 @@ export class UrlContentFetcher {
 		if (!globalStoragePath) {
 			throw new Error("Global storage uri is invalid")
 		}
-		const puppeteerDir = path.join(globalStoragePath, "puppeteer")
+		const puppeteerDir = toPosixPath(PathUtils.joinPath(globalStoragePath, "puppeteer"))
 		const dirExists = await fileExistsAtPath(puppeteerDir)
 		if (!dirExists) {
 			await fs.mkdir(puppeteerDir, { recursive: true })

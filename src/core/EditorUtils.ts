@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import * as path from "path"
+import { PathUtils } from "../services/checkpoints/CheckpointUtils"
 
 /**
  * Represents an effective range in a document along with the corresponding text.
@@ -110,7 +110,7 @@ export class EditorUtils {
 			if (!workspaceFolder) {
 				filePath = document.uri.fsPath
 			} else {
-				const relativePath = path.relative(workspaceFolder.uri.fsPath, document.uri.fsPath)
+				const relativePath = PathUtils.relativePath(workspaceFolder.uri.fsPath, document.uri.fsPath)
 				filePath = !relativePath || relativePath.startsWith("..") ? document.uri.fsPath : relativePath
 			}
 

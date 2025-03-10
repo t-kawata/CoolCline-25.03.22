@@ -1,4 +1,4 @@
-import { arePathsEqual, getReadablePath } from "../path"
+import { arePathsEqual, getReadablePath, toRelativePath, toPosixPath } from "../path"
 import * as path from "path"
 import os from "os"
 
@@ -11,20 +11,32 @@ describe("Path Utilities", () => {
 		})
 	})
 
-	describe("String.prototype.toPosix", () => {
+	describe("toPosixPath", () => {
 		it("should convert backslashes to forward slashes", () => {
 			const windowsPath = "C:\\Users\\test\\file.txt"
-			expect(windowsPath.toPosix()).toBe("C:/Users/test/file.txt")
+			expect(toPosixPath(windowsPath)).toBe("C:/Users/test/file.txt")
 		})
 
 		it("should not modify paths with forward slashes", () => {
 			const unixPath = "/home/user/file.txt"
-			expect(unixPath.toPosix()).toBe("/home/user/file.txt")
+			expect(toPosixPath(unixPath)).toBe("/home/user/file.txt")
 		})
 
 		it("should preserve extended-length Windows paths", () => {
 			const extendedPath = "\\\\?\\C:\\Very\\Long\\Path"
-			expect(extendedPath.toPosix()).toBe("\\\\?\\C:\\Very\\Long\\Path")
+			expect(toPosixPath(extendedPath)).toBe("\\\\?\\C:\\Very\\Long\\Path")
+		})
+
+		it("should handle mixed separators", () => {
+			const mixedPath = "C:\\Users/test\\Documents/file.txt"
+			expect(toPosixPath(mixedPath)).toBe("C:/Users/test/Documents/file.txt")
+		})
+	})
+
+	describe("String.prototype.toPosix", () => {
+		it("should be available on string instances", () => {
+			const path = "C:\\test\\path"
+			expect(path.toPosix()).toBe("C:/test/path")
 		})
 	})
 
@@ -41,17 +53,15 @@ describe("Path Utilities", () => {
 			})
 
 			it("should handle different path separators", () => {
-				// Convert both paths to use forward slashes after normalization
-				const path1 = path.normalize("C:\\Users\\Test").replace(/\\/g, "/")
-				const path2 = path.normalize("C:/Users/Test").replace(/\\/g, "/")
-				expect(arePathsEqual(path1, path2)).toBe(true)
+				expect(arePathsEqual("C:\\Users\\Test", "C:/Users/Test")).toBe(true)
 			})
 
 			it("should normalize paths with ../", () => {
-				// Convert both paths to use forward slashes after normalization
-				const path1 = path.normalize("C:\\Users\\Test\\..\\Test").replace(/\\/g, "/")
-				const path2 = path.normalize("C:\\Users\\Test").replace(/\\/g, "/")
-				expect(arePathsEqual(path1, path2)).toBe(true)
+				expect(arePathsEqual("C:\\Users\\Test\\..\\Test", "C:\\Users\\Test")).toBe(true)
+			})
+
+			it("should handle mixed separators", () => {
+				expect(arePathsEqual("C:\\Users/Test", "C:/Users\\Test")).toBe(true)
 			})
 		})
 
@@ -90,8 +100,9 @@ describe("Path Utilities", () => {
 	})
 
 	describe("getReadablePath", () => {
-		const homeDir = os.homedir()
-		const desktop = path.join(homeDir, "Desktop")
+		it("should throw error when cwd is not provided", () => {
+			expect(() => getReadablePath("" as any)).toThrow("cwd is required")
+		})
 
 		it("should return basename when path equals cwd", () => {
 			const cwd = "/Users/test/project"
@@ -110,16 +121,6 @@ describe("Path Utilities", () => {
 			expect(getReadablePath(cwd, filePath)).toBe("/Users/test/other/file.txt")
 		})
 
-		it("should handle Desktop as cwd", () => {
-			const filePath = path.join(desktop, "file.txt")
-			expect(getReadablePath(desktop, filePath)).toBe(filePath.toPosix())
-		})
-
-		it("should handle undefined relative path", () => {
-			const cwd = "/Users/test/project"
-			expect(getReadablePath(cwd)).toBe("project")
-		})
-
 		it("should handle parent directory traversal", () => {
 			const cwd = "/Users/test/project"
 			const filePath = "../../other/file.txt"
@@ -130,6 +131,48 @@ describe("Path Utilities", () => {
 			const cwd = "/Users/test/project"
 			const filePath = "/Users/test/project/./src/../src/file.txt"
 			expect(getReadablePath(cwd, filePath)).toBe("src/file.txt")
+		})
+
+		it("should handle mixed separators", () => {
+			const cwd = "C:\\Users\\test"
+			const filePath = "C:\\Users\\test/docs\\file.txt"
+			expect(getReadablePath(cwd, filePath)).toBe("docs/file.txt")
+		})
+
+		it("should handle undefined relative path", () => {
+			const cwd = "/Users/test/project"
+			expect(getReadablePath(cwd)).toBe("project")
+		})
+
+		it("should handle root paths", () => {
+			expect(getReadablePath("/")).toBe("")
+			expect(getReadablePath("/", "file.txt")).toBe("file.txt")
+		})
+	})
+
+	describe("toRelativePath", () => {
+		it("should convert absolute path to relative", () => {
+			const filePath = "/Users/test/project/file.txt"
+			const cwd = "/Users/test"
+			expect(toRelativePath(filePath, cwd)).toBe("project/file.txt")
+		})
+
+		it("should handle mixed path separators", () => {
+			const filePath = "C:\\Users/test\\file.txt"
+			const cwd = "C:\\Users\\test"
+			expect(toRelativePath(filePath, cwd)).toBe("file.txt")
+		})
+
+		it("should preserve trailing slash", () => {
+			const filePath = "/Users/test/dir/"
+			const cwd = "/Users/test"
+			expect(toRelativePath(filePath, cwd)).toBe("dir/")
+		})
+
+		it("should handle Windows backslash trailing separator", () => {
+			const filePath = "C:\\Users\\test\\dir\\"
+			const cwd = "C:\\Users\\test"
+			expect(toRelativePath(filePath, cwd)).toBe("dir/")
 		})
 	})
 })

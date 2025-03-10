@@ -3,6 +3,7 @@ import * as path from "path"
 import * as vscode from "vscode"
 import os from "os"
 import crypto from "crypto"
+import { arePathsEqual as pathsAreEqual, toPosixPath as convertToPosixPath } from "../../utils/path"
 
 /**
  * 路径工具类
@@ -14,21 +15,27 @@ class PathUtils {
 	 * Windows 上将反斜杠转换为正斜杠
 	 */
 	static toPosixPath(filePath: string): string {
-		return filePath.split(path.sep).join("/")
+		return convertToPosixPath(filePath)
 	}
 
 	/**
 	 * 规范化路径并转换为 POSIX 格式
 	 */
 	static normalizePath(filePath: string): string {
-		return this.toPosixPath(path.normalize(filePath))
+		// normalize 解析 ./.. 段，删除重复的斜杠，标准化路径分隔符
+		let normalized = path.normalize(filePath)
+		// 删除尾部斜杠（除了根路径）
+		if (normalized.length > 1 && (normalized.endsWith("/") || normalized.endsWith("\\"))) {
+			normalized = normalized.slice(0, -1)
+		}
+		return this.toPosixPath(normalized)
 	}
 
 	/**
 	 * 比较两个路径是否相同（跨平台兼容）
 	 */
 	static pathsEqual(path1: string, path2: string): boolean {
-		return this.normalizePath(path1) === this.normalizePath(path2)
+		return pathsAreEqual(path1, path2)
 	}
 
 	/**
@@ -195,38 +202,7 @@ export async function fileExists(filePath: string): Promise<boolean> {
  * @returns boolean 路径是否相等
  */
 export function arePathsEqual(path1?: string, path2?: string): boolean {
-	if (!path1 && !path2) {
-		return true
-	}
-	if (!path1 || !path2) {
-		return false
-	}
-
-	path1 = normalizePath(path1)
-	path2 = normalizePath(path2)
-
-	if (process.platform === "win32") {
-		return path1.toLowerCase() === path2.toLowerCase()
-	}
-	return path1 === path2
-}
-
-/**
- * 标准化路径。
- * - 解析 ./.. 段
- * - 删除重复的斜杠
- * - 标准化路径分隔符
- * - 删除尾部斜杠（除了根路径）
- *
- * @param p - 要标准化的路径
- * @returns 标准化后的路径
- */
-function normalizePath(p: string): string {
-	let normalized = path.normalize(p)
-	if (normalized.length > 1 && (normalized.endsWith("/") || normalized.endsWith("\\"))) {
-		normalized = normalized.slice(0, -1)
-	}
-	return normalized
+	return pathsAreEqual(path1, path2)
 }
 
 // 导出工具类

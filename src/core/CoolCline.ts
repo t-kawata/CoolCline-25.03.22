@@ -6,7 +6,6 @@ import delay from "delay"
 import fs from "fs/promises"
 import os from "os"
 import pWaitFor from "p-wait-for"
-import * as path from "path"
 import { serializeError } from "serialize-error"
 import * as vscode from "vscode"
 import { ApiHandler, SingleCompletionHandler, buildApiHandler } from "../api"
@@ -65,10 +64,11 @@ import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiment
 import { CheckpointService } from "../services/checkpoints/CheckpointService"
 import { logger } from "../utils/logging"
 import { CheckpointRecoveryMode } from "../services/checkpoints/types"
-import { getShadowGitPath, hashWorkingDir } from "../services/checkpoints/CheckpointUtils"
+import { getShadowGitPath, hashWorkingDir, PathUtils } from "../services/checkpoints/CheckpointUtils"
 
 const cwd =
-	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? path.join(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
+	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
+	PathUtils.joinPath(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
 
 type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>
 type UserContent = Array<
@@ -185,13 +185,16 @@ export class CoolCline {
 		if (!vscodeGlobalStorageCoolClinePath) {
 			throw new Error("Global storage uri is invalid")
 		}
-		const taskDir = path.join(vscodeGlobalStorageCoolClinePath, "tasks", this.taskId)
+		const taskDir = PathUtils.joinPath(vscodeGlobalStorageCoolClinePath, "tasks", this.taskId)
 		await fs.mkdir(taskDir, { recursive: true })
 		return taskDir
 	}
 
 	private async getSavedApiConversationHistory(): Promise<Anthropic.MessageParam[]> {
-		const filePath = path.join(await this.ensureTaskDirectoryExists(), GlobalFileNames.apiConversationHistory)
+		const filePath = PathUtils.joinPath(
+			await this.ensureTaskDirectoryExists(),
+			GlobalFileNames.apiConversationHistory,
+		)
 		const fileExists = await fileExistsAtPath(filePath)
 		if (fileExists) {
 			return JSON.parse(await fs.readFile(filePath, "utf8"))
@@ -212,7 +215,10 @@ export class CoolCline {
 
 	private async saveApiConversationHistory() {
 		try {
-			const filePath = path.join(await this.ensureTaskDirectoryExists(), GlobalFileNames.apiConversationHistory)
+			const filePath = PathUtils.joinPath(
+				await this.ensureTaskDirectoryExists(),
+				GlobalFileNames.apiConversationHistory,
+			)
 			await fs.writeFile(filePath, JSON.stringify(this.apiConversationHistory))
 		} catch (error) {
 			// in the off chance this fails, we don't want to stop the task
@@ -221,12 +227,12 @@ export class CoolCline {
 	}
 
 	private async getSavedCoolClineMessages(): Promise<CoolClineMessage[]> {
-		const filePath = path.join(await this.ensureTaskDirectoryExists(), GlobalFileNames.uiMessages)
+		const filePath = PathUtils.joinPath(await this.ensureTaskDirectoryExists(), GlobalFileNames.uiMessages)
 		if (await fileExistsAtPath(filePath)) {
 			return JSON.parse(await fs.readFile(filePath, "utf8"))
 		} else {
 			// check old location
-			const oldPath = path.join(await this.ensureTaskDirectoryExists(), "claude_messages.json")
+			const oldPath = PathUtils.joinPath(await this.ensureTaskDirectoryExists(), "claude_messages.json")
 			if (await fileExistsAtPath(oldPath)) {
 				const data = JSON.parse(await fs.readFile(oldPath, "utf8"))
 				await fs.unlink(oldPath) // remove old file
@@ -251,7 +257,7 @@ export class CoolCline {
 
 	private async saveCoolClineMessages() {
 		try {
-			const filePath = path.join(await this.ensureTaskDirectoryExists(), GlobalFileNames.uiMessages)
+			const filePath = PathUtils.joinPath(await this.ensureTaskDirectoryExists(), GlobalFileNames.uiMessages)
 
 			// 处理大型消息
 			const processedMessages = this.coolclineMessages.map((msg) => {
@@ -525,7 +531,7 @@ export class CoolCline {
 	private async startTask(task?: string, images?: string[]): Promise<void> {
 		// 只创建必要的目录结构
 		// 这一步主要是为了生成目录，这样历史记录可以记录这个目录，以便之后加载历史消息可以按项目加载
-		const shadowGitDir = path.join(
+		const shadowGitDir = PathUtils.joinPath(
 			this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
 			"shadow-git",
 			hashWorkingDir(cwd),
@@ -1395,7 +1401,7 @@ export class CoolCline {
 						if (this.diffViewProvider.editType !== undefined) {
 							fileExists = this.diffViewProvider.editType === "modify"
 						} else {
-							const absolutePath = path.resolve(cwd, relPath)
+							const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 							fileExists = await fileExistsAtPath(absolutePath)
 							this.diffViewProvider.editType = fileExists ? "modify" : "create"
 						}
@@ -1599,7 +1605,7 @@ export class CoolCline {
 									break
 								}
 
-								const absolutePath = path.resolve(cwd, relPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 								const fileExists = await fileExistsAtPath(absolutePath)
 
 								if (!fileExists) {
@@ -1727,7 +1733,7 @@ export class CoolCline {
 								break
 							}
 
-							const absolutePath = path.resolve(cwd, relPath)
+							const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 							const fileExists = await fileExistsAtPath(absolutePath)
 
 							if (!fileExists) {
@@ -1878,7 +1884,7 @@ export class CoolCline {
 									break
 								}
 
-								const absolutePath = path.resolve(cwd, relPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 								const fileExists = await fileExistsAtPath(absolutePath)
 
 								if (!fileExists) {
@@ -2033,7 +2039,7 @@ export class CoolCline {
 									break
 								}
 								this.consecutiveMistakeCount = 0
-								const absolutePath = path.resolve(cwd, relPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 								const completeMessage = JSON.stringify({
 									...sharedMessageProps,
 									content: absolutePath,
@@ -2075,7 +2081,7 @@ export class CoolCline {
 									break
 								}
 								this.consecutiveMistakeCount = 0
-								const absolutePath = path.resolve(cwd, relDirPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relDirPath))
 								const [files, didHitLimit] = await listFiles(absolutePath, recursive, 200)
 								const result = formatResponse.formatFilesList(absolutePath, files, didHitLimit)
 								const completeMessage = JSON.stringify({
@@ -2117,7 +2123,7 @@ export class CoolCline {
 									break
 								}
 								this.consecutiveMistakeCount = 0
-								const absolutePath = path.resolve(cwd, relDirPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relDirPath))
 								const result = await parseSourceCodeForDefinitionsTopLevel(absolutePath)
 								const completeMessage = JSON.stringify({
 									...sharedMessageProps,
@@ -2165,7 +2171,7 @@ export class CoolCline {
 									break
 								}
 								this.consecutiveMistakeCount = 0
-								const absolutePath = path.resolve(cwd, relDirPath)
+								const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relDirPath))
 								const results = await regexSearchFiles(cwd, absolutePath, regex, filePattern)
 								const completeMessage = JSON.stringify({
 									...sharedMessageProps,
@@ -3197,7 +3203,7 @@ export class CoolCline {
 		const visibleFiles = vscode.window.visibleTextEditors
 			?.map((editor) => editor.document?.uri?.fsPath)
 			.filter(Boolean)
-			.map((absolutePath) => path.relative(cwd, absolutePath).toPosix())
+			.map((absolutePath) => PathUtils.relativePath(cwd, absolutePath).toPosix())
 			.join("\n")
 		if (visibleFiles) {
 			details += `\n${visibleFiles}`
@@ -3210,7 +3216,7 @@ export class CoolCline {
 			.flatMap((group) => group.tabs)
 			.map((tab) => (tab.input as vscode.TabInputText)?.uri?.fsPath)
 			.filter(Boolean)
-			.map((absolutePath) => path.relative(cwd, absolutePath).toPosix())
+			.map((absolutePath) => PathUtils.relativePath(cwd, absolutePath).toPosix())
 			.join("\n")
 		if (openTabs) {
 			details += `\n${openTabs}`
@@ -3244,7 +3250,7 @@ export class CoolCline {
 		for (const [uri, fileDiagnostics] of diagnostics) {
 			const problems = fileDiagnostics.filter((d) => d.severity === vscode.DiagnosticSeverity.Error)
 			if (problems.length > 0) {
-				diagnosticsDetails += `\n## ${path.relative(cwd, uri.fsPath)}`
+				diagnosticsDetails += `\n## ${PathUtils.relativePath(cwd, uri.fsPath)}`
 				for (const diagnostic of problems) {
 					// let severity = diagnostic.severity === vscode.DiagnosticSeverity.Error ? "Error" : "Warning"
 					const line = diagnostic.range.start.line + 1 // VSCode lines are 0-indexed
@@ -3346,7 +3352,7 @@ export class CoolCline {
 
 		if (includeFileDetails) {
 			details += `\n\n# Current Working Directory (${cwd.toPosix()}) Files\n`
-			const isDesktop = arePathsEqual(cwd, path.join(os.homedir(), "Desktop"))
+			const isDesktop = arePathsEqual(cwd, PathUtils.joinPath(os.homedir(), "Desktop"))
 			if (isDesktop) {
 				// don't want to immediately access desktop since it would show permission popup
 				details += "(Desktop files not shown automatically. Use list_files to explore if needed.)"

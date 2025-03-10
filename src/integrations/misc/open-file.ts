@@ -1,7 +1,7 @@
-import * as path from "path"
 import * as os from "os"
 import * as vscode from "vscode"
 import { arePathsEqual } from "../../utils/path"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export async function openImage(dataUri: string) {
 	const matches = dataUri.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/)
@@ -11,7 +11,7 @@ export async function openImage(dataUri: string) {
 	}
 	const [, format, base64Data] = matches
 	const imageBuffer = Buffer.from(base64Data, "base64")
-	const tempFilePath = path.join(os.tmpdir(), `temp_image_${Date.now()}.${format}`)
+	const tempFilePath = PathUtils.joinPath(os.tmpdir(), `temp_image_${Date.now()}.${format}`)
 	try {
 		await vscode.workspace.fs.writeFile(vscode.Uri.file(tempFilePath), imageBuffer)
 		await vscode.commands.executeCommand("vscode.open", vscode.Uri.file(tempFilePath))
@@ -36,7 +36,7 @@ export async function openFile(filePath: string, options: OpenFileOptions = {}) 
 		}
 
 		// If path starts with ./, resolve it relative to workspace root
-		const fullPath = filePath.startsWith("./") ? path.join(workspaceRoot, filePath.slice(2)) : filePath
+		const fullPath = filePath.startsWith("./") ? PathUtils.joinPath(workspaceRoot, filePath.slice(2)) : filePath
 
 		const uri = vscode.Uri.file(fullPath)
 

@@ -1,5 +1,4 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import { openFile } from "../../integrations/misc/open-file"
 import { UrlContentFetcher } from "../../services/browser/UrlContentFetcher"
 import { mentionRegexGlobal, formatGitSuggestion, type MentionSuggestion } from "../../shared/context-mentions"
@@ -8,6 +7,7 @@ import { extractTextFromFile } from "../../integrations/misc/extract-text"
 import { isBinaryFile } from "isbinaryfile"
 import { diagnosticsToProblemsString } from "../../integrations/diagnostics"
 import { getCommitInfo, getWorkingState } from "../../utils/git"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export async function openMention(mention?: string): Promise<void> {
 	if (!mention) {
@@ -21,7 +21,7 @@ export async function openMention(mention?: string): Promise<void> {
 
 	if (mention.startsWith("/")) {
 		const relPath = mention.slice(1)
-		const absPath = path.resolve(cwd, relPath)
+		const absPath = PathUtils.normalizePath(PathUtils.joinPath(cwd, relPath))
 		if (mention.endsWith("/")) {
 			vscode.commands.executeCommand("revealInExplorer", vscode.Uri.file(absPath))
 		} else {
@@ -133,7 +133,7 @@ export async function parseMentions(text: string, cwd: string, urlContentFetcher
 }
 
 async function getFileOrFolderContent(mentionPath: string, cwd: string): Promise<string> {
-	const absPath = path.resolve(cwd, mentionPath)
+	const absPath = PathUtils.normalizePath(PathUtils.joinPath(cwd, mentionPath))
 
 	try {
 		const stats = await fs.stat(absPath)
@@ -154,8 +154,8 @@ async function getFileOrFolderContent(mentionPath: string, cwd: string): Promise
 				const linePrefix = isLast ? "└── " : "├── "
 				if (entry.isFile()) {
 					folderContent += `${linePrefix}${entry.name}\n`
-					const filePath = path.join(mentionPath, entry.name)
-					const absoluteFilePath = path.resolve(absPath, entry.name)
+					const filePath = PathUtils.joinPath(mentionPath, entry.name)
+					const absoluteFilePath = PathUtils.normalizePath(PathUtils.joinPath(absPath, entry.name))
 					fileContentPromises.push(
 						(async () => {
 							try {

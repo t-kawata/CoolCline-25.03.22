@@ -1,12 +1,12 @@
-import * as path from "path"
 import * as vscode from "vscode"
 import { promises as fs } from "fs"
 import { modes, ModeConfig } from "../../../shared/modes"
+import { PathUtils } from "../../../services/checkpoints/CheckpointUtils"
 
 export async function getModesSection(context: vscode.ExtensionContext): Promise<string> {
-	const settingsDir = path.join(context.globalStorageUri.fsPath, "settings")
+	const settingsDir = PathUtils.joinPath(context.globalStorageUri.fsPath, "settings")
 	await fs.mkdir(settingsDir, { recursive: true })
-	const customModesPath = path.join(settingsDir, "coolcline_custom_modes.json")
+	const customModesPath = PathUtils.joinPath(settingsDir, "coolcline_custom_modes.json")
 
 	return `====
 

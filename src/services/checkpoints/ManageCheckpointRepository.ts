@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import * as fs from "fs/promises"
+import { PathUtils } from "./CheckpointUtils"
 
 export class ManageCheckpointRepository {
 	constructor(private readonly context: vscode.ExtensionContext) {}
@@ -11,7 +11,7 @@ export class ManageCheckpointRepository {
 	 * @param currentWorkspaceHash 当前工作区的哈希值
 	 */
 	public async cleanCheckpointRepositories(deleteAll: boolean, currentWorkspaceHash: string) {
-		const shadowGitBasePath = path.join(this.context.globalStorageUri.fsPath, "shadow-git")
+		const shadowGitBasePath = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "shadow-git")
 
 		try {
 			if (deleteAll) {
@@ -21,12 +21,12 @@ export class ManageCheckpointRepository {
 				await fs.mkdir(shadowGitBasePath, { recursive: true })
 			} else {
 				// 删除当前项目的 checkpoint 目录
-				const projectCheckpointDir = path.join(shadowGitBasePath, currentWorkspaceHash)
+				const projectCheckpointDir = PathUtils.joinPath(shadowGitBasePath, currentWorkspaceHash)
 				await fs.rm(projectCheckpointDir, { recursive: true, force: true })
 			}
 
 			// 确保当前项目的 checkpoint 目录存在
-			await fs.mkdir(path.join(shadowGitBasePath, currentWorkspaceHash), { recursive: true })
+			await fs.mkdir(PathUtils.joinPath(shadowGitBasePath, currentWorkspaceHash), { recursive: true })
 		} catch (error) {
 			console.error(`Error handling checkpoint repositories: ${error}`)
 			throw error
@@ -38,7 +38,11 @@ export class ManageCheckpointRepository {
 	 * @param currentWorkspaceHash 当前工作区的哈希值
 	 */
 	public async ensureProjectCheckpointDirectory(currentWorkspaceHash: string) {
-		const projectCheckpointDir = path.join(this.context.globalStorageUri.fsPath, "shadow-git", currentWorkspaceHash)
+		const projectCheckpointDir = PathUtils.joinPath(
+			this.context.globalStorageUri.fsPath,
+			"shadow-git",
+			currentWorkspaceHash,
+		)
 		await fs.mkdir(projectCheckpointDir, { recursive: true })
 		return projectCheckpointDir
 	}
@@ -48,6 +52,6 @@ export class ManageCheckpointRepository {
 	 * @param currentWorkspaceHash 当前工作区的哈希值
 	 */
 	public getProjectCheckpointPath(currentWorkspaceHash: string): string {
-		return path.join(this.context.globalStorageUri.fsPath, "shadow-git", currentWorkspaceHash)
+		return PathUtils.joinPath(this.context.globalStorageUri.fsPath, "shadow-git", currentWorkspaceHash)
 	}
 }

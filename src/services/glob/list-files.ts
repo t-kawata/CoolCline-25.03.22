@@ -1,12 +1,12 @@
 import { globby, Options } from "globby"
 import os from "os"
-import * as path from "path"
 import { arePathsEqual } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 export async function listFiles(dirPath: string, recursive: boolean, limit: number): Promise<[string[], boolean]> {
-	const absolutePath = path.resolve(dirPath)
+	const absolutePath = PathUtils.normalizePath(dirPath)
 	// Do not allow listing files in root or home directory, which coolcline tends to want to do when the user's prompt is vague.
-	const root = process.platform === "win32" ? path.parse(absolutePath).root : "/"
+	const root = process.platform === "win32" ? PathUtils.dirname(absolutePath) : "/"
 	const isRoot = arePathsEqual(absolutePath, root)
 	if (isRoot) {
 		return [[root], false]
@@ -40,7 +40,7 @@ export async function listFiles(dirPath: string, recursive: boolean, limit: numb
 		cwd: dirPath,
 		dot: true, // do not ignore hidden files/directories
 		absolute: true,
-		markDirectories: true, // Append a / on any directories matched (/ is used on windows as well, so dont use path.sep)
+		markDirectories: true, // Append a / on any directories matched (always use forward slash for cross-platform compatibility)
 		gitignore: recursive, // globby ignores any files that are gitignored
 		ignore: recursive ? dirsToIgnore : undefined, // just in case there is no gitignore, we ignore sensible defaults
 		onlyFiles: false, // true by default, false means it will list directories on their own too

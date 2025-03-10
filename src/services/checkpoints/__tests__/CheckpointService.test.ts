@@ -2,10 +2,10 @@
 
 import { jest } from "@jest/globals"
 import * as fs from "fs/promises"
-import * as path from "path"
 import "../../../utils/path"
 import { CheckpointService } from "../CheckpointService"
 import { createTestEnvironment, createTestService, TestEnvironment } from "./test-utils"
+import { PathUtils } from "../CheckpointUtils"
 
 jest.setTimeout(30000)
 
@@ -73,7 +73,7 @@ describe("CheckpointService", () => {
 
 		it("应该能够处理多个文件的变更", async () => {
 			// 创建多个测试文件
-			const testFile2Path = path.join(env.workspaceRoot, "src", "test2.txt")
+			const testFile2Path = PathUtils.joinPath(env.workspaceRoot, "src", "test2.txt")
 			await fs.writeFile(testFile2Path, "file 2 content")
 
 			// 保存初始检查点

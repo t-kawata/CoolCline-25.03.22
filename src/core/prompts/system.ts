@@ -24,7 +24,6 @@ import {
 	addCustomInstructions,
 } from "./sections"
 import fs from "fs/promises"
-import path from "path"
 
 async function generatePrompt(
 	context: vscode.ExtensionContext,

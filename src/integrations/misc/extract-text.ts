@@ -1,9 +1,10 @@
-import * as path from "path"
 // @ts-ignore-next-line
 import pdf from "pdf-parse/lib/pdf-parse"
 import mammoth from "mammoth"
 import fs from "fs/promises"
 import { isBinaryFile } from "isbinaryfile"
+import * as vscode from "vscode"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export async function extractTextFromFile(filePath: string): Promise<string> {
 	try {
@@ -11,7 +12,7 @@ export async function extractTextFromFile(filePath: string): Promise<string> {
 	} catch (error) {
 		throw new Error(`File not found: ${filePath}`)
 	}
-	const fileExtension = path.extname(filePath).toLowerCase()
+	const fileExtension = PathUtils.extname(filePath).toLowerCase()
 	switch (fileExtension) {
 		case ".pdf":
 			return extractTextFromPDF(filePath)

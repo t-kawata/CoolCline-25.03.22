@@ -1,6 +1,5 @@
 import * as vscode from "vscode"
 import * as fs from "fs/promises"
-import * as path from "path"
 import { Browser, Page, ScreenshotOptions, TimeoutError, launch } from "puppeteer-core"
 // @ts-ignore
 import PCR from "puppeteer-chromium-resolver"
@@ -8,6 +7,8 @@ import pWaitFor from "p-wait-for"
 import delay from "delay"
 import { fileExistsAtPath } from "../../utils/fs"
 import { BrowserActionResult } from "../../shared/ExtensionMessage"
+import { toPosixPath } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 interface PCRStats {
 	puppeteer: { launch: typeof launch }
@@ -30,7 +31,7 @@ export class BrowserSession {
 			throw new Error("Global storage uri is invalid")
 		}
 
-		const puppeteerDir = path.join(globalStoragePath, "puppeteer")
+		const puppeteerDir = toPosixPath(PathUtils.joinPath(globalStoragePath, "puppeteer"))
 		const dirExists = await fileExistsAtPath(puppeteerDir)
 		if (!dirExists) {
 			await fs.mkdir(puppeteerDir, { recursive: true })

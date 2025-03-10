@@ -1,10 +1,10 @@
 import { diff_match_patch } from "diff-match-patch"
 import { EditResult, Hunk } from "./types"
 import { getDMPSimilarity, validateEditResult } from "./search-strategies"
-import * as path from "path"
 import simpleGit, { SimpleGit } from "simple-git"
 import * as tmp from "tmp"
 import * as fs from "fs"
+import { PathUtils } from "../../../../services/checkpoints/CheckpointUtils"
 
 // Helper function to infer indentation - simplified version
 function inferIndentation(line: string, contextLines: string[], previousIndent: string = ""): string {
@@ -158,7 +158,7 @@ export async function applyGitFallback(hunk: Hunk, content: string[]): Promise<E
 		await git.addConfig("user.name", "Temp")
 		await git.addConfig("user.email", "temp@example.com")
 
-		const filePath = path.join(tmpDir.name, "file.txt")
+		const filePath = PathUtils.joinPath(tmpDir.name, "file.txt")
 
 		const searchLines = hunk.changes
 			.filter((change) => change.type === "context" || change.type === "remove")

@@ -2,7 +2,7 @@ import { ModeConfig } from "../../../shared/modes"
 import { CustomModesManager } from "../CustomModesManager"
 import * as vscode from "vscode"
 import * as fs from "fs/promises"
-import * as path from "path"
+import { PathUtils } from "../../../services/checkpoints/CheckpointUtils"
 
 // Mock dependencies
 jest.mock("vscode")
@@ -22,7 +22,7 @@ describe("CustomModesManager", () => {
 		jest.clearAllMocks()
 
 		// Mock storage path
-		mockStoragePath = "/test/storage/path"
+		mockStoragePath = PathUtils.normalizePath("/test/storage/path")
 
 		// Mock context
 		mockContext = {
@@ -107,14 +107,14 @@ describe("CustomModesManager", () => {
 
 	describe("File Operations", () => {
 		test("creates settings directory if it doesn't exist", async () => {
-			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
+			const configPath = PathUtils.joinPath(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			await manager.getCustomModesFilePath()
 
-			expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(configPath), { recursive: true })
+			expect(fs.mkdir).toHaveBeenCalledWith(PathUtils.dirname(configPath), { recursive: true })
 		})
 
 		test("creates default config if file doesn't exist", async () => {
-			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
+			const configPath = PathUtils.joinPath(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			await manager.getCustomModesFilePath()
 
 			expect(fs.writeFile).toHaveBeenCalledWith(configPath, JSON.stringify({ customModes: [] }, null, 2))
@@ -122,7 +122,7 @@ describe("CustomModesManager", () => {
 
 		test("watches file for changes", async () => {
 			// Mock file path resolution
-			const configPath = path.join(mockStoragePath, "settings", "coolcline_custom_modes.json")
+			const configPath = PathUtils.joinPath(mockStoragePath, "settings", "coolcline_custom_modes.json")
 			;(fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify({ customModes: [] }))
 
 			// Create manager and wait for initialization

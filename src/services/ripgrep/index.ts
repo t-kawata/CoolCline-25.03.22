@@ -1,8 +1,9 @@
 import * as vscode from "vscode"
 import * as childProcess from "child_process"
-import * as path from "path"
 import * as fs from "fs"
 import * as readline from "readline"
+import { toPosixPath } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 /*
 This file provides functionality to perform regex searches on files using ripgrep.
@@ -62,7 +63,7 @@ const MAX_RESULTS = 300
 
 async function getBinPath(vscodeAppRoot: string): Promise<string | undefined> {
 	const checkPath = async (pkgFolder: string) => {
-		const fullPath = path.join(vscodeAppRoot, pkgFolder, binName)
+		const fullPath = toPosixPath(PathUtils.joinPath(vscodeAppRoot, pkgFolder, binName))
 		return (await pathExists(fullPath)) ? fullPath : undefined
 	}
 
@@ -194,7 +195,7 @@ function formatResults(results: SearchResult[], cwd: string): string {
 
 	// Group results by file name
 	results.slice(0, MAX_RESULTS).forEach((result) => {
-		const relativeFilePath = path.relative(cwd, result.file)
+		const relativeFilePath = toPosixPath(PathUtils.relativePath(cwd, result.file))
 		if (!groupedResults[relativeFilePath]) {
 			groupedResults[relativeFilePath] = []
 		}

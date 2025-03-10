@@ -1,7 +1,7 @@
 import { Anthropic } from "@anthropic-ai/sdk"
-import os from "os"
-import * as path from "path"
 import * as vscode from "vscode"
+import * as os from "os"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export async function downloadTask(dateTs: number, conversationHistory: Anthropic.MessageParam[]) {
 	// File name
@@ -31,7 +31,7 @@ export async function downloadTask(dateTs: number, conversationHistory: Anthropi
 	// Prompt user for save location
 	const saveUri = await vscode.window.showSaveDialog({
 		filters: { Markdown: ["md"] },
-		defaultUri: vscode.Uri.file(path.join(os.homedir(), "Downloads", fileName)),
+		defaultUri: vscode.Uri.file(PathUtils.joinPath(os.homedir(), "Downloads", fileName)),
 	})
 
 	if (saveUri) {

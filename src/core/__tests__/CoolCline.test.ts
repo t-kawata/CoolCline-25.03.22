@@ -5,7 +5,7 @@ import { ApiStreamChunk } from "../../api/transform/stream"
 import { Anthropic } from "@anthropic-ai/sdk"
 import * as vscode from "vscode"
 import * as os from "os"
-import * as path from "path"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 // Mock all MCP-related modules
 jest.mock(
@@ -237,7 +237,7 @@ describe("CoolCline", () => {
 	beforeEach(() => {
 		// Setup mock extension context
 		const storageUri = {
-			fsPath: path.join(os.tmpdir(), "test-storage"),
+			fsPath: PathUtils.joinPath(os.tmpdir(), "test-storage"),
 		}
 		mockExtensionContext = {
 			globalState: {

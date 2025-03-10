@@ -1,5 +1,4 @@
 import fs from "fs/promises"
-import * as path from "path"
 import simpleGit, { SimpleGit } from "simple-git"
 import * as vscode from "vscode"
 import { GitOperations } from "./GitOperations"
@@ -79,7 +78,7 @@ export class CheckpointTracker {
 			this.gitPath = await this.gitOperations.initShadowGit(coolclineShadowGitPath)
 
 			// 创建 SimpleGit 实例
-			this.shadowGit = simpleGit(path.dirname(coolclineShadowGitPath))
+			this.shadowGit = simpleGit(PathUtils.dirname(coolclineShadowGitPath))
 
 			// 创建并切换到任务分支
 			await this.gitOperations.createTaskBranch(this.taskId, this.gitPath)

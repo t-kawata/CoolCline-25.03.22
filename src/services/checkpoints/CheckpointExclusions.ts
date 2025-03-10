@@ -1,6 +1,5 @@
 import fs from "fs/promises"
-import { join } from "path"
-import { fileExists } from "./CheckpointUtils"
+import { fileExists, PathUtils } from "./CheckpointUtils"
 
 /**
  * CheckpointExclusions 模块
@@ -204,11 +203,11 @@ function getLogFilePatterns(): string[] {
  * @param lfsPatterns - 可选的 LFS 模式数组
  */
 export const writeExcludesFile = async (gitPath: string, lfsPatterns: string[] = []): Promise<void> => {
-	const excludesPath = join(gitPath, "info", "exclude")
+	const excludesPath = PathUtils.joinPath(gitPath, "info", "exclude")
 	const excludes = getDefaultExclusions(lfsPatterns).join("\n")
 
 	try {
-		await fs.mkdir(join(gitPath, "info"), { recursive: true })
+		await fs.mkdir(PathUtils.joinPath(gitPath, "info"), { recursive: true })
 		await fs.writeFile(excludesPath, excludes)
 	} catch (error) {
 		console.error("写入排除文件失败:", error)
@@ -221,7 +220,7 @@ export const writeExcludesFile = async (gitPath: string, lfsPatterns: string[] =
  * @returns LFS 模式数组
  */
 export const getLfsPatterns = async (workspacePath: string): Promise<string[]> => {
-	const lfsAttributesPath = join(workspacePath, ".gitattributes")
+	const lfsAttributesPath = PathUtils.joinPath(workspacePath, ".gitattributes")
 
 	if (await fileExists(lfsAttributesPath)) {
 		try {

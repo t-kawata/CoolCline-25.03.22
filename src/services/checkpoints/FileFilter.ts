@@ -1,6 +1,5 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
-import * as path from "path"
 import { PathUtils } from "./CheckpointUtils"
 import ignore from "ignore"
 
@@ -163,7 +162,7 @@ export class FileFilter {
 			const entries = await fs.readdir(dir, { withFileTypes: true })
 
 			for (const entry of entries) {
-				const fullPath = path.join(dir, entry.name)
+				const fullPath = PathUtils.joinPath(dir, entry.name)
 
 				if (entry.isDirectory()) {
 					const subFiles = await this.getAllFiles(fullPath)

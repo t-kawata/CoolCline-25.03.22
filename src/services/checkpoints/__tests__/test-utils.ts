@@ -1,12 +1,12 @@
 import { jest } from "@jest/globals"
 import * as vscode from "vscode"
 import * as fs from "fs/promises"
-import * as path from "path"
 import * as os from "os"
 import { CheckpointService } from "../CheckpointService"
 import { StorageProvider } from "../types"
 import { GitOperations } from "../GitOperations"
 import simpleGit from "simple-git"
+import { PathUtils } from "../CheckpointUtils"
 
 export interface TestEnvironment {
 	workspaceRoot: string
@@ -16,25 +16,25 @@ export interface TestEnvironment {
 }
 
 export async function createTestEnvironment(): Promise<TestEnvironment> {
-	const workspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "test-workspace-"))
-	const globalStoragePath = await fs.mkdtemp(path.join(os.tmpdir(), "test-storage-"))
+	const workspaceRoot = await fs.mkdtemp(PathUtils.joinPath(os.tmpdir(), "test-workspace-"))
+	const globalStoragePath = await fs.mkdtemp(PathUtils.joinPath(os.tmpdir(), "test-storage-"))
 
 	// 创建测试文件目录和文件
-	const testDir = path.join(workspaceRoot, "src")
+	const testDir = PathUtils.joinPath(workspaceRoot, "src")
 	await fs.mkdir(testDir, { recursive: true })
 
 	// 创建测试所需的文件
-	await fs.writeFile(path.join(testDir, "app.js"), "console.log('app');")
-	await fs.writeFile(path.join(testDir, "test.js"), "console.log('test');")
+	await fs.writeFile(PathUtils.joinPath(testDir, "app.js"), "console.log('app');")
+	await fs.writeFile(PathUtils.joinPath(testDir, "test.js"), "console.log('test');")
 
 	// 创建必要的目录结构
-	const checkpointsDir = path.join(workspaceRoot, "checkpoints")
-	const tasksDir = path.join(workspaceRoot, "tasks")
+	const checkpointsDir = PathUtils.joinPath(workspaceRoot, "checkpoints")
+	const tasksDir = PathUtils.joinPath(workspaceRoot, "tasks")
 	await fs.mkdir(checkpointsDir, { recursive: true })
 	await fs.mkdir(tasksDir, { recursive: true })
 
 	// 创建 .gitignore 文件
-	await fs.writeFile(path.join(workspaceRoot, ".gitignore"), "node_modules\n.git\n")
+	await fs.writeFile(PathUtils.joinPath(workspaceRoot, ".gitignore"), "node_modules\n.git\n")
 
 	// 更新 VSCode workspace mock
 	const mockWorkspace = vscode.workspace as any
@@ -48,7 +48,7 @@ export async function createTestEnvironment(): Promise<TestEnvironment> {
 
 	return {
 		workspaceRoot,
-		testFilePath: path.join(testDir, "app.js"),
+		testFilePath: PathUtils.joinPath(testDir, "app.js"),
 		globalStoragePath,
 		cleanup: async () => {
 			try {
@@ -75,8 +75,8 @@ class MockStorageProvider implements StorageProvider {
 
 export async function createTestService(env: TestEnvironment): Promise<CheckpointService> {
 	const gitOps = new GitOperations(env.globalStoragePath, env.workspaceRoot)
-	const shadowGitDir = path.join(env.globalStoragePath, "shadow-git", "test-hash")
-	const gitPath = path.join(shadowGitDir, ".git")
+	const shadowGitDir = PathUtils.joinPath(env.globalStoragePath, "shadow-git", "test-hash")
+	const gitPath = PathUtils.joinPath(shadowGitDir, ".git")
 
 	// 确保目录存在
 	await fs.mkdir(shadowGitDir, { recursive: true })

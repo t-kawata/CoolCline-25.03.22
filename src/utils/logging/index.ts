@@ -2,12 +2,12 @@
  * @fileoverview 日志记录器入口文件,导出默认实例和测试用的空日志记录器
  */
 
-import * as path from "path"
 import * as fs from "fs"
 import * as vscode from "vscode"
 import { CompactLogger } from "./CompactLogger"
 import { CompactTransport } from "./CompactTransport"
 import { ILogger } from "./types"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 let defaultTransport: CompactTransport | null = null
 let defaultLogger: CompactLogger | null = null
@@ -26,14 +26,14 @@ export async function initializeLogger(context: vscode.ExtensionContext) {
 		}
 
 		// 创建日志目录
-		const logDir = path.join(extensionDir, "logs")
+		const logDir = PathUtils.joinPath(extensionDir, "logs")
 		// console.log("日志目录路径:", logDir)
 		if (!fs.existsSync(logDir)) {
 			// console.log("创建日志目录:", logDir)
 			await fs.promises.mkdir(logDir, { recursive: true })
 		}
 
-		const logPath = path.join(logDir, "coolcline.log")
+		const logPath = PathUtils.joinPath(logDir, "coolcline.log")
 		// console.log("日志文件完整路径:", logPath)
 
 		// 验证目录权限

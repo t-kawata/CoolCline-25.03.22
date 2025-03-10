@@ -66,7 +66,7 @@ describe("WorkspaceTracker", () => {
 
 		expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 			type: "workspaceUpdated",
-			filePaths: expect.arrayContaining(["file1.ts", "file2.ts"]),
+			filePaths: expect.arrayContaining(["test/workspace/file1.ts", "test/workspace/file2.ts"]),
 			openedTabs: [],
 		})
 		expect((mockProvider.postMessageToWebview as jest.Mock).mock.calls[0][0].filePaths).toHaveLength(2)
@@ -80,7 +80,7 @@ describe("WorkspaceTracker", () => {
 
 		expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 			type: "workspaceUpdated",
-			filePaths: ["newfile.ts"],
+			filePaths: ["test/workspace/newfile.ts"],
 			openedTabs: [],
 		})
 	})
@@ -114,7 +114,7 @@ describe("WorkspaceTracker", () => {
 
 		expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({
 			type: "workspaceUpdated",
-			filePaths: expect.arrayContaining(["newdir"]),
+			filePaths: expect.arrayContaining(["test/workspace/newdir"]),
 			openedTabs: [],
 		})
 		const lastCall = (mockProvider.postMessageToWebview as jest.Mock).mock.calls.slice(-1)[0]
@@ -130,7 +130,7 @@ describe("WorkspaceTracker", () => {
 		jest.runAllTimers()
 
 		// Should only have 1000 files initially
-		const expectedFiles = Array.from({ length: 1000 }, (_, i) => `file${i}.ts`).sort()
+		const expectedFiles = Array.from({ length: 1000 }, (_, i) => `test/workspace/file${i}.ts`).sort()
 		const calls = (mockProvider.postMessageToWebview as jest.Mock).mock.calls
 
 		expect(mockProvider.postMessageToWebview).toHaveBeenCalledWith({

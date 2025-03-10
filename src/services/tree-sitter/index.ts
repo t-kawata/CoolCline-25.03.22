@@ -1,13 +1,13 @@
 import * as fs from "fs/promises"
-import * as path from "path"
 import { listFiles } from "../glob/list-files"
 import { LanguageParser, loadRequiredLanguageParsers } from "./languageParser"
 import { fileExistsAtPath } from "../../utils/fs"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 // TODO: implement caching behavior to avoid having to keep analyzing project for new tasks.
 export async function parseSourceCodeForDefinitionsTopLevel(dirPath: string): Promise<string> {
 	// check if the path exists
-	const dirExists = await fileExistsAtPath(path.resolve(dirPath))
+	const dirExists = await fileExistsAtPath(PathUtils.normalizePath(dirPath))
 	if (!dirExists) {
 		return "This directory does not exist or you do not have permission to access it."
 	}
@@ -27,7 +27,7 @@ export async function parseSourceCodeForDefinitionsTopLevel(dirPath: string): Pr
 	for (const file of filesToParse) {
 		const definitions = await parseFile(file, languageParsers)
 		if (definitions) {
-			result += `${path.relative(dirPath, file).toPosix()}\n${definitions}\n`
+			result += `${PathUtils.relativePath(dirPath, file)}\n${definitions}\n`
 		}
 		// else {
 		// 	filesWithoutDefinitions.push(file)
@@ -74,7 +74,7 @@ function separateFiles(allFiles: string[]): { filesToParse: string[]; remainingF
 		"php",
 		"swift",
 	].map((e) => `.${e}`)
-	const filesToParse = allFiles.filter((file) => extensions.includes(path.extname(file))).slice(0, 50) // 50 files max
+	const filesToParse = allFiles.filter((file) => extensions.includes(PathUtils.extname(file))).slice(0, 50) // 50 files max
 	const remainingFiles = allFiles.filter((file) => !filesToParse.includes(file))
 	return { filesToParse, remainingFiles }
 }
@@ -97,7 +97,7 @@ This approach allows us to focus on the most relevant parts of the code (defined
 */
 async function parseFile(filePath: string, languageParsers: LanguageParser): Promise<string | undefined> {
 	const fileContent = await fs.readFile(filePath, "utf8")
-	const ext = path.extname(filePath).toLowerCase().slice(1)
+	const ext = PathUtils.extname(filePath).toLowerCase().slice(1)
 
 	const { parser, query } = languageParsers[ext] || {}
 	if (!parser || !query) {
@@ -157,4 +157,22 @@ async function parseFile(filePath: string, languageParsers: LanguageParser): Pro
 		return `|----\n${formattedOutput}|----\n`
 	}
 	return undefined
+}
+
+async function getDefinitions(dirPath: string): Promise<string> {
+	const dirExists = await fileExistsAtPath(PathUtils.normalizePath(dirPath))
+	if (!dirExists) {
+		return ""
+	}
+
+	let result = ""
+	const files = await fs.readdir(dirPath)
+	for (const file of files) {
+		if (!file.endsWith(".d.ts")) {
+			continue
+		}
+		const definitions = await fs.readFile(PathUtils.joinPath(dirPath, file), "utf8")
+		result += `${PathUtils.relativePath(dirPath, file)}\n${definitions}\n`
+	}
+	return result
 }

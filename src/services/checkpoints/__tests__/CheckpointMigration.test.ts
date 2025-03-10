@@ -1,10 +1,9 @@
 import { jest } from "@jest/globals"
 import { CheckpointMigration } from "../CheckpointMigration"
 import { createTestEnvironment, TestEnvironment } from "./test-utils"
-import * as path from "path"
 import * as fs from "fs/promises"
 import { simpleGit, SimpleGit } from "simple-git"
-import { getShadowGitPath } from "../CheckpointUtils"
+import { getShadowGitPath, PathUtils } from "../CheckpointUtils"
 import * as vscode from "vscode"
 
 describe("CheckpointMigration", () => {
@@ -22,7 +21,7 @@ describe("CheckpointMigration", () => {
 		outputChannel = vscode.window.createOutputChannel("Checkpoint Migration")
 
 		// 创建必要的目录结构
-		await fs.mkdir(path.dirname(gitPath), { recursive: true })
+		await fs.mkdir(PathUtils.joinPath(env.workspaceRoot, "checkpoints"), { recursive: true })
 		await git.init()
 	})
 
@@ -34,12 +33,12 @@ describe("CheckpointMigration", () => {
 	describe("数据迁移", () => {
 		it("应该能够迁移旧版本的检查点", async () => {
 			// 创建旧版本的检查点结构
-			const oldCheckpointsDir = path.join(env.workspaceRoot, "checkpoints")
+			const oldCheckpointsDir = PathUtils.joinPath(env.workspaceRoot, "checkpoints")
 			await fs.mkdir(oldCheckpointsDir, { recursive: true })
 
 			// 创建一些旧的检查点文件
 			await fs.writeFile(
-				path.join(oldCheckpointsDir, "checkpoint1.json"),
+				PathUtils.joinPath(oldCheckpointsDir, "checkpoint1.json"),
 				JSON.stringify({
 					id: "checkpoint1",
 					files: [{ path: "test.txt", content: "old content" }],
@@ -51,7 +50,7 @@ describe("CheckpointMigration", () => {
 
 			// 验证迁移结果
 			const newGitExists = await fs
-				.access(path.dirname(gitPath))
+				.access(PathUtils.joinPath(env.workspaceRoot, "shadow-git"))
 				.then(() => true)
 				.catch(() => false)
 			expect(newGitExists).toBe(true)
@@ -66,18 +65,18 @@ describe("CheckpointMigration", () => {
 
 		it("应该能够处理不完整的旧数据", async () => {
 			// 创建不完整的旧数据
-			const oldCheckpointsDir = path.join(env.workspaceRoot, "checkpoints")
+			const oldCheckpointsDir = PathUtils.joinPath(env.workspaceRoot, "checkpoints")
 			await fs.mkdir(oldCheckpointsDir, { recursive: true })
 
 			// 创建一个损坏的检查点文件
-			await fs.writeFile(path.join(oldCheckpointsDir, "corrupt.json"), "invalid json")
+			await fs.writeFile(PathUtils.joinPath(oldCheckpointsDir, "corrupt.json"), "invalid json")
 
 			// 执行迁移
 			await CheckpointMigration.migrateToNewStructure(env.workspaceRoot, outputChannel)
 
 			// 验证迁移是否正常完成
 			const newGitExists = await fs
-				.access(path.dirname(gitPath))
+				.access(PathUtils.joinPath(env.workspaceRoot, "shadow-git"))
 				.then(() => true)
 				.catch(() => false)
 			expect(newGitExists).toBe(true)
@@ -87,9 +86,9 @@ describe("CheckpointMigration", () => {
 	describe("清理操作", () => {
 		it("应该能够清理旧的检查点数据", async () => {
 			// 创建旧的检查点数据
-			const oldCheckpointsDir = path.join(env.workspaceRoot, "tasks")
+			const oldCheckpointsDir = PathUtils.joinPath(env.workspaceRoot, "tasks")
 			await fs.mkdir(oldCheckpointsDir, { recursive: true })
-			await fs.writeFile(path.join(oldCheckpointsDir, "old.json"), "old data")
+			await fs.writeFile(PathUtils.joinPath(oldCheckpointsDir, "old.json"), "old data")
 
 			// 执行清理
 			await CheckpointMigration.cleanupLegacyCheckpoints(env.workspaceRoot, outputChannel)
@@ -118,7 +117,7 @@ describe("CheckpointMigration", () => {
 	describe("错误处理", () => {
 		it("应该能够处理迁移过程中的错误", async () => {
 			// 创建一个无法访问的目录
-			const restrictedDir = path.join(env.workspaceRoot, "checkpoints")
+			const restrictedDir = PathUtils.joinPath(env.workspaceRoot, "checkpoints")
 			await fs.mkdir(restrictedDir, { recursive: true })
 
 			try {
@@ -127,7 +126,7 @@ describe("CheckpointMigration", () => {
 
 				// 验证新目录结构已创建
 				const newGitExists = await fs
-					.access(path.dirname(gitPath))
+					.access(PathUtils.joinPath(env.workspaceRoot, "shadow-git"))
 					.then(() => true)
 					.catch(() => false)
 				expect(newGitExists).toBe(true)
@@ -142,7 +141,7 @@ describe("CheckpointMigration", () => {
 
 		it("应该能够处理并发迁移", async () => {
 			// 创建必要的目录结构
-			await fs.mkdir(path.dirname(gitPath), { recursive: true })
+			await fs.mkdir(PathUtils.joinPath(env.workspaceRoot, "checkpoints"), { recursive: true })
 
 			// 同时启动多个迁移操作
 			const migrations = Array(5)
@@ -154,7 +153,7 @@ describe("CheckpointMigration", () => {
 
 			// 验证最终状态是正确的
 			const newGitExists = await fs
-				.access(path.dirname(gitPath))
+				.access(PathUtils.joinPath(env.workspaceRoot, "shadow-git"))
 				.then(() => true)
 				.catch(() => false)
 			expect(newGitExists).toBe(true)
@@ -164,13 +163,13 @@ describe("CheckpointMigration", () => {
 	describe("性能测试", () => {
 		it("应该能够高效处理大量检查点", async () => {
 			// 创建大量旧检查点
-			const oldCheckpointsDir = path.join(env.workspaceRoot, "checkpoints")
+			const oldCheckpointsDir = PathUtils.joinPath(env.workspaceRoot, "checkpoints")
 			await fs.mkdir(oldCheckpointsDir, { recursive: true })
 
 			const checkpointCount = 100
 			for (let i = 0; i < checkpointCount; i++) {
 				await fs.writeFile(
-					path.join(oldCheckpointsDir, `checkpoint${i}.json`),
+					PathUtils.joinPath(oldCheckpointsDir, `checkpoint${i}.json`),
 					JSON.stringify({
 						id: `checkpoint${i}`,
 						files: [{ path: `file${i}.txt`, content: `content ${i}` }],

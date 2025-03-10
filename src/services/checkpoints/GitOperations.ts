@@ -1,6 +1,5 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
-import * as path from "path"
 import { SimpleGit, simpleGit, CleanOptions } from "simple-git"
 import { fileExists, PathUtils } from "./CheckpointUtils"
 import { getLfsPatterns, writeExcludesFile, GIT_DISABLED_SUFFIX } from "./CheckpointExclusions"
@@ -162,7 +161,7 @@ export class GitOperations {
 
 			for (const gitDir of gitDirs) {
 				const disabledPath = PathUtils.joinPath(
-					PathUtils.normalizePath(path.dirname(gitDir)),
+					PathUtils.normalizePath(PathUtils.dirname(gitDir)),
 					`.git${GIT_DISABLED_SUFFIX}`,
 				)
 

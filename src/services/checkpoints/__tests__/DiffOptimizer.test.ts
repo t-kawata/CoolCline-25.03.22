@@ -2,8 +2,8 @@ import { jest } from "@jest/globals"
 import { DiffOptimizer } from "../DiffOptimizer"
 import { simpleGit, SimpleGit } from "simple-git"
 import { createTestEnvironment, TestEnvironment } from "./test-utils"
-import path from "path"
 import fs from "fs/promises"
+import { PathUtils } from "../CheckpointUtils"
 
 describe("DiffOptimizer", () => {
 	let env: TestEnvironment
@@ -24,7 +24,7 @@ describe("DiffOptimizer", () => {
 	describe("差异计算", () => {
 		it("应该能够计算简单的文本差异", async () => {
 			// 创建初始文件
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "Hello\nWorld\n")
 			await git.add("test.txt")
 			const firstCommit = (await git.commit("Initial commit")).commit
@@ -45,7 +45,7 @@ describe("DiffOptimizer", () => {
 
 		it("应该能够处理大规模文本变更", async () => {
 			// 创建大文件
-			const testFile = path.join(env.workspaceRoot, "large.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "large.txt")
 			const longText = Array(1000).fill("line\n").join("")
 			await fs.writeFile(testFile, longText)
 			await git.add("large.txt")
@@ -69,16 +69,16 @@ describe("DiffOptimizer", () => {
 		it("应该能够处理多文件变更", async () => {
 			// 创建多个文件
 			await Promise.all([
-				fs.writeFile(path.join(env.workspaceRoot, "file1.txt"), "Original1"),
-				fs.writeFile(path.join(env.workspaceRoot, "file2.txt"), "Original2"),
+				fs.writeFile(PathUtils.joinPath(env.workspaceRoot, "file1.txt"), "Original1"),
+				fs.writeFile(PathUtils.joinPath(env.workspaceRoot, "file2.txt"), "Original2"),
 			])
 			await git.add(["file1.txt", "file2.txt"])
 			const firstCommit = (await git.commit("Initial files")).commit
 
 			// 修改文件
 			await Promise.all([
-				fs.writeFile(path.join(env.workspaceRoot, "file1.txt"), "Modified1"),
-				fs.writeFile(path.join(env.workspaceRoot, "file2.txt"), "Modified2"),
+				fs.writeFile(PathUtils.joinPath(env.workspaceRoot, "file1.txt"), "Modified1"),
+				fs.writeFile(PathUtils.joinPath(env.workspaceRoot, "file2.txt"), "Modified2"),
 			])
 			await git.add(["file1.txt", "file2.txt"])
 			const secondCommit = (await git.commit("Modified files")).commit
@@ -96,7 +96,7 @@ describe("DiffOptimizer", () => {
 	describe("增量差异计算", () => {
 		it("应该能够计算增量差异", async () => {
 			// 创建初始文件
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "Version 1")
 			await git.add("test.txt")
 			const commit1 = (await git.commit("Version 1")).commit
@@ -123,7 +123,7 @@ describe("DiffOptimizer", () => {
 	describe("缓存管理", () => {
 		it("应该能够缓存差异结果", async () => {
 			// 创建测试文件
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "Original")
 			await git.add("test.txt")
 			const commit1 = (await git.commit("Original")).commit
@@ -148,7 +148,7 @@ describe("DiffOptimizer", () => {
 
 		it("应该能够预热缓存", async () => {
 			// 创建一系列提交
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			const commits = []
 
 			for (let i = 1; i <= 3; i++) {
@@ -175,14 +175,14 @@ describe("DiffOptimizer", () => {
 			// 创建多个文件
 			const fileCount = 50
 			for (let i = 0; i < fileCount; i++) {
-				await fs.writeFile(path.join(env.workspaceRoot, `file${i}.txt`), `Original ${i}`)
+				await fs.writeFile(PathUtils.joinPath(env.workspaceRoot, `file${i}.txt`), `Original ${i}`)
 			}
 			await git.add(".")
 			const commit1 = (await git.commit("Original files")).commit
 
 			// 修改所有文件
 			for (let i = 0; i < fileCount; i++) {
-				await fs.writeFile(path.join(env.workspaceRoot, `file${i}.txt`), `Modified ${i}`)
+				await fs.writeFile(PathUtils.joinPath(env.workspaceRoot, `file${i}.txt`), `Modified ${i}`)
 			}
 			await git.add(".")
 			const commit2 = (await git.commit("Modified files")).commit
@@ -198,7 +198,7 @@ describe("DiffOptimizer", () => {
 
 		it("应该能够处理大文件", async () => {
 			// 创建大文件
-			const testFile = path.join(env.workspaceRoot, "large.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "large.txt")
 			const largeContent = "x".repeat(1024 * 1024) // 1MB
 			await fs.writeFile(testFile, largeContent)
 			await git.add("large.txt")

@@ -1,8 +1,8 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import { listFiles } from "../../services/glob/list-files"
 import { CoolClineProvider } from "../../core/webview/CoolClineProvider"
 import { toRelativePath } from "../../utils/path"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 const cwd = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0)
 const MAX_INITIAL_FILES = 1_000
@@ -89,7 +89,9 @@ class WorkspaceTracker {
 	}
 
 	private normalizeFilePath(filePath: string): string {
-		const resolvedPath = cwd ? path.resolve(cwd, filePath) : path.resolve(filePath)
+		const resolvedPath = cwd
+			? PathUtils.normalizePath(PathUtils.joinPath(cwd, filePath))
+			: PathUtils.normalizePath(filePath)
 		return filePath.endsWith("/") ? resolvedPath + "/" : resolvedPath
 	}
 

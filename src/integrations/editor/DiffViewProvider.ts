@@ -1,5 +1,4 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import * as fs from "fs/promises"
 import { createDirectoriesForFile } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
@@ -7,6 +6,7 @@ import { formatResponse } from "../../core/prompts/responses"
 import { DecorationController } from "./DecorationController"
 import * as diff from "diff"
 import { diagnosticsToProblemsString, getNewDiagnostics } from "../diagnostics"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export const DIFF_VIEW_URI_SCHEME = "coolcline-diff"
 
@@ -29,7 +29,7 @@ export class DiffViewProvider {
 	async open(relPath: string): Promise<void> {
 		this.relPath = relPath
 		const fileExists = this.editType === "modify"
-		const absolutePath = path.resolve(this.cwd, relPath)
+		const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(this.cwd, relPath))
 		this.isEditing = true
 		// if the file is already open, ensure it's not dirty before getting its contents
 		if (fileExists) {
@@ -144,7 +144,7 @@ export class DiffViewProvider {
 		if (!this.relPath || !this.newContent || !this.activeDiffEditor) {
 			return { newProblemsMessage: undefined, userEdits: undefined, finalContent: undefined }
 		}
-		const absolutePath = path.resolve(this.cwd, this.relPath)
+		const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(this.cwd, this.relPath))
 		const updatedDocument = this.activeDiffEditor.document
 		const editedContent = updatedDocument.getText()
 		if (updatedDocument.isDirty) {
@@ -207,7 +207,7 @@ export class DiffViewProvider {
 		}
 		const fileExists = this.editType === "modify"
 		const updatedDocument = this.activeDiffEditor.document
-		const absolutePath = path.resolve(this.cwd, this.relPath)
+		const absolutePath = PathUtils.normalizePath(PathUtils.joinPath(this.cwd, this.relPath))
 		if (!fileExists) {
 			if (updatedDocument.isDirty) {
 				await updatedDocument.save()
@@ -264,7 +264,7 @@ export class DiffViewProvider {
 		if (!this.relPath) {
 			throw new Error("No file path set")
 		}
-		const uri = vscode.Uri.file(path.resolve(this.cwd, this.relPath))
+		const uri = vscode.Uri.file(PathUtils.normalizePath(PathUtils.joinPath(this.cwd, this.relPath)))
 		// If this diff editor is already open (ie if a previous write file was interrupted) then we should activate that instead of opening a new diff
 		const diffTab = vscode.window.tabGroups.all
 			.flatMap((group) => group.tabs)
@@ -280,7 +280,7 @@ export class DiffViewProvider {
 		}
 		// Open new diff editor
 		return new Promise<vscode.TextEditor>((resolve, reject) => {
-			const fileName = path.basename(uri.fsPath)
+			const fileName = PathUtils.basename(uri.fsPath)
 			const fileExists = this.editType === "modify"
 			const disposable = vscode.window.onDidChangeActiveTextEditor((editor) => {
 				if (editor && arePathsEqual(editor.document.uri.fsPath, uri.fsPath)) {

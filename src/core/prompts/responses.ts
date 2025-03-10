@@ -1,6 +1,6 @@
 import { Anthropic } from "@anthropic-ai/sdk"
-import * as path from "path"
 import * as diff from "diff"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export const formatResponse = {
 	toolDenied: () => `The user denied this operation.`,
@@ -56,7 +56,7 @@ Otherwise, if you have not completed the task and do not need additional informa
 		const sorted = files
 			.map((file) => {
 				// convert absolute path to relative path
-				const relativePath = path.relative(absolutePath, file).toPosix()
+				const relativePath = PathUtils.relativePath(absolutePath, file).toPosix()
 				return file.endsWith("/") ? relativePath + "/" : relativePath
 			})
 			// Sort so files are listed under their respective directories to make it clear what files are children of what directories. Since we build file list top down, even if file list is truncated it will show directories that coolcline can then explore further.

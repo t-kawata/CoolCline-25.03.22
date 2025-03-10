@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import * as path from "path"
+import { PathUtils } from "../services/checkpoints/CheckpointUtils"
 
 /**
  * Minimum interval (in milliseconds) to prevent continuous playback
@@ -16,8 +16,8 @@ let lastPlayedTime = 0
  * @param filepath string
  * @returns boolean
  */
-export const isWAV = (filepath: string): boolean => {
-	return path.extname(filepath).toLowerCase() === ".wav"
+export function isWavFile(filepath: string): boolean {
+	return PathUtils.extname(filepath).toLowerCase() === ".wav"
 }
 
 let isSoundEnabled = false
@@ -54,7 +54,7 @@ export const playSound = (filepath: string): void => {
 			return
 		}
 
-		if (!isWAV(filepath)) {
+		if (!isWavFile(filepath)) {
 			throw new Error("Only wav files are supported.")
 		}
 

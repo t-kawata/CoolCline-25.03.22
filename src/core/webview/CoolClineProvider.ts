@@ -4,7 +4,6 @@ import axios from "axios"
 import fs from "fs/promises"
 import os from "os"
 import pWaitFor from "p-wait-for"
-import * as path from "path"
 import * as vscode from "vscode"
 import { buildApiHandler } from "../../api"
 import { downloadTask } from "../../integrations/misc/export-markdown"
@@ -38,7 +37,7 @@ import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RequestyProvider } from "./RequestyProvider"
 import { CheckpointRecoveryMode } from "../../services/checkpoints/types"
-import { getShadowGitPath, hashWorkingDir } from "../../services/checkpoints/CheckpointUtils"
+import { getShadowGitPath, hashWorkingDir, PathUtils } from "../../services/checkpoints/CheckpointUtils"
 import { ManageCheckpointRepository } from "../../services/checkpoints/ManageCheckpointRepository"
 
 /*
@@ -177,7 +176,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 			await this.postStateToWebview()
 		})
 		this.requestyProvider = new RequestyProvider(
-			path.join(this.context.globalStorageUri.fsPath, "cache"),
+			PathUtils.joinPath(this.context.globalStorageUri.fsPath, "cache"),
 			this.outputChannel,
 		)
 		this.checkpointManager = new ManageCheckpointRepository(context)
@@ -928,7 +927,11 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 						break
 					case "playSound":
 						if (message.audioType) {
-							const soundPath = path.join(this.context.extensionPath, "audio", `${message.audioType}.wav`)
+							const soundPath = PathUtils.joinPath(
+								this.context.extensionPath,
+								"audio",
+								`${message.audioType}.wav`,
+							)
 							playSound(soundPath)
 						}
 						break
@@ -1657,7 +1660,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	// MCP
 
 	async ensureMcpServersDirectoryExists(): Promise<string> {
-		const mcpServersDir = path.join(os.homedir(), "Documents", "CoolCline", "MCP")
+		const mcpServersDir = PathUtils.joinPath(os.homedir(), "Documents", "CoolCline", "MCP")
 		try {
 			await fs.mkdir(mcpServersDir, { recursive: true })
 		} catch (error) {
@@ -1667,7 +1670,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async ensureSettingsDirectoryExists(): Promise<string> {
-		const settingsDir = path.join(this.context.globalStorageUri.fsPath, "settings")
+		const settingsDir = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "settings")
 		await fs.mkdir(settingsDir, { recursive: true })
 		return settingsDir
 	}
@@ -1778,7 +1781,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	private async ensureCacheDirectoryExists(): Promise<string> {
-		const cacheDir = path.join(this.context.globalStorageUri.fsPath, "cache")
+		const cacheDir = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "cache")
 		await fs.mkdir(cacheDir, { recursive: true })
 		return cacheDir
 	}
@@ -1813,7 +1816,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	private async readModelsFromCache(filename: string): Promise<Record<string, ModelInfo> | undefined> {
-		const filePath = path.join(await this.ensureCacheDirectoryExists(), filename)
+		const filePath = PathUtils.joinPath(await this.ensureCacheDirectoryExists(), filename)
 		const fileExists = await fileExistsAtPath(filePath)
 		if (fileExists) {
 			const fileContents = await fs.readFile(filePath, "utf8")
@@ -1835,7 +1838,10 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async refreshGlamaModels() {
-		const glamaModelsFilePath = path.join(await this.ensureCacheDirectoryExists(), GlobalFileNames.glamaModels)
+		const glamaModelsFilePath = PathUtils.joinPath(
+			await this.ensureCacheDirectoryExists(),
+			GlobalFileNames.glamaModels,
+		)
 
 		const models: Record<string, ModelInfo> = {}
 		try {
@@ -1909,7 +1915,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async refreshOpenRouterModels() {
-		const openRouterModelsFilePath = path.join(
+		const openRouterModelsFilePath = PathUtils.joinPath(
 			await this.ensureCacheDirectoryExists(),
 			GlobalFileNames.openRouterModels,
 		)
@@ -2024,7 +2030,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		const models: Record<string, ModelInfo> = {}
 		try {
 			const cacheDir = await this.ensureCacheDirectoryExists()
-			const unboundModelsFilePath = path.join(cacheDir, "unbound-models.json")
+			const unboundModelsFilePath = PathUtils.joinPath(cacheDir, "unbound-models.json")
 			const response = await axios.get("https://api.getunbound.ai/models")
 			if (response.data) {
 				const rawModels = response.data
@@ -2071,9 +2077,12 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		const history = ((await this.getGlobalState("taskHistory")) as HistoryItem[] | undefined) || []
 		const historyItem = history.find((item) => item.id === id)
 		if (historyItem) {
-			const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks", id)
-			const apiConversationHistoryFilePath = path.join(taskDirPath, GlobalFileNames.apiConversationHistory)
-			const uiMessagesFilePath = path.join(taskDirPath, GlobalFileNames.uiMessages)
+			const taskDirPath = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "tasks", id)
+			const apiConversationHistoryFilePath = PathUtils.joinPath(
+				taskDirPath,
+				GlobalFileNames.apiConversationHistory,
+			)
+			const uiMessagesFilePath = PathUtils.joinPath(taskDirPath, GlobalFileNames.uiMessages)
 			const fileExists = await fileExistsAtPath(apiConversationHistoryFilePath)
 			if (fileExists) {
 				const apiConversationHistory = JSON.parse(await fs.readFile(apiConversationHistoryFilePath, "utf8"))
@@ -2124,11 +2133,11 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		if (uiMessagesFileExists) {
 			await fs.unlink(uiMessagesFilePath)
 		}
-		const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json")
+		const legacyMessagesFilePath = PathUtils.joinPath(taskDirPath, "claude_messages.json")
 		if (await fileExistsAtPath(legacyMessagesFilePath)) {
 			await fs.unlink(legacyMessagesFilePath)
 		}
-		await fs.rmdir(taskDirPath) // succeeds if the dir is empty
+		await fs.rmdir(taskDirPath).catch(() => {}) // succeeds if the dir is empty
 	}
 
 	async deleteTaskFromState(id: string) {
@@ -2149,10 +2158,13 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		// Delete all task files
 		for (const task of taskHistory) {
 			try {
-				const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks", task.id)
-				const apiConversationHistoryFilePath = path.join(taskDirPath, GlobalFileNames.apiConversationHistory)
-				const uiMessagesFilePath = path.join(taskDirPath, GlobalFileNames.uiMessages)
-				const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json")
+				const taskDirPath = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "tasks", task.id)
+				const apiConversationHistoryFilePath = PathUtils.joinPath(
+					taskDirPath,
+					GlobalFileNames.apiConversationHistory,
+				)
+				const uiMessagesFilePath = PathUtils.joinPath(taskDirPath, GlobalFileNames.uiMessages)
+				const legacyMessagesFilePath = PathUtils.joinPath(taskDirPath, "claude_messages.json")
 
 				// Delete related files
 				await fs.rm(apiConversationHistoryFilePath, { force: true })
@@ -2199,10 +2211,13 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		// Delete task files
 		for (const task of projectTasks) {
 			try {
-				const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks", task.id)
-				const apiConversationHistoryFilePath = path.join(taskDirPath, GlobalFileNames.apiConversationHistory)
-				const uiMessagesFilePath = path.join(taskDirPath, GlobalFileNames.uiMessages)
-				const legacyMessagesFilePath = path.join(taskDirPath, "claude_messages.json")
+				const taskDirPath = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "tasks", task.id)
+				const apiConversationHistoryFilePath = PathUtils.joinPath(
+					taskDirPath,
+					GlobalFileNames.apiConversationHistory,
+				)
+				const uiMessagesFilePath = PathUtils.joinPath(taskDirPath, GlobalFileNames.uiMessages)
+				const legacyMessagesFilePath = PathUtils.joinPath(taskDirPath, "claude_messages.json")
 
 				// Delete related files
 				await fs.rm(apiConversationHistoryFilePath, { force: true })
@@ -2831,7 +2846,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	async refreshRequestyModels() {
-		const requestyModelsFilePath = path.join(
+		const requestyModelsFilePath = PathUtils.joinPath(
 			await this.ensureCacheDirectoryExists(),
 			GlobalFileNames.requestyModels,
 		)

@@ -5,15 +5,15 @@
 import { CompactTransport } from "../CompactTransport"
 import { CompactLogEntry, LogLevel } from "../types"
 import * as fs from "fs"
-import * as path from "path"
 import * as os from "os"
+import { PathUtils } from "../../../services/checkpoints/CheckpointUtils"
 
 describe("CompactTransport", () => {
 	let transport: CompactTransport
 	let logFilePath: string
 
 	beforeEach(() => {
-		logFilePath = path.join(os.tmpdir(), `test-log-${Date.now()}.log`)
+		logFilePath = PathUtils.joinPath(os.tmpdir(), `test-log-${Date.now()}.log`)
 		transport = new CompactTransport({
 			level: "debug",
 			filePath: logFilePath,
@@ -113,7 +113,7 @@ describe("CompactTransport", () => {
 
 	it("should handle errors gracefully", () => {
 		// 使用临时目录下的不存在目录
-		const nonexistentPath = path.join(os.tmpdir(), "nonexistent", "test.log")
+		const nonexistentPath = PathUtils.joinPath(os.tmpdir(), "nonexistent", "test.log")
 		const invalidTransport = new CompactTransport({
 			level: "info",
 			filePath: nonexistentPath,

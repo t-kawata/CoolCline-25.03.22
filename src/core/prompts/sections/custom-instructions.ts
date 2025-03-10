@@ -1,5 +1,5 @@
 import fs from "fs/promises"
-import path from "path"
+import { PathUtils } from "../../../services/checkpoints/CheckpointUtils"
 
 export async function loadRuleFiles(cwd: string): Promise<string> {
 	const ruleFiles = [".coolclinerules", ".cursorrules", ".windsurfrules"]
@@ -7,7 +7,7 @@ export async function loadRuleFiles(cwd: string): Promise<string> {
 
 	for (const file of ruleFiles) {
 		try {
-			const content = await fs.readFile(path.join(cwd, file), "utf-8")
+			const content = await fs.readFile(PathUtils.joinPath(cwd, file), "utf-8")
 			if (content.trim()) {
 				combinedRules += `\n# Rules from ${file}:\n${content.trim()}\n`
 			}
@@ -36,7 +36,7 @@ export async function addCustomInstructions(
 	if (mode) {
 		try {
 			const modeRuleFile = `.coolclinerules-${mode}`
-			const content = await fs.readFile(path.join(cwd, modeRuleFile), "utf-8")
+			const content = await fs.readFile(PathUtils.joinPath(cwd, modeRuleFile), "utf-8")
 			if (content.trim()) {
 				modeRuleContent = content.trim()
 			}

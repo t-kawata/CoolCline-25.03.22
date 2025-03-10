@@ -1,6 +1,5 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
-import * as path from "path"
 import { PathUtils } from "./CheckpointUtils"
 import { FileFilter } from "./FileFilter"
 import pLimit from "p-limit"

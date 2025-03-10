@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import * as fs from "fs/promises"
 import { convertTheme } from "monaco-vscode-textmate-theme-converter/lib/cjs"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 const defaultThemes: Record<string, string> = {
 	"Default Dark Modern": "dark_modern",
@@ -43,7 +43,7 @@ export async function getTheme() {
 			if (extension.packageJSON?.contributes?.themes?.length > 0) {
 				for (const theme of extension.packageJSON.contributes.themes) {
 					if (theme.label === colorTheme) {
-						const themePath = path.join(extension.extensionPath, theme.path)
+						const themePath = PathUtils.joinPath(extension.extensionPath, theme.path)
 						currentTheme = await fs.readFile(themePath, "utf-8")
 						break
 					}
@@ -54,7 +54,14 @@ export async function getTheme() {
 		if (currentTheme === undefined && defaultThemes[colorTheme]) {
 			const filename = `${defaultThemes[colorTheme]}.json`
 			currentTheme = await fs.readFile(
-				path.join(getExtensionUri().fsPath, "src", "integrations", "theme", "default-themes", filename),
+				PathUtils.joinPath(
+					getExtensionUri().fsPath,
+					"src",
+					"integrations",
+					"theme",
+					"default-themes",
+					filename,
+				),
 				"utf-8",
 			)
 		}
@@ -64,7 +71,14 @@ export async function getTheme() {
 
 		if (parsed.include) {
 			const includeThemeString = await fs.readFile(
-				path.join(getExtensionUri().fsPath, "src", "integrations", "theme", "default-themes", parsed.include),
+				PathUtils.joinPath(
+					getExtensionUri().fsPath,
+					"src",
+					"integrations",
+					"theme",
+					"default-themes",
+					parsed.include,
+				),
 				"utf-8",
 			)
 			const includeTheme = parseThemeString(includeThemeString)

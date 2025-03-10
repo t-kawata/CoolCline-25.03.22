@@ -1,5 +1,5 @@
 import fs from "fs/promises"
-import * as path from "path"
+import { PathUtils } from "../services/checkpoints/CheckpointUtils"
 
 /**
  * Asynchronously creates all non-existing subdirectories for a given file path
@@ -10,8 +10,8 @@ import * as path from "path"
  */
 export async function createDirectoriesForFile(filePath: string): Promise<string[]> {
 	const newDirectories: string[] = []
-	const normalizedFilePath = path.normalize(filePath) // Normalize path for cross-platform compatibility
-	const directoryPath = path.dirname(normalizedFilePath)
+	const normalizedFilePath = PathUtils.normalizePath(filePath) // Normalize path for cross-platform compatibility
+	const directoryPath = PathUtils.dirname(normalizedFilePath)
 
 	let currentPath = directoryPath
 	const dirsToCreate: string[] = []
@@ -19,7 +19,7 @@ export async function createDirectoriesForFile(filePath: string): Promise<string
 	// Traverse up the directory tree and collect missing directories
 	while (!(await fileExistsAtPath(currentPath))) {
 		dirsToCreate.push(currentPath)
-		currentPath = path.dirname(currentPath)
+		currentPath = PathUtils.dirname(currentPath)
 	}
 
 	// Create directories from the topmost missing one down to the target directory

@@ -1,9 +1,9 @@
 import * as fs from "fs/promises"
-import * as path from "path"
 import * as vscode from "vscode"
 import { ModelInfo } from "../../shared/api"
 import { GlobalFileNames } from "./CoolClineProvider"
 import { RequestyHandler } from "../../api/providers/requesty"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export class RequestyProvider {
 	private filePath: string
@@ -12,7 +12,7 @@ export class RequestyProvider {
 		cachePath: string,
 		private readonly outputChannel: vscode.OutputChannel,
 	) {
-		this.filePath = path.join(cachePath, GlobalFileNames.requestyModels)
+		this.filePath = PathUtils.joinPath(cachePath, GlobalFileNames.requestyModels)
 	}
 
 	async readModels(): Promise<Record<string, ModelInfo> | undefined> {
@@ -35,7 +35,7 @@ export class RequestyProvider {
 			const handler = new RequestyHandler(apiKey)
 			const models = await handler.refreshModels()
 
-			await fs.mkdir(path.dirname(this.filePath), { recursive: true })
+			await fs.mkdir(PathUtils.dirname(this.filePath), { recursive: true })
 			await fs.writeFile(this.filePath, JSON.stringify(models, null, 2))
 
 			return models

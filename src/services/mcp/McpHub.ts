@@ -11,7 +11,6 @@ import chokidar, { FSWatcher } from "chokidar"
 import delay from "delay"
 import deepEqual from "fast-deep-equal"
 import * as fs from "fs/promises"
-import * as path from "path"
 import * as vscode from "vscode"
 import { z } from "zod"
 import { CoolClineProvider, GlobalFileNames } from "../../core/webview/CoolClineProvider"
@@ -24,7 +23,8 @@ import {
 	McpToolCallResponse,
 } from "../../shared/mcp"
 import { fileExistsAtPath } from "../../utils/fs"
-import { arePathsEqual } from "../../utils/path"
+import { arePathsEqual, toPosixPath } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 
 export type McpConnection = {
 	server: McpServer
@@ -86,9 +86,8 @@ export class McpHub {
 		if (!provider) {
 			throw new Error("Provider not available")
 		}
-		const mcpSettingsFilePath = path.join(
-			await provider.ensureSettingsDirectoryExists(),
-			GlobalFileNames.mcpSettings,
+		const mcpSettingsFilePath = toPosixPath(
+			PathUtils.joinPath(await provider.ensureSettingsDirectoryExists(), GlobalFileNames.mcpSettings),
 		)
 		const fileExists = await fileExistsAtPath(mcpSettingsFilePath)
 		if (!fileExists) {

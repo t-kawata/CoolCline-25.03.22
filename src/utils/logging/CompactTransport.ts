@@ -3,7 +3,7 @@
  */
 
 import * as fs from "fs"
-import * as path from "path"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 import { CompactTransportConfig, ICompactTransport, CompactLogEntry, LogLevel, LOG_LEVELS } from "./types"
 
 /**
@@ -34,7 +34,7 @@ export class CompactTransport implements ICompactTransport {
 	 * @param config - 传输配置
 	 */
 	constructor(private config: CompactTransportConfig) {
-		this.logDir = path.dirname(config.filePath)
+		this.logDir = PathUtils.dirname(config.filePath)
 		this.logPath = config.filePath
 		this.initializeLogFile()
 	}

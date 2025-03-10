@@ -2,9 +2,8 @@ import { jest } from "@jest/globals"
 import { GitOperations } from "../GitOperations"
 import { createTestEnvironment, TestEnvironment } from "./test-utils"
 import { SimpleGit } from "simple-git"
-import * as path from "path"
 import * as fs from "fs/promises"
-import { getShadowGitPath } from "../CheckpointUtils"
+import { getShadowGitPath, PathUtils } from "../CheckpointUtils"
 import { CheckpointDiff } from "../types"
 
 describe("GitOperations", () => {
@@ -32,7 +31,7 @@ describe("GitOperations", () => {
 
 		it("应该能够创建任务分支", async () => {
 			await gitOps.createTaskBranch("test-task", gitPath)
-			const git = require("simple-git")(path.dirname(gitPath))
+			const git = require("simple-git")(PathUtils.dirname(gitPath))
 			const branches = await git.branch()
 			expect(branches.current).toBe("task-test-task")
 		})
@@ -44,7 +43,7 @@ describe("GitOperations", () => {
 		})
 
 		it("应该能够创建提交", async () => {
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "test content")
 			await gitOps.addCheckpointFiles(gitPath)
 			const commit = await gitOps.commit(gitPath, "test commit")
@@ -53,7 +52,7 @@ describe("GitOperations", () => {
 		})
 
 		it("应该能够获取提交历史", async () => {
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "test content")
 			await gitOps.addCheckpointFiles(gitPath)
 			const commitHash = await gitOps.commit(gitPath, "test commit")
@@ -71,7 +70,7 @@ describe("GitOperations", () => {
 		})
 
 		it("应该能够获取工作目录的差异", async () => {
-			const testFile = path.join(env.workspaceRoot, "test.txt")
+			const testFile = PathUtils.joinPath(env.workspaceRoot, "test.txt")
 			await fs.writeFile(testFile, "initial content")
 			await gitOps.addCheckpointFiles(gitPath)
 			const commitHash = await gitOps.commit(gitPath, "initial commit")
@@ -140,7 +139,7 @@ describe("GitOperations", () => {
 			const files: string[] = []
 
 			for (let i = 0; i < fileCount; i++) {
-				const filePath = path.join(env.workspaceRoot, `test-${i}.txt`)
+				const filePath = PathUtils.joinPath(env.workspaceRoot, `test-${i}.txt`)
 				await fs.writeFile(filePath, `content-${i}`)
 				files.push(filePath)
 			}
@@ -155,7 +154,7 @@ describe("GitOperations", () => {
 		})
 
 		it("应该能够处理大文件", async () => {
-			const largeFilePath = path.join(env.workspaceRoot, "large-file.txt")
+			const largeFilePath = PathUtils.joinPath(env.workspaceRoot, "large-file.txt")
 			const content = "x".repeat(5 * 1024 * 1024) // 5MB
 			await fs.writeFile(largeFilePath, content)
 

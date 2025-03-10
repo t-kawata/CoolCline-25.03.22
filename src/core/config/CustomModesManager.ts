@@ -1,10 +1,10 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import * as fs from "fs/promises"
 import { CustomModesSettingsSchema } from "./CustomModesSchema"
 import { ModeConfig } from "../../shared/modes"
 import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
+import { PathUtils } from "../../services/checkpoints/CheckpointUtils"
 
 export class CustomModesManager {
 	private disposables: vscode.Disposable[] = []
@@ -45,7 +45,7 @@ export class CustomModesManager {
 
 	async getCustomModesFilePath(): Promise<string> {
 		const settingsDir = await this.ensureSettingsDirectoryExists()
-		const filePath = path.join(settingsDir, "coolcline_custom_modes.json")
+		const filePath = PathUtils.joinPath(settingsDir, "coolcline_custom_modes.json")
 		const fileExists = await fileExistsAtPath(filePath)
 		if (!fileExists) {
 			await this.queueWrite(async () => {
@@ -160,7 +160,7 @@ export class CustomModesManager {
 	}
 
 	private async ensureSettingsDirectoryExists(): Promise<string> {
-		const settingsDir = path.join(this.context.globalStorageUri.fsPath, "settings")
+		const settingsDir = PathUtils.joinPath(this.context.globalStorageUri.fsPath, "settings")
 		await fs.mkdir(settingsDir, { recursive: true })
 		return settingsDir
 	}

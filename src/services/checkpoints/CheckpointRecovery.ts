@@ -1,6 +1,5 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
-import * as path from "path"
 import * as vscode from "vscode"
 import { PathUtils } from "./CheckpointUtils"
 import simpleGit, { SimpleGit } from "simple-git"
@@ -123,7 +122,7 @@ export class CheckpointRecovery {
 				const backupPath = PathUtils.joinPath(this.backupDir, file.path)
 
 				// 创建备份目录
-				await fs.mkdir(path.dirname(backupPath), { recursive: true })
+				await fs.mkdir(PathUtils.dirname(backupPath), { recursive: true })
 
 				// 如果文件存在，创建备份
 				if (existsSync(filePath)) {

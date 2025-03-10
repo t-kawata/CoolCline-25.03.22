@@ -1,5 +1,4 @@
 import fs from "fs/promises"
-import * as path from "path"
 import * as vscode from "vscode"
 import { fileExists, PathUtils } from "./CheckpointUtils"
 
@@ -27,7 +26,7 @@ export class CheckpointMigration {
 		try {
 			outputChannel.appendLine("检查旧版本 checkpoints...")
 
-			const tasksDir = PathUtils.toPosixPath(path.join(vscodeGlobalStorageCoolClinePath, "tasks"))
+			const tasksDir = PathUtils.joinPath(vscodeGlobalStorageCoolClinePath, "tasks")
 
 			// 检查任务目录是否存在
 			if (!(await fileExists(tasksDir))) {
@@ -75,12 +74,12 @@ export class CheckpointMigration {
 				const workspaceDirs = await fs.readdir(oldCheckpointsDir)
 
 				for (const workspaceDir of workspaceDirs) {
-					const oldWorkspacePath = PathUtils.toPosixPath(path.join(oldCheckpointsDir, workspaceDir))
-					const newWorkspacePath = PathUtils.toPosixPath(path.join(newCheckpointsDir, workspaceDir))
+					const oldWorkspacePath = PathUtils.joinPath(oldCheckpointsDir, workspaceDir)
+					const newWorkspacePath = PathUtils.joinPath(newCheckpointsDir, workspaceDir)
 
 					// 如果是目录且包含 .git
 					if ((await fs.stat(oldWorkspacePath)).isDirectory()) {
-						const gitDir = PathUtils.toPosixPath(path.join(oldWorkspacePath, ".git"))
+						const gitDir = PathUtils.joinPath(oldWorkspacePath, ".git")
 						if (await fileExists(gitDir)) {
 							try {
 								// 如果目标目录已存在，先删除它
@@ -133,7 +132,7 @@ export class CheckpointMigration {
 		try {
 			outputChannel.appendLine("开始清理孤立资源...")
 
-			const checkpointsDir = PathUtils.toPosixPath(path.join(vscodeGlobalStorageCoolClinePath, "shadow-git"))
+			const checkpointsDir = PathUtils.joinPath(vscodeGlobalStorageCoolClinePath, "shadow-git")
 			if (!(await fileExists(checkpointsDir))) {
 				return
 			}
@@ -142,12 +141,12 @@ export class CheckpointMigration {
 			const workspaceDirs = await fs.readdir(checkpointsDir)
 
 			for (const workspaceDir of workspaceDirs) {
-				const workspacePath = PathUtils.toPosixPath(path.join(checkpointsDir, workspaceDir))
-				const gitDir = PathUtils.toPosixPath(path.join(workspacePath, ".git"))
+				const workspacePath = PathUtils.joinPath(checkpointsDir, workspaceDir)
+				const gitDir = PathUtils.joinPath(workspacePath, ".git")
 
 				if (await fileExists(gitDir)) {
 					// 获取所有分支
-					const branchesFile = PathUtils.toPosixPath(path.join(gitDir, "refs", "heads"))
+					const branchesFile = PathUtils.joinPath(gitDir, "refs", "heads")
 					if (await fileExists(branchesFile)) {
 						const branches = await fs.readdir(branchesFile)
 
@@ -155,7 +154,7 @@ export class CheckpointMigration {
 						for (const branch of branches) {
 							const taskId = branch.replace("task-", "")
 							if (!activeTasks.includes(taskId)) {
-								const branchPath = PathUtils.toPosixPath(path.join(branchesFile, branch))
+								const branchPath = PathUtils.joinPath(branchesFile, branch)
 								await fs.unlink(branchPath)
 								outputChannel.appendLine(`已删除孤立分支: ${branch}`)
 							}

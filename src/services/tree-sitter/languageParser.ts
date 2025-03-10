@@ -1,5 +1,6 @@
-import * as path from "path"
 import Parser from "web-tree-sitter"
+import { toPosixPath } from "../../utils/path"
+import { PathUtils } from "../checkpoints/CheckpointUtils"
 import {
 	javascriptQuery,
 	typescriptQuery,
@@ -23,7 +24,7 @@ export interface LanguageParser {
 }
 
 async function loadLanguage(langName: string) {
-	return await Parser.Language.load(path.join(__dirname, `tree-sitter-${langName}.wasm`))
+	return await Parser.Language.load(toPosixPath(PathUtils.joinPath(__dirname, `tree-sitter-${langName}.wasm`)))
 }
 
 let isParserInitialized = false
@@ -59,7 +60,7 @@ Sources:
 */
 export async function loadRequiredLanguageParsers(filesToParse: string[]): Promise<LanguageParser> {
 	await initializeParser()
-	const extensionsToLoad = new Set(filesToParse.map((file) => path.extname(file).toLowerCase().slice(1)))
+	const extensionsToLoad = new Set(filesToParse.map((file) => PathUtils.extname(file).toLowerCase().slice(1)))
 	const parsers: LanguageParser = {}
 	for (const ext of extensionsToLoad) {
 		let language: Parser.Language
