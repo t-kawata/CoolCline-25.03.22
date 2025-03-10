@@ -65,6 +65,7 @@ import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiment
 import { CheckpointService } from "../services/checkpoints/CheckpointService"
 import { logger } from "../utils/logging"
 import { CheckpointRecoveryMode } from "../services/checkpoints/types"
+import { getShadowGitPath, hashWorkingDir } from "../services/checkpoints/CheckpointUtils"
 
 const cwd =
 	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ?? path.join(os.homedir(), "Desktop") // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
@@ -310,6 +311,11 @@ export class CoolCline {
 					cacheWrites: apiMetrics.totalCacheWrites,
 					cacheReads: apiMetrics.totalCacheReads,
 					totalCost: apiMetrics.totalCost,
+					shadowGitConfigWorkTree: await getShadowGitPath(
+						this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
+						this.taskId,
+						hashWorkingDir(cwd),
+					),
 				})
 			} catch (error) {
 				// 如果写入失败，尝试只保存最近的消息
@@ -438,6 +444,7 @@ export class CoolCline {
 	async handleWebviewAskResponse(askResponse: CoolClineAskResponse, text?: string, images?: string[]) {
 		if (text) {
 			// 收到发送的消息（一个任务窗口追问的情况）
+			console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
 			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
 		}
 		this.askResponse = askResponse
@@ -516,6 +523,22 @@ export class CoolCline {
 	// Task lifecycle
 
 	private async startTask(task?: string, images?: string[]): Promise<void> {
+		// 只创建必要的目录结构
+		// 这一步主要是为了生成目录，这样历史记录可以记录这个目录，以便之后加载历史消息可以按项目加载
+		const shadowGitDir = path.join(
+			this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
+			"shadow-git",
+			hashWorkingDir(cwd),
+		)
+
+		try {
+			// 检查目录是否存在
+			await fs.access(shadowGitDir)
+		} catch {
+			// 目录不存在时创建
+			await fs.mkdir(shadowGitDir, { recursive: true })
+		}
+
 		if (task || images) {
 			this.awaitCreateCheckpoint = true // 当用户第一次发送消息时设置标记
 		}
@@ -3432,6 +3455,7 @@ export class CoolCline {
 		try {
 			const service = await this.getCheckpointService()
 			const checkpoint = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
+			console.log("checkpoint： ", checkpoint)
 
 			if (checkpoint?.hash) {
 				await this.providerRef

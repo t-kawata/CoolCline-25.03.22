@@ -65,21 +65,28 @@ jest.mock("../../utils/fs", () => ({
 }))
 
 // Mock fs/promises
-const mockMessages = [
-	{
-		ts: Date.now(),
-		type: "say",
-		say: "text",
-		text: "historical task",
-	},
-]
-
 jest.mock("fs/promises", () => ({
-	mkdir: jest.fn().mockResolvedValue(undefined),
+	mkdir: jest.fn().mockImplementation(async (dirPath) => {
+		// 如果是创建 shadow-git 目录，直接返回成功
+		if (dirPath.includes("shadow-git")) {
+			return Promise.resolve()
+		}
+		// 其他目录创建操作正常进行
+		return Promise.resolve()
+	}),
 	writeFile: jest.fn().mockResolvedValue(undefined),
 	readFile: jest.fn().mockImplementation((filePath) => {
 		if (filePath.includes("ui_messages.json")) {
-			return Promise.resolve(JSON.stringify(mockMessages))
+			return Promise.resolve(
+				JSON.stringify([
+					{
+						ts: Date.now(),
+						type: "say",
+						say: "text",
+						text: "historical task",
+					},
+				]),
+			)
 		}
 		if (filePath.includes("api_conversation_history.json")) {
 			return Promise.resolve("[]")
@@ -88,6 +95,13 @@ jest.mock("fs/promises", () => ({
 	}),
 	unlink: jest.fn().mockResolvedValue(undefined),
 	rmdir: jest.fn().mockResolvedValue(undefined),
+	access: jest.fn().mockImplementation(async (path) => {
+		// 如果是检查 shadow-git 目录，返回不存在
+		if (path.includes("shadow-git")) {
+			throw new Error("ENOENT")
+		}
+		return Promise.resolve()
+	}),
 }))
 
 // Mock dependencies
@@ -124,6 +138,16 @@ jest.mock("vscode", () => {
 		window: {
 			createTextEditorDecorationType: jest.fn().mockReturnValue({
 				dispose: jest.fn(),
+			}),
+			createOutputChannel: jest.fn().mockReturnValue({
+				append: jest.fn(),
+				appendLine: jest.fn(),
+				clear: jest.fn(),
+				dispose: jest.fn(),
+				show: jest.fn(),
+				hide: jest.fn(),
+				replace: jest.fn(),
+				name: "Mock Output Channel",
 			}),
 			visibleTextEditors: [mockTextEditor],
 			tabGroups: {
