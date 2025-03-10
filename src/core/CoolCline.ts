@@ -450,7 +450,7 @@ export class CoolCline {
 	async handleWebviewAskResponse(askResponse: CoolClineAskResponse, text?: string, images?: string[]) {
 		if (text) {
 			// 收到发送的消息（一个任务窗口追问的情况）
-			console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
+			// console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
 			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
 		}
 		this.askResponse = askResponse
@@ -546,7 +546,7 @@ export class CoolCline {
 		}
 
 		if (task || images) {
-			this.awaitCreateCheckpoint = true // 当用户第一次发送消息时设置标记
+			this.awaitCreateCheckpoint = true // 当用户第一次创建任务并发送消息时设置标记
 		}
 		this.coolclineMessages = []
 		this.apiConversationHistory = []
@@ -1223,7 +1223,6 @@ export class CoolCline {
 						console.log("满足条件，生成 checkpoint")
 						await this.checkpointSave()
 					}
-					this.awaitCreateCheckpoint = false // 重置标记
 				}
 
 				const toolDescription = (): string => {
@@ -3476,6 +3475,7 @@ export class CoolCline {
 					.deref()
 					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: checkpoint.hash })
 				await this.say("checkpoint_saved", checkpoint.hash)
+				this.awaitCreateCheckpoint = false // 只有在成功创建检查点后才重置标记
 			}
 		} catch (err) {
 			this.providerRef
@@ -3484,7 +3484,8 @@ export class CoolCline {
 					`[checkpointSave] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
 				)
 
-			// this.checkpointsEnabled = false
+			// 失败时不重置标记，这样下次修改操作时还会尝试创建检查点
+			console.error("创建检查点失败，将在下次修改时重试")
 		}
 	}
 
