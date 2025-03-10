@@ -139,6 +139,8 @@ export interface CoolClineMessage {
 	images?: string[]
 	partial?: boolean
 	reasoning?: string
+	conversationHistoryIndex?: number
+	conversationHistoryDeletedRange?: [number, number] // 用于记录对话历史被截断的范围
 }
 
 export type CoolClineAsk =

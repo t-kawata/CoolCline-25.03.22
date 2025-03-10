@@ -125,6 +125,7 @@ export class CoolCline {
 	private didAlreadyUseTool = false
 	private didCompleteReadingStream = false
 	private awaitCreateCheckpoint: boolean = false // 新增状态
+	private conversationHistoryDeletedRange?: [number, number] // 用于记录对话历史被截断的范围
 
 	constructor(
 		provider: CoolClineProvider,
@@ -385,7 +386,14 @@ export class CoolCline {
 					// this.askResponseImages = undefined
 					askTs = Date.now()
 					this.lastMessageTs = askTs
-					await this.addToCoolClineMessages({ ts: askTs, type: "ask", ask: type, text, partial })
+					await this.addToCoolClineMessages({
+						ts: askTs,
+						type: "ask",
+						ask: type,
+						text,
+						partial,
+						conversationHistoryIndex: this.apiConversationHistory.length - 1, // 设置当前消息在 API 对话历史中的索引
+					})
 					await this.providerRef.deref()?.postStateToWebview()
 					throw new Error("Current ask promise was ignored 2")
 				}
@@ -432,7 +440,13 @@ export class CoolCline {
 			this.askResponseImages = undefined
 			askTs = Date.now()
 			this.lastMessageTs = askTs
-			await this.addToCoolClineMessages({ ts: askTs, type: "ask", ask: type, text })
+			await this.addToCoolClineMessages({
+				ts: askTs,
+				type: "ask",
+				ask: type,
+				text,
+				conversationHistoryIndex: this.apiConversationHistory.length - 1, // 设置当前消息在 API 对话历史中的索引
+			})
 			await this.providerRef.deref()?.postStateToWebview()
 		}
 
@@ -450,7 +464,7 @@ export class CoolCline {
 	async handleWebviewAskResponse(askResponse: CoolClineAskResponse, text?: string, images?: string[]) {
 		if (text) {
 			// 收到发送的消息（一个任务窗口追问的情况）
-			// console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
+			console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
 			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
 		}
 		this.askResponse = askResponse
@@ -3507,8 +3521,9 @@ export class CoolCline {
 		}
 
 		const index = this.coolclineMessages.findIndex((m) => m.ts === ts)
+		const message = this.coolclineMessages[index]
 
-		if (index === -1) {
+		if (index === -1 || !message) {
 			this.providerRef.deref()?.log(`[checkpointRestore] Could not find message with timestamp ${ts}`)
 			vscode.window.showErrorMessage("Could not find specified checkpoint.")
 			return
@@ -3518,7 +3533,6 @@ export class CoolCline {
 			const service = await this.getCheckpointService()
 
 			// 处理文件恢复
-			//const shouldRestoreFiles = mode === "restore" || mode === "files" || mode === "files_and_messages"
 			const shouldRestoreFiles =
 				mode === CheckpointRecoveryMode.FILES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
 			if (shouldRestoreFiles) {
@@ -3529,35 +3543,26 @@ export class CoolCline {
 			}
 
 			// 处理消息恢复
-			// const shouldRestoreMessages = mode === "restore" || mode === "messages" || mode === "files_and_messages"
 			const shouldRestoreMessages =
 				mode === CheckpointRecoveryMode.MESSAGES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
 			if (shouldRestoreMessages) {
-				// 恢复 API 对话历史
-				await this.overwriteApiConversationHistory(
-					this.apiConversationHistory.filter((m) => !m.ts || m.ts < ts),
-				)
+				// 记录被删除的对话范围
+				this.conversationHistoryDeletedRange = message.conversationHistoryDeletedRange
 
-				// 计算被删除消息的指标
-				const deletedMessages = this.coolclineMessages.slice(index + 1)
-				const { totalTokensIn, totalTokensOut, totalCacheWrites, totalCacheReads, totalCost } = getApiMetrics(
-					combineApiRequests(combineCommandSequences(deletedMessages)),
+				// 恢复 API 对话历史，确保包含用户的最后一条消息
+				const newConversationHistory = this.apiConversationHistory.slice(
+					0,
+					(message.conversationHistoryIndex || 0) + 2, // +1 对应最后一条用户消息，+1 因为 slice 的结束索引是不包含的
 				)
+				await this.overwriteApiConversationHistory(newConversationHistory)
+
+				// 计算被删除消息的指标（仅用于内部统计）
+				const deletedMessages = this.coolclineMessages.slice(index + 1)
+				getApiMetrics(combineApiRequests(combineCommandSequences(deletedMessages)))
 
 				// 更新消息历史
-				await this.overwriteCoolClineMessages(this.coolclineMessages.slice(0, index + 1))
-
-				// 发送删除的 API 请求信息
-				await this.say(
-					"api_req_deleted",
-					JSON.stringify({
-						tokensIn: totalTokensIn,
-						tokensOut: totalTokensOut,
-						cacheWrites: totalCacheWrites,
-						cacheReads: totalCacheReads,
-						cost: totalCost,
-					} satisfies CoolClineApiReqInfo),
-				)
+				const newCoolClineMessages = this.coolclineMessages.slice(0, index + 1)
+				await this.overwriteCoolClineMessages(newCoolClineMessages)
 			}
 
 			// 显示恢复成功消息
