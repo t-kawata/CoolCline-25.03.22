@@ -4,16 +4,33 @@ import userEvent from "@testing-library/user-event"
 import HistoryView from "../HistoryView"
 import { useExtensionState } from "../../../context/ExtensionStateContext"
 import { vscode } from "../../../utils/vscode"
-import { useTranslation } from "react-i18next"
 
 // Mock dependencies
 jest.mock("../../../context/ExtensionStateContext")
 jest.mock("../../../utils/vscode")
 jest.mock("../../../utils/i18n")
+
+interface TaskHistoryItem {
+	id: string
+	task: string
+	ts: number
+	tokensIn?: number
+	tokensOut?: number
+	totalCost?: number
+	cacheWrites?: number
+	cacheReads?: number
+}
+
 jest.mock("react-virtuoso", () => ({
-	Virtuoso: ({ data, itemContent }: any) => (
+	Virtuoso: ({
+		data,
+		itemContent,
+	}: {
+		data: TaskHistoryItem[]
+		itemContent: (index: number, item: TaskHistoryItem) => React.ReactNode
+	}) => (
 		<div data-testid="virtuoso-container">
-			{data.map((item: any, index: number) => (
+			{data.map((item, index) => (
 				<div key={item.id} data-testid={`virtuoso-item-${item.id}`}>
 					{itemContent(index, item)}
 				</div>
@@ -150,7 +167,7 @@ describe("HistoryView", () => {
 		})
 	})
 
-	it("handles task deletion", () => {
+	it("handles task deletion", async () => {
 		const onDone = jest.fn()
 		render(<HistoryView onDone={onDone} />)
 
@@ -161,11 +178,27 @@ describe("HistoryView", () => {
 		const deleteButton = within(taskContainer).getByTitle("Delete Task")
 		fireEvent.click(deleteButton)
 
-		// Verify vscode message was sent
+		// Verify confirmation dialog appears
+		expect(screen.getByText("Delete Task")).toBeInTheDocument()
+		expect(
+			screen.getByText("Are you sure you want to delete this task? This action cannot be undone."),
+		).toBeInTheDocument()
+
+		// Verify delete message isn't sent before confirmation
+		expect(vscode.postMessage).not.toHaveBeenCalled()
+
+		// Click confirm button
+		const confirmButton = screen.getByRole("button", { name: "Confirm" })
+		fireEvent.click(confirmButton)
+
+		// Now verify vscode message was sent
 		expect(vscode.postMessage).toHaveBeenCalledWith({
 			type: "deleteTaskWithId",
 			text: "1",
 		})
+
+		// Verify dialog is closed
+		expect(screen.queryByText("Delete Task")).not.toBeInTheDocument()
 	})
 
 	it("handles task copying", async () => {
