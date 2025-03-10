@@ -43,12 +43,12 @@ describe("GeminiHandler", () => {
 		})
 
 		it("should use default API key if not provided", () => {
-			const handlerWithoutApiKey = new GeminiHandler({
+			const handler = new GeminiHandler({
 				apiModelId: "gemini-2.0-flash-thinking-exp-1219",
 				geminiApiKey: undefined,
 			})
-			expect(handlerWithoutApiKey).toBeInstanceOf(GeminiHandler)
 			expect(GoogleGenerativeAI).toHaveBeenCalledWith("gemini-api-key-not-configured")
+			expect(handler["options"].geminiApiKey).toBeUndefined()
 		})
 	})
 

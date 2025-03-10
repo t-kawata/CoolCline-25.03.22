@@ -94,16 +94,12 @@ describe("DeepSeekHandler", () => {
 		})
 
 		it("should use default API key if not provided", () => {
-			const handlerWithoutApiKey = new DeepSeekHandler({
+			const handler = new DeepSeekHandler({
 				...mockOptions,
 				deepSeekApiKey: undefined,
 			})
-			expect(handlerWithoutApiKey).toBeInstanceOf(DeepSeekHandler)
-			expect(OpenAI).toHaveBeenCalledWith(
-				expect.objectContaining({
-					apiKey: "deepseek-api-key-not-configured",
-				}),
-			)
+			expect(handler).toBeInstanceOf(DeepSeekHandler)
+			expect(handler["options"].openAiApiKey).toBe("deepseek-api-key-not-configured")
 		})
 
 		it("should use default model ID if not provided", () => {
