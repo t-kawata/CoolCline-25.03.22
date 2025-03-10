@@ -936,8 +936,14 @@ export class CoolCline {
 		// Add maximum retry limit
 		const MAX_RETRIES = 3
 		if (retryAttempt >= MAX_RETRIES) {
+			await this.say(
+				"api_req_retry_delayed",
+				`Maximum retry attempts (${MAX_RETRIES}) reached. Please check your network connection or Resume Task.`,
+				undefined,
+				false,
+			)
 			throw new Error(
-				`Maximum retry attempts (${MAX_RETRIES}) reached. Please check your network connection or contact support.`,
+				`Maximum retry attempts (${MAX_RETRIES}) reached. Please check your network connection or Resume Task.`,
 			)
 		}
 
@@ -948,8 +954,8 @@ export class CoolCline {
 
 		let finalDelay = 0
 
-		// Only apply rate limiting if this isn't the first request
-		if (this.lastApiRequestTime) {
+		// Only apply rate limiting if this isn't the first request and not retrying
+		if (this.lastApiRequestTime && retryAttempt === 0) {
 			const now = Date.now()
 			const timeSinceLastRequest = now - this.lastApiRequestTime
 			const rateLimit = rateLimitSeconds || 0
@@ -957,19 +963,10 @@ export class CoolCline {
 			finalDelay = rateLimitDelay
 		}
 
-		// Add exponential backoff delay for retries
-		if (retryAttempt > 0) {
-			const baseDelay = requestDelaySeconds || 5
-			const exponentialDelay = Math.ceil(baseDelay * Math.pow(2, retryAttempt)) * 1000
-			finalDelay = Math.max(finalDelay, exponentialDelay)
-		}
-
 		if (finalDelay > 0) {
-			// Show countdown timer
+			// Show countdown timer for rate limiting
 			for (let i = Math.ceil(finalDelay / 1000); i > 0; i--) {
-				const delayMessage =
-					retryAttempt > 0 ? `Retrying in ${i} seconds...` : `Rate limiting for ${i} seconds...`
-				await this.say("api_req_retry_delayed", delayMessage, undefined, true)
+				await this.say("api_req_retry_delayed", `Rate limiting for ${i} seconds...`, undefined, true)
 				await delay(1000)
 			}
 		}
@@ -1079,19 +1076,40 @@ export class CoolCline {
 			yield firstChunk.value
 		} catch (error) {
 			// note that this api_req_failed ask is unique in that we only present this option if the api hasn't streamed any content yet (ie it fails on the first chunk due), as it would allow them to hit a retry button. However if the api failed mid-stream, it could be in any arbitrary state where some tools may have executed, so that error is handled differently and requires cancelling the task entirely.
+			if (retryAttempt >= MAX_RETRIES) {
+				throw new Error(
+					`Maximum retry attempts (${MAX_RETRIES}) reached. Please check your network connection or Resume Task.`,
+				)
+			}
+
+			const errorMsg = error.message ?? "Unknown error"
+			const remainingRetries = MAX_RETRIES - retryAttempt
+			let shouldRetry = false
+
 			if (alwaysApproveResubmit) {
-				const errorMsg = error.message ?? "Unknown error"
-				const baseDelay = requestDelaySeconds || 5
-				const exponentialDelay = Math.ceil(baseDelay * Math.pow(2, retryAttempt))
+				shouldRetry = true
+			} else {
+				const { response } = await this.ask(
+					"api_req_failed",
+					error.message ?? JSON.stringify(serializeError(error), null, 2),
+				)
+				shouldRetry = response === "yesButtonClicked"
+				if (!shouldRetry) {
+					throw new Error("API request failed")
+				}
+				await this.say("api_req_retried")
+			}
 
-				// Add remaining retries info
-				const remainingRetries = MAX_RETRIES - retryAttempt
+			if (shouldRetry) {
+				// 使用固定的退避时间间隔
+				const retryDelays = [3, 5, 10] // 秒
+				const retryDelay = retryDelays[retryAttempt] // 当前重试次数对应的延迟
 
-				// Show countdown timer with exponential backoff
-				for (let i = exponentialDelay; i > 0; i--) {
+				// Show countdown timer with fixed backoff
+				for (let i = retryDelay; i > 0; i--) {
 					await this.say(
 						"api_req_retry_delayed",
-						`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}/${MAX_RETRIES}\nRemaining retries: ${remainingRetries}\nRetrying in ${i} seconds...`,
+						`${errorMsg}\n\nRetry ${retryAttempt + 1} of ${MAX_RETRIES}\nRetrying in ${i} seconds...`,
 						undefined,
 						true,
 					)
@@ -1100,26 +1118,16 @@ export class CoolCline {
 
 				await this.say(
 					"api_req_retry_delayed",
-					`${errorMsg}\n\nRetry attempt ${retryAttempt + 1}/${MAX_RETRIES}\nRetrying now...`,
+					`${errorMsg}\n\nRetry ${retryAttempt + 1} of ${MAX_RETRIES}\nRetrying now...`,
 					undefined,
 					false,
 				)
 
+				// 重置最后请求时间，避免触发速率限制
+				this.lastApiRequestTime = 0
+
 				// delegate generator output from the recursive call with incremented retry count
 				yield* this.attemptApiRequest(previousApiReqIndex, retryAttempt + 1)
-				return
-			} else {
-				const { response } = await this.ask(
-					"api_req_failed",
-					error.message ?? JSON.stringify(serializeError(error), null, 2),
-				)
-				if (response !== "yesButtonClicked") {
-					// this will never happen since if noButtonClicked, we will clear current task, aborting this instance
-					throw new Error("API request failed")
-				}
-				await this.say("api_req_retried")
-				// delegate generator output from the recursive call
-				yield* this.attemptApiRequest(previousApiReqIndex)
 				return
 			}
 		}
@@ -1164,7 +1172,7 @@ export class CoolCline {
 					// (have to do this for partial and complete since sending content in thinking tags to markdown renderer will automatically be removed)
 					// Remove end substrings of <thinking or </thinking (below xml parsing is only for opening tags)
 					// (this is done with the xml parsing below now, but keeping here for reference)
-					// content = content.replace(/<\/?t(?:h(?:i(?:n(?:k(?:i(?:n(?:g)?)?)?)?$/, "")
+					// content = content.replace(/<\/?t(?:h(?:i(?:n(?:k(?:i(?:n(?:g)?)?)?$/, "")
 					// Remove all instances of <thinking> (with optional line break after) and </thinking> (with optional line break before)
 					// - Needs to be separate since we dont want to remove the line break before the first tag
 					// - Needs to happen before the xml parsing below
