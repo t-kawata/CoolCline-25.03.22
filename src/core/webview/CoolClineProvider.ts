@@ -2152,6 +2152,16 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 	// 删除所有项目的所有历史记录
 	async deleteAllProjectsAllHistory() {
+		const answer = await vscode.window.showInformationMessage(
+			"Are you sure you want to delete all history records from all projects? This action cannot be undone.",
+			{ modal: true },
+			"Yes",
+		)
+
+		if (answer !== "Yes") {
+			return
+		}
+
 		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
 		const currentWorkspaceHash = hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? "")
 
@@ -2190,6 +2200,16 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 	// 删除当前项目的所有历史记录
 	async deleteThisProjectAllHistory() {
+		const answer = await vscode.window.showInformationMessage(
+			"Are you sure you want to delete all history records from all projects? This action cannot be undone.",
+			{ modal: true },
+			"Yes",
+		)
+
+		if (answer !== "Yes") {
+			return
+		}
+
 		const taskHistory = ((await this.getGlobalState("taskHistory")) as HistoryItem[]) || []
 		const currentWorkspaceHash = hashWorkingDir(vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? "")
 
