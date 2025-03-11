@@ -3520,7 +3520,6 @@ export class CoolCline {
 	}: {
 		ts: number
 		commitHash: string
-		//mode: "preview" | "restore" | "files" | "messages" | "files_and_messages"
 		mode: CheckpointRecoveryMode
 	}) {
 		// 立即取消任务
@@ -3588,6 +3587,11 @@ export class CoolCline {
 				await this.providerRef
 					.deref()
 					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: commitHash })
+
+				// 关闭所有差异编辑器
+				vscode.commands.executeCommand("git.closeAllDiffEditors")
+				// 关闭当前活动的编辑器
+				vscode.commands.executeCommand("workbench.action.closeActiveEditor")
 			}
 
 			// 显示恢复成功消息
