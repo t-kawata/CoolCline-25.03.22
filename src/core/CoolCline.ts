@@ -3389,19 +3389,27 @@ export class CoolCline {
 
 	// Checkpoints
 	// 获取或初始化 CheckpointService 实例
-	private async getCheckpointService() {
+	private async getCheckpointService(): Promise<CheckpointService> {
 		if (!this.checkpointService) {
+			const globalStoragePath = this.providerRef.deref()?.context.globalStorageUri.fsPath
+			if (!globalStoragePath) {
+				throw new Error("无法获取 vscode globalStorage 路径")
+			}
+
 			this.checkpointService = await CheckpointService.create(this.taskId, {
 				context: {
-					// 获取当前扩展在 vscode 中的位置，本项目在本机获得到的是
-					// /Users/<user>/Library/Application Support/Code/User/globalStorage/coolcline.coolcline
 					globalStorageUri: {
-						fsPath: this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
+						fsPath: globalStoragePath,
 					},
 				},
 			})
-			// 初始化 checkpoint service
-			await this.checkpointService.initialize()
+
+			try {
+				await this.checkpointService.initialize()
+			} catch (error) {
+				console.error("CheckpointService 初始化失败:", error)
+				throw error
+			}
 		}
 		return this.checkpointService
 	}
@@ -3481,8 +3489,9 @@ export class CoolCline {
 
 		try {
 			const service = await this.getCheckpointService()
+			// console.log("CoolCline.ts 中 创建 checkpoint 需要的数据 taskid： ", this.taskId)
 			const checkpoint = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
-			console.log("checkpoint： ", checkpoint)
+			// console.log("CoolCline.ts 中 创建 checkpoint 返回的值： ", checkpoint)
 
 			if (checkpoint?.hash) {
 				await this.providerRef

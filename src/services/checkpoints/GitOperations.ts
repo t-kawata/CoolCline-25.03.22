@@ -59,6 +59,17 @@ export class GitOperations {
 		const checkpointsDir = PathUtils.dirname(coolclineShadowGitPath)
 		const git = this.getGit(coolclineShadowGitPath)
 
+		// 检查是否已经存在 shadow Git 仓库的 .git 目录
+		if (existsSync(coolclineShadowGitPath)) {
+			// 验证 core.worktree 配置是否正确
+			const worktree = await git.getConfig("core.worktree")
+			if (!PathUtils.pathsEqual(worktree.value || "", normalizedProjectPath)) {
+				throw new Error("Checkpoints 只能在原始工作区中使用: " + worktree.value)
+			}
+			return coolclineShadowGitPath
+		}
+
+		// 如果 .git 目录不存在，则执行初始化
 		try {
 			await fs.mkdir(checkpointsDir, { recursive: true })
 			await git.init()
@@ -74,7 +85,7 @@ export class GitOperations {
 			if (!PathUtils.pathsEqual(worktree.value || "", normalizedProjectPath)) {
 				throw new Error("Checkpoints 只能在原始工作区中使用: " + worktree.value)
 			}
-			console.warn("GitOperations: 使用现有的 shadow git: " + coolclineShadowGitPath)
+			// console.warn("GitOperations: 使用现有的 shadow git: " + coolclineShadowGitPath)
 		}
 
 		return coolclineShadowGitPath
@@ -350,6 +361,10 @@ export class GitOperations {
 		toTaskId: string,
 		toHash: string,
 	): Promise<CheckpointDiff[]> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
 		const git = this.getGit(gitPath)
 		// 保存当前分支
 		const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
@@ -378,81 +393,60 @@ export class GitOperations {
 	}
 
 	/**
-	 * 恢复到指定的 checkpoint
-	 *
-	 * @param gitPath - .git 目录的路径
-	 * @param hash - 要恢复到的 checkpoint 哈希
-	 * @returns Promise<void>
-	 */
-	public async restoreCheckpoint(gitPath: string, hash: string): Promise<void> {
-		try {
-			const git = this.getGit(gitPath)
-			// 清理工作区
-			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
-			// 使用 reset --hard 命令完全恢复到指定的 checkpoint
-			await git.reset(["--hard", hash])
-
-			// 从指定 commit hash 的提交信息中获取 task id
-			const commitInfo = await git.raw(["show", "-s", "--format=%B", hash]) // 使用 raw 命令以获取原始输出
-			const commitMessage = commitInfo.trim() // 移除可能的空白字符
-			const taskMatch = commitMessage.match(/Task: ([^,\n]+)/) // 增加 \n 以确保不会匹配到换行
-			const taskId = taskMatch ? taskMatch[1].trim() : "" // 确保 taskId 没有空白字符
-
-			// 创建一个新的 commit 来记录这个 restore 操作
-			const message = `task:${taskId},restore:${hash},Time:${Date.now()}`
-			await git.commit(message, ["--allow-empty"])
-		} catch (error) {
-			console.error("GitOperations: 恢复 checkpoint 失败:", error)
-			throw error
-		}
-	}
-
-	public async commit(gitPath: string, message: string): Promise<string> {
-		try {
-			const git = this.getGit(gitPath)
-
-			await git.add(".")
-
-			const result = await git.commit(message)
-			return result.commit
-		} catch (error) {
-			console.error("GitOperations: 提交更改失败:", error)
-			throw error
-		}
-	}
-
-	async getCommits(gitPath: string): Promise<GitCommit[]> {
-		const git = this.getGit(gitPath)
-		const log = await git.log()
-		return log.all.map((commit) => ({
-			hash: commit.hash,
-			message: commit.message,
-			date: commit.date,
-		}))
-	}
-
-	/**
 	 * 获取与工作区的差异
 	 * @param gitPath - .git 目录的路径
 	 * @param hash - 要与工作区比较的 commit hash
 	 */
 	async getDiffWithWorkingDir(gitPath: string, hash: string): Promise<CheckpointDiff[]> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
+		if (!hash) {
+			throw new Error("hash 不能为空")
+		}
+
 		const git = this.getGit(gitPath)
-		const summary = await git.diffSummary([hash])
+
+		// 获取最新提交的 hash
+		const latestCommitHash = await git.revparse(["HEAD"])
+
+		// 判断是否与最新提交相同
+		if (hash === latestCommitHash) {
+			// 如果相同，仅仅比较最新提交与工作区差异
+			return this.compareWorkingDirWithLatest(git)
+		}
+
+		// 如果不同，先比较指定 commit 与最新提交的差异
+		const diffCommitToLatest = await this.getDiffBetweenCommits(gitPath, hash, latestCommitHash)
+
+		// 再比较最新提交与工作区差异
+		const diffWorkingDirToLatest = await this.compareWorkingDirWithLatest(git)
+
+		// 合并两个差异结果
+		return [...diffCommitToLatest, ...diffWorkingDirToLatest]
+	}
+
+	/**
+	 * 比较最新提交与工作区差异
+	 */
+	private async compareWorkingDirWithLatest(git: SimpleGit): Promise<CheckpointDiff[]> {
+		const status = await git.status()
 		const result: CheckpointDiff[] = []
 
-		for (const file of summary.files) {
-			const relativePath = file.file
+		// 处理已暂存和未暂存的更改
+		for (const file of status.files) {
+			const relativePath = file.path
 			const absolutePath = PathUtils.joinPath(this.userProjectPath, relativePath)
 
 			let before = ""
 			let after = ""
 
 			try {
-				// 获取指定 commit 中的文件内容
-				before = await git.show([`${hash}:${file.file}`])
+				// 获取最新提交中的文件内容
+				before = await git.show([`HEAD:${file.path}`])
 			} catch (error) {
-				// 文件在指定 commit 中不存在
+				// 文件在最新提交中不存在
 			}
 
 			try {
@@ -462,13 +456,24 @@ export class GitOperations {
 				// 文件在工作区中不存在
 			}
 
-			const diff: CheckpointDiff = {
+			result.push({
 				relativePath,
 				absolutePath,
 				before,
 				after,
-			}
-			result.push(diff)
+			})
+		}
+
+		// 处理未跟踪文件
+		for (const file of status.not_added) {
+			const absolutePath = PathUtils.joinPath(this.userProjectPath, file)
+			const after = await fs.readFile(absolutePath, "utf-8")
+			result.push({
+				relativePath: file,
+				absolutePath,
+				before: "", // 未跟踪文件在最新提交中不存在
+				after,
+			})
 		}
 
 		return result
@@ -481,6 +486,10 @@ export class GitOperations {
 	 * @param hash2 - 第二个 commit hash，如果不提供则与工作区比较
 	 */
 	async getDiff(gitPath: string, hash1: string, hash2?: string): Promise<CheckpointDiff[]> {
+		if (!hash1) {
+			throw new Error("hash 不能为空")
+		}
+
 		if (!hash2) {
 			return this.getDiffWithWorkingDir(gitPath, hash1)
 		}
@@ -521,11 +530,103 @@ export class GitOperations {
 	}
 
 	/**
+	 * 恢复到指定的 checkpoint
+	 *
+	 * @param gitPath - .git 目录的路径
+	 * @param hash - 要恢复到的 checkpoint 哈希
+	 * @returns Promise<void>
+	 */
+	public async restoreCheckpoint(gitPath: string, hash: string): Promise<string> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
+		try {
+			const git = this.getGit(gitPath)
+
+			// 保存当前分支
+			const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
+
+			// 清理工作区
+			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
+
+			// 使用 reset --hard 命令完全恢复到指定的 checkpoint
+			await git.reset(["--hard", hash])
+
+			// 从指定 commit hash 的提交信息中获取 task id
+			const commitInfo = await git.raw(["show", "-s", "--format=%B", hash]) // 使用 raw 命令以获取原始输出
+			const commitMessage = commitInfo.trim() // 移除可能的空白字符
+			const taskMatch = commitMessage.match(/Task: ([^,\n]+)/) // 增加 \n 以确保不会匹配到换行
+			const taskId = taskMatch ? taskMatch[1].trim() : "" // 确保 taskId 没有空白字符
+
+			// 创建一个新的 commit 来记录这个 restore 操作
+			const message = `task:${taskId},restore:${hash},Time:${Date.now()}`
+			const result = await git.commit(message, ["--allow-empty"])
+			// 恢复原始分支
+			await git.checkout(currentBranch)
+
+			// 返回 restore 产生的 hash
+			return result.commit
+		} catch (error) {
+			console.error("GitOperations: 恢复 checkpoint 失败:", error)
+			throw error
+		}
+	}
+
+	// 创建检查点（git add . && git commit）
+	public async commit(gitPath: string, message: string): Promise<string> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
+		try {
+			const git = this.getGit(gitPath)
+
+			// 检查是否有文件更改，如果没有应该是 restore 后重新提交发起提交
+			const status = await git.status()
+			if (status.files.length === 0 && status.not_added.length === 0) {
+				// 如果没有更改，直接返回当前 HEAD 的 hash
+				const headHash = await git.revparse(["HEAD"])
+				return headHash
+			}
+
+			// 如果有更改，执行提交
+			await git.add(".")
+
+			const result = await git.commit(message)
+			// console.log("commit: ",result)
+			return result.commit
+		} catch (error) {
+			console.error("GitOperations: 提交更改失败:", error)
+			throw error
+		}
+	}
+
+	// 查看提交历史（git log）
+	async getCommits(gitPath: string): Promise<GitCommit[]> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
+		const git = this.getGit(gitPath)
+		const log = await git.log()
+		return log.all.map((commit) => ({
+			hash: commit.hash,
+			message: commit.message,
+			date: commit.date,
+		}))
+	}
+
+	/**
 	 * 清理旧的 checkpoints
 	 * @param gitPath - .git 目录的路径
 	 * @param hashes - 要清理的 checkpoint hash 列表
 	 */
 	public async cleanupCheckpoints(gitPath: string, hashes: string[]): Promise<void> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
 		const git = this.getGit(gitPath)
 		try {
 			for (const hash of hashes) {

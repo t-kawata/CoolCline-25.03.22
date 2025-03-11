@@ -39,6 +39,7 @@ export class CheckpointService {
 	private readonly _taskId: string
 	private readonly log: (message: string) => void
 	private gitPath?: string
+	private isInitialized = false // 添加初始化状态标志
 
 	constructor(options: CheckpointServiceOptions) {
 		this.vscodeGlobalStorageCoolClinePath = PathUtils.normalizePath(
@@ -93,7 +94,13 @@ export class CheckpointService {
 			// await CheckpointMigration.migrateToNewStructure(this.userProjectPath, this.outputChannel)
 
 			// 直接初始化 tracker
-			await this.tracker.initialize()
+			try {
+				await this.tracker.initialize()
+				this.isInitialized = true // 初始化成功后设置标志
+			} catch (error) {
+				this.outputChannel.appendLine(`tracker 初始化失败: ${error}`)
+				throw error
+			}
 
 			// 获取 shadow git 路径
 			const coolclineShadowGitPath = await getShadowGitPath(
@@ -116,6 +123,11 @@ export class CheckpointService {
 		if (!this.gitPath) {
 			throw new Error("Checkpoint 服务未初始化")
 		}
+
+		if (!this.isInitialized) {
+			await this.tracker.initialize()
+		}
+
 		const commitHash = await this.gitOps.commit(this.gitPath, message)
 		await this.scheduleCleanup() // 在创建新的 checkpoint 后执行清理
 		return {
@@ -132,8 +144,8 @@ export class CheckpointService {
 		if (!this.gitPath) {
 			throw new Error("Checkpoint 服务未初始化")
 		}
-		console.log("CheckpointService.ts 中执行 getDiff hash1: ", hash1)
-		console.log("CheckpointService.ts 中执行 getDiff hash2: ", hash2)
+		// console.log("CheckpointService.ts 中执行 getDiff hash1: ", hash1)
+		// console.log("CheckpointService.ts 中执行 getDiff hash2: ", hash2)
 		const changes = await this.gitOps.getDiff(this.gitPath, hash1, hash2)
 		return this.optimizeDiff(changes)
 	}

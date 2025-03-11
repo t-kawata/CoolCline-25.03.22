@@ -63,7 +63,12 @@ export class CheckpointTracker {
 	 *
 	 * @returns Promise<void>
 	 */
+	private isInitialized = false
 	public async initialize(): Promise<void> {
+		if (this.isInitialized) {
+			return
+		}
+
 		console.info("初始化 checkpoint 跟踪器")
 
 		try {
@@ -82,6 +87,8 @@ export class CheckpointTracker {
 
 			// 创建并切换到任务分支
 			await this.gitOperations.createTaskBranch(this.taskId, this.gitPath)
+
+			this.isInitialized = true
 		} catch (error) {
 			console.error("初始化 checkpoint 跟踪器失败:", error)
 			throw error
