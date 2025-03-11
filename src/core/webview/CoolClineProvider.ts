@@ -2767,7 +2767,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 	async resetState() {
 		const answer = await vscode.window.showInformationMessage(
-			"Are you sure you want to reset all state and secret storage in the extension? This cannot be undone.",
+			"Are you sure you want to delete all data in the extension? This cannot be undone.",
 			{ modal: true },
 			"Yes",
 		)
@@ -2804,6 +2804,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		}
 		await this.postStateToWebview()
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+		// 删除所有历史记录，包括 git 仓库
+		await this.deleteAllProjectsAllHistory()
 	}
 
 	// integration tests
