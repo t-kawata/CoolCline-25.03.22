@@ -3523,55 +3523,71 @@ export class CoolCline {
 		//mode: "preview" | "restore" | "files" | "messages" | "files_and_messages"
 		mode: CheckpointRecoveryMode
 	}) {
-		if (!this.checkpointsEnabled) {
-			this.providerRef.deref()?.log("[checkpointRestore] checkpoints feature is disabled.")
-			vscode.window.showWarningMessage("Checkpoints feature is disabled.")
-			return
-		}
-
-		const index = this.coolclineMessages.findIndex((m) => m.ts === ts)
-		const message = this.coolclineMessages[index]
-
-		if (index === -1 || !message) {
-			this.providerRef.deref()?.log(`[checkpointRestore] Could not find message with timestamp ${ts}`)
-			vscode.window.showErrorMessage("Could not find specified checkpoint.")
-			return
-		}
+		// 立即取消任务
+		await this.providerRef.deref()?.cancelTask()
 
 		try {
-			const service = await this.getCheckpointService()
+			// 处理消息恢复
+			const shouldRestoreMessages =
+				mode === CheckpointRecoveryMode.MESSAGES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
+			if (shouldRestoreMessages) {
+				// 找到用户发送的消息
+				const editMessageIndex = this.coolclineMessages.findIndex((m) => m.ts === ts)
+
+				if (editMessageIndex === -1) {
+					this.providerRef
+						.deref()
+						?.log(`[checkpointRestore] Could not find edit message with timestamp ${ts}`)
+					vscode.window.showErrorMessage("Could not find specified checkpoint.")
+					return
+				}
+
+				// 向前查找这个编辑操作所属的用户消息的开始位置
+				let taskStartIndex = editMessageIndex
+				while (taskStartIndex > 0) {
+					const msg = this.coolclineMessages[taskStartIndex - 1]
+					// 如果找到一个带有 images 字段，且type 字段的值是 say 类型消息，就停止（根据目前数据结构）
+					if (msg.type === "say" && "images" in msg) {
+						break
+					}
+					taskStartIndex--
+				}
+
+				// 找到原始消息
+				const message = this.coolclineMessages[taskStartIndex - 1]
+				if (!message) {
+					throw new Error("无法找到要恢复的消息")
+				}
+
+				// 保存原始消息的历史范围信息
+				this.conversationHistoryDeletedRange = message.conversationHistoryDeletedRange
+
+				// 构建新的消息历史，确保包含原始消息
+				const newCoolClineMessages = this.coolclineMessages.slice(0, taskStartIndex - 1)
+				newCoolClineMessages.push(message) // 添加原始消息
+
+				// 更新消息历史
+				await this.overwriteCoolClineMessages(newCoolClineMessages)
+
+				// 恢复 API 对话历史
+				let historyIndex =
+					message.conversationHistoryIndex ?? Math.min(this.apiConversationHistory.length, taskStartIndex - 1)
+				const newConversationHistory = this.apiConversationHistory.slice(0, historyIndex)
+				await this.overwriteApiConversationHistory(newConversationHistory)
+
+				// 通知 UI 刷新
+				await this.providerRef.deref()?.postStateToWebview()
+			}
 
 			// 处理文件恢复
 			const shouldRestoreFiles =
 				mode === CheckpointRecoveryMode.FILES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
 			if (shouldRestoreFiles) {
+				const service = await this.getCheckpointService()
 				await service.restoreCheckpoint(commitHash)
 				await this.providerRef
 					.deref()
 					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: commitHash })
-			}
-
-			// 处理消息恢复
-			const shouldRestoreMessages =
-				mode === CheckpointRecoveryMode.MESSAGES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
-			if (shouldRestoreMessages) {
-				// 记录被删除的对话范围
-				this.conversationHistoryDeletedRange = message.conversationHistoryDeletedRange
-
-				// 恢复 API 对话历史，确保包含用户的最后一条消息
-				const newConversationHistory = this.apiConversationHistory.slice(
-					0,
-					(message.conversationHistoryIndex || 0) + 2, // +1 对应最后一条用户消息，+1 因为 slice 的结束索引是不包含的
-				)
-				await this.overwriteApiConversationHistory(newConversationHistory)
-
-				// 计算被删除消息的指标（仅用于内部统计）
-				const deletedMessages = this.coolclineMessages.slice(index + 1)
-				getApiMetrics(combineApiRequests(combineCommandSequences(deletedMessages)))
-
-				// 更新消息历史
-				const newCoolClineMessages = this.coolclineMessages.slice(0, index + 1)
-				await this.overwriteCoolClineMessages(newCoolClineMessages)
 			}
 
 			// 显示恢复成功消息
@@ -3601,9 +3617,6 @@ export class CoolCline {
 				// 更新 checkpoint 状态 (在我们的实现中不需要设置 isCheckpointCheckedOut 标志)
 				await this.saveCoolClineMessages()
 			}
-
-			// 如果不是预览模式，取消当前任务
-			this.providerRef.deref()?.cancelTask()
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : String(err)
 			this.providerRef
