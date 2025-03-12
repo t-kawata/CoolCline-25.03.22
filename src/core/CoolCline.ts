@@ -3523,9 +3523,6 @@ export class CoolCline {
 		//mode: "preview" | "restore" | "files" | "messages" | "files_and_messages"
 		mode: CheckpointRecoveryMode
 	}) {
-		// 立即取消任务
-		await this.providerRef.deref()?.cancelTask()
-
 		try {
 			// 处理消息恢复
 			const shouldRestoreMessages =
