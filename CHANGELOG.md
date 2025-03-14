@@ -3,7 +3,7 @@
 >
 > Detailed Documentation: [English](docs/user-docs/en/index.md) | [简体中文](https://gitee.com/coolcline/coolcline/blob/main/docs/user-docs/zh/index.md)
 
-## [4.4.6]
+## [4.4.7]
 - refactor checkpoint
 
 > ########### CoolCline ⬆️ ###########
