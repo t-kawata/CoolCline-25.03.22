@@ -3644,9 +3644,6 @@ export class CoolCline {
 		mode: CheckpointRestoreMode
 	}) {
 		try {
-			//
-			await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
-
 			// 处理消息恢复
 			const shouldRestoreMessages = true // 新模式下都需要删除消息
 			if (shouldRestoreMessages) {
@@ -3775,6 +3772,16 @@ export class CoolCline {
 
 			if (successMessage) {
 				vscode.window.showInformationMessage(successMessage)
+				// 关闭所有差异编辑器
+				vscode.commands.executeCommand("git.closeAllDiffEditors")
+				// 关闭 vscode.changes 打开页面
+				const visibleEditors = vscode.window.visibleTextEditors
+				for (const editor of visibleEditors) {
+					// DIFF_VIEW_URI_SCHEME = "coolcline-diff"
+					if (editor.document.uri.scheme === "coolcline-diff") {
+						await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+					}
+				}
 			}
 
 			// 更新 checkpoint 状态
