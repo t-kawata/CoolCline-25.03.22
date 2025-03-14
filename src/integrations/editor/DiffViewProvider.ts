@@ -32,8 +32,6 @@ export class DiffViewProvider {
 			backgroundColor: "rgba(128, 128, 128, 0.1)",
 			// 禁用光标
 			cursor: "not-allowed",
-			// 禁用选择
-			rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
 		})
 	}
 
