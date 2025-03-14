@@ -1021,11 +1021,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	const atBottomStateChange = useCallback((isAtBottom: boolean) => {
 		setIsAtBottom(isAtBottom)
-		if (isAtBottom) {
-			// 如果到达底部，重置滚动状态
-			disableAutoScrollRef.current = false
-			userScrolledRef.current = false
-		}
 		// 只有在用户手动滚动且不在底部时显示滚动按钮
 		setShowScrollToBottom(userScrolledRef.current && !isAtBottom)
 	}, [])
