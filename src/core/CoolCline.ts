@@ -2779,18 +2779,27 @@ export class CoolCline {
 							} else {
 								// console.log("partial 为 false 结果输出完成")
 								if (!result) {
-									// console.log("执行没有结果")
+									console.log("执行没有结果")
 									this.consecutiveMistakeCount++
 									pushToolResult(
 										await this.sayAndCreateMissingParamError("attempt_completion", "result"),
 									)
 									break
 								}
+
+								// 如果有文件修改，在 AI 响应结束时创建检查点
+								if (this.awaitCreateCheckpoint) {
+									// console.log("1.AI 响应结束，生成 checkpoint")
+									await this.checkpointSave()
+									// await new Promise(resolve => setTimeout(resolve, 1000))
+								}
+
 								this.consecutiveMistakeCount = 0
 
 								let commandResult: ToolResponse | undefined
 								if (command) {
-									// console.log("执行结果有命令command: ",command)
+									// console.log("执行结果有命令command: ", command)
+
 									if (lastMessage && lastMessage.ask !== "command") {
 										// havent sent a command message yet so first send completion_result then command
 										await this.say("completion_result", result, undefined, false)
@@ -2812,28 +2821,14 @@ export class CoolCline {
 								} else {
 									// console.log("执行结果没有命令command")
 									await this.say("completion_result", result, undefined, false)
-
-									// 如果有文件修改，在 AI 响应结束时创建检查点
-									if (this.awaitCreateCheckpoint) {
-										console.log("AI 响应结束，生成 checkpoint")
-										await this.checkpointSave()
-										//await new Promise(resolve => setTimeout(resolve, 1000))
-									}
 								}
 
 								// we already sent completion_result says, an empty string asks relinquishes control over button and field
 								const { response, text, images } = await this.ask("completion_result", "", false)
-								// console.log("执行结果response: ",response)
+								// console.log("执行结果response: ", response)
+
 								if (response === "yesButtonClicked") {
 									pushToolResult("") // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
-
-									// 如果有文件修改，在 AI 响应结束时创建检查点
-									if (this.awaitCreateCheckpoint) {
-										console.log("AI 响应结束，生成 checkpoint")
-										await this.checkpointSave()
-										// await new Promise(resolve => setTimeout(resolve, 1000))
-									}
-
 									break
 								}
 								await this.say("user_feedback", text ?? "", images)
