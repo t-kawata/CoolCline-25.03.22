@@ -11,6 +11,8 @@ export class DiffOptimizer {
 	private readonly cache: CacheManager
 	private readonly concurrencyLimit: number
 	private readonly limiter: ReturnType<typeof pLimit>
+	private readonly MAX_FILE_SIZE = 1024 * 1024 // 1MB
+	private readonly MAX_TOTAL_SIZE = 10 * 1024 * 1024 // 10MB
 
 	constructor(
 		private readonly git: SimpleGit,
@@ -34,6 +36,8 @@ export class DiffOptimizer {
 			absolutePath: string
 			before: string
 			after: string
+			skipped?: boolean
+			reason?: string
 		}>
 	> {
 		const cacheKey = `diff:${fromHash}:${toHash}`
@@ -45,12 +49,45 @@ export class DiffOptimizer {
 		// 获取变更的文件列表
 		const summary = await this.git.diffSummary([fromHash, toHash])
 		const result = []
+		let totalSize = 0
 
 		// 并发获取文件内容
 		const promises = summary.files.map((file) =>
 			this.limiter(async () => {
 				const relativePath = PathUtils.normalizePath(file.file)
 				const absolutePath = PathUtils.handleLongPath(relativePath)
+
+				// 检查文件大小
+				try {
+					const stats = await this.git.raw(["ls-tree", "-l", toHash, file.file])
+					const size = parseInt(stats.split(/\s+/)[3], 10)
+
+					if (size > this.MAX_FILE_SIZE) {
+						return {
+							relativePath,
+							absolutePath,
+							before: "",
+							after: "",
+							skipped: true,
+							reason: "文件过大，已跳过差异比较",
+						}
+					}
+
+					if (totalSize + size > this.MAX_TOTAL_SIZE) {
+						return {
+							relativePath,
+							absolutePath,
+							before: "",
+							after: "",
+							skipped: true,
+							reason: "累计差异过大，已跳过比较",
+						}
+					}
+
+					totalSize += size
+				} catch (error) {
+					// 如果无法获取文件大小，继续处理
+				}
 
 				let before = ""
 				let after = ""
@@ -102,6 +139,8 @@ export class DiffOptimizer {
 			absolutePath: string
 			before: string
 			after: string
+			skipped?: boolean
+			reason?: string
 		}>
 	> {
 		// 如果有上一次的哈希，计算增量差异
@@ -124,30 +163,56 @@ export class DiffOptimizer {
 	}
 
 	/**
+	 * 在创建检查点后预热缓存
+	 * @param newHash 新创建的检查点哈希
+	 * @param previousHash 前一个检查点的哈希
+	 */
+	async warmupAfterCreate(newHash: string, previousHash?: string): Promise<void> {
+		if (previousHash) {
+			const cacheKey = `diff:${previousHash}:${newHash}`
+			if (!this.cache.get(cacheKey)) {
+				await this.computeDiff(previousHash, newHash)
+			}
+		}
+	}
+
+	/**
+	 * 在恢复检查点时预热缓存
+	 * @param targetHash 目标检查点哈希
+	 * @param currentHash 当前检查点哈希
+	 */
+	async warmupAfterRestore(targetHash: string, currentHash: string): Promise<void> {
+		const cacheKey = `diff:${targetHash}:${currentHash}`
+		if (!this.cache.get(cacheKey)) {
+			// 在后台进行预热，不阻塞主流程
+			this.limiter(async () => {
+				await this.computeDiff(targetHash, currentHash)
+			})
+		}
+	}
+
+	/**
 	 * 预热缓存
-	 * 预先计算可能需要的差异
+	 * 只预热相邻提交的差异
+	 * @deprecated 使用 warmupAfterCreate 和 warmupAfterRestore 代替
 	 */
 	async warmupCache(commits: string[]): Promise<void> {
-		// 限制并发数量
 		const tasks = []
+		// 只预热相邻提交的差异
 		for (let i = 0; i < commits.length - 1; i++) {
-			for (let j = i + 1; j < commits.length; j++) {
-				const fromHash = commits[i]
-				const toHash = commits[j]
-				const cacheKey = `diff:${fromHash}:${toHash}`
+			const fromHash = commits[i]
+			const toHash = commits[i + 1]
+			const cacheKey = `diff:${fromHash}:${toHash}`
 
-				// 如果缓存中没有，添加到任务列表
-				if (!this.cache.get(cacheKey)) {
-					tasks.push(
-						this.limiter(async () => {
-							await this.computeDiff(fromHash, toHash)
-						}),
-					)
-				}
+			if (!this.cache.get(cacheKey)) {
+				tasks.push(
+					this.limiter(async () => {
+						await this.computeDiff(fromHash, toHash)
+					}),
+				)
 			}
 		}
 
-		// 并发执行预热任务
 		await Promise.all(tasks)
 	}
 

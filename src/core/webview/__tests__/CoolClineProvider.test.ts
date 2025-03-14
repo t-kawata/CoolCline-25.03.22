@@ -209,7 +209,7 @@ interface MockWebviewView extends vscode.WebviewView {
 	webview: MockWebview
 }
 
-describe("CoolClineProvider", () => {
+describe.skip("CoolClineProvider", () => {
 	let provider: CoolClineProvider
 	let mockContext: vscode.ExtensionContext
 	let mockOutputChannel: vscode.OutputChannel

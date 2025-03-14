@@ -193,17 +193,17 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 			// retry fetching generation details
 			let retries = 0
 			while (retries < 3) {
-				await delay(5000) // FIXME: necessary delay to ensure generation endpoint is ready
+				// await delay(5000) // FIXME: necessary delay to ensure generation endpoint is ready
 				try {
 					const response = await axios.get(`https://openrouter.ai/api/v1/generation?id=${genId}`, {
 						headers: {
 							Authorization: `Bearer ${this.options.openRouterApiKey}`,
 						},
-						timeout: 5_000, // this request hangs sometimes
+						timeout: 1_000 * 15, // this request hangs sometimes
 					})
 
 					const generation = response.data?.data
-					console.log("OpenRouter generation details:", response.data)
+					// console.log("OpenRouter generation details:", response.data)
 					yield {
 						type: "usage",
 						// cacheWriteTokens: 0,
@@ -217,7 +217,7 @@ export class OpenRouterHandler implements ApiHandler, SingleCompletionHandler {
 					break // 成功获取数据后退出循环
 				} catch (error) {
 					// ignore if fails
-					console.error("Error fetching OpenRouter generation details:", error)
+					console.error("Error fetching OpenRouter generation")
 					retries++
 					if (retries === 3) {
 						console.error("Max retries reached for OpenRouter generation details")

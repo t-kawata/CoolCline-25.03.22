@@ -36,7 +36,7 @@ import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt
 import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RequestyProvider } from "./RequestyProvider"
-import { CheckpointRecoveryMode } from "../../services/checkpoints/types"
+import { CheckpointRestoreMode } from "../../services/checkpoints/types"
 import { getShadowGitPath, hashWorkingDir, PathUtils } from "../../services/checkpoints/CheckpointUtils"
 import { ManageCheckpointRepository } from "../../services/checkpoints/ManageCheckpointRepository"
 
@@ -819,8 +819,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 						if (message.payload) {
 							try {
 								await this.coolcline?.checkpointDiff({
-									ts: message.payload.ts,
-									commitHash: message.payload.commitHash,
+									ts: message.payload.ts as number,
+									commitHash: message.payload.commitHash as string,
 									mode: message.payload.mode as "full" | "checkpoint",
 								})
 							} catch (error) {
@@ -846,9 +846,9 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 
 								// 调用 Core 层的 checkpointRestore 方法
 								await this.coolcline?.checkpointRestore({
-									ts: message.payload.ts,
-									commitHash: message.payload.commitHash,
-									mode: message.payload.mode as CheckpointRecoveryMode,
+									ts: message.payload.ts as number,
+									commitHash: message.payload.commitHash as string,
+									mode: message.payload.mode as CheckpointRestoreMode,
 								})
 							} catch (error) {
 								const errorMessage = error instanceof Error ? error.message : "未知错误"

@@ -63,8 +63,13 @@ import { insertGroups } from "./diff/insert-groups"
 import { EXPERIMENT_IDS, experiments as Experiments } from "../shared/experiments"
 import { CheckpointService } from "../services/checkpoints/CheckpointService"
 import { logger } from "../utils/logging"
-import { CheckpointRecoveryMode } from "../services/checkpoints/types"
-import { getShadowGitPath, hashWorkingDir, PathUtils } from "../services/checkpoints/CheckpointUtils"
+import { CheckpointRestoreMode } from "../services/checkpoints/types"
+import {
+	getShadowGitPath,
+	hashWorkingDir,
+	PathUtils,
+	ensureShadowGitDir,
+} from "../services/checkpoints/CheckpointUtils"
 
 const cwd =
 	vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -464,8 +469,8 @@ export class CoolCline {
 	async handleWebviewAskResponse(askResponse: CoolClineAskResponse, text?: string, images?: string[]) {
 		if (text) {
 			// 收到发送的消息（一个任务窗口追问的情况）
-			console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
-			this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
+			// console.log("handleWebviewAskResponse,awaitCreateCheckpoint", text)
+			// this.awaitCreateCheckpoint = true // 当用户发送消息时设置标记
 		}
 		this.askResponse = askResponse
 		this.askResponseText = text
@@ -545,12 +550,12 @@ export class CoolCline {
 	private async startTask(task?: string, images?: string[]): Promise<void> {
 		// 只创建必要的目录结构
 		// 这一步主要是为了生成目录，这样历史记录可以记录这个目录，以便之后加载历史消息可以按项目加载
+		// await ensureShadowGitDir(hashWorkingDir(cwd)) // 这个测试太难模拟环境了所以弃用
 		const shadowGitDir = PathUtils.joinPath(
 			this.providerRef.deref()?.context.globalStorageUri.fsPath ?? "",
 			"shadow-git",
 			hashWorkingDir(cwd),
 		)
-
 		try {
 			// 检查目录是否存在
 			await fs.access(shadowGitDir)
@@ -562,6 +567,7 @@ export class CoolCline {
 		if (task || images) {
 			this.awaitCreateCheckpoint = true // 当用户第一次创建任务并发送消息时设置标记
 		}
+
 		this.coolclineMessages = []
 		this.apiConversationHistory = []
 		await this.providerRef.deref()?.postStateToWebview()
@@ -580,7 +586,7 @@ export class CoolCline {
 
 	private async resumeTaskFromHistory() {
 		const modifiedCoolClineMessages = await this.getSavedCoolClineMessages()
-		this.awaitCreateCheckpoint = true // 在恢复任务时设置标记，确保第一次修改操作会创建检查点
+		// this.awaitCreateCheckpoint = true // 在恢复任务时设置标记，确保第一次修改操作会创建检查点
 
 		// Remove any resume messages that may have been added before
 		const lastRelevantMessageIndex = findLastIndex(
@@ -1232,11 +1238,8 @@ export class CoolCline {
 					"execute_command", // 执行命令可能会通过重定向、管道等修改文件
 				]
 
-				if (this.awaitCreateCheckpoint && modifyingTools.includes(block.name)) {
-					if (this.checkpointsEnabled) {
-						console.log("满足条件，生成 checkpoint")
-						await this.checkpointSave()
-					}
+				if (modifyingTools.includes(block.name)) {
+					this.awaitCreateCheckpoint = true
 				}
 
 				const toolDescription = (): string => {
@@ -2735,6 +2738,7 @@ export class CoolCline {
 						try {
 							const lastMessage = this.coolclineMessages.at(-1)
 							if (block.partial) {
+								// console.log("partial 为 true 正在流式输出结果")
 								if (command) {
 									// the attempt_completion text is done, now we're getting command
 									// remove the previous partial attempt_completion ask, replace with say, post state to webview, then stream command
@@ -2773,7 +2777,9 @@ export class CoolCline {
 								}
 								break
 							} else {
+								// console.log("partial 为 false 结果输出完成")
 								if (!result) {
+									// console.log("执行没有结果")
 									this.consecutiveMistakeCount++
 									pushToolResult(
 										await this.sayAndCreateMissingParamError("attempt_completion", "result"),
@@ -2784,6 +2790,7 @@ export class CoolCline {
 
 								let commandResult: ToolResponse | undefined
 								if (command) {
+									// console.log("执行结果有命令command: ",command)
 									if (lastMessage && lastMessage.ask !== "command") {
 										// havent sent a command message yet so first send completion_result then command
 										await this.say("completion_result", result, undefined, false)
@@ -2803,13 +2810,30 @@ export class CoolCline {
 									// user didn't reject, but the command may have output
 									commandResult = execCommandResult
 								} else {
+									// console.log("执行结果没有命令command")
 									await this.say("completion_result", result, undefined, false)
+
+									// 如果有文件修改，在 AI 响应结束时创建检查点
+									if (this.awaitCreateCheckpoint) {
+										console.log("AI 响应结束，生成 checkpoint")
+										await this.checkpointSave()
+										//await new Promise(resolve => setTimeout(resolve, 1000))
+									}
 								}
 
 								// we already sent completion_result says, an empty string asks relinquishes control over button and field
 								const { response, text, images } = await this.ask("completion_result", "", false)
+								// console.log("执行结果response: ",response)
 								if (response === "yesButtonClicked") {
 									pushToolResult("") // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
+
+									// 如果有文件修改，在 AI 响应结束时创建检查点
+									if (this.awaitCreateCheckpoint) {
+										console.log("AI 响应结束，生成 checkpoint")
+										await this.checkpointSave()
+										// await new Promise(resolve => setTimeout(resolve, 1000))
+									}
+
 									break
 								}
 								await this.say("user_feedback", text ?? "", images)
@@ -3432,23 +3456,23 @@ export class CoolCline {
 
 		let nextCommitHash = undefined
 		let title = ""
+		let changes = undefined
 
 		if (mode === "checkpoint") {
-			// 查找下一个 checkpoint
-			const nextCheckpoint = this.coolclineMessages
-				.filter(({ say }) => say === "checkpoint_saved")
-				.sort((a, b) => a.ts - b.ts) // 按时间正序排列
-				.find((message) => message.ts > ts)
+			const service = await this.getCheckpointService()
+			changes = await service.getDiff(commitHash || "HEAD", nextCommitHash || undefined)
 
-			nextCommitHash = nextCheckpoint?.text
-			title = "Changes to next checkpoint"
+			title = "This Changes"
 		} else {
-			title = "All changes since task started"
+			const service = await this.getCheckpointService()
+			changes = await service.getDiffToLatest(commitHash || "HEAD")
+
+			title = "All changes"
 		}
 
 		try {
-			const service = await this.getCheckpointService()
-			const changes = await service.getDiff(commitHash || "HEAD", nextCommitHash || undefined)
+			// const service = await this.getCheckpointService()
+			// const changes = await service.getDiff(commitHash || "HEAD", nextCommitHash || undefined)
 
 			if (!changes?.length) {
 				vscode.window.showInformationMessage("No changes found.")
@@ -3481,25 +3505,121 @@ export class CoolCline {
 		}
 	}
 
+	// 移动 checkpoint 消息到用户消息后面
+	private async moveCheckpointAfterMessage(): Promise<boolean> {
+		try {
+			// 1. 从后往前找到第一个 checkpoint 消息
+			let checkpointIndex = this.coolclineMessages.length - 1
+			while (checkpointIndex >= 0) {
+				const msg = this.coolclineMessages[checkpointIndex]
+				if (msg.type === "say" && msg.say === "checkpoint_saved") {
+					break
+				}
+				checkpointIndex--
+			}
+
+			if (checkpointIndex === -1) {
+				console.log("找不到 checkpoint 消息")
+				return false
+			}
+
+			const checkpointMessage = this.coolclineMessages[checkpointIndex]
+
+			// 2. 从 checkpoint 消息位置向上查找最近的用户消息（带有 images 字段的消息）
+			let messageStartIndex = checkpointIndex - 1
+			while (messageStartIndex >= 0) {
+				const msg = this.coolclineMessages[messageStartIndex]
+				if (msg.type === "say" && Array.isArray(msg.images)) {
+					break
+				}
+				messageStartIndex--
+			}
+
+			if (messageStartIndex === -1) {
+				console.log("找不到用户消息")
+				return false
+			}
+
+			let apiCheckpointIndex = -1
+			try {
+				// 3. 更新内存中的 UI 消息
+				this.coolclineMessages.splice(checkpointIndex, 1)
+				this.coolclineMessages.splice(messageStartIndex + 1, 0, checkpointMessage)
+
+				// 4. 更新内存中的 API 历史
+				// 从后往前找到对应的 API 历史消息
+				apiCheckpointIndex = this.apiConversationHistory.length - 1
+				while (apiCheckpointIndex >= 0) {
+					const msg = this.apiConversationHistory[apiCheckpointIndex]
+					if (
+						msg.content &&
+						Array.isArray(msg.content) &&
+						msg.content.some((c) => c.type === "text" && c.text.includes("checkpoint_saved"))
+					) {
+						break
+					}
+					apiCheckpointIndex--
+				}
+
+				if (apiCheckpointIndex !== -1) {
+					const apiCheckpointMessage = this.apiConversationHistory[apiCheckpointIndex]
+					this.apiConversationHistory.splice(apiCheckpointIndex, 1)
+					this.apiConversationHistory.splice(messageStartIndex + 1, 0, apiCheckpointMessage)
+				}
+
+				// 5. 保存到文件
+				await Promise.all([this.saveCoolClineMessages(), this.saveApiConversationHistory()])
+
+				// 6. 通知 webview 更新
+				await this.providerRef.deref()?.postStateToWebview()
+
+				return true // 成功移动消息
+			} catch (error) {
+				// 如果保存失败，恢复内存中的状态
+				if (apiCheckpointIndex !== -1) {
+					const apiCheckpointMessage = this.apiConversationHistory[messageStartIndex + 1]
+					this.apiConversationHistory.splice(messageStartIndex + 1, 1)
+					this.apiConversationHistory.splice(apiCheckpointIndex, 0, apiCheckpointMessage)
+				}
+				this.coolclineMessages.splice(messageStartIndex + 1, 1)
+				this.coolclineMessages.splice(checkpointIndex, 0, checkpointMessage)
+
+				console.error("移动 checkpoint 消息失败:", error)
+				return false
+			}
+		} catch (error) {
+			console.error("移动 checkpoint 消息失败:", error)
+			return false
+		}
+	}
+
 	// 创建 checkpoint 检查点
-	public async checkpointSave() {
+	public async checkpointSave(): Promise<boolean> {
 		if (!this.checkpointsEnabled) {
-			return
+			return false
 		}
 
 		try {
 			const service = await this.getCheckpointService()
-			// console.log("CoolCline.ts 中 创建 checkpoint 需要的数据 taskid： ", this.taskId)
-			const checkpoint = await service.saveCheckpoint(`Task: ${this.taskId}, Time: ${Date.now()}`)
-			// console.log("CoolCline.ts 中 创建 checkpoint 返回的值： ", checkpoint)
+			const message = `checkpoint:create,task:${this.taskId}`
+			const checkpoint = await service.saveCheckpoint(message)
 
 			if (checkpoint?.hash) {
 				await this.providerRef
 					.deref()
 					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: checkpoint.hash })
+
 				await this.say("checkpoint_saved", checkpoint.hash)
+
 				this.awaitCreateCheckpoint = false // 只有在成功创建检查点后才重置标记
+
+				// 直接移动最后一条消息（就是刚刚创建的 checkpoint 消息）
+				// 移动到消息下一行
+				await this.moveCheckpointAfterMessage()
+
+				return true
 			}
+			return false
 		} catch (err) {
 			this.providerRef
 				.deref()
@@ -3509,6 +3629,7 @@ export class CoolCline {
 
 			// 失败时不重置标记，这样下次修改操作时还会尝试创建检查点
 			console.error("创建检查点失败，将在下次修改时重试")
+			return false
 		}
 	}
 
@@ -3520,16 +3641,19 @@ export class CoolCline {
 	}: {
 		ts: number
 		commitHash: string
-		//mode: "preview" | "restore" | "files" | "messages" | "files_and_messages"
-		mode: CheckpointRecoveryMode
+		mode: CheckpointRestoreMode
 	}) {
 		try {
+			//
+			await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+
 			// 处理消息恢复
-			const shouldRestoreMessages =
-				mode === CheckpointRecoveryMode.MESSAGES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
+			const shouldRestoreMessages = true // 新模式下都需要删除消息
 			if (shouldRestoreMessages) {
 				// 找到用户发送的消息
 				const editMessageIndex = this.coolclineMessages.findIndex((m) => m.ts === ts)
+				console.log("coolclineMessages: ", this.coolclineMessages)
+				console.log("editMessageIndex: ", editMessageIndex)
 
 				if (editMessageIndex === -1) {
 					this.providerRef
@@ -3542,16 +3666,17 @@ export class CoolCline {
 				// 向前查找这个编辑操作所属的用户消息的开始位置
 				let taskStartIndex = editMessageIndex
 				while (taskStartIndex > 0) {
-					const msg = this.coolclineMessages[taskStartIndex - 1]
+					const msg = this.coolclineMessages[taskStartIndex]
 					// 如果找到一个带有 images 字段，且type 字段的值是 say 类型消息，就停止（根据目前数据结构）
-					if (msg.type === "say" && "images" in msg) {
+					if (msg.type === "say" && Array.isArray(msg.images)) {
 						break
 					}
 					taskStartIndex--
 				}
 
 				// 找到原始消息
-				const message = this.coolclineMessages[taskStartIndex - 1]
+				const message = this.coolclineMessages[taskStartIndex]
+				console.log("上一条message: ", message)
 				if (!message) {
 					throw new Error("无法找到要恢复的消息")
 				}
@@ -3559,45 +3684,92 @@ export class CoolCline {
 				// 保存原始消息的历史范围信息
 				this.conversationHistoryDeletedRange = message.conversationHistoryDeletedRange
 
-				// 构建新的消息历史，确保包含原始消息
-				const newCoolClineMessages = this.coolclineMessages.slice(0, taskStartIndex - 1)
-				newCoolClineMessages.push(message) // 添加原始消息
+				// 根据不同的恢复模式处理消息
+				let newCoolClineMessages: typeof this.coolclineMessages = []
+				if (mode === "restore_this_change") {
+					newCoolClineMessages = [...this.coolclineMessages]
+
+					// 查找下一条用户消息
+					let nextMessageIndex = editMessageIndex
+					console.log("nextMessageIndex1: ", nextMessageIndex)
+					while (nextMessageIndex < this.coolclineMessages.length - 1) {
+						const nextMsg = this.coolclineMessages[nextMessageIndex] // 修改这里
+						if (nextMsg.type === "say" && Array.isArray(nextMsg.images)) {
+							break
+						}
+						nextMessageIndex++
+					}
+
+					let message = undefined
+					if (nextMessageIndex === this.coolclineMessages.length - 1) {
+						message = this.coolclineMessages[0]
+					} else {
+						message = this.coolclineMessages[taskStartIndex]
+					}
+					console.log("下一条message: ", message)
+
+					// 计算要删除的元素数量
+					const deleteCount =
+						nextMessageIndex < this.coolclineMessages.length - 1
+							? nextMessageIndex - taskStartIndex + 1 // 移除 -1
+							: this.coolclineMessages.length - taskStartIndex + 1
+
+					// 执行删除和插入操作
+					if (taskStartIndex === 0) {
+						newCoolClineMessages.splice(taskStartIndex + 1, deleteCount - 1)
+					} else {
+						newCoolClineMessages.splice(taskStartIndex - 1, deleteCount - 1)
+					}
+
+					// if (nextMessageIndex < this.coolclineMessages.length - 1) {
+					// 	newCoolClineMessages.splice(taskStartIndex, 0, message);
+					// }
+				} else if (mode === "restore_this_and_after_change" || mode === "undo_restore") {
+					// 删除之后的所有消息
+					newCoolClineMessages = this.coolclineMessages.slice(0, taskStartIndex) // 移除 -1
+					if (taskStartIndex === 0) {
+						newCoolClineMessages.push(message)
+					}
+				}
 
 				// 更新消息历史
 				await this.overwriteCoolClineMessages(newCoolClineMessages)
 
 				// 恢复 API 对话历史
 				let historyIndex =
-					message.conversationHistoryIndex ?? Math.min(this.apiConversationHistory.length, taskStartIndex - 1)
+					message.conversationHistoryIndex ?? Math.min(this.apiConversationHistory.length, taskStartIndex) // 移除 -1
 				const newConversationHistory = this.apiConversationHistory.slice(0, historyIndex)
 				await this.overwriteApiConversationHistory(newConversationHistory)
 
-				// 通知 UI 刷新
 				await this.providerRef.deref()?.postStateToWebview()
 			}
 
 			// 处理文件恢复
-			const shouldRestoreFiles =
-				mode === CheckpointRecoveryMode.FILES || mode === CheckpointRecoveryMode.FILES_AND_MESSAGES
-			if (shouldRestoreFiles) {
-				const service = await this.getCheckpointService()
-				await service.restoreCheckpoint(commitHash)
-				await this.providerRef
-					.deref()
-					?.postMessageToWebview({ type: "currentCheckpointUpdated", text: commitHash })
+			const service = await this.getCheckpointService()
+			if (mode === "restore_this_change") {
+				const message1 = `checkpoint:restore,task:${this.taskId},target:${commitHash},restoreMode:restore_this_change,time:${Date.now()}`
+				await service.restoreCheckpoint(message1)
+			} else if (mode === "restore_this_and_after_change") {
+				const message2 = `checkpoint:restore,task:${this.taskId},target:${commitHash},restoreMode:restore_this_and_after_change,time:${Date.now()}`
+				await service.restoreCheckpoint(message2)
+			} else if (mode === "undo_restore") {
+				const message3 = `checkpoint:undo_restore,task:${this.taskId},target:${commitHash},restoreMode:undo_restore,time:${Date.now()}`
+				await service.undoRestore(message3)
 			}
+
+			await this.providerRef.deref()?.postMessageToWebview({ type: "currentCheckpointUpdated", text: commitHash })
 
 			// 显示恢复成功消息
 			let successMessage = ""
 			switch (mode) {
-				case CheckpointRecoveryMode.FILES:
-					successMessage = "Files have been restored to the selected checkpoint"
+				case "restore_this_change":
+					successMessage = "This change has been restored"
 					break
-				case CheckpointRecoveryMode.MESSAGES:
-					successMessage = "Messages have been restored to the selected checkpoint"
+				case "restore_this_and_after_change":
+					successMessage = "This change and all changes after it have been restored"
 					break
-				case CheckpointRecoveryMode.FILES_AND_MESSAGES:
-					successMessage = "Files and messages history have been restored to the selected checkpoint"
+				case "undo_restore":
+					successMessage = "The restore operation has been undone"
 					break
 			}
 
@@ -3605,15 +3777,8 @@ export class CoolCline {
 				vscode.window.showInformationMessage(successMessage)
 			}
 
-			// 如果恢复了文件，更新 checkpoint 状态
-			if (shouldRestoreFiles) {
-				// 找到所有 checkpoint 消息
-				const checkpointMessages = this.coolclineMessages.filter((m) => m.say === "checkpoint_saved")
-				const currentMessageIndex = checkpointMessages.findIndex((m) => m.ts === ts)
-
-				// 更新 checkpoint 状态 (在我们的实现中不需要设置 isCheckpointCheckedOut 标志)
-				await this.saveCoolClineMessages()
-			}
+			// 更新 checkpoint 状态
+			await this.saveCoolClineMessages()
 		} catch (err) {
 			const errorMessage = err instanceof Error ? err.message : String(err)
 			this.providerRef
@@ -3622,7 +3787,6 @@ export class CoolCline {
 					`[checkpointRestore] Encountered unexpected error: $${err instanceof Error ? err.message : String(err)}`,
 				)
 			vscode.window.showErrorMessage(`Failed to restore checkpoint: ${errorMessage}`)
-			// this.checkpointsEnabled = false
 		}
 	}
 }

@@ -4,7 +4,7 @@ import { CheckpointTracker } from "./CheckpointTracker"
 import { CheckpointMigration } from "./CheckpointMigration"
 import { GitOperations } from "./GitOperations"
 import { getWorkingDirectory, PathUtils, getShadowGitPath, hashWorkingDir } from "./CheckpointUtils"
-import { StorageProvider, Checkpoint, CheckpointDiff, CheckpointServiceOptions } from "./types"
+import { StorageProvider, CheckpointDiff, CheckpointServiceOptions } from "./types"
 
 /**
  * Checkpoint 恢复模式
@@ -32,7 +32,6 @@ export class CheckpointService {
 	private readonly outputChannel: vscode.OutputChannel
 	private readonly tracker: CheckpointTracker
 	private readonly gitOps: GitOperations
-	private lastCheckpoint?: string
 	private git: SimpleGit
 	private readonly vscodeGlobalStorageCoolClinePath: string
 	private readonly userProjectPath: string
@@ -116,10 +115,9 @@ export class CheckpointService {
 	}
 
 	/**
-	 * 保存 checkpoint
-	 * @param message - checkpoint 消息
+	 * 保存检查点
 	 */
-	public async saveCheckpoint(message: string): Promise<Checkpoint> {
+	public async saveCheckpoint(message: string): Promise<{ hash: string; timestamp: number }> {
 		if (!this.gitPath) {
 			throw new Error("Checkpoint 服务未初始化")
 		}
@@ -128,133 +126,67 @@ export class CheckpointService {
 			await this.tracker.initialize()
 		}
 
-		const commitHash = await this.gitOps.commit(this.gitPath, message)
-		await this.scheduleCleanup() // 在创建新的 checkpoint 后执行清理
-		return {
-			hash: commitHash,
-			message,
-			timestamp: new Date(),
-		}
+		return await this.gitOps.saveCheckpoint(this.gitPath, message)
 	}
 
 	/**
-	 * 获取文件差异
+	 * 恢复检查点
 	 */
-	public async getDiff(hash1: string, hash2?: string): Promise<CheckpointDiff[]> {
+	public async restoreCheckpoint(message: string): Promise<{ hash: string; timestamp: number }> {
 		if (!this.gitPath) {
 			throw new Error("Checkpoint 服务未初始化")
 		}
-		// console.log("CheckpointService.ts 中执行 getDiff hash1: ", hash1)
-		// console.log("CheckpointService.ts 中执行 getDiff hash2: ", hash2)
-		const changes = await this.gitOps.getDiff(this.gitPath, hash1, hash2)
+
+		return await this.gitOps.restoreCheckpoint(this.gitPath, message)
+	}
+
+	/**
+	 * 撤销恢复操作
+	 */
+	public async undoRestore(message: string): Promise<{ hash: string; timestamp: number }> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
+		}
+
+		return await this.gitOps.undoRestore(this.gitPath, message)
+	}
+
+	/**
+	 * 比较当前差异
+	 * @param fromHash 起始 commit hash
+	 * @param toHash 结束 commit hash，如果不提供则与工作区比较
+	 * 当没有传 toHash 时会执行与工作区的比较
+	 */
+	public async getDiff(fromHash: string, toHash?: string): Promise<CheckpointDiff[]> {
+		if (!this.gitPath) {
+			throw new Error("Checkpoint 服务未初始化")
+		}
+		const changes = await this.gitOps.getDiff(this.gitPath, fromHash)
 		return this.optimizeDiff(changes)
 	}
 
+	// getDiffToLatest
 	/**
-	 * 比较两个任务之间的差异
+	 * 比较之后的所有差异
+	 * @param fromHash 起始 commit hash
 	 */
-	public async getDiffAcrossTasks(otherTaskId: string, fromHash: string, toHash: string): Promise<CheckpointDiff[]> {
-		try {
-			const otherTracker = new CheckpointTracker(this.userProjectPath, otherTaskId, this.userProjectPath)
-			return await otherTracker.getDiff(fromHash, toHash)
-		} catch (error) {
-			this.outputChannel.appendLine(`获取跨任务差异失败: ${error}`)
-			throw error
-		}
-	}
-
-	/**
-	 * 恢复到指定的 checkpoint
-	 * @param commitHash - 要恢复到的 commit hash
-	 * @param mode - 恢复模式
-	 */
-	public async restoreCheckpoint(commitHash: string): Promise<void> {
+	public async getDiffToLatest(fromHash: string): Promise<CheckpointDiff[]> {
 		if (!this.gitPath) {
 			throw new Error("Checkpoint 服务未初始化")
 		}
-		console.log("CheckpointService.ts 中执行 restoreCheckpoint commitHash: ", commitHash)
-		try {
-			// 暂存当前更改
-			const hasStash = await this.tracker.stashChanges()
-
-			try {
-				await this.tracker.restoreCheckpoint(commitHash)
-
-				// 如果有暂存的更改，尝试重新应用
-				if (hasStash) {
-					await this.tracker.stashChanges()
-				}
-			} catch (error) {
-				// 如果恢复失败且有暂存的更改，恢复暂存
-				if (hasStash) {
-					await this.tracker.stashChanges()
-				}
-				throw error
-			}
-		} catch (error) {
-			this.outputChannel.appendLine(`恢复 checkpoint 失败: ${error}`)
-			throw error
-		}
-	}
-
-	/**
-	 * 获取 checkpoint 历史记录
-	 */
-	public async getHistory(): Promise<Checkpoint[]> {
-		if (!this.gitPath) {
-			throw new Error("Checkpoint 服务未初始化")
-		}
-		const commits = await this.gitOps.getCommits(this.gitPath)
-		return commits.map((commit) => ({
-			hash: commit.hash,
-			message: commit.message,
-			timestamp: new Date(commit.date),
-		}))
-	}
-
-	/**
-	 * 清理孤立的资源
-	 */
-	public async cleanup(activeTasks: string[]): Promise<void> {
-		try {
-			await CheckpointMigration.cleanupOrphanedResources(this.userProjectPath, activeTasks, this.outputChannel)
-			await this.tracker.cleanup()
-		} catch (error) {
-			this.outputChannel.appendLine(`清理失败: ${error}`)
-			throw error
-		}
-	}
-
-	/**
-	 * 销毁服务实例
-	 */
-	public dispose(): void {
-		this.outputChannel.dispose()
-	}
-
-	private async scheduleCleanup() {
-		if (!this.gitPath) {
-			throw new Error("Checkpoint 服务未初始化")
-		}
-		try {
-			const checkpoints = await this.getHistory()
-			if (checkpoints.length > CheckpointService.CLEANUP_THRESHOLD) {
-				// 保留最近的 checkpoints
-				const checkpointsToRemove = checkpoints
-					.slice(CheckpointService.CLEANUP_THRESHOLD)
-					.map((checkpoint: Checkpoint) => checkpoint.hash)
-				await this.gitOps.cleanupCheckpoints(this.gitPath, checkpointsToRemove)
-				this.log(`Cleaned up ${checkpointsToRemove.length} old checkpoints`)
-			}
-		} catch (error) {
-			this.log(`Failed to cleanup checkpoints: ${error}`)
-		}
+		const changes = await this.gitOps.getDiffToLatest(this.gitPath, fromHash)
+		return this.optimizeDiff(changes)
 	}
 
 	private optimizeDiff(changes: CheckpointDiff[]): CheckpointDiff[] {
+		let totalSize = 0
 		return changes.filter((change) => {
-			const totalSize = (change.before?.length || 0) + (change.after?.length || 0)
-			return totalSize <= CheckpointService.MAX_DIFF_SIZE
+			const size = change.before.length + change.after.length
+			if (totalSize + size > CheckpointService.MAX_DIFF_SIZE) {
+				return false
+			}
+			totalSize += size
+			return true
 		})
 	}
 }

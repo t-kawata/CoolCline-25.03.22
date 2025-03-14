@@ -1,14 +1,44 @@
 import fs from "fs/promises"
 import { existsSync } from "fs"
 import { SimpleGit, simpleGit, CleanOptions } from "simple-git"
-import { fileExists, PathUtils } from "./CheckpointUtils"
+import { PathUtils } from "./CheckpointUtils"
 import { getLfsPatterns, writeExcludesFile, GIT_DISABLED_SUFFIX } from "./CheckpointExclusions"
-import { CheckpointDiff } from "./types"
+import { CheckpointDiff, CheckpointMode } from "./types"
 
 interface GitCommit {
 	hash: string
 	message: string
 	date: string
+}
+
+const GitService = {
+	async commit(git: SimpleGit, message: string): Promise<{ hash: string; timestamp: number }> {
+		if (!message.includes("checkpoint:")) {
+			throw new Error("无效的消息格式: 必须包含 checkpoint: 字段")
+		}
+
+		const info = GitOperations.parseMessage(message)
+		if (!info.type) {
+			throw new Error("无效的消息格式: checkpoint 字段值不能为空")
+		}
+
+		let result
+		if (info.type === "create") {
+			// 常规提交，需要包含文件变更
+			result = await git.commit(message)
+		} else if (info.type === "restore" || info.type === "undo_restore") {
+			// 空提交，只记录操作
+			const options = { "--allow-empty": null }
+			result = await git.commit(message, options)
+		} else {
+			throw new Error(`未知的提交类型: ${info.type}`)
+		}
+
+		return {
+			hash: result.commit,
+			timestamp: Date.now(),
+		}
+	},
 }
 
 /**
@@ -21,7 +51,6 @@ interface GitCommit {
  * - Git 设置管理（用户、LFS 等）
  * - 文件暂存和 checkpoint 创建
  * - 嵌套 git 仓库管理
- * - 分支管理（branch-per-task 模型）
  */
 export class GitOperations {
 	private static readonly USER_NAME = "CoolCline"
@@ -52,7 +81,7 @@ export class GitOperations {
 	 * @returns Promise<string> 初始化的 .git 目录的路径
 	 */
 	public async initShadowGit(coolclineShadowGitPath: string): Promise<string> {
-		console.info("GitOperations: 开始初始化 shadow git, 路径:", coolclineShadowGitPath)
+		// console.info("GitOperations: 开始初始化 shadow git, 路径:", coolclineShadowGitPath)
 		// /Users/zhaoyu/Library/Application Support/Code/User/globalStorage/coolcline.coolcline/shadow-git/06c0bd08/.git
 
 		const normalizedProjectPath = PathUtils.normalizePath(this.userProjectPath)
@@ -85,7 +114,6 @@ export class GitOperations {
 			if (!PathUtils.pathsEqual(worktree.value || "", normalizedProjectPath)) {
 				throw new Error("Checkpoints 只能在原始工作区中使用: " + worktree.value)
 			}
-			// console.warn("GitOperations: 使用现有的 shadow git: " + coolclineShadowGitPath)
 		}
 
 		return coolclineShadowGitPath
@@ -206,296 +234,27 @@ export class GitOperations {
 	}
 
 	/**
-	 * 创建任务分支
-	 */
-	public async createTaskBranch(taskId: string, gitPath: string): Promise<void> {
-		const git = this.getGit(gitPath)
-		const branchName = `task-${taskId}`
-		let tempBranch: string | null = null
-
-		try {
-			// 检查分支是否存在
-			const branches = await git.branch()
-			const exists = branches.all.includes(branchName)
-
-			if (exists) {
-				// 如果分支存在，先切换到一个临时分支
-				const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
-				if (currentBranch === branchName) {
-					// 创建并切换到临时分支
-					tempBranch = `temp-${Date.now()}`
-					await git.checkout(["-b", tempBranch])
-				}
-				// 删除旧分支
-				await git.branch(["-D", branchName])
-			}
-
-			// 创建新分支
-			await git.checkout(["-b", branchName])
-		} catch (error) {
-			throw new Error(`创建任务分支失败: ${error}`)
-		} finally {
-			// 清理临时分支
-			if (tempBranch) {
-				try {
-					await git.branch(["-D", tempBranch])
-				} catch (cleanupError) {
-					console.warn(`清理临时分支失败: ${cleanupError}`)
-					// 不抛出清理错误，因为主要操作已完成
-				}
-			}
-		}
-	}
-
-	/**
-	 * 删除任务分支
-	 */
-	public async deleteTaskBranch(taskId: string, gitPath: string): Promise<void> {
-		const git = this.getGit(gitPath)
-		const branchName = `task-${taskId}`
-		let tempBranch: string | null = null
-
-		try {
-			// 检查分支是否存在
-			const branches = await git.branch()
-			if (!branches.all.includes(branchName)) {
-				return // 分支不存在，无需删除
-			}
-
-			// 如果当前在要删除的分支上，先切换到一个临时分支
-			const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
-			if (currentBranch === branchName) {
-				// 创建并切换到临时分支
-				tempBranch = `temp-${Date.now()}`
-				await git.checkout(["-b", tempBranch])
-			}
-
-			// 删除分支
-			await git.branch(["-D", branchName])
-		} catch (error) {
-			throw new Error(`删除任务分支失败: ${error}`)
-		} finally {
-			// 清理临时分支
-			if (tempBranch) {
-				try {
-					await git.branch(["-D", tempBranch])
-				} catch (cleanupError) {
-					console.warn(`清理临时分支失败: ${cleanupError}`)
-					// 不抛出清理错误，因为主要操作已完成
-				}
-			}
-		}
-	}
-
-	/**
-	 * 为 checkpoint 添加文件
-	 *
-	 * @param gitPath - .git 目录的路径
-	 * @returns Promise<{success: boolean}> 添加操作的结果
-	 */
-	public async addCheckpointFiles(gitPath: string): Promise<{ success: boolean }> {
-		const git = this.getGit(gitPath)
-		try {
-			await git.add(["-A"])
-			return { success: true }
-		} catch (error) {
-			console.error("添加 checkpoint 文件失败:", error)
-			return { success: false }
-		}
-	}
-
-	/**
-	 * 获取两个提交之间的差异
-	 *
-	 * @param gitPath - .git 目录的路径
-	 * @param fromHash - 起始提交哈希
-	 * @param toHash - 结束提交哈希
-	 * @returns Promise<Array<{paths: {relative: string, absolute: string}, content: {before: string, after: string}}>>
-	 */
-	public async getDiffBetweenCommits(gitPath: string, fromHash: string, toHash: string): Promise<CheckpointDiff[]> {
-		const git = this.getGit(gitPath)
-		const summary = await git.diffSummary([`${fromHash}..${toHash}`])
-		const result: CheckpointDiff[] = []
-
-		for (const file of summary.files.filter((f) => !f.binary)) {
-			let before = ""
-			let after = ""
-
-			try {
-				before = await git.show([`${fromHash}:${file.file}`])
-			} catch (error) {
-				// 文件在 'from' 提交中不存在
-			}
-
-			try {
-				after = await git.show([`${toHash}:${file.file}`])
-			} catch (error) {
-				// 文件在 'to' 提交中不存在
-			}
-
-			result.push({
-				relativePath: file.file,
-				absolutePath: `${this.userProjectPath}/${file.file}`,
-				before,
-				after,
-			})
-		}
-
-		return result
-	}
-
-	/**
-	 * 获取跨任务的差异
-	 *
-	 * @param gitPath - .git 目录的路径
-	 * @param fromTaskId - 起始任务 ID
-	 * @param fromHash - 起始提交哈希
-	 * @param toTaskId - 结束任务 ID
-	 * @param toHash - 结束提交哈希
-	 * @returns Promise<Array<{paths: {relative: string, absolute: string}, content: {before: string, after: string}}>>
-	 */
-	public async getDiffAcrossTasks(
-		gitPath: string,
-		fromTaskId: string,
-		fromHash: string,
-		toTaskId: string,
-		toHash: string,
-	): Promise<CheckpointDiff[]> {
-		if (!gitPath) {
-			throw new Error("gitPath 不能为空")
-		}
-
-		const git = this.getGit(gitPath)
-		// 保存当前分支
-		const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
-
-		try {
-			// 切换到起始任务分支
-			await git.checkout(`task-${fromTaskId}`)
-			const fromCommit = await git.revparse([fromHash])
-
-			// 切换到结束任务分支
-			await git.checkout(`task-${toTaskId}`)
-			const toCommit = await git.revparse([toHash])
-
-			// 获取差异
-			const result = await this.getDiffBetweenCommits(gitPath, fromCommit, toCommit)
-
-			// 恢复原始分支
-			await git.checkout(currentBranch)
-
-			return result
-		} catch (error) {
-			// 确保恢复原始分支
-			await git.checkout(currentBranch)
-			throw error
-		}
-	}
-
-	/**
-	 * 获取与工作区的差异
-	 * @param gitPath - .git 目录的路径
-	 * @param hash - 要与工作区比较的 commit hash
-	 */
-	async getDiffWithWorkingDir(gitPath: string, hash: string): Promise<CheckpointDiff[]> {
-		if (!gitPath) {
-			throw new Error("gitPath 不能为空")
-		}
-
-		if (!hash) {
-			throw new Error("hash 不能为空")
-		}
-
-		const git = this.getGit(gitPath)
-
-		// 获取最新提交的 hash
-		const latestCommitHash = await git.revparse(["HEAD"])
-
-		// 判断是否与最新提交相同
-		if (hash === latestCommitHash) {
-			// 如果相同，仅仅比较最新提交与工作区差异
-			return this.compareWorkingDirWithLatest(git)
-		}
-
-		// 如果不同，先比较指定 commit 与最新提交的差异
-		const diffCommitToLatest = await this.getDiffBetweenCommits(gitPath, hash, latestCommitHash)
-
-		// 再比较最新提交与工作区差异
-		const diffWorkingDirToLatest = await this.compareWorkingDirWithLatest(git)
-
-		// 合并两个差异结果
-		return [...diffCommitToLatest, ...diffWorkingDirToLatest]
-	}
-
-	/**
-	 * 比较最新提交与工作区差异
-	 */
-	private async compareWorkingDirWithLatest(git: SimpleGit): Promise<CheckpointDiff[]> {
-		const status = await git.status()
-		const result: CheckpointDiff[] = []
-
-		// 处理已暂存和未暂存的更改
-		for (const file of status.files) {
-			const relativePath = file.path
-			const absolutePath = PathUtils.joinPath(this.userProjectPath, relativePath)
-
-			let before = ""
-			let after = ""
-
-			try {
-				// 获取最新提交中的文件内容
-				before = await git.show([`HEAD:${file.path}`])
-			} catch (error) {
-				// 文件在最新提交中不存在
-			}
-
-			try {
-				// 获取工作区中的文件内容
-				after = await fs.readFile(absolutePath, "utf-8")
-			} catch (error) {
-				// 文件在工作区中不存在
-			}
-
-			result.push({
-				relativePath,
-				absolutePath,
-				before,
-				after,
-			})
-		}
-
-		// 处理未跟踪文件
-		for (const file of status.not_added) {
-			const absolutePath = PathUtils.joinPath(this.userProjectPath, file)
-			const after = await fs.readFile(absolutePath, "utf-8")
-			result.push({
-				relativePath: file,
-				absolutePath,
-				before: "", // 未跟踪文件在最新提交中不存在
-				after,
-			})
-		}
-
-		return result
-	}
-
-	/**
 	 * 获取差异
 	 * @param gitPath - .git 目录的路径
-	 * @param hash1 - 第一个 commit hash
-	 * @param hash2 - 第二个 commit hash，如果不提供则与工作区比较
+	 * @param hash1 - 第一个 commit hash（前端传入的当前检查点）
 	 */
-	async getDiff(gitPath: string, hash1: string, hash2?: string): Promise<CheckpointDiff[]> {
+	async getDiff(gitPath: string, hash1: string): Promise<CheckpointDiff[]> {
 		if (!hash1) {
-			throw new Error("hash 不能为空")
-		}
-
-		if (!hash2) {
-			return this.getDiffWithWorkingDir(gitPath, hash1)
+			throw new Error("请点击正确的 checkpoint")
 		}
 
 		const git = this.getGit(gitPath)
-		const summary = await git.diffSummary([hash1, hash2])
+
+		// 由于现在是编辑完成生成检查点
+		// // 将 hash1 往前移动一个检查点
+		// 因为现在是编辑文件内容结束才创建检查点
+		const hash_one = await this.getAdjacentCheckpoint(gitPath, hash1, "previous")
+		const hash_two = hash1
+		if (!hash_one) {
+			throw new Error("这是第一个检查点，无法比较差异")
+		}
+
+		const summary = await git.diffSummary([hash_one, hash_two])
 		const result: CheckpointDiff[] = []
 
 		for (const file of summary.files) {
@@ -506,13 +265,13 @@ export class GitOperations {
 			let after = ""
 
 			try {
-				before = await git.show([`${hash1}:${file.file}`])
+				before = await git.show([`${hash_one}:${file.file}`])
 			} catch (error) {
-				// 文件在 hash1 中不存在
+				// 文件在 previousHash 中不存在
 			}
 
 			try {
-				after = await git.show([`${hash2}:${file.file}`])
+				after = await git.show([`${hash_two}:${file.file}`])
 			} catch (error) {
 				// 文件在 hash2 中不存在
 			}
@@ -530,76 +289,242 @@ export class GitOperations {
 	}
 
 	/**
-	 * 恢复到指定的 checkpoint
-	 *
+	 * 获取从指定检查点到最新检查点的所有修改
 	 * @param gitPath - .git 目录的路径
-	 * @param hash - 要恢复到的 checkpoint 哈希
-	 * @returns Promise<void>
+	 * @param fromHash - 起始检查点的 hash
 	 */
-	public async restoreCheckpoint(gitPath: string, hash: string): Promise<string> {
+	public async getDiffToLatest(gitPath: string, fromHash: string): Promise<CheckpointDiff[]> {
+		if (!gitPath || !fromHash) {
+			throw new Error("参数不能为空")
+		}
+
+		const git = this.getGit(gitPath)
+
+		// 由于现在是编辑完成生成检查点
+		const hash_one = await this.getAdjacentCheckpoint(gitPath, fromHash, "previous")
+
+		// 获取最新的检查点
+		const hash_two = await git.revparse(["HEAD"])
+		if (!hash_two) {
+			throw new Error("无法获取最新检查点")
+		}
+
+		const summary = await git.diffSummary([hash_one, hash_two])
+		const result: CheckpointDiff[] = []
+
+		for (const file of summary.files) {
+			const relativePath = file.file
+			const absolutePath = PathUtils.joinPath(this.userProjectPath, relativePath)
+
+			let before = ""
+			let after = ""
+
+			try {
+				before = await git.show([`${hash_one}:${file.file}`])
+			} catch (error) {
+				// 文件在 previousHash 中不存在
+			}
+
+			try {
+				after = await git.show([`${hash_two}:${file.file}`])
+			} catch (error) {
+				// 文件在 hash2 中不存在
+			}
+
+			const diff: CheckpointDiff = {
+				relativePath,
+				absolutePath,
+				before,
+				after,
+			}
+			result.push(diff)
+		}
+
+		return result
+	}
+
+	/**
+	 * 保存检查点（创建检查点）
+	 */
+	public async saveCheckpoint(gitPath: string, message: string): Promise<{ hash: string; timestamp: number }> {
 		if (!gitPath) {
 			throw new Error("gitPath 不能为空")
 		}
 
-		try {
-			const git = this.getGit(gitPath)
+		const git = this.getGit(gitPath)
+		await git.add(".")
+		const commitMessage = `${message},time:${Date.now()}`
+		return await GitService.commit(git, commitMessage)
+	}
 
-			// 保存当前分支
-			const currentBranch = await git.revparse(["--abbrev-ref", "HEAD"])
+	/**
+	 * 获取相邻的检查点
+	 * @param gitPath - .git 目录的路径
+	 * @param currentHash - 当前检查点的 hash
+	 * @param direction - 查找方向：'previous' 或 'next'
+	 */
+	private async getAdjacentCheckpoint(
+		gitPath: string,
+		currentHash: string,
+		direction: "previous" | "next",
+	): Promise<string> {
+		const git = this.getGit(gitPath)
 
-			// 清理工作区
-			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
+		// 使用 git rev-list 命令高效查找相邻的检查点
+		const args = ["--max-count=1", direction === "previous" ? "--parents" : "--children", currentHash]
 
-			// 使用 reset --hard 命令完全恢复到指定的 checkpoint
-			await git.reset(["--hard", hash])
+		const result = await git.raw(["rev-list", ...args])
+		const hashes = result.trim().split(/\s+/)
 
-			// 从指定 commit hash 的提交信息中获取 task id
-			const commitInfo = await git.raw(["show", "-s", "--format=%B", hash]) // 使用 raw 命令以获取原始输出
-			const commitMessage = commitInfo.trim() // 移除可能的空白字符
-			const taskMatch = commitMessage.match(/Task: ([^,\n]+)/) // 增加 \n 以确保不会匹配到换行
-			const taskId = taskMatch ? taskMatch[1].trim() : "" // 确保 taskId 没有空白字符
-
-			// 创建一个新的 commit 来记录这个 restore 操作
-			const message = `task:${taskId},restore:${hash},Time:${Date.now()}`
-			const result = await git.commit(message, ["--allow-empty"])
-			// 恢复原始分支
-			await git.checkout(currentBranch)
-
-			// 返回 restore 产生的 hash
-			return result.commit
-		} catch (error) {
-			console.error("GitOperations: 恢复 checkpoint 失败:", error)
-			throw error
+		if (direction === "previous") {
+			// 对于 previous，取第二个 hash（父提交）
+			return hashes[1] || ""
+		} else {
+			// 对于 next，取第一个子提交
+			return hashes[0] || ""
 		}
 	}
 
-	// 创建检查点（git add . && git commit）
-	public async commit(gitPath: string, message: string): Promise<string> {
+	/**
+	 * 恢复检查点
+	 */
+	public async restoreCheckpoint(gitPath: string, message: string): Promise<{ hash: string; timestamp: number }> {
 		if (!gitPath) {
 			throw new Error("gitPath 不能为空")
 		}
 
-		try {
-			const git = this.getGit(gitPath)
+		const git = this.getGit(gitPath)
+		const info = GitOperations.parseMessage(message)
 
-			// 检查是否有文件更改，如果没有应该是 restore 后重新提交发起提交
-			const status = await git.status()
-			if (status.files.length === 0 && status.not_added.length === 0) {
-				// 如果没有更改，直接返回当前 HEAD 的 hash
-				const headHash = await git.revparse(["HEAD"])
-				return headHash
-			}
-
-			// 如果有更改，执行提交
-			await git.add(".")
-
-			const result = await git.commit(message)
-			// console.log("commit: ",result)
-			return result.commit
-		} catch (error) {
-			console.error("GitOperations: 提交更改失败:", error)
-			throw error
+		// 获取前一个检查点
+		// 由于我们现在改为编辑完成生成检查点，所以 restore 是要还原到上一个提交
+		const previousHash = await this.getAdjacentCheckpoint(gitPath, info.targetHash!, "previous")
+		if (!previousHash) {
+			throw new Error("这是第一个检查点，无法恢复")
 		}
+
+		if (info.restoreMode === "restore_this_change") {
+			try {
+				await this.revertCheckpoint(git, info.targetHash!)
+			} catch (error) {
+				throw error
+			}
+		} else if (info.restoreMode === "restore_this_and_after_change") {
+			// 清理工作区中未跟踪的文件
+			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
+
+			// 恢复到前一个检查点
+			await git.reset(["--hard", previousHash])
+		} else {
+			throw new Error("无效的 restore 模式")
+		}
+
+		const commitMessage = `${message},time:${Date.now()}`
+		return await GitService.commit(git, commitMessage)
+	}
+
+	/**
+	 * 撤销恢复操作
+	 */
+	public async undoRestore(gitPath: string, message: string): Promise<{ hash: string; timestamp: number }> {
+		if (!gitPath) {
+			throw new Error("gitPath 不能为空")
+		}
+
+		const git = this.getGit(gitPath)
+		const info = GitOperations.parseMessage(message)
+
+		// 获取目标提交的信息
+		const targetCommit = await git.raw(["show", "--format=%s", "-s", info.targetHash!])
+		const targetInfo = GitOperations.parseMessage(targetCommit.toString().trim())
+
+		// 检查目标提交是否是恢复操作
+		if (targetInfo.type !== "restore") {
+			throw new Error("目标不是一个 restore 记录，不能执行撤销")
+		}
+
+		// 获取下一个检查点
+		const nextHash = await this.getAdjacentCheckpoint(gitPath, info.targetHash!, "next")
+		if (!nextHash) {
+			throw new Error("这是最新的检查点，无法撤销恢复")
+		}
+
+		// 获取恢复操作的目标提交
+		const restoreTargetHash = targetInfo.targetHash
+		if (!restoreTargetHash) {
+			throw new Error("无法获取恢复操作的目标提交")
+		}
+
+		// 根据原始恢复操作的模式执行不同的撤销操作
+		if (targetInfo.restoreMode === "restore_this_change") {
+			try {
+				await this.revertCheckpoint(git, info.targetHash!)
+			} catch (error) {
+				throw error
+			}
+		} else if (targetInfo.restoreMode === "restore_this_and_after_change") {
+			// 清理工作区中未跟踪的文件
+			await git.clean([CleanOptions.FORCE, CleanOptions.RECURSIVE])
+
+			// 恢复到恢复操作的目标提交的下一个提交
+			const restoreNextHash = await this.getAdjacentCheckpoint(gitPath, restoreTargetHash, "next")
+			if (!restoreNextHash) {
+				throw new Error("无法获取恢复操作的目标提交的下一个提交")
+			}
+			await git.reset(["--hard", restoreNextHash])
+		} else {
+			throw new Error("无效的 restore 模式")
+		}
+
+		// 记录撤销操作
+		return await GitService.commit(git, message)
+	}
+
+	/**
+	 * 尝试撤销指定 checkpoint 的修改
+	 * 如果后续修改与目标 checkpoint 有冲突，将放弃操作并抛出错误
+	 * @param git SimpleGit 实例
+	 * @param hash 要撤销的 checkpoint 的 hash
+	 * @throws {Error} 当发生冲突时抛出带有明确提示信息的错误
+	 */
+	private async revertCheckpoint(git: SimpleGit, hash: string): Promise<void> {
+		try {
+			await git.revert(hash, { "--no-commit": null })
+		} catch (error) {
+			// 发生冲突，中止 revert
+			await git.raw(["revert", "--abort"])
+			throw new Error(
+				"无法撤销这个检查点的修改，因为后续的修改与之存在冲突。请从后往前 restore 或使用 restore_this_and_after_change 模式全部撤销之后的修改。",
+			)
+		}
+	}
+
+	/**
+	 * 解析消息
+	 */
+	public static parseMessage(message: string) {
+		const parts = message.split(",")
+		const info: {
+			type?: CheckpointMode
+			taskId?: string
+			targetHash?: string
+			restoreMode?: string
+		} = {}
+
+		for (const part of parts) {
+			const [key, value] = part.split(":")
+			if (key === "checkpoint") {
+				info.type = value as CheckpointMode
+			} else if (key === "task") {
+				info.taskId = value
+			} else if (key === "target") {
+				info.targetHash = value
+			} else if (key === "restoreMode") {
+				info.restoreMode = value
+			}
+		}
+
+		return info
 	}
 
 	// 查看提交历史（git log）

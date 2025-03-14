@@ -7,20 +7,27 @@ import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons"
 import { vscode } from "../../../utils/vscode"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@/components/ui"
 import { ConfirmDialog } from "../../ui/ConfirmDialog"
-import { CheckpointRecoveryMode } from "../../../../../src/services/checkpoints/types"
+import { CheckpointMode, CheckpointRestoreMode } from "../../../../../src/services/checkpoints/types"
 
 type CheckpointMenuProps = {
 	ts: number
 	commitHash: string
 	currentCheckpointHash?: string
+	type?: CheckpointMode
+	restoreMode?: CheckpointRestoreMode
 }
 
-export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: CheckpointMenuProps) => {
+export const CheckpointMenu = ({
+	ts,
+	commitHash,
+	currentCheckpointHash,
+	type = "create" as CheckpointMode,
+	restoreMode,
+}: CheckpointMenuProps) => {
 	const [compareDisabled, setCompareDisabled] = useState(false)
-	const [restoreFilesDisabled, setRestoreFilesDisabled] = useState(false)
-	const [restoreMessagesDisabled, setRestoreMessagesDisabled] = useState(false)
-	const [restoreBothDisabled, setRestoreBothDisabled] = useState(false)
+	const [restoreDisabled, setRestoreDisabled] = useState(false)
 	const [showRestoreConfirm, setShowRestoreConfirm] = useState(false)
+	const [showCompareConfirm, setShowCompareConfirm] = useState(false)
 	const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 	const [confirmDialogConfig, setConfirmDialogConfig] = useState<{
 		title: string
@@ -62,82 +69,83 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 		const message = event.data
 		if (message.type === "relinquishControl") {
 			setCompareDisabled(false)
-			setRestoreFilesDisabled(false)
-			setRestoreMessagesDisabled(false)
-			setRestoreBothDisabled(false)
+			setRestoreDisabled(false)
 			setShowRestoreConfirm(false)
 		}
 	}, [])
 
 	useEvent("message", handleMessage)
 
-	const handleRestoreMessages = () => {
-		if (showRestoreConfirm) {
-			setConfirmDialogConfig({
-				title: "Warning",
-				description:
-					"This action will delete all messages after this checkpoint and cannot be undone. Are you sure you want to continue?",
-				onConfirm: () => {
-					setRestoreMessagesDisabled(true)
-					vscode.postMessage({
-						type: "checkpointRestore",
-						payload: {
-							ts,
-							commitHash,
-							mode: CheckpointRecoveryMode.MESSAGES,
-						},
-					})
-					setShowRestoreConfirm(false)
-				},
-			})
-			setShowConfirmDialog(true)
-		}
+	const handleRestoreClick = () => {
+		setConfirmDialogConfig({
+			title: "Warning",
+			description:
+				"This action will restore this change and all changes after it, and delete all related messages. This cannot be undone. Are you sure you want to continue?",
+			onConfirm: () => {
+				setRestoreDisabled(true)
+				vscode.postMessage({
+					type: "checkpointRestore",
+					payload: {
+						ts,
+						commitHash,
+						mode: "restore_this_and_after_change" as CheckpointRestoreMode,
+					},
+				})
+			},
+		})
+		setShowConfirmDialog(true)
 	}
 
-	const handleRestoreFiles = () => {
-		if (showRestoreConfirm) {
-			setConfirmDialogConfig({
-				title: "Warning",
-				description:
-					"This action will restore all changes after this point and cannot be undone. Are you sure you want to continue?",
-				onConfirm: () => {
-					setRestoreFilesDisabled(true)
-					vscode.postMessage({
-						type: "checkpointRestore",
-						payload: {
-							ts,
-							commitHash,
-							mode: CheckpointRecoveryMode.FILES,
-						},
-					})
-					setShowRestoreConfirm(false)
-				},
-			})
-			setShowConfirmDialog(true)
-		}
+	const handleUndoRestore = () => {
+		setConfirmDialogConfig({
+			title: "Warning",
+			description:
+				"This action will undo the restore operation. This cannot be undone. Are you sure you want to continue?",
+			onConfirm: () => {
+				setRestoreDisabled(true)
+				vscode.postMessage({
+					type: "checkpointRestore",
+					payload: {
+						ts,
+						commitHash,
+						mode: "undo_restore" as CheckpointRestoreMode,
+					},
+				})
+			},
+		})
+		setShowConfirmDialog(true)
 	}
 
-	const handleRestoreBoth = () => {
-		if (showRestoreConfirm) {
-			setConfirmDialogConfig({
-				title: "Warning",
-				description:
-					"This action will restore project files to the state at this checkpoint and delete all messages after this point. This cannot be undone. Are you sure you want to continue?",
-				onConfirm: () => {
-					setRestoreBothDisabled(true)
-					vscode.postMessage({
-						type: "checkpointRestore",
-						payload: {
-							ts,
-							commitHash,
-							mode: CheckpointRecoveryMode.FILES_AND_MESSAGES,
-						},
-					})
-					setShowRestoreConfirm(false)
-				},
-			})
-			setShowConfirmDialog(true)
-		}
+	const handleCompareThisChange = () => {
+		setCompareDisabled(true)
+		vscode.postMessage({
+			type: "checkpointDiff",
+			payload: {
+				ts,
+				commitHash,
+				mode: "checkpoint",
+			},
+		})
+		setShowCompareConfirm(false)
+		setTimeout(() => {
+			setCompareDisabled(false)
+		}, 2000)
+	}
+
+	const handleCompareAllChanges = () => {
+		setCompareDisabled(true)
+		vscode.postMessage({
+			type: "checkpointDiff",
+			payload: {
+				ts,
+				commitHash,
+				mode: "full",
+			},
+		})
+		setShowCompareConfirm(false)
+		setTimeout(() => {
+			setCompareDisabled(false)
+		}, 2000)
 	}
 
 	const handleMouseEnter = () => {
@@ -147,6 +155,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 	const handleMouseLeave = () => {
 		if (hasMouseEntered) {
 			setShowRestoreConfirm(false)
+			setShowCompareConfirm(false)
 			setHasMouseEntered(false)
 		}
 	}
@@ -166,7 +175,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 
 	const handleMouseMove = useCallback(
 		(e: MouseEvent) => {
-			if (!showRestoreConfirm) return
+			if (!showRestoreConfirm && !showCompareConfirm) return
 
 			const tooltipElement = tooltipRef.current
 			const buttonElement = buttonRef.current
@@ -175,13 +184,11 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 				const tooltipRect = tooltipElement.getBoundingClientRect()
 				const buttonRect = buttonElement.getBoundingClientRect()
 
-				// 计算安全区域
 				const safeZoneLeft = Math.min(tooltipRect.left, buttonRect.left) - 10
 				const safeZoneRight = Math.max(tooltipRect.right, buttonRect.right) + 10
 				const safeZoneTop = Math.min(tooltipRect.top, buttonRect.top) - 10
 				const safeZoneBottom = Math.max(tooltipRect.bottom, buttonRect.bottom) + 10
 
-				// 检查鼠标是否在安全区域内
 				if (
 					e.clientX >= safeZoneLeft &&
 					e.clientX <= safeZoneRight &&
@@ -192,24 +199,58 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 				}
 
 				setShowRestoreConfirm(false)
+				setShowCompareConfirm(false)
 			}
 		},
-		[showRestoreConfirm],
+		[showRestoreConfirm, showCompareConfirm],
 	)
 
 	useEffect(() => {
-		if (showRestoreConfirm) {
+		if (showRestoreConfirm || showCompareConfirm) {
 			document.addEventListener("mousemove", handleMouseMove)
 			return () => {
 				document.removeEventListener("mousemove", handleMouseMove)
 			}
 		}
-	}, [showRestoreConfirm, handleMouseMove])
+	}, [showRestoreConfirm, showCompareConfirm, handleMouseMove])
 
 	const isCheckedOut = currentCheckpointHash === commitHash
 
+	// 根据 type 和 restoreMode 决定显示的按钮
+	const renderActionButtons = () => {
+		if (type === ("undo_restore" as CheckpointMode)) {
+			return (
+				<CustomButton
+					$isCheckedOut={isCheckedOut}
+					disabled={true}
+					title="This checkpoint was created by an undo restore operation. To restore again, please operate on the original checkpoint.">
+					Undo
+				</CustomButton>
+			)
+		}
+
+		if (type === ("restore" as CheckpointMode)) {
+			return (
+				<CustomButton $isCheckedOut={isCheckedOut} disabled={restoreDisabled} onClick={handleUndoRestore}>
+					Undo
+				</CustomButton>
+			)
+		}
+
+		// type === "create"
+		return (
+			<CustomButton
+				$isCheckedOut={isCheckedOut}
+				disabled={restoreDisabled}
+				style={{ cursor: restoreDisabled ? "wait" : "pointer" }}
+				onClick={handleRestoreClick}>
+				Restore
+			</CustomButton>
+		)
+	}
+
 	return (
-		<Container isMenuOpen={showRestoreConfirm} $isCheckedOut={isCheckedOut} onMouseLeave={handleMouseLeave}>
+		<Container $isMenuOpen={showCompareConfirm} $isCheckedOut={isCheckedOut} onMouseLeave={handleMouseLeave}>
 			<i
 				className="codicon codicon-bookmark"
 				style={{
@@ -218,91 +259,62 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 					flexShrink: 0,
 				}}
 			/>
-			<Label $isCheckedOut={isCheckedOut}>{isCheckedOut ? "Checkpoint" : "Checkpoint"}</Label>
+			<Label $isCheckedOut={isCheckedOut}>Checkpoint</Label>
 			<DottedLine $isCheckedOut={isCheckedOut} />
 			<ButtonGroup>
-				<CustomButton
-					$isCheckedOut={isCheckedOut}
-					disabled={compareDisabled}
-					style={{ cursor: compareDisabled ? "wait" : "pointer" }}
-					onClick={() => {
-						setCompareDisabled(true)
-						vscode.postMessage({
-							type: "checkpointDiff",
-							payload: {
-								ts,
-								commitHash,
-								mode: "checkpoint",
-							},
-						})
-						// 3秒后重新启用按钮
-						setTimeout(() => {
-							setCompareDisabled(false)
-						}, 2000)
-					}}>
-					Compare
-				</CustomButton>
-				<DottedLine small $isCheckedOut={isCheckedOut} />
 				<div ref={(node) => setRefs(node, "button")} style={{ position: "relative", marginTop: -2 }}>
 					<CustomButton
 						$isCheckedOut={isCheckedOut}
-						isActive={showRestoreConfirm}
-						onClick={() => setShowRestoreConfirm(true)}>
-						Restore
+						disabled={compareDisabled}
+						$isActive={showCompareConfirm}
+						style={{ cursor: compareDisabled ? "wait" : "pointer" }}
+						onClick={() => {
+							setShowCompareConfirm(true)
+						}}>
+						Compare
 					</CustomButton>
-					{showRestoreConfirm &&
+					{showCompareConfirm &&
 						createPortal(
 							<RestoreConfirmTooltip
 								ref={(node) => setRefs(node, "tooltip")}
 								style={floatingStyles}
 								data-placement={placement}
+								$tooltipType="compare"
 								onMouseEnter={handleMouseEnter}
 								onMouseLeave={handleMouseLeave}>
 								<RestoreOption>
 									<Button
 										variant="default"
 										className="w-full mb-2.5"
-										disabled={restoreBothDisabled}
-										style={{ cursor: restoreBothDisabled ? "wait" : "pointer" }}
-										onClick={handleRestoreBoth}>
-										Restore Files & Messages
+										disabled={compareDisabled}
+										style={{ cursor: compareDisabled ? "wait" : "pointer" }}
+										onClick={handleCompareThisChange}>
+										Compare This Change
 									</Button>
 									<p className="text-muted-foreground text-xs">
-										Restores your project's files and deletes all messages after this point
+										Compare this change with the current state
 									</p>
 								</RestoreOption>
 								<RestoreOption>
 									<Button
 										variant="default"
 										className="w-full mb-2.5"
-										disabled={restoreMessagesDisabled}
-										style={{ cursor: restoreMessagesDisabled ? "wait" : "pointer" }}
-										onClick={handleRestoreMessages}>
-										Restore Messages Only
+										disabled={compareDisabled}
+										style={{ cursor: compareDisabled ? "wait" : "pointer" }}
+										onClick={handleCompareAllChanges}>
+										Compare All Changes
 									</Button>
 									<p className="text-muted-foreground text-xs">
-										Deletes messages after this point (does not affect project files)
-									</p>
-								</RestoreOption>
-								<RestoreOption>
-									<Button
-										variant="default"
-										className="w-full mb-2.5"
-										disabled={restoreFilesDisabled}
-										style={{ cursor: restoreFilesDisabled ? "wait" : "pointer" }}
-										onClick={handleRestoreFiles}>
-										Restore Files Only
-									</Button>
-									<p className="text-muted-foreground text-xs">
-										Restores your project's files to a snapshot taken at this point (messages may
-										become out of sync)
+										Compare all changes since task started
 									</p>
 								</RestoreOption>
 							</RestoreConfirmTooltip>,
 							document.body,
 						)}
 				</div>
-				<DottedLine small $isCheckedOut={isCheckedOut} />
+				<DottedLine $small $isCheckedOut={isCheckedOut} />
+				{renderActionButtons()}
+				<DottedLine $small $isCheckedOut={isCheckedOut} />
 			</ButtonGroup>
 			<ConfirmDialog
 				isOpen={showConfirmDialog}
@@ -318,7 +330,7 @@ export const CheckpointMenu = ({ ts, commitHash, currentCheckpointHash }: Checkp
 	)
 }
 
-const Container = styled.div<{ isMenuOpen?: boolean; $isCheckedOut?: boolean }>`
+const Container = styled.div<{ $isMenuOpen?: boolean; $isCheckedOut?: boolean }>`
 	display: flex;
 	align-items: center;
 	padding: 4px 0;
@@ -327,7 +339,7 @@ const Container = styled.div<{ isMenuOpen?: boolean; $isCheckedOut?: boolean }>`
 	min-width: 0;
 	margin-top: 4px;
 	margin-bottom: -14px;
-	opacity: ${(props) => (props.$isCheckedOut ? 1 : props.isMenuOpen ? 1 : 0.5)};
+	opacity: ${(props) => (props.$isCheckedOut ? 1 : props.$isMenuOpen ? 1 : 0.5)};
 
 	&:hover {
 		opacity: 1;
@@ -341,9 +353,9 @@ const Label = styled.span<{ $isCheckedOut?: boolean }>`
 	flex-shrink: 0;
 `
 
-const DottedLine = styled.div<{ small?: boolean; $isCheckedOut?: boolean }>`
-	flex: ${(props) => (props.small ? "0 0 5px" : "1")};
-	min-width: ${(props) => (props.small ? "5px" : "5px")};
+const DottedLine = styled.div<{ $small?: boolean; $isCheckedOut?: boolean }>`
+	flex: ${(props) => (props.$small ? "0 0 5px" : "1")};
+	min-width: ${(props) => (props.$small ? "5px" : "5px")};
 	height: 1px;
 	background-image: linear-gradient(
 		to right,
@@ -364,16 +376,16 @@ const ButtonGroup = styled.div`
 	margin-right: 2px;
 `
 
-const CustomButton = styled.button<{ disabled?: boolean; isActive?: boolean; $isCheckedOut?: boolean }>`
+const CustomButton = styled.button<{ disabled?: boolean; $isActive?: boolean; $isCheckedOut?: boolean }>`
 	background: ${(props) =>
-		props.isActive || props.disabled
+		props.$isActive || props.disabled
 			? props.$isCheckedOut
 				? "var(--vscode-textLink-foreground)"
 				: "var(--vscode-descriptionForeground)"
 			: "transparent"};
 	border: none;
 	color: ${(props) =>
-		props.isActive || props.disabled
+		props.$isActive || props.disabled
 			? "var(--vscode-editor-background)"
 			: props.$isCheckedOut
 				? "var(--vscode-textLink-foreground)"
@@ -392,14 +404,14 @@ const CustomButton = styled.button<{ disabled?: boolean; isActive?: boolean; $is
 		bottom: 0;
 		border-radius: 1px;
 		background-image: ${(props) =>
-			props.isActive || props.disabled
+			props.$isActive || props.disabled
 				? "none"
 				: `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%)`};
 		background-size: ${(props) =>
-			props.isActive || props.disabled ? "auto" : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
+			props.$isActive || props.disabled ? "auto" : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
 		background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
 		background-position:
 			0 0,
@@ -442,7 +454,7 @@ const RestoreOption = styled.div`
 	}
 `
 
-const RestoreConfirmTooltip = styled.div`
+const RestoreConfirmTooltip = styled.div<{ $tooltipType?: "compare" | "restore" }>`
 	position: fixed;
 	background: var(--vscode-editor-background);
 	border: 1px solid var(--vscode-editorGroup-border);
@@ -456,10 +468,11 @@ const RestoreConfirmTooltip = styled.div`
 	&::before {
 		content: "";
 		position: absolute;
-		top: -8px; // Same as margin-top
-		left: 0;
-		right: 0;
-		height: 8px;
+		top: -20px; // 增加上方安全区域
+		left: -20px; // 增加左侧安全区域
+		right: -20px; // 增加右侧安全区域
+		bottom: -20px; // 增加下方安全区域
+		z-index: -1;
 	}
 
 	// Adjust arrow to be above the padding
@@ -467,7 +480,7 @@ const RestoreConfirmTooltip = styled.div`
 		content: "";
 		position: absolute;
 		top: -6px;
-		right: 24px;
+		${(props) => (props.$tooltipType === "restore" ? "right: 24px;" : "right: 84px;")}
 		width: 10px;
 		height: 10px;
 		background: var(--vscode-editor-background);
@@ -480,14 +493,14 @@ const RestoreConfirmTooltip = styled.div`
 	// When menu appears above the button
 	&[data-placement^="top"] {
 		&::before {
-			top: auto;
-			bottom: -8px;
+			top: -20px;
+			bottom: -20px;
 		}
 
 		&::after {
 			top: auto;
 			bottom: -6px;
-			right: 24px;
+			${(props) => (props.$tooltipType === "restore" ? "right: 24px;" : "right: 84px;")}
 			transform: rotate(225deg);
 		}
 	}

@@ -6,7 +6,8 @@ import { CheckpointService } from "../CheckpointService"
 import { StorageProvider } from "../types"
 import { GitOperations } from "../GitOperations"
 import simpleGit from "simple-git"
-import { PathUtils } from "../CheckpointUtils"
+import { PathUtils, setExtensionContext } from "../CheckpointUtils"
+import { Uri } from "vscode"
 
 export interface TestEnvironment {
 	workspaceRoot: string
@@ -18,6 +19,28 @@ export interface TestEnvironment {
 export async function createTestEnvironment(): Promise<TestEnvironment> {
 	const workspaceRoot = await fs.mkdtemp(PathUtils.joinPath(os.tmpdir(), "test-workspace-"))
 	const globalStoragePath = await fs.mkdtemp(PathUtils.joinPath(os.tmpdir(), "test-storage-"))
+
+	// 设置模拟的扩展上下文
+	const mockContext = {
+		globalStorageUri: Uri.file(globalStoragePath),
+		extensionUri: Uri.file(workspaceRoot),
+		subscriptions: [],
+		workspaceState: {
+			get: jest.fn(),
+			update: jest.fn(),
+		},
+		globalState: {
+			get: jest.fn(),
+			update: jest.fn(),
+		},
+		extensionPath: workspaceRoot,
+		asAbsolutePath: (relativePath: string) => PathUtils.joinPath(workspaceRoot, relativePath),
+		storageUri: Uri.file(globalStoragePath),
+		logUri: Uri.file(PathUtils.joinPath(globalStoragePath, "logs")),
+		extensionMode: 1,
+	} as unknown as vscode.ExtensionContext
+
+	setExtensionContext(mockContext)
 
 	// 创建测试文件目录和文件
 	const testDir = PathUtils.joinPath(workspaceRoot, "src")

@@ -84,8 +84,19 @@ describe("CompactTransport", () => {
 			m: `message ${i}`,
 		}))
 
-		entries.forEach((entry) => transport.write(entry))
-		await new Promise((resolve) => setTimeout(resolve, 1000)) // 增加等待时间
+		// 使用 Promise.all 等待所有写入操作完成
+		await Promise.all(
+			entries.map(
+				(entry) =>
+					new Promise<void>((resolve) => {
+						transport.write(entry)
+						resolve()
+					}),
+			),
+		)
+
+		// 增加等待时间，确保所有消息都被写入
+		await new Promise((resolve) => setTimeout(resolve, 2000))
 		transport.close()
 
 		const fileContent = fs.readFileSync(logFilePath, "utf-8")

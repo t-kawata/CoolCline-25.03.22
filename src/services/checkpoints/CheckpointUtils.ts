@@ -5,6 +5,17 @@ import os from "os"
 import crypto from "crypto"
 import { arePathsEqual as pathsAreEqual, toPosixPath as convertToPosixPath } from "../../utils/path"
 
+// 存储扩展上下文的引用
+let extensionContext: vscode.ExtensionContext | undefined
+
+/**
+ * 设置扩展上下文
+ * @param context - VSCode 扩展上下文
+ */
+export function setExtensionContext(context: vscode.ExtensionContext) {
+	extensionContext = context
+}
+
 /**
  * 路径工具类
  * 处理所有路径相关的操作，确保跨平台兼容性
@@ -98,7 +109,6 @@ class PathUtils {
 
 /**
  * 获取 shadow Git 仓库在 globalStorage 中的路径。
- * 使用 branch-per-task 结构。
  *
  * 路径结构:
  * globalStorage/
@@ -120,9 +130,8 @@ export async function getShadowGitPath(
 	if (!vscodeGlobalStorageCoolClinePath) {
 		throw new Error("Global storage uri is invalid")
 	}
-	// 直接使用 shadow-git 目录
-	const shadowGitDir = PathUtils.joinPath(vscodeGlobalStorageCoolClinePath, "shadow-git", cwdHash)
-	await mkdir(shadowGitDir, { recursive: true })
+	// 使用 ensureShadowGitDir 创建目录
+	const shadowGitDir = await ensureShadowGitDir(cwdHash)
 	return PathUtils.joinPath(shadowGitDir, ".git")
 }
 
@@ -203,6 +212,28 @@ export async function fileExists(filePath: string): Promise<boolean> {
  */
 export function arePathsEqual(path1?: string, path2?: string): boolean {
 	return pathsAreEqual(path1, path2)
+}
+
+/**
+ * 创建 shadow-git 目录
+ *
+ * @param cwdHash - 工作目录路径的哈希值
+ * @returns Promise<string> shadow git 目录的绝对路径
+ * @throws Error 如果全局存储路径无效
+ */
+export async function ensureShadowGitDir(cwdHash: string): Promise<string> {
+	if (!extensionContext) {
+		throw new Error("Extension context not initialized")
+	}
+
+	const globalStoragePath = extensionContext.globalStorageUri.fsPath
+	if (!globalStoragePath) {
+		throw new Error("Global storage uri is invalid")
+	}
+
+	const shadowGitDir = PathUtils.joinPath(globalStoragePath, "shadow-git", cwdHash)
+	await mkdir(shadowGitDir, { recursive: true })
+	return shadowGitDir
 }
 
 // 导出工具类

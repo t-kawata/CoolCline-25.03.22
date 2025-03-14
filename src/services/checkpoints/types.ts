@@ -6,10 +6,61 @@ export interface StorageProvider {
 	}
 }
 
-export interface Checkpoint {
+// 基础类型
+export type CheckpointMode = "create" | "restore" | "undo_restore"
+export type CheckpointRestoreMode = "restore_this_change" | "restore_this_and_after_change" | "undo_restore"
+
+// 检查点基础信息
+export interface CheckpointInfo {
 	hash: string
-	message: string
-	timestamp?: Date
+	timestamp: Date
+	taskId: string
+	type: CheckpointMode
+	targetHash?: string
+	restoreMode?: CheckpointRestoreMode
+}
+
+// 操作返回类型
+export interface CreateCheckpointResult {
+	taskId: string
+	hash: string
+	timestamp: Date
+}
+
+export interface RestoreResult {
+	taskId: string
+	targetHash: string
+	restoreMode: CheckpointRestoreMode
+	hash: string
+	timestamp: Date
+}
+
+export interface UndoRestoreResult {
+	taskId: string
+	targetHash: string
+	restoreMode: CheckpointRestoreMode
+	hash: string
+	timestamp: Date
+}
+
+export interface GetCheckpointsResult {
+	checkpoints: CheckpointInfo[]
+}
+
+// 操作参数类型
+export interface RestoreOptions {
+	restoreMode: CheckpointRestoreMode
+	hash: string
+}
+
+// 事务状态
+export interface TransactionState {
+	taskId: string
+	startHash: string
+	currentHash: string
+	operationType: CheckpointMode
+	restoreMode?: CheckpointRestoreMode
+	targetHash?: string
 }
 
 export interface CheckpointDiff {
@@ -26,10 +77,4 @@ export interface CheckpointServiceOptions {
 	userProjectPath: string
 	log?: (message: string) => void
 	provider?: StorageProvider
-}
-
-export enum CheckpointRecoveryMode {
-	FILES = "files",
-	MESSAGES = "messages",
-	FILES_AND_MESSAGES = "files_and_messages",
 }

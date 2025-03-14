@@ -8,6 +8,7 @@ import { CodeActionProvider } from "./core/CodeActionProvider"
 import { DIFF_VIEW_URI_SCHEME } from "./integrations/editor/DiffViewProvider"
 import { handleUri, registerCommands, registerCodeActions, registerTerminalActions } from "./activate"
 import { McpServerManager } from "./services/mcp/McpServerManager"
+import { setExtensionContext } from "./services/checkpoints/CheckpointUtils"
 
 /**
  * Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -27,6 +28,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	outputChannel = vscode.window.createOutputChannel("CoolCline")
 	context.subscriptions.push(outputChannel)
 	outputChannel.appendLine("CoolCline extension activated")
+
+	// 设置扩展上下文
+	setExtensionContext(context)
 
 	// 初始化日志系统
 	try {

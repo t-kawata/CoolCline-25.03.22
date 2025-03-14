@@ -1,7 +1,7 @@
 import { ApiConfiguration, llmProvider } from "./api"
 import { Mode, PromptComponent, ModeConfig } from "./modes"
 import { z } from "zod"
-import { CheckpointRecoveryMode } from "../services/checkpoints/types"
+import { CheckpointRestoreMode } from "../services/checkpoints/types"
 
 export type PromptMode = Mode | "enhance"
 
@@ -129,11 +129,7 @@ export const checkoutRestorePayloadSchema = z.object({
 	ts: z.number(),
 	commitHash: z.string(),
 	// mode: z.enum(["preview", "restore", "files", "messages", "files_and_messages"]),
-	mode: z.enum([
-		CheckpointRecoveryMode.FILES,
-		CheckpointRecoveryMode.MESSAGES,
-		CheckpointRecoveryMode.FILES_AND_MESSAGES,
-	]),
+	mode: z.enum(["restore_this_change", "restore_this_and_after_change", "undo_restore"] as const),
 })
 
 export type CheckpointRestorePayload = z.infer<typeof checkoutRestorePayloadSchema>
