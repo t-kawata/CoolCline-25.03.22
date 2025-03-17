@@ -350,7 +350,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 
 			<div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
 				{/* 通用基础设置部分 */}
-				<div style={{ paddingBottom: "20px", borderBottom: "1px solid var(--vscode-input-border)" }}>
+				<div style={{ paddingBottom: "0px", borderBottom: "1px solid var(--vscode-input-border)" }}>
 					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
 						{String(t("prompts.settings.sections.general"))}
 					</h3>
@@ -422,7 +422,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					<div
 						style={{
 							marginTop: "20px",
-							paddingBottom: "60px",
+							paddingBottom: "0px",
 							borderBottom: "1px solid var(--vscode-input-border)",
 						}}>
 						<h3 style={{ margin: "0 0 20px 0" }}>{String(t("prompts.settings.sections.tools"))}</h3>
@@ -582,6 +582,17 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					</div>
 					{/* 辅助部分结束 */}
 				</div>
+
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "30px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						borderBottom: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
 
 				{/* 自定义角色模式部分 */}
 				<div style={{ marginTop: "20px" }}>
