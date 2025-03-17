@@ -349,12 +349,16 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 			</div>
 
 			<div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
-				{/* 基础设置部分 */}
+				{/* 通用基础设置部分 */}
 				<div style={{ paddingBottom: "20px", borderBottom: "1px solid var(--vscode-input-border)" }}>
 					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
 						{String(t("prompts.settings.sections.general"))}
 					</h3>
+
+					{/* 语言组件 */}
 					<LanguageSelector />
+
+					{/* 通用 Prompts 提示词 */}
 					<div style={{ marginBottom: "20px" }}>
 						<div style={{ marginBottom: "4px" }}>
 							{String(t("prompts.settings.customInstructions.title"))}
@@ -413,9 +417,173 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							{String(t("prompts.settings.customInstructions.inWorkspace"))}
 						</div>
 					</div>
+
+					{/* 通用辅助功能部分 */}
+					<div
+						style={{
+							marginTop: "20px",
+							paddingBottom: "60px",
+							borderBottom: "1px solid var(--vscode-input-border)",
+						}}>
+						<h3 style={{ margin: "0 0 20px 0" }}>{String(t("prompts.settings.sections.tools"))}</h3>
+						<div
+							style={{
+								display: "flex",
+								gap: "8px",
+								alignItems: "center",
+								marginBottom: "12px",
+								flexWrap: "wrap",
+								padding: "4px 0",
+							}}>
+							{Object.keys(supportPrompt.default).map((type) => (
+								<button
+									key={type}
+									data-testid={`${type}-tab`}
+									data-active={activeSupportTab === type ? "true" : "false"}
+									onClick={() => setActiveSupportTab(type as SupportPromptType)}
+									style={{
+										padding: "4px 8px",
+										border: "none",
+										background:
+											activeSupportTab === type ? "var(--vscode-button-background)" : "none",
+										color:
+											activeSupportTab === type
+												? "var(--vscode-button-foreground)"
+												: "var(--vscode-foreground)",
+										cursor: "pointer",
+										opacity: activeSupportTab === type ? 1 : 0.8,
+										borderRadius: "3px",
+										fontWeight: "bold",
+									}}>
+									{String(t(supportPromptLabels[type as SupportPromptType]))}
+								</button>
+							))}
+						</div>
+
+						{/* Support prompt description */}
+						<div
+							style={{
+								fontSize: "13px",
+								color: "var(--vscode-descriptionForeground)",
+								margin: "8px 0 16px",
+							}}>
+							{String(t(supportPromptDescriptions[activeSupportTab]))}
+						</div>
+
+						{/* Show active tab content */}
+						<div key={activeSupportTab}>
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									marginBottom: "4px",
+								}}>
+								<div>{String(t("common.prompt"))}</div>
+								<VSCodeButton
+									appearance="icon"
+									onClick={() => handleSupportReset(activeSupportTab)}
+									title={`Reset ${activeSupportTab} prompt to default`}>
+									<span className="codicon codicon-discard"></span>
+								</VSCodeButton>
+							</div>
+
+							<VSCodeTextArea
+								value={getSupportPromptValue(activeSupportTab)}
+								onChange={(e) => {
+									const value =
+										(e as CustomEvent)?.detail?.target?.value ||
+										((e as any).target as HTMLTextAreaElement).value
+									const trimmedValue = value.trim()
+									updateSupportPrompt(activeSupportTab, trimmedValue || undefined)
+								}}
+								rows={6}
+								resize="vertical"
+								style={{ width: "100%" }}
+							/>
+
+							{activeSupportTab === "ENHANCE" && (
+								<>
+									<div>
+										<div
+											style={{
+												fontSize: "13px",
+												marginBottom: "20px",
+												marginTop: "5px",
+											}}></div>
+										<div style={{ marginBottom: "12px" }}>
+											<div style={{ marginBottom: "8px" }}>
+												<div style={{ marginBottom: "4px" }}>
+													{String(t("prompts.settings.modePrompts.apiConfig.title"))}
+												</div>
+												<div
+													style={{
+														fontSize: "13px",
+														color: "var(--vscode-descriptionForeground)",
+													}}>
+													{String(t("prompts.settings.modePrompts.apiConfig.enhancePrompts"))}
+												</div>
+											</div>
+											<VSCodeDropdown
+												value={enhancementApiConfigId || ""}
+												data-testid="api-config-dropdown"
+												onChange={(e: any) => {
+													const value = e.detail?.target?.value || e.target?.value
+													setEnhancementApiConfigId(value)
+													vscode.postMessage({
+														type: "enhancementApiConfigId",
+														text: value,
+													})
+												}}
+												style={{ width: "300px" }}>
+												<VSCodeOption value="">
+													{String(
+														t("prompts.settings.modePrompts.apiConfig.useCurrentConfig"),
+													)}
+												</VSCodeOption>
+												{(listApiConfigMeta || []).map((config) => (
+													<VSCodeOption key={config.id} value={config.id}>
+														{config.name}
+													</VSCodeOption>
+												))}
+											</VSCodeDropdown>
+										</div>
+									</div>
+
+									<div style={{ marginTop: "12px" }}>
+										<VSCodeTextArea
+											value={testPrompt}
+											onChange={(e) => setTestPrompt((e.target as HTMLTextAreaElement).value)}
+											placeholder={String(t("prompts.support.enhance.enterPrompt"))}
+											rows={3}
+											resize="vertical"
+											style={{ width: "100%" }}
+											data-testid="test-prompt-textarea"
+										/>
+										<div
+											style={{
+												marginTop: "8px",
+												display: "flex",
+												justifyContent: "flex-start",
+												alignItems: "center",
+												gap: 8,
+											}}>
+											<VSCodeButton
+												onClick={handleTestEnhancement}
+												disabled={isEnhancing}
+												appearance="primary">
+												{String(t("prompts.support.enhance.preview"))}
+											</VSCodeButton>
+										</div>
+									</div>
+								</>
+							)}
+						</div>
+					</div>
+					{/* 辅助部分结束 */}
 				</div>
 
-				{/* 角色模式部分 */}
+				{/* 自定义角色模式部分 */}
 				<div style={{ marginTop: "20px" }}>
 					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
 						{String(t("prompts.settings.sections.modes"))}
@@ -870,168 +1038,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						data-testid="preview-prompt-button">
 						{String(t("prompts.settings.modePrompts.preview"))}
 					</VSCodeButton>
-				</div>
-
-				{/* 辅助功能部分 */}
-				<div
-					style={{
-						marginTop: "20px",
-						paddingBottom: "60px",
-						borderBottom: "1px solid var(--vscode-input-border)",
-					}}>
-					<h3 style={{ margin: "0 0 20px 0", fontWeight: "600" }}>
-						{String(t("prompts.settings.sections.tools"))}
-					</h3>
-					<div
-						style={{
-							display: "flex",
-							gap: "8px",
-							alignItems: "center",
-							marginBottom: "12px",
-							flexWrap: "wrap",
-							padding: "4px 0",
-						}}>
-						{Object.keys(supportPrompt.default).map((type) => (
-							<button
-								key={type}
-								data-testid={`${type}-tab`}
-								data-active={activeSupportTab === type ? "true" : "false"}
-								onClick={() => setActiveSupportTab(type as SupportPromptType)}
-								style={{
-									padding: "4px 8px",
-									border: "none",
-									background: activeSupportTab === type ? "var(--vscode-button-background)" : "none",
-									color:
-										activeSupportTab === type
-											? "var(--vscode-button-foreground)"
-											: "var(--vscode-foreground)",
-									cursor: "pointer",
-									opacity: activeSupportTab === type ? 1 : 0.8,
-									borderRadius: "3px",
-									fontWeight: "bold",
-								}}>
-								{String(t(supportPromptLabels[type as SupportPromptType]))}
-							</button>
-						))}
-					</div>
-
-					{/* Support prompt description */}
-					<div
-						style={{
-							fontSize: "13px",
-							color: "var(--vscode-descriptionForeground)",
-							margin: "8px 0 16px",
-						}}>
-						{String(t(supportPromptDescriptions[activeSupportTab]))}
-					</div>
-
-					{/* Show active tab content */}
-					<div key={activeSupportTab}>
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-								marginBottom: "4px",
-							}}>
-							<div>{String(t("common.prompt"))}</div>
-							<VSCodeButton
-								appearance="icon"
-								onClick={() => handleSupportReset(activeSupportTab)}
-								title={`Reset ${activeSupportTab} prompt to default`}>
-								<span className="codicon codicon-discard"></span>
-							</VSCodeButton>
-						</div>
-
-						<VSCodeTextArea
-							value={getSupportPromptValue(activeSupportTab)}
-							onChange={(e) => {
-								const value =
-									(e as CustomEvent)?.detail?.target?.value ||
-									((e as any).target as HTMLTextAreaElement).value
-								const trimmedValue = value.trim()
-								updateSupportPrompt(activeSupportTab, trimmedValue || undefined)
-							}}
-							rows={6}
-							resize="vertical"
-							style={{ width: "100%" }}
-						/>
-
-						{activeSupportTab === "ENHANCE" && (
-							<>
-								<div>
-									<div
-										style={{
-											fontSize: "13px",
-											marginBottom: "20px",
-											marginTop: "5px",
-										}}></div>
-									<div style={{ marginBottom: "12px" }}>
-										<div style={{ marginBottom: "8px" }}>
-											<div style={{ marginBottom: "4px" }}>
-												{String(t("prompts.settings.modePrompts.apiConfig.title"))}
-											</div>
-											<div
-												style={{
-													fontSize: "13px",
-													color: "var(--vscode-descriptionForeground)",
-												}}>
-												{String(t("prompts.settings.modePrompts.apiConfig.enhancePrompts"))}
-											</div>
-										</div>
-										<VSCodeDropdown
-											value={enhancementApiConfigId || ""}
-											data-testid="api-config-dropdown"
-											onChange={(e: any) => {
-												const value = e.detail?.target?.value || e.target?.value
-												setEnhancementApiConfigId(value)
-												vscode.postMessage({
-													type: "enhancementApiConfigId",
-													text: value,
-												})
-											}}
-											style={{ width: "300px" }}>
-											<VSCodeOption value="">
-												{String(t("prompts.settings.modePrompts.apiConfig.useCurrentConfig"))}
-											</VSCodeOption>
-											{(listApiConfigMeta || []).map((config) => (
-												<VSCodeOption key={config.id} value={config.id}>
-													{config.name}
-												</VSCodeOption>
-											))}
-										</VSCodeDropdown>
-									</div>
-								</div>
-
-								<div style={{ marginTop: "12px" }}>
-									<VSCodeTextArea
-										value={testPrompt}
-										onChange={(e) => setTestPrompt((e.target as HTMLTextAreaElement).value)}
-										placeholder={String(t("prompts.support.enhance.enterPrompt"))}
-										rows={3}
-										resize="vertical"
-										style={{ width: "100%" }}
-										data-testid="test-prompt-textarea"
-									/>
-									<div
-										style={{
-											marginTop: "8px",
-											display: "flex",
-											justifyContent: "flex-start",
-											alignItems: "center",
-											gap: 8,
-										}}>
-										<VSCodeButton
-											onClick={handleTestEnhancement}
-											disabled={isEnhancing}
-											appearance="primary">
-											{String(t("prompts.support.enhance.preview"))}
-										</VSCodeButton>
-									</div>
-								</div>
-							</>
-						)}
-					</div>
 				</div>
 			</div>
 
