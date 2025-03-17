@@ -9,7 +9,7 @@ const LanguageSelector = () => {
 	const { t } = useTranslation()
 
 	return (
-		<div style={{ marginBottom: "20px" }}>
+		<div style={{ marginBottom: "0px" }}>
 			<div style={{ marginBottom: "4px" }}>{String(t("prompts.settings.language.title"))}</div>
 			<select
 				value={preferredLanguage}

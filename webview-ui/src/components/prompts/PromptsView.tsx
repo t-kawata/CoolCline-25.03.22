@@ -356,7 +356,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					</h3>
 
 					{/* 语言组件 */}
-					<LanguageSelector />
+					<div style={{ marginBottom: 20 }}>
+						<LanguageSelector />
+					</div>
 
 					{/* 通用 Prompts 提示词 */}
 					<div style={{ marginBottom: "20px" }}>
