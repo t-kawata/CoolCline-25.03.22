@@ -356,7 +356,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 						<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
 					</div>
 				</div>
-				<div style={{ padding: "5px 17px 6px 17px" }}>
+				<div style={{ padding: "5px 17px 6px 20px" }}>
 					<div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
 						<VSCodeTextField
 							style={{ width: "100%" }}

@@ -332,15 +332,18 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 				left: 0,
 				right: 0,
 				bottom: 0,
+				padding: "10px 0px 0px 20px",
 				display: "flex",
 				flexDirection: "column",
+				overflow: "hidden",
 			}}>
 			<div
 				style={{
 					display: "flex",
 					justifyContent: "space-between",
 					alignItems: "center",
-					padding: "10px 17px 10px 20px",
+					marginBottom: "17px",
+					paddingRight: 17,
 				}}>
 				<h3 style={{ margin: 0, fontWeight: "800", fontSize: 15 }}>
 					{String(t("prompts.settings.modePrompts.title"))}
@@ -348,7 +351,8 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 				<VSCodeButton onClick={onDone}>{String(t("common.done"))}</VSCodeButton>
 			</div>
 
-			<div style={{ flex: 1, overflow: "auto", padding: "0 20px" }}>
+			<div
+				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
 				{/* 通用基础设置部分 */}
 				<div style={{ paddingBottom: "0px", borderBottom: "1px solid var(--vscode-input-border)" }}>
 					<h3 style={{ margin: "0 0 20px 0", fontWeight: "500" }}>
@@ -588,11 +592,10 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 				{/* 分割线 - 使用双边框样式 */}
 				<div
 					style={{
-						margin: "30px 0",
+						margin: "60px 0",
 						height: "1px",
 						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
 						borderTop: "1px solid var(--vscode-panel-border)",
-						borderBottom: "1px solid var(--vscode-panel-border)",
 						width: "100%",
 					}}></div>
 

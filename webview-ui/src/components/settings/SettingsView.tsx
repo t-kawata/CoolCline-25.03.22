@@ -206,18 +206,29 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 				<h1 style={{ fontWeight: "800", fontSize: 15, margin: 0 }}>{t("settings.title").toString()}</h1>
 				<VSCodeButton onClick={handleSubmit}>{t("settings.done").toString()}</VSCodeButton>
 			</div>
-
-			<div style={{ fontWeight: "500" }}>
-				<LanguageSelector />
-			</div>
-
 			<div
 				style={{ flexGrow: 1, overflowY: "scroll", paddingRight: 8, display: "flex", flexDirection: "column" }}>
-				<div style={{ marginBottom: 40 }}>
+				{/* 语言组件 */}
+				<div style={{ fontWeight: "500" }}>
+					<LanguageSelector />
+				</div>
+
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "40px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
+
+				{/* LLM Provider 配置 */}
+				<div style={{ marginBottom: 0 }}>
 					<h2 style={{ margin: "0 0 15px 0", fontWeight: "500" }}>
 						{t("settings.provider.title").toString()}
 					</h2>
-					<div style={{ marginBottom: 15 }}>
+					<div style={{ marginBottom: 0 }}>
 						<ApiConfigManager
 							currentApiConfigName={currentApiConfigName}
 							listApiConfigMeta={listApiConfigMeta}
@@ -252,7 +263,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 				</div>
 
-				<div style={{ marginBottom: 40 }}>
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "40px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
+
+				{/* 自动批准 */}
+				<div style={{ marginBottom: 0 }}>
 					<h3 style={{ margin: "0 0 15px 0", fontWeight: "500" }}>
 						{t("settings.autoApprove.title").toString()}
 					</h3>
@@ -534,7 +556,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 				</div>
 
-				<div style={{ marginBottom: 40 }}>
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "40px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
+
+				{/* 浏览器设置 */}
+				<div style={{ marginBottom: 0 }}>
 					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.browser.title").toString()}
 					</h3>
@@ -579,7 +612,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 						</p>
 					</div>
 
-					<div style={{ marginBottom: 15 }}>
+					<div style={{ marginBottom: 0 }}>
 						<div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
 							<span>{t("settings.browser.screenshot.title").toString()}</span>
 							<div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -608,7 +641,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					</div>
 				</div>
 
-				<div style={{ marginBottom: 40 }}>
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "40px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
+
+				{/* 通知设置 */}
+				<div style={{ marginBottom: 0 }}>
 					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.notification.title").toString()}
 					</h3>
@@ -660,6 +704,17 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 					)}
 				</div>
 
+				{/* 分割线 - 使用双边框样式 */}
+				<div
+					style={{
+						margin: "40px 0",
+						height: "1px",
+						background: "linear-gradient(to bottom, var(--vscode-panel-border), transparent)",
+						borderTop: "1px solid var(--vscode-panel-border)",
+						width: "100%",
+					}}></div>
+
+				{/* 高级设置 */}
 				<div style={{ marginBottom: 40 }}>
 					<h3 style={{ margin: "0 0 15px 0", fontWeight: "600" }}>
 						{t("settings.advanced.title").toString()}
