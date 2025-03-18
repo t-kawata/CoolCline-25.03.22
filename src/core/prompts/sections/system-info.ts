@@ -4,6 +4,20 @@ import osName from "os-name"
 import { Mode, ModeConfig, getModeBySlug, defaultModeSlug, isToolAllowedForMode } from "../../../shared/modes"
 import { getShell, getSystemInfo } from "../../../utils/shell"
 
+/*
+这个getSystemInfoSection函数的主要作用是：
+生成一个包含系统信息的提示词部分，作为大型语言模型（如GPT或Claude）的系统提示的一部分
+提供给AI模型关于用户系统环境的重要信息，包括：
+操作系统类型
+默认shell
+用户主目录
+当前工作目录
+函数还包含了一段说明文字，告诉AI模型：
+用户初次提交任务时会包含当前工作目录的所有文件路径列表
+这些文件路径信息有助于理解项目结构和组织方式
+如何使用list_files工具来进一步探索目录结构
+这些信息对于AI助手了解用户的操作环境和项目上下文非常重要，有助于提供更准确、更相关的代码建议和帮助。
+*/
 export function getSystemInfoSection(cwd: string, currentMode: Mode, customModes?: ModeConfig[]): string {
 	const findModeBySlug = (slug: string, modes?: ModeConfig[]) => modes?.find((m) => m.slug === slug)
 

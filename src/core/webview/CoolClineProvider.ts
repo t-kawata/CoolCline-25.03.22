@@ -321,6 +321,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 		await visibleProvider.initCoolClineWithTask(prompt)
 	}
 
+	// 初始化 CoolCline 组件
 	async resolveWebviewView(webviewView: vscode.WebviewView | vscode.WebviewPanel) {
 		this.outputChannel.appendLine("Resolving webview view")
 		this.view = webviewView
@@ -1239,22 +1240,74 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							const mode = message.mode ?? defaultModeSlug
 							const customModes = await this.customModesManager.getCustomModes()
 
-							const systemPrompt = await SYSTEM_PROMPT(
-								this.context,
-								cwd,
-								apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,
-								mcpEnabled ? this.mcpHub : undefined,
-								diffStrategy,
-								browserViewportSize ?? "900x600",
-								mode,
-								customModePrompts,
-								customModes,
-								customInstructions,
-								preferredLanguage,
-								diffEnabled,
-								experiments,
-								enableMcpServerCreation,
-							)
+							// 这里的作用是 `webview-ui/src/components/prompts/PromptsView.tsx` 预览提示词用的
+							// 根据模式传入不同的参数，保持与CoolCline.ts中的实现一致
+							const systemPrompt = await (async () => {
+								// 根据模式传入不同的参数
+								//  mode 是要传 slug，是小写字母
+								switch (mode) {
+									case "ask":
+										return SYSTEM_PROMPT(
+											{
+												context: this.context,
+												preferredLanguage,
+											},
+											"ask",
+										)
+
+									case "code":
+										return SYSTEM_PROMPT(
+											{
+												context: this.context,
+												preferredLanguage,
+												cwd,
+												enableBaseObjective: true, // 默认启用基础工作目标
+												// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+												globalCustomInstructions: customInstructions,
+												supportsComputerUse:
+													apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,
+												browserViewportSize: browserViewportSize ?? "900x600",
+												enableMcpServerCreation, // 是否需要 AI 创建 MCP 服务器
+												mcpHub: mcpEnabled ? this.mcpHub : undefined,
+												diffStrategy,
+												diffEnabled,
+												allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+												customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
+												customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
+												experiments,
+												enableToolUse: true, // 显式启用工具使用部分
+												enableToolGuidelines: true, // 显式启用工具使用指南部分
+											},
+											"code",
+										)
+
+									default:
+										return SYSTEM_PROMPT(
+											{
+												context: this.context,
+												preferredLanguage,
+												cwd,
+												enableBaseObjective: true, // 默认启用基础工作目标
+												// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+												globalCustomInstructions: customInstructions,
+												supportsComputerUse:
+													apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,
+												browserViewportSize: browserViewportSize ?? "900x600",
+												enableMcpServerCreation, // 是否需要 AI 创建 MCP 服务器
+												mcpHub: mcpEnabled ? this.mcpHub : undefined,
+												diffStrategy,
+												diffEnabled,
+												allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+												customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
+												customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
+												experiments,
+												enableToolUse: true, // 显式启用工具使用部分
+												enableToolGuidelines: true, // 显式启用工具使用指南部分
+											},
+											mode,
+										)
+								}
+							})()
 
 							await this.postMessageToWebview({
 								type: "systemPrompt",

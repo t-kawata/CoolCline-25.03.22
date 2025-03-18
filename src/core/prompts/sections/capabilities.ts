@@ -1,6 +1,35 @@
 import { DiffStrategy } from "../../diff/DiffStrategy"
 import { McpHub } from "../../../services/mcp/McpHub"
 
+/*
+capabilities.ts 这个文件的主要作用是生成AI系统提示词中的"能力部分"(CAPABILITIES)，
+告诉AI助手它可以使用哪些工具和执行哪些操作。具体分析如下：
+功能定义：文件导出一个getCapabilitiesSection函数，用于根据不同参数生成相应的能力描述文本。
+参数依赖：
+cwd：当前工作目录，用于告知AI文件系统的位置
+supportsComputerUse：布尔值，决定AI是否可以使用浏览器功能
+mcpHub（可选）：MCP服务器相关配置
+diffStrategy（可选）：差异策略，影响文件修改方式
+描述的能力：
+执行CLI命令
+列出文件
+查看代码定义
+正则表达式搜索
+读写文件
+提问后续问题
+条件性能力（根据参数启用）：
+使用浏览器（当supportsComputerUse为true时）
+使用差异比较工具（当diffStrategy存在时）
+MCP服务器功能（当mcpHub存在时）
+工作流程指导：提示词详细描述了AI应如何使用这些工具来完成任务，包括：
+先了解项目结构
+使用定义查看工具理解代码
+读取相关文件
+分析并建议改进
+应用更改
+这个提示词模块是AI系统的重要组成部分，它定义了AI助手的操作边界和能力范围，
+使AI能够清楚地了解自己可以执行哪些操作来协助用户完成任务。它通过动态生成的方式，根据系统配置灵活调整AI的能力范围。
+*/
 export function getCapabilitiesSection(
 	cwd: string,
 	supportsComputerUse: boolean,

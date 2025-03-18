@@ -2,6 +2,37 @@ import { DiffStrategy } from "../../diff/DiffStrategy"
 import { modes, ModeConfig } from "../../../shared/modes"
 import * as vscode from "vscode"
 
+/*
+这个rules.ts文件定义了AI助手的操作规则，主要包含以下作用：
+文件编辑工具管理：
+getEditingInstructions函数根据可用的策略和实验特性，动态生成文件编辑相关的指令
+支持多种编辑工具：write_to_file, apply_diff, insert_content, search_and_replace
+为每种实验性工具提供详细使用说明
+操作规则定义：
+getRulesSection函数生成完整的规则文本，包含：
+工作目录限制：固定在特定目录
+命令执行规则：要考虑系统环境和目录限制
+文件搜索和读写策略
+项目创建的最佳实践
+交互行为规范：
+禁止使用特定开头（如"Great", "Certainly"等）保持简洁专业
+使用ask_followup_question工具询问用户
+完成任务后使用attempt_completion结束
+等待用户确认每个工具操作成功
+模式限制处理：
+不同模式对可编辑文件有限制，违反会导致FileRestrictionError
+例如架构师模式(architect mode)只能编辑匹配"\\.md$"的文件
+环境感知能力：
+检查活动终端
+使用环境详情了解项目结构
+考虑命令执行环境兼容性
+计算机使用能力：
+根据supportsComputerUse条件提供额外规则
+处理非开发任务时使用browser_action工具
+测试应用时等待用户确认截图和操作结果
+总体来说，这个文件定义了AI助手处理代码和与用户交互的核心规则系统，确保助手能够以规范、高效的方式完成任务，
+同时避免常见错误和不必要的交互。
+*/
 function getEditingInstructions(diffStrategy?: DiffStrategy, experiments?: Record<string, boolean>): string {
 	const instructions: string[] = []
 	const availableTools: string[] = ["write_to_file (for creating new files or complete file rewrites)"]

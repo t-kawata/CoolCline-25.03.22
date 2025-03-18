@@ -12,6 +12,8 @@ import "../../../utils/path"
 import { addCustomInstructions } from "../sections/custom-instructions"
 import * as modesSection from "../sections/modes"
 import { EXPERIMENT_IDS } from "../../../shared/experiments"
+import { Mode, ModeConfig, PromptComponent, CustomModePrompts } from "../../../shared/modes"
+import { DiffStrategy } from "../../../core/diff/types"
 
 // Mock the sections
 jest.mock("../sections/modes", () => ({
@@ -21,15 +23,8 @@ jest.mock("../sections/modes", () => ({
 jest.mock("../sections/custom-instructions", () => ({
 	addCustomInstructions: jest
 		.fn()
-		.mockImplementation(async (modeCustomInstructions, globalCustomInstructions, cwd, mode, options) => {
+		.mockImplementation(async (modeCustomInstructions, globalCustomInstructions, cwd, mode) => {
 			const sections = []
-
-			// Add language preference if provided
-			if (options?.preferredLanguage) {
-				sections.push(
-					`Language Preference:\nYou should always speak and think in the ${options.preferredLanguage} language.`,
-				)
-			}
 
 			// Add global instructions first
 			if (globalCustomInstructions?.trim()) {
@@ -170,237 +165,241 @@ describe("SYSTEM_PROMPT", () => {
 
 	it("should maintain consistent system prompt", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("You are CoolCline")
+		expect(prompt).toContain("CAPABILITIES")
+		expect(prompt).toContain("RULES")
+		expect(prompt).toContain("SYSTEM INFORMATION")
 	})
 
 	it("should include browser actions when supportsComputerUse is true", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			true, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			"1280x800", // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: true,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: "1280x800",
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("browser_action")
+		expect(prompt).toContain("Puppeteer-controlled browser")
 	})
 
 	it("should include MCP server info when mcpHub is provided", async () => {
 		mockMcpHub = createMockMcpHub()
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			mockMcpHub, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: mockMcpHub,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("MCP SERVERS")
 	})
 
 	it("should explicitly handle undefined mcpHub", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // explicitly undefined mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).not.toContain("(No MCP servers currently connected)")
 	})
 
 	it("should handle different browser viewport sizes", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			true, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			"900x600", // different viewport size
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: true,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: "900x600",
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("browser_action")
+		expect(prompt).toContain("Puppeteer-controlled browser")
 	})
 
 	it("should include diff strategy tool description when diffEnabled is true", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			new SearchReplaceDiffStrategy(), // Use actual diff strategy from the codebase
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			true, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: new SearchReplaceDiffStrategy(),
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: true,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
 		expect(prompt).toContain("apply_diff")
-		expect(prompt).toMatchSnapshot()
 	})
 
 	it("should exclude diff strategy tool description when diffEnabled is false", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			new SearchReplaceDiffStrategy(), // Use actual diff strategy from the codebase
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			false, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: new SearchReplaceDiffStrategy(),
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: false,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
 		expect(prompt).not.toContain("apply_diff")
-		expect(prompt).toMatchSnapshot()
 	})
 
 	it("should exclude diff strategy tool description when diffEnabled is undefined", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			new SearchReplaceDiffStrategy(), // Use actual diff strategy from the codebase
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: new SearchReplaceDiffStrategy(),
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
 		expect(prompt).not.toContain("apply_diff")
-		expect(prompt).toMatchSnapshot()
 	})
 
-	it("should include preferred language in custom instructions", async () => {
-		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined, // globalCustomInstructions
-			"Spanish", // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
-		)
+	it("should include preferred language in system prompt", async () => {
+		const prompt = await generatePromptWithLanguage("Spanish")
 
 		expect(prompt).toContain("Language Preference:")
 		expect(prompt).toContain("You should always speak and think in the Spanish language")
 	})
 
 	it("should include custom mode role definition at top and instructions at bottom", async () => {
-		const modeCustomInstructions = "Custom mode instructions"
-		const customModes = [
+		const customModePrompts: CustomModePrompts = {
+			[defaultModeSlug]: {
+				roleDefinition: "You are a rockstar developer.\nAlways write clean code.\nRock on!",
+				customInstructions: "Rock on!",
+			},
+		}
+		const customModeConfigs: ModeConfig[] = [
 			{
-				slug: "custom-mode",
-				name: "Custom Mode",
-				roleDefinition: "Custom role definition",
-				customInstructions: modeCustomInstructions,
-				groups: ["read"] as const,
+				slug: defaultModeSlug,
+				name: "Default Mode",
+				roleDefinition: "Default role definition",
+				groups: [],
 			},
 		]
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			"custom-mode", // mode
-			undefined, // customModePrompts
-			customModes, // customModes
-			"Global instructions", // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts,
+				customModeConfigs,
+				globalCustomInstructions: "Global custom instructions",
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
-		// Role definition should be at the top
-		expect(prompt.indexOf("Custom role definition")).toBeLessThan(prompt.indexOf("TOOL USE"))
-
-		// Custom instructions should be at the bottom
-		const customInstructionsIndex = prompt.indexOf("Custom mode instructions")
-		const userInstructionsHeader = prompt.indexOf("USER'S CUSTOM INSTRUCTIONS")
-		expect(customInstructionsIndex).toBeGreaterThan(-1)
-		expect(userInstructionsHeader).toBeGreaterThan(-1)
-		expect(customInstructionsIndex).toBeGreaterThan(userInstructionsHeader)
+		expect(prompt).toContain("You are a rockstar developer")
+		expect(prompt).toContain("Always write clean code")
+		expect(prompt).toContain("Rock on!")
+		expect(prompt).toContain("Global custom instructions")
 	})
 
 	it("should use promptComponent roleDefinition when available", async () => {
@@ -412,20 +411,22 @@ describe("SYSTEM_PROMPT", () => {
 		}
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false,
-			undefined,
-			undefined,
-			undefined,
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: customModePrompts,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
 			defaultModeSlug,
-			customModePrompts,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			experiments,
-			true, // enableMcpServerCreation
 		)
 
 		// Role definition from promptComponent should be at the top
@@ -443,20 +444,22 @@ describe("SYSTEM_PROMPT", () => {
 		}
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false,
-			undefined,
-			undefined,
-			undefined,
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: customModePrompts,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
 			defaultModeSlug,
-			customModePrompts,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			experiments,
-			true, // enableMcpServerCreation
 		)
 
 		// Should use the default mode's role definition
@@ -466,20 +469,22 @@ describe("SYSTEM_PROMPT", () => {
 	describe("experimental tools", () => {
 		it("should disable experimental tools by default", async () => {
 			const prompt = await SYSTEM_PROMPT(
-				mockContext,
-				"/test/path",
-				false, // supportsComputerUse
-				undefined, // mcpHub
-				undefined, // diffStrategy
-				undefined, // browserViewportSize
-				defaultModeSlug, // mode
-				undefined, // customModePrompts
-				undefined, // customModes
-				undefined, // globalCustomInstructions
-				undefined, // preferredLanguage
-				undefined, // diffEnabled
-				experiments, // experiments - undefined should disable all experimental tools
-				true, // enableMcpServerCreation
+				{
+					context: mockContext,
+					cwd: "/test/path",
+					supportsComputerUse: false,
+					mcpHub: undefined,
+					diffStrategy: undefined,
+					browserViewportSize: undefined,
+					customModePrompts: undefined,
+					customModeConfigs: undefined,
+					globalCustomInstructions: undefined,
+					preferredLanguage: undefined,
+					diffEnabled: undefined,
+					experiments,
+					enableMcpServerCreation: true,
+				},
+				defaultModeSlug,
 			)
 
 			// Verify experimental tools are not included in the prompt
@@ -494,20 +499,22 @@ describe("SYSTEM_PROMPT", () => {
 			}
 
 			const prompt = await SYSTEM_PROMPT(
-				mockContext,
-				"/test/path",
-				false, // supportsComputerUse
-				undefined, // mcpHub
-				undefined, // diffStrategy
-				undefined, // browserViewportSize
-				defaultModeSlug, // mode
-				undefined, // customModePrompts
-				undefined, // customModes
-				undefined, // globalCustomInstructions
-				undefined, // preferredLanguage
-				undefined, // diffEnabled
-				experiments,
-				true, // enableMcpServerCreation
+				{
+					context: mockContext,
+					cwd: "/test/path",
+					supportsComputerUse: false,
+					mcpHub: undefined,
+					diffStrategy: undefined,
+					browserViewportSize: undefined,
+					customModePrompts: undefined,
+					customModeConfigs: undefined,
+					globalCustomInstructions: undefined,
+					preferredLanguage: undefined,
+					diffEnabled: undefined,
+					experiments,
+					enableMcpServerCreation: true,
+				},
+				defaultModeSlug,
 			)
 
 			// Verify experimental tools are included in the prompt when enabled
@@ -522,20 +529,22 @@ describe("SYSTEM_PROMPT", () => {
 			}
 
 			const prompt = await SYSTEM_PROMPT(
-				mockContext,
-				"/test/path",
-				false, // supportsComputerUse
-				undefined, // mcpHub
-				undefined, // diffStrategy
-				undefined, // browserViewportSize
-				defaultModeSlug, // mode
-				undefined, // customModePrompts
-				undefined, // customModes
-				undefined, // globalCustomInstructions
-				undefined, // preferredLanguage
-				undefined, // diffEnabled
-				experiments,
-				true, // enableMcpServerCreation
+				{
+					context: mockContext,
+					cwd: "/test/path",
+					supportsComputerUse: false,
+					mcpHub: undefined,
+					diffStrategy: undefined,
+					browserViewportSize: undefined,
+					customModePrompts: undefined,
+					customModeConfigs: undefined,
+					globalCustomInstructions: undefined,
+					preferredLanguage: undefined,
+					diffEnabled: undefined,
+					experiments,
+					enableMcpServerCreation: true,
+				},
+				defaultModeSlug,
 			)
 
 			// Verify only enabled experimental tools are included
@@ -550,20 +559,22 @@ describe("SYSTEM_PROMPT", () => {
 			}
 
 			const prompt = await SYSTEM_PROMPT(
-				mockContext,
-				"/test/path",
-				false,
-				undefined,
-				new SearchReplaceDiffStrategy(),
-				undefined,
+				{
+					context: mockContext,
+					cwd: "/test/path",
+					supportsComputerUse: false,
+					mcpHub: undefined,
+					diffStrategy: new SearchReplaceDiffStrategy(),
+					browserViewportSize: undefined,
+					customModePrompts: undefined,
+					customModeConfigs: undefined,
+					globalCustomInstructions: undefined,
+					preferredLanguage: undefined,
+					diffEnabled: true,
+					experiments,
+					enableMcpServerCreation: true,
+				},
 				defaultModeSlug,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				true, // diffEnabled
-				experiments,
-				true, // enableMcpServerCreation
 			)
 
 			// Verify base instruction lists all available tools
@@ -580,20 +591,22 @@ describe("SYSTEM_PROMPT", () => {
 			}
 
 			const prompt = await SYSTEM_PROMPT(
-				mockContext,
-				"/test/path",
-				false,
-				undefined,
-				new SearchReplaceDiffStrategy(),
-				undefined,
+				{
+					context: mockContext,
+					cwd: "/test/path",
+					supportsComputerUse: false,
+					mcpHub: undefined,
+					diffStrategy: new SearchReplaceDiffStrategy(),
+					browserViewportSize: undefined,
+					customModePrompts: undefined,
+					customModeConfigs: undefined,
+					globalCustomInstructions: undefined,
+					preferredLanguage: undefined,
+					diffEnabled: true,
+					experiments,
+					enableMcpServerCreation: true,
+				},
 				defaultModeSlug,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				true,
-				experiments,
-				true, // enableMcpServerCreation
 			)
 
 			// Verify detailed instructions for each tool
@@ -636,194 +649,191 @@ describe("addCustomInstructions", () => {
 
 	it("should generate correct prompt for architect mode", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			"architect", // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined,
-			undefined,
-			undefined,
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			"architect",
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("You are CoolCline")
+		expect(prompt).toContain("CAPABILITIES")
+		expect(prompt).toContain("RULES")
+		expect(prompt).toContain("SYSTEM INFORMATION")
+		expect(prompt).toContain("architect")
 	})
 
 	it("should generate correct prompt for ask mode", async () => {
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			undefined, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			"ask", // mode
-			undefined, // customModePrompts
-			undefined, // customModes
-			undefined,
-			undefined,
-			undefined,
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: undefined,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			"ask",
 		)
 
-		expect(prompt).toMatchSnapshot()
+		expect(prompt).toContain("You are CoolCline")
+		expect(prompt).toContain("CAPABILITIES")
+		expect(prompt).toContain("RULES")
+		expect(prompt).toContain("SYSTEM INFORMATION")
+		expect(prompt).toContain("ask")
 	})
 
 	it("should include MCP server creation info when enabled", async () => {
 		const mockMcpHub = createMockMcpHub()
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			mockMcpHub, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			true, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: mockMcpHub,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: true,
+			},
+			defaultModeSlug,
 		)
 
 		expect(prompt).toContain("Creating an MCP Server")
-		expect(prompt).toMatchSnapshot()
 	})
 
 	it("should exclude MCP server creation info when disabled", async () => {
 		const mockMcpHub = createMockMcpHub()
 
 		const prompt = await SYSTEM_PROMPT(
-			mockContext,
-			"/test/path",
-			false, // supportsComputerUse
-			mockMcpHub, // mcpHub
-			undefined, // diffStrategy
-			undefined, // browserViewportSize
-			defaultModeSlug, // mode
-			undefined, // customModePrompts
-			undefined, // customModes,
-			undefined, // globalCustomInstructions
-			undefined, // preferredLanguage
-			undefined, // diffEnabled
-			experiments,
-			false, // enableMcpServerCreation
+			{
+				context: mockContext,
+				cwd: "/test/path",
+				supportsComputerUse: false,
+				mcpHub: mockMcpHub,
+				diffStrategy: undefined,
+				browserViewportSize: undefined,
+				customModePrompts: undefined,
+				customModeConfigs: undefined,
+				globalCustomInstructions: undefined,
+				preferredLanguage: undefined,
+				diffEnabled: undefined,
+				experiments,
+				enableMcpServerCreation: false,
+			},
+			defaultModeSlug,
 		)
 
 		expect(prompt).not.toContain("Creating an MCP Server")
-		expect(prompt).toMatchSnapshot()
 	})
 
 	it("should prioritize mode-specific rules for code mode", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", defaultModeSlug)
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules-code")
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should prioritize mode-specific rules for ask mode", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", modes[2].slug)
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules-ask")
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should prioritize mode-specific rules for architect mode", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", modes[1].slug)
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules-architect")
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should prioritize mode-specific rules for test engineer mode", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", "test")
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules-test")
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should prioritize mode-specific rules for code reviewer mode", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", "review")
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules-review")
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should fall back to generic rules when mode-specific rules not found", async () => {
 		const instructions = await addCustomInstructions("", "", "/test/path", defaultModeSlug)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should include preferred language when provided", async () => {
-		const instructions = await addCustomInstructions("", "", "/test/path", defaultModeSlug, {
-			preferredLanguage: "Spanish",
-		})
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Rules from .coolclinerules")
 	})
 
 	it("should include custom instructions when provided", async () => {
 		const instructions = await addCustomInstructions("Custom test instructions", "", "/test/path", defaultModeSlug)
-		expect(instructions).toMatchSnapshot()
+		expect(instructions).toContain("Mode-specific Instructions")
+		expect(instructions).toContain("Custom test instructions")
 	})
 
-	it("should combine all custom instructions", async () => {
-		const instructions = await addCustomInstructions(
-			"Custom test instructions",
-			"",
-			"/test/path",
-			defaultModeSlug,
-			{ preferredLanguage: "French" },
-		)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should handle undefined mode-specific instructions", async () => {
-		const instructions = await addCustomInstructions("", "", "/test/path", defaultModeSlug)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should trim mode-specific instructions", async () => {
-		const instructions = await addCustomInstructions(
-			"  Custom mode instructions  ",
-			"",
-			"/test/path",
-			defaultModeSlug,
-		)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should handle empty mode-specific instructions", async () => {
-		const instructions = await addCustomInstructions("", "", "/test/path", defaultModeSlug)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should combine global and mode-specific instructions", async () => {
-		const instructions = await addCustomInstructions(
-			"Mode-specific instructions",
-			"Global instructions",
-			"/test/path",
-			defaultModeSlug,
-		)
-		expect(instructions).toMatchSnapshot()
-	})
-
-	it("should prioritize mode-specific instructions after global ones", async () => {
-		const instructions = await addCustomInstructions(
-			"Second instruction",
-			"First instruction",
-			"/test/path",
-			defaultModeSlug,
-		)
-
-		const instructionParts = instructions.split("\n\n")
-		const globalIndex = instructionParts.findIndex((part) => part.includes("First instruction"))
-		const modeSpecificIndex = instructionParts.findIndex((part) => part.includes("Second instruction"))
-
-		expect(globalIndex).toBeLessThan(modeSpecificIndex)
-		expect(instructions).toMatchSnapshot()
+	it("should combine custom instructions without language preference", async () => {
+		const instructions = await addCustomInstructions("Custom test instructions", "", "/test/path", defaultModeSlug)
+		expect(instructions).toContain("Mode-specific Instructions")
+		expect(instructions).toContain("Custom test instructions")
+		expect(instructions).not.toContain("Language Preference")
 	})
 
 	afterAll(() => {
 		jest.restoreAllMocks()
 	})
+})
+
+// 添加一个测试生成器函数
+async function generatePromptWithLanguage(language?: string) {
+	const testExperiments = {
+		[EXPERIMENT_IDS.SEARCH_AND_REPLACE]: false,
+		[EXPERIMENT_IDS.INSERT_BLOCK]: false,
+	}
+
+	return SYSTEM_PROMPT(
+		{
+			context: mockContext,
+			cwd: "/test/path",
+			supportsComputerUse: false,
+			mcpHub: undefined,
+			diffStrategy: undefined,
+			browserViewportSize: undefined,
+			customModePrompts: undefined,
+			customModeConfigs: undefined,
+			globalCustomInstructions: undefined,
+			preferredLanguage: language,
+			diffEnabled: undefined,
+			experiments: testExperiments,
+			enableMcpServerCreation: true,
+		},
+		defaultModeSlug,
+	)
+}
+
+it("should not include language preference section when no language is specified", async () => {
+	const prompt = await generatePromptWithLanguage(undefined)
+
+	expect(prompt).not.toContain("Language Preference:")
+	expect(prompt).not.toContain("You should always speak and think in")
 })

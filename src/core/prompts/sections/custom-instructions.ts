@@ -1,6 +1,26 @@
 import fs from "fs/promises"
 import { PathUtils } from "../../../services/checkpoints/CheckpointUtils"
 
+/*
+这个custom-instructions.ts文件的主要作用是处理用户自定义指令，用于构建提供给AI模型的提示词。具体功能如下：
+加载规则文件：
+loadRuleFiles函数从工作目录中读取多种规则文件（.coolclinerules、.cursorrules、.windsurfrules）
+将这些文件的内容合并为一个字符串
+添加自定义指令：
+addCustomInstructions函数整合多种自定义指令和规则
+处理几种不同类型的指令：
+语言偏好设置（如果提供了preferredLanguage）
+全局指令（globalCustomInstructions）
+模式特定指令（modeCustomInstructions）
+模式特定规则（从.coolclinerules-{mode}文件加载）
+通用规则（通过loadRuleFiles函数加载）
+格式化输出：
+将所有指令和规则组织成结构化的部分
+添加清晰的标题（如"Global Instructions"、"Mode-specific Instructions"、"Rules"）
+生成最终的提示词部分，标记为"USER'S CUSTOM INSTRUCTIONS"
+这个文件的作用是让用户能够通过各种配置文件自定义AI助手的行为，比如设置首选语言、添加特定的工作规则或针对不同模式的自定义行为。
+这些指令和规则会被添加到AI模型的系统提示中，从而影响AI助手如何理解和响应用户请求。
+*/
 export async function loadRuleFiles(cwd: string): Promise<string> {
 	const ruleFiles = [".coolclinerules", ".cursorrules", ".windsurfrules"]
 	let combinedRules = ""
@@ -27,7 +47,6 @@ export async function addCustomInstructions(
 	globalCustomInstructions: string,
 	cwd: string,
 	mode: string,
-	options: { preferredLanguage?: string } = {},
 ): Promise<string> {
 	const sections = []
 
@@ -46,13 +65,6 @@ export async function addCustomInstructions(
 				throw err
 			}
 		}
-	}
-
-	// Add language preference if provided
-	if (options.preferredLanguage) {
-		sections.push(
-			`Language Preference:\nYou should always speak and think in the ${options.preferredLanguage} language.`,
-		)
 	}
 
 	// Add global instructions first
