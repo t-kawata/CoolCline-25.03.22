@@ -53,7 +53,7 @@ describe("mode-validator", () => {
 					slug: "custom-mode",
 					name: "Custom Mode",
 					roleDefinition: "Custom role",
-					groups: ["read", "write"],
+					groups: ["read", "edit"],
 				},
 			]
 

@@ -128,7 +128,7 @@ describe("CustomModesSettings", () => {
 				customModes: [
 					{
 						...validMode,
-						groups: ["read", "write", "browser"] as const,
+						groups: ["read", "edit", "browser"] as const,
 					},
 				],
 			}

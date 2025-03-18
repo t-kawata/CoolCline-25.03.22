@@ -67,7 +67,7 @@ describe("isToolAllowedForMode", () => {
 				roleDefinition: "Multi-group role",
 				groups: [
 					["read", { fileRegex: "^src/.*\\.ts$" }],
-					["write", { fileRegex: "^test/.*\\.ts$" }],
+					["edit", { fileRegex: "^test/.*\\.ts$" }],
 				],
 			},
 		]

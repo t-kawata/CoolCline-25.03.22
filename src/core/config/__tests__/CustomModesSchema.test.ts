@@ -20,7 +20,7 @@ describe("CustomModeSchema", () => {
 				slug: "test",
 				name: "Test Mode",
 				roleDefinition: "Test role definition",
-				groups: ["read", "write", "browser"] as const,
+				groups: ["read", "edit", "browser"] as const,
 			} satisfies ModeConfig
 
 			expect(() => validateCustomMode(validMode)).not.toThrow()
@@ -181,14 +181,14 @@ describe("CustomModeSchema", () => {
 				slug: "test",
 				name: "Test",
 				roleDefinition: "Test",
-				groups: ["read", ["write", { fileRegex: "^src/.*\\.ts$" }]],
+				groups: ["read", ["edit", { fileRegex: "^src/.*\\.ts$" }]],
 			} satisfies ModeConfig
 
 			const modeWithDescription = {
 				slug: "test",
 				name: "Test",
 				roleDefinition: "Test",
-				groups: ["read", ["write", { fileRegex: "^src/.*\\.ts$", description: "TypeScript files in src" }]],
+				groups: ["read", ["edit", { fileRegex: "^src/.*\\.ts$", description: "TypeScript files in src" }]],
 			} satisfies ModeConfig
 
 			expect(() => CustomModeSchema.parse(modeWithJustRegex)).not.toThrow()
@@ -203,7 +203,7 @@ describe("CustomModeSchema", () => {
 					slug: "test",
 					name: "Test",
 					roleDefinition: "Test",
-					groups: ["read", ["write", { fileRegex: pattern }]],
+					groups: ["read", ["edit", { fileRegex: pattern }]],
 				} satisfies ModeConfig
 				expect(() => CustomModeSchema.parse(mode)).not.toThrow()
 			})
@@ -215,7 +215,7 @@ describe("CustomModeSchema", () => {
 					slug: "test",
 					name: "Test",
 					roleDefinition: "Test",
-					groups: ["read", ["write", { fileRegex: pattern }]],
+					groups: ["read", ["edit", { fileRegex: pattern }]],
 				} satisfies ModeConfig
 				expect(() => CustomModeSchema.parse(mode)).toThrow()
 			})
@@ -229,8 +229,8 @@ describe("CustomModeSchema", () => {
 				groups: [
 					"read",
 					["read", { fileRegex: "^src/.*\\.ts$" }],
-					["write", { fileRegex: "^test/.*\\.ts$" }],
-					["write", { fileRegex: "^src/.*\\.ts$" }],
+					["edit", { fileRegex: "^test/.*\\.ts$" }],
+					["edit", { fileRegex: "^src/.*\\.ts$" }],
 				],
 			} satisfies ModeConfig
 
