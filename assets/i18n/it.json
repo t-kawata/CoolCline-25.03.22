@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Configurazione Prompt",
-				"description": "Clicca su + per creare una nuova modalità ruolo, o chiedi direttamente a CoolCline nella chat di crearne una per te!",
+				"description": "Clicca su + per creare una nuova modalità ruolo!",
 				"createMode": "Crea nuova modalità ruolo",
 				"editConfig": "Modifica configurazione modalità ruolo",
 				"name": "Nome",

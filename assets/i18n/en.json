@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Prompt Settings",
-				"description": "Hit the + to create a new custom mode, or just ask CoolCline in chat to create one for you!",
+				"description": "Hit the + to create a new custom mode!",
 				"createMode": "Create new role mode",
 				"editConfig": "Edit role mode configuration",
 				"name": "Name",

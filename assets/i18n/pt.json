@@ -202,7 +202,7 @@
 			},
 			"modePrompts": {
 				"title": "Configurações de Prompt",
-				"description": "Clique em + para criar um novo modo de função, ou simplesmente peça ao CoolCline no chat para criar um para você!",
+				"description": "Clique em + para criar um novo modo de função!",
 				"createMode": "Criar novo modo de função",
 				"editConfig": "Editar configuração do modo de função",
 				"name": "Nome",

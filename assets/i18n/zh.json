@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Prompt 配置",
-				"description": "点击 + 创建新模式，或直接在对话中让 CoolCline 为您创建！",
+				"description": "点击 + 创建新模式！",
 				"createMode": "新建角色模式",
 				"editConfig": "编辑角色模式配置",
 				"name": "名称",

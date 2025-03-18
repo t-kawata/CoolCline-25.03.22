@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Ustawienia promptów",
-				"description": "Kliknij +, aby utworzyć nowy tryb, lub po prostu poproś CoolCline w czacie o utworzenie go dla Ciebie!",
+				"description": "Kliknij +, aby utworzyć nowy tryb!",
 				"createMode": "Nowy tryb roli",
 				"editConfig": "Edytuj konfigurację trybu roli",
 				"name": "Nazwa",

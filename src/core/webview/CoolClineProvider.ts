@@ -1240,8 +1240,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 							const mode = message.mode ?? defaultModeSlug
 							const customModes = await this.customModesManager.getCustomModes()
 
-							// 这里的作用是 `webview-ui/src/components/prompts/PromptsView.tsx` 预览提示词用的
-							// 根据模式传入不同的参数，保持与CoolCline.ts中的实现一致
+							// 这里的作用是 `PromptsView.tsx` 页面预览提示词按钮用的
+							// 注意保持与 CoolCline.ts 中组装提示词的实现一致
 							const systemPrompt = await (async () => {
 								// 根据模式传入不同的参数
 								//  mode 是要传 slug，是小写字母
@@ -1249,7 +1249,6 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 									case "ask":
 										return SYSTEM_PROMPT(
 											{
-												context: this.context,
 												preferredLanguage,
 											},
 											"ask",
@@ -1263,6 +1262,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 												cwd,
 												enableBaseObjective: true, // 默认启用基础工作目标
 												// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+												// 它是追加模式，系统的提示词是这些
+												// 基础目标部分（如果启用），能力部分，规则部分，系统信息部分，MCP服务器部分，工具使用部分和指南，工具描述部分
 												globalCustomInstructions: customInstructions,
 												supportsComputerUse:
 													apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,
@@ -1271,7 +1272,7 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 												mcpHub: mcpEnabled ? this.mcpHub : undefined,
 												diffStrategy,
 												diffEnabled,
-												allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+												// allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
 												customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
 												customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
 												experiments,
@@ -1279,6 +1280,43 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 												enableToolGuidelines: true, // 显式启用工具使用指南部分
 											},
 											"code",
+										)
+
+									case "architect":
+										return SYSTEM_PROMPT(
+											{
+												preferredLanguage,
+												cwd,
+											},
+											"architect",
+										)
+
+									case "agent":
+										return SYSTEM_PROMPT(
+											{
+												context: this.context,
+												preferredLanguage,
+												cwd,
+												enableBaseObjective: true, // 默认启用基础工作目标
+												// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+												// 它是追加模式，系统的提示词是这些
+												// 基础目标部分（如果启用），能力部分，规则部分，系统信息部分，MCP服务器部分，工具使用部分和指南，工具描述部分
+												globalCustomInstructions: customInstructions,
+												supportsComputerUse:
+													apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,
+												browserViewportSize: browserViewportSize ?? "900x600",
+												enableMcpServerCreation, // 是否需要 AI 创建 MCP 服务器
+												mcpHub: mcpEnabled ? this.mcpHub : undefined,
+												diffStrategy,
+												diffEnabled,
+												// allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+												customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
+												customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
+												experiments,
+												enableToolUse: true, // 显式启用工具使用部分
+												enableToolGuidelines: true, // 显式启用工具使用指南部分
+											},
+											"agent",
 										)
 
 									default:
@@ -1289,6 +1327,8 @@ export class CoolClineProvider implements vscode.WebviewViewProvider {
 												cwd,
 												enableBaseObjective: true, // 默认启用基础工作目标
 												// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+												// 它是追加模式，系统的提示词是这些
+												// 基础目标部分（如果启用），能力部分，规则部分，系统信息部分，MCP服务器部分，工具使用部分和指南，工具描述部分
 												globalCustomInstructions: customInstructions,
 												supportsComputerUse:
 													apiConfiguration.openRouterModelInfo?.supportsComputerUse ?? false,

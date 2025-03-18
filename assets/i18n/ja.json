@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Prompt 設定",
-				"description": "+ をクリックして新しいモードを作成するか、チャットで CoolCline に作成を依頼できます！",
+				"description": "+ をクリックして新しいモードを作成するか！",
 				"createMode": "新規役割モード作成",
 				"editConfig": "役割モード設定を編集",
 				"name": "名称",

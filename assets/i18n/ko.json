@@ -202,7 +202,7 @@
 			},
 			"modePrompts": {
 				"title": "프롬프트 설정",
-				"description": "+ 를 클릭하여 새 모드를 만들거나, 채팅에서 CoolCline에게 만들어달라고 요청하세요!",
+				"description": "+ 를 클릭하여 새 모드를 만들거나!",
 				"createMode": "새 역할 모드",
 				"editConfig": "역할 모드 구성 편집",
 				"name": "이름",

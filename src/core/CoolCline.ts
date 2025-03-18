@@ -1053,7 +1053,7 @@ export class CoolCline {
 							mcpHub,
 							diffStrategy: this.diffStrategy,
 							diffEnabled: this.diffEnabled,
-							allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+							// allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
 							customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
 							customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
 							experiments,
@@ -1061,6 +1061,42 @@ export class CoolCline {
 							enableToolGuidelines: true, // 显式启用工具使用指南部分
 						},
 						"code",
+					)
+
+				case "architect":
+					return SYSTEM_PROMPT(
+						{
+							preferredLanguage,
+							cwd,
+						},
+						"architect",
+					)
+
+				case "agent":
+					return SYSTEM_PROMPT(
+						{
+							context: provider.context,
+							preferredLanguage,
+							cwd,
+							enableBaseObjective: true, // 默认启用基础工作目标
+							// 全局自定义指令，对应UI中的"General Prompt Instructions"输入框
+							// 它是追加模式，系统的提示词是这些
+							// 基础目标部分（如果启用），能力部分，规则部分，系统信息部分，MCP服务器部分，工具使用部分和指南，工具描述部分
+							globalCustomInstructions: this.customInstructions,
+							supportsComputerUse: this.api.getModel().info.supportsComputerUse ?? false,
+							browserViewportSize,
+							enableMcpServerCreation, // 是否需要 AI 创建 MCP 服务器
+							mcpHub,
+							diffStrategy: this.diffStrategy,
+							diffEnabled: this.diffEnabled,
+							// allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
+							customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
+							customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
+							experiments,
+							enableToolUse: true, // 显式启用工具使用部分
+							enableToolGuidelines: true, // 显式启用工具使用指南部分
+						},
+						"agent",
 					)
 
 				default:
@@ -1083,7 +1119,7 @@ export class CoolCline {
 							allowAIToCreateMode: false, // 是否需要 AI 创建角色模式
 							customModePrompts, // 获取终端用户自定义roleDefinition和customInstructions
 							customModeConfigs: customModes, // 获取开发者预设的模式配置，包含slug、name、roleDefinition、groups等
-							experiments,
+							experiments, // 实验设置，可能影响提示词的生成
 							enableToolUse: true, // 显式启用工具使用部分
 							enableToolGuidelines: true, // 显式启用工具使用指南部分
 						},

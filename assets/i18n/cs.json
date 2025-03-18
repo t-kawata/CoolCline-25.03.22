@@ -203,7 +203,7 @@
 			},
 			"modePrompts": {
 				"title": "Nastavení promptů",
-				"description": "Klikněte na + pro vytvoření nového režimu, nebo prostě požádejte CoolCline v chatu, aby ho pro vás vytvořil!",
+				"description": "Klikněte na + pro vytvoření nového režimu!",
 				"createMode": "Nový režim role",
 				"editConfig": "Upravit konfiguraci režimu role",
 				"name": "Název",
