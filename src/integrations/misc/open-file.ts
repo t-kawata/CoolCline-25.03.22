@@ -67,12 +67,20 @@ export async function openFile(filePath: string, options: OpenFileOptions = {}) 
 						group.tabs.includes(existingTab),
 					)?.viewColumn
 					if (activeColumn && activeColumn !== tabColumn && !existingTab.isDirty) {
-						await vscode.window.tabGroups.close(existingTab)
+						try {
+							await vscode.window.tabGroups.close(existingTab)
+						} catch (err) {
+							console.log(`Error closing tab in openFile: ${err.message || err}`)
+							// 忽略关闭标签页时出现的错误，继续流程
+						}
 					}
 					break
 				}
 			}
-		} catch {} // not essential, sometimes tab operations fail
+		} catch (err) {
+			console.log(`Error handling tabs in openFile: ${err.message || err}`)
+			// 不是必要的操作，标签页操作可能会失败
+		}
 
 		const document = await vscode.workspace.openTextDocument(uri)
 		await vscode.window.showTextDocument(document, { preview: false })

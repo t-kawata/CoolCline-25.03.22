@@ -3857,14 +3857,24 @@ export class CoolCline {
 			if (successMessage) {
 				vscode.window.showInformationMessage(successMessage)
 				// 关闭所有差异编辑器
-				vscode.commands.executeCommand("git.closeAllDiffEditors")
-				// 关闭 vscode.changes 打开页面
-				const visibleEditors = vscode.window.visibleTextEditors
-				for (const editor of visibleEditors) {
-					// DIFF_VIEW_URI_SCHEME = "coolcline-diff"
-					if (editor.document.uri.scheme === "coolcline-diff") {
-						await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+				try {
+					await vscode.commands.executeCommand("git.closeAllDiffEditors")
+					// 关闭 vscode.changes 打开页面
+					const visibleEditors = vscode.window.visibleTextEditors
+					for (const editor of visibleEditors) {
+						// DIFF_VIEW_URI_SCHEME = "coolcline-diff"
+						if (editor.document.uri.scheme === "coolcline-diff") {
+							try {
+								await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+							} catch (closeError) {
+								console.log(`Error closing editor: ${closeError.message || closeError}`)
+								// 忽略关闭编辑器出现的错误
+							}
+						}
 					}
+				} catch (diffError) {
+					console.log(`Error closing diff editors: ${diffError.message || diffError}`)
+					// 忽略关闭差异编辑器时出现的错误
 				}
 			}
 

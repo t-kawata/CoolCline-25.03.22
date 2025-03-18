@@ -89,7 +89,12 @@ export class DiffViewProvider {
 			)
 		for (const tab of tabs) {
 			if (!tab.isDirty) {
-				await vscode.window.tabGroups.close(tab)
+				try {
+					await vscode.window.tabGroups.close(tab)
+				} catch (err) {
+					console.log(`Error closing tab during open: ${err.message || err}`)
+					// 忽略关闭标签页时出现的错误
+				}
 			}
 			this.documentWasOpen = true
 		}
@@ -235,17 +240,27 @@ export class DiffViewProvider {
 	}
 
 	private async closeAllDiffViews() {
-		const tabs = vscode.window.tabGroups.all
-			.flatMap((tg) => tg.tabs)
-			.filter(
-				(tab) =>
-					tab.input instanceof vscode.TabInputTextDiff &&
-					tab.input?.original?.scheme === DIFF_VIEW_URI_SCHEME,
-			)
-		for (const tab of tabs) {
-			if (!tab.isDirty) {
-				await vscode.window.tabGroups.close(tab)
+		try {
+			const tabs = vscode.window.tabGroups.all
+				.flatMap((tg) => tg.tabs)
+				.filter(
+					(tab) =>
+						tab.input instanceof vscode.TabInputTextDiff &&
+						tab.input?.original?.scheme === DIFF_VIEW_URI_SCHEME,
+				)
+			for (const tab of tabs) {
+				if (!tab.isDirty) {
+					try {
+						await vscode.window.tabGroups.close(tab)
+					} catch (err) {
+						console.log(`Error closing diff tab: ${err.message || err}`)
+						// 忽略关闭标签页时出现的错误，通常是由于标签页已被关闭
+					}
+				}
 			}
+		} catch (err) {
+			console.log(`Error in closeAllDiffViews: ${err.message || err}`)
+			// 忽略 tabGroups 相关的任何错误，确保流程继续
 		}
 	}
 
